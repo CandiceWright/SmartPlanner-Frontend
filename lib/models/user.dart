@@ -50,14 +50,21 @@ class User {
 
   void buildBacklogMap() {
     print("I am building backlog");
-    //var backlog = new Map();
     for (int i = 0; i < backlogItems.length; i++) {
       print("I am in for loop");
       print(backlogItems[i].category);
-      if (backlog.containsKey(backlogItems[i].category)) {
-        backlog[backlogItems[i].category].add(backlogItems[i]);
+      if (backlogItems[i].category == "") {
+        if (backlog.containsKey("Other")) {
+          backlog["Other"].add(backlogItems[i]);
+        } else {
+          backlog["Other"] = [backlogItems[i]];
+        }
       } else {
-        backlog[backlogItems[i].category] = [backlogItems[i]];
+        if (backlog.containsKey(backlogItems[i].category)) {
+          backlog[backlogItems[i].category].add(backlogItems[i]);
+        } else {
+          backlog[backlogItems[i].category] = [backlogItems[i]];
+        }
       }
     }
     print(backlog);

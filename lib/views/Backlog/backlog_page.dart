@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice_planner/views/Backlog/new_task_page.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,15 +32,18 @@ class _BacklogPageState extends State<BacklogPage> {
 
   void _openNewBacklogItemPage() {
     //this function needs to change to create new goal
-    // Navigator.push(
-    //     context,
-    //     CupertinoPageRoute(
-    //         builder: (context) => NewGoalPage(updateGoals: _updateGoalsList)));
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) =>
+                NewTaskPage(updateBacklog: _updateBacklogList)));
   }
 
   void _updateBacklogList() {
-    print("I am in update goals");
-    setState(() {});
+    print("I am in update backlog");
+    setState(() {
+      backlog = PlannerService.sharedInstance.user.backlog;
+    });
   }
 
   List<Widget> buildBacklogListView() {
@@ -105,7 +109,7 @@ class _BacklogPageState extends State<BacklogPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openNewBacklogItemPage,
-        tooltip: 'Increment',
+        tooltip: 'Create new task.',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
