@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
+import '/views/Backlog/backlog_page.dart';
 
 class NavigationWrapper extends StatefulWidget {
   const NavigationWrapper({Key? key}) : super(key: key);
@@ -17,6 +18,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
+    BacklogPage(),
     GoalsPage(),
   ];
 
@@ -39,6 +41,10 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Backlog',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.track_changes_outlined),
