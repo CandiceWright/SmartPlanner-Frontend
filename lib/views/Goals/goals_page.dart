@@ -23,7 +23,7 @@ class GoalsPage extends StatefulWidget {
 
 class _GoalsPageState extends State<GoalsPage> {
   int _counter = 0;
-  var goals = PlannerService.sharedInstance.user.goals;
+  //var goals = PlannerService.sharedInstance.user.goals;
 
   @override
   void initState() {
@@ -41,16 +41,14 @@ class _GoalsPageState extends State<GoalsPage> {
 
   void _updateGoalsList() {
     print("I am in update goals");
-    setState(() {
-      goals = PlannerService.sharedInstance.user.goals;
-    });
+    setState(() {});
   }
 
   List<Widget> buildGoalsListView() {
     print("building goals list view");
     List<Widget> goalsListView = [];
     /*This implementation uses cards*/
-    for (int i = 0; i < goals.length; i++) {
+    for (int i = 0; i < PlannerService.sharedInstance.user.goals.length; i++) {
       Widget goalContainerWidget = Card(
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -59,11 +57,12 @@ class _GoalsPageState extends State<GoalsPage> {
               child: Column(
                 children: [
                   Text(
-                    DateFormat.yMMMd().format(goals[i].date),
+                    DateFormat.yMMMd().format(
+                        PlannerService.sharedInstance.user.goals[i].date),
                     style: Theme.of(context).textTheme.subtitle2,
                   ),
                   Text(
-                    goals[i].description,
+                    PlannerService.sharedInstance.user.goals[i].description,
                   )
                 ],
               ),

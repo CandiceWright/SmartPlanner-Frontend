@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
-
+import 'package:intl/intl.dart';
 import 'goal.dart';
 import 'backlog_item.dart';
+import 'habit.dart';
 
 class User {
   var name = "";
@@ -9,6 +10,8 @@ class User {
   var goals = [];
   var backlogItems = <BacklogItem>[];
   var backlog = new Map();
+  var todayTasks = [];
+  var habits = <Habit>[];
 
   User(this.name, this.email) {
     //Goals
@@ -21,7 +24,7 @@ class User {
 
     //List<BacklogItem> backlogItems = [];
     BacklogItem bli1 = BacklogItem("Complete backlog feature.",
-        DateTime(2022, 3, 1), false, "Planner Business");
+        DateTime(2022, 3, 6), false, "Planner Business");
     BacklogItem bli2 = BacklogItem(
         "Complete Homepage.", DateTime(2022, 3, 3), false, "Planner Business");
     BacklogItem bli3 = BacklogItem("Complete Calendar Feature.",
@@ -46,6 +49,7 @@ class User {
     print(backlogItems);
 
     buildBacklogMap();
+    buildHabitList();
   }
 
   void buildBacklogMap() {
@@ -67,7 +71,34 @@ class User {
         }
       }
     }
-    print(backlog);
+    //print(backlog);
+    buildTodayTaskList();
     //return backlog;
+  }
+
+  void buildTodayTaskList() {
+    print("I am building task list for today");
+    print("printing current date");
+    print(DateFormat.yMMMd().format(DateTime.now()));
+    backlog.forEach((key, value) {
+      for (int i = 0; i < value.length; i++) {
+        print(value[i].completeBy);
+        if (DateFormat.yMMMd().format(value[i].completeBy) ==
+            DateFormat.yMMMd().format(DateTime.now())) {
+          todayTasks.add(value[i]);
+        }
+      }
+    });
+    print(todayTasks.length);
+  }
+
+  void buildHabitList() {
+    Habit habit1 = Habit("Pray daily");
+    Habit habit2 = Habit("Code daily");
+    Habit habit3 = Habit("Workout for 30min daily");
+
+    habits.add(habit1);
+    habits.add(habit2);
+    habits.add(habit3);
   }
 }

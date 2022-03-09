@@ -21,13 +21,13 @@ class BacklogPage extends StatefulWidget {
 }
 
 class _BacklogPageState extends State<BacklogPage> {
-  bool _value = false;
-  var backlog = PlannerService.sharedInstance.user.backlog;
+  //bool _value = false;
+  //var backlog = PlannerService.sharedInstance.user.backlog;
 
   @override
   void initState() {
     super.initState();
-    print(PlannerService.sharedInstance.user.backlog);
+    //print(PlannerService.sharedInstance.user.backlog);
   }
 
   void _openNewBacklogItemPage() {
@@ -41,25 +41,25 @@ class _BacklogPageState extends State<BacklogPage> {
 
   void _updateBacklogList() {
     print("I am in update backlog");
-    setState(() {
-      backlog = PlannerService.sharedInstance.user.backlog;
-    });
+    setState(() {});
   }
 
   List<Widget> buildBacklogListView() {
     print("building backlog view");
     List<Widget> backloglistview = [];
-    backlog.forEach((key, value) {
+    PlannerService.sharedInstance.user.backlog.forEach((key, value) {
       List<Widget> expansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
         Widget child = CheckboxListTile(
           title: Text(value[i].description),
           subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy)),
-          value: value[i].isComplete,
+          value: PlannerService.sharedInstance.user.backlog[key][i].isComplete,
           onChanged: (bool? value) {
             print(value);
             setState(() {
-              _value = value!;
+              PlannerService.sharedInstance.user.backlog[key][i].isComplete =
+                  value;
+              //_value = value!;
             });
           },
           secondary: IconButton(
@@ -101,12 +101,141 @@ class _BacklogPageState extends State<BacklogPage> {
         title: const Text("Life Backlog"),
         centerTitle: true,
       ),
-      body: Container(
-        child: ListView(
-          children: backlogListView,
-        ),
-        margin: EdgeInsets.all(15),
+      body: Column(
+        children: [
+          // SingleChildScrollView(
+          //   child: Card(
+          //       child: Container(
+          //         child: Column(
+          //           children: [
+          //             CheckboxListTile(
+          //               title: Text("Test task 1"),
+          //               value: false,
+          //               onChanged: (bool? value) {
+          //                 print(value);
+          //                 setState(() {
+          //                   _value = value!;
+          //                 });
+          //               },
+          //               secondary: IconButton(
+          //                 icon: const Icon(Icons.visibility_outlined),
+          //                 tooltip: 'View this backlog item',
+          //                 onPressed: () {
+          //                   setState(() {});
+          //                 },
+          //               ),
+          //               controlAffinity: ListTileControlAffinity.leading,
+          //             ),
+          //             CheckboxListTile(
+          //               title: Text("Test task 1"),
+          //               value: false,
+          //               onChanged: (bool? value) {
+          //                 print(value);
+          //                 setState(() {
+          //                   _value = value!;
+          //                 });
+          //               },
+          //               secondary: IconButton(
+          //                 icon: const Icon(Icons.visibility_outlined),
+          //                 tooltip: 'View this backlog item',
+          //                 onPressed: () {
+          //                   setState(() {});
+          //                 },
+          //               ),
+          //               controlAffinity: ListTileControlAffinity.leading,
+          //             ),
+          //             CheckboxListTile(
+          //               title: Text("Test task 1"),
+          //               value: false,
+          //               onChanged: (bool? value) {
+          //                 print(value);
+          //                 setState(() {
+          //                   _value = value!;
+          //                 });
+          //               },
+          //               secondary: IconButton(
+          //                 icon: const Icon(Icons.visibility_outlined),
+          //                 tooltip: 'View this backlog item',
+          //                 onPressed: () {
+          //                   setState(() {});
+          //                 },
+          //               ),
+          //               controlAffinity: ListTileControlAffinity.leading,
+          //             )
+          //           ],
+          //         ),
+          //       ),
+          //       color: Colors.pink.shade50,
+          //       // margin: EdgeInsets.all(20),
+          //       margin:
+          //           EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
+          //       elevation: 5,
+          //       shape: RoundedRectangleBorder(
+          //         borderRadius: BorderRadius.circular(10.0),
+          //       )),
+          // ),
+          // const Divider(
+          //   thickness: 0.5,
+          //   indent: 20,
+          //   endIndent: 0,
+          //   color: Colors.grey,
+          // ),
+          Expanded(
+            child: ListView(
+              children: backlogListView,
+            ),
+          )
+        ],
       ),
+      // body: Column(
+      //   children: [
+      //     Card(
+      //         child: Container(
+      //           child: Column(
+      //             children: [
+      //               CheckboxListTile(
+      //                 title: Text("Test task 1"),
+      //                 value: false,
+      //                 onChanged: (bool? value) {
+      //                   print(value);
+      //                   setState(() {
+      //                     _value = value!;
+      //                   });
+      //                 },
+      //                 secondary: IconButton(
+      //                   icon: const Icon(Icons.visibility_outlined),
+      //                   tooltip: 'View this backlog item',
+      //                   onPressed: () {
+      //                     setState(() {});
+      //                   },
+      //                 ),
+      //                 controlAffinity: ListTileControlAffinity.leading,
+      //               )
+      //             ],
+      //           ),
+      //         ),
+      //         color: Colors.pink.shade50,
+      //         // margin: EdgeInsets.all(20),
+      //         margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
+      //         elevation: 5,
+      //         shape: RoundedRectangleBorder(
+      //           borderRadius: BorderRadius.circular(10.0),
+      //         )),
+      //     const Divider(
+      //       thickness: 0.5,
+      //       indent: 20,
+      //       endIndent: 0,
+      //       color: Colors.grey,
+      //     ),
+      //     Expanded(
+      //       child: ListView(
+      //         children: backlogListView,
+      //       ),
+      //     )
+      //   ],
+      // ),
+      // margin: EdgeInsets.all(15),
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openNewBacklogItemPage,
         tooltip: 'Create new task.',

@@ -5,7 +5,7 @@ import '/services/planner_service.dart';
 
 class NewTaskPage extends StatefulWidget {
   const NewTaskPage({Key? key, required this.updateBacklog}) : super(key: key);
-
+  //const NewTaskPage({Key? key}) : super(key: key);
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -14,6 +14,7 @@ class NewTaskPage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
+
   final Function updateBacklog;
 
   @override
@@ -70,6 +71,10 @@ class _NewTaskPageState extends State<NewTaskPage> {
     } else {
       PlannerService.sharedInstance.user.backlog[newBacklogItem.category]
           .add(newBacklogItem);
+    }
+    if (DateFormat.yMMMd().format(selectedDate) ==
+        DateFormat.yMMMd().format(DateTime.now())) {
+      PlannerService.sharedInstance.user.todayTasks.add(newBacklogItem);
     }
     widget.updateBacklog();
     _backToBacklogPage();
