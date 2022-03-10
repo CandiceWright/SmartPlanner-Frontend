@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
     return todayTasksWidgets;
   }
 
-  Widget buildHabitsView() {
+  List<TableRow> buildHabitsView() {
     List<TableRow> tableRows = [];
     TableRow headerRow = TableRow(children: [
       TableCell(
@@ -90,8 +90,12 @@ class _HomePageState extends State<HomePage> {
     ]);
 
     tableRows.add(headerRow);
+    print("printing size of habits size");
+    print(PlannerService.sharedInstance.user.habits.length);
 
     for (int i = 0; i < PlannerService.sharedInstance.user.habits.length; i++) {
+      //print("printing habit tracker map at Sunday");
+      //print(PlannerService.sharedInstance.user.habits[i].habitTrackerMap["Sunday"]);
       TableRow tableRow = TableRow(children: [
         TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
@@ -105,305 +109,121 @@ class _HomePageState extends State<HomePage> {
         ),
         TableCell(
           child: Container(
-              child: Radio(
-            groupValue: true,
-            value: PlannerService
-                .sharedInstance.user.habits[i].habitTrackerMap["Sunday"]!,
-            onChanged: (bool? value) {
-              print(value);
-              setState(() {});
-            },
-          )),
+            child: Checkbox(
+              shape: CircleBorder(),
+              value: PlannerService
+                  .sharedInstance.user.habits[i].habitTrackerMap["Sunday"]!,
+              onChanged: (bool? value) {
+                print(value);
+                setState(() {
+                  PlannerService.sharedInstance.user.habits[i]
+                      .habitTrackerMap["Sunday"] = value!;
+                });
+              },
+            ),
+          ),
         ),
         TableCell(
           child: Container(
-              child: Radio(
-            groupValue: true,
-            value: PlannerService
-                .sharedInstance.user.habits[i].habitTrackerMap["Mon"]!,
-            onChanged: (bool? value) {
-              print(value);
-              setState(() {});
-            },
-          )),
+            child: Checkbox(
+              shape: CircleBorder(),
+              value: PlannerService
+                  .sharedInstance.user.habits[i].habitTrackerMap["Mon"]!,
+              onChanged: (bool? value) {
+                print(value);
+                setState(() {
+                  PlannerService.sharedInstance.user.habits[i]
+                      .habitTrackerMap["Mon"] = value!;
+                });
+              },
+            ),
+          ),
         ),
         TableCell(
           child: Container(
-              child: Radio(
-            groupValue: true,
-            value: PlannerService
-                .sharedInstance.user.habits[i].habitTrackerMap["Tues"]!,
-            onChanged: (bool? value) {
-              print(value);
-              setState(() {});
-            },
-          )),
+            child: Checkbox(
+              shape: CircleBorder(),
+              value: PlannerService
+                  .sharedInstance.user.habits[i].habitTrackerMap["Tues"]!,
+              onChanged: (bool? value) {
+                print(value);
+                setState(() {
+                  PlannerService.sharedInstance.user.habits[i]
+                      .habitTrackerMap["Tues"] = value!;
+                });
+              },
+            ),
+          ),
         ),
         TableCell(
           child: Container(
-              child: Radio(
-            groupValue: true,
-            value: PlannerService
-                .sharedInstance.user.habits[i].habitTrackerMap["Wed"]!,
-            onChanged: (bool? value) {
-              print(value);
-              setState(() {});
-            },
-          )),
+            child: Checkbox(
+              shape: CircleBorder(),
+              value: PlannerService
+                  .sharedInstance.user.habits[i].habitTrackerMap["Wed"]!,
+              onChanged: (bool? value) {
+                print(value);
+                setState(() {
+                  PlannerService.sharedInstance.user.habits[i]
+                      .habitTrackerMap["Wed"] = value!;
+                });
+              },
+            ),
+          ),
         ),
         TableCell(
           child: Container(
-              child: Radio(
-            groupValue: true,
-            value: PlannerService
-                .sharedInstance.user.habits[i].habitTrackerMap["Thurs"]!,
-            onChanged: (bool? value) {
-              print(value);
-              setState(() {});
-            },
-          )),
+            child: Checkbox(
+              shape: CircleBorder(),
+              value: PlannerService
+                  .sharedInstance.user.habits[i].habitTrackerMap["Thurs"]!,
+              onChanged: (bool? value) {
+                print(value);
+                setState(() {
+                  PlannerService.sharedInstance.user.habits[i]
+                      .habitTrackerMap["Thurs"] = value!;
+                });
+              },
+            ),
+          ),
         ),
         TableCell(
           child: Container(
-              child: Radio(
-            groupValue: true,
-            value: PlannerService
-                .sharedInstance.user.habits[i].habitTrackerMap["Friday"]!,
-            onChanged: (bool? value) {
-              print(value);
-              setState(() {});
-            },
-          )),
+            child: Checkbox(
+              shape: CircleBorder(),
+              value: PlannerService
+                  .sharedInstance.user.habits[i].habitTrackerMap["Friday"]!,
+              onChanged: (bool? value) {
+                print(value);
+                setState(() {
+                  PlannerService.sharedInstance.user.habits[i]
+                      .habitTrackerMap["Friday"] = value!;
+                });
+              },
+            ),
+          ),
         ),
         TableCell(
           child: Container(
-              child: Radio(
-            groupValue: true,
-            value: PlannerService
-                .sharedInstance.user.habits[i].habitTrackerMap["Saurday"]!,
-            onChanged: (bool? value) {
-              print(value);
-              setState(() {});
-            },
-          )),
+            child: Checkbox(
+              shape: CircleBorder(),
+              value: PlannerService
+                  .sharedInstance.user.habits[i].habitTrackerMap["Saturday"]!,
+              onChanged: (bool? value) {
+                print(value);
+                setState(() {
+                  PlannerService.sharedInstance.user.habits[i]
+                      .habitTrackerMap["Saturday"] = value!;
+                });
+              },
+            ),
+          ),
         ),
       ]);
+      tableRows.add(tableRow);
     }
 
-    Widget table = Table(
-      // border: TableBorder.symmetric(),
-      border: TableBorder(
-        verticalInside: BorderSide(width: 1, style: BorderStyle.solid),
-        horizontalInside: BorderSide(width: 1),
-      ),
-      columnWidths: const {
-        0: IntrinsicColumnWidth(),
-      },
-      children: [
-        TableRow(children: [
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.fill,
-            child: Container(
-              child: const Text(
-                "Habits",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.pink,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              margin: EdgeInsets.only(left: 10, right: 10),
-            ),
-          ),
-          TableCell(
-              child: Container(child: Text("S", textAlign: TextAlign.center))),
-          TableCell(child: Text("M", textAlign: TextAlign.center)),
-          TableCell(child: Text("T", textAlign: TextAlign.center)),
-          TableCell(child: Text("W", textAlign: TextAlign.center)),
-          TableCell(child: Text("TH", textAlign: TextAlign.center)),
-          TableCell(child: Text("F", textAlign: TextAlign.center)),
-          TableCell(child: Text("S", textAlign: TextAlign.center)),
-        ]),
-        TableRow(children: [
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Container(
-              child: const Text(
-                "Habit 1",
-                textAlign: TextAlign.center,
-              ),
-              margin: EdgeInsets.only(left: 10, right: 10),
-            ),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-        ]),
-        TableRow(children: [
-          TableCell(
-            verticalAlignment: TableCellVerticalAlignment.middle,
-            child: Container(
-              child: const Text(
-                "Habit 2",
-                textAlign: TextAlign.center,
-              ),
-              margin: EdgeInsets.only(left: 10, right: 10),
-            ),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-          TableCell(
-            child: Container(
-                child: Radio(
-              groupValue: true,
-              value: false,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {});
-              },
-            )),
-          ),
-        ]),
-      ],
-    );
+    return tableRows;
   }
 
   @override
@@ -411,7 +231,8 @@ class _HomePageState extends State<HomePage> {
     //MaterialApp is a flutter class which has a constructor
     // List<Widget> goalsListView = buildGoalsListView();
     List<Widget> todayTasksView = buildTodayTaskListView();
-    Widget habitsView = buildHabitsView();
+    List<TableRow> habitTableRows = buildHabitsView();
+    //List<TableRow> habitTableRows = [];
     return Scaffold(
       appBar: AppBar(
         //title: const Text('Home Page'),
@@ -455,23 +276,6 @@ class _HomePageState extends State<HomePage> {
           margin: EdgeInsets.all(15),
           color: Colors.pink.shade50,
         ),
-        // leading: Card(
-        //   child: Row(
-        //     children: [
-        //       Container(
-        //         // child: Text("hi"),
-        //         child: Column(
-        //           children: [
-        //             Text(DateTime.now().weekday.toString()),
-        //             Text(DateTime.now().day.toString()),
-        //           ],
-        //         ),
-        //         color: Colors.pink.shade50,
-        //       )
-        //     ],
-        //   ),
-        //   margin: EdgeInsets.all(15),
-        // ),
       ),
       //body: Text('This is my default text'),
       body: Container(
@@ -509,7 +313,18 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Container(
-                    child: habitsView,
+                    child: Table(
+                      // border: TableBorder.symmetric(),
+                      border: TableBorder(
+                        verticalInside:
+                            BorderSide(width: 1, style: BorderStyle.solid),
+                        horizontalInside: BorderSide(width: 1),
+                      ),
+                      columnWidths: const {
+                        0: IntrinsicColumnWidth(),
+                      },
+                      children: habitTableRows,
+                    ),
                     margin: EdgeInsets.only(top: 20),
                   ),
                 ],

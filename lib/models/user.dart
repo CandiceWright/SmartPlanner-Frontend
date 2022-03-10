@@ -26,7 +26,7 @@ class User {
     BacklogItem bli1 = BacklogItem("Complete backlog feature.",
         DateTime(2022, 3, 6), false, "Planner Business");
     BacklogItem bli2 = BacklogItem(
-        "Complete Homepage.", DateTime(2022, 3, 3), false, "Planner Business");
+        "Complete Homepage.", DateTime(2022, 3, 9), false, "Planner Business");
     BacklogItem bli3 = BacklogItem("Complete Calendar Feature.",
         DateTime(2022, 3, 6), false, "Planner Business");
     BacklogItem bli4 = BacklogItem("Complete assistant feature.",
