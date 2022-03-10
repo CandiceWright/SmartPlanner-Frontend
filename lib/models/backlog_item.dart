@@ -8,5 +8,5 @@ class BacklogItem {
   String? notes;
 
   BacklogItem(this.description, this.completeBy, this.isComplete,
-      [this.category, this.location, this.notes]) {}
+      [this.category, this.location, this.notes]);
 }

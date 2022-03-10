@@ -2,11 +2,8 @@ class Goal {
   String description = "";
   DateTime date = DateTime.now();
   //this '?' says that the value can be null
-  String? category;
+  String category = "";
+  String notes = "";
 
-  Goal(String description, DateTime date, {String? category}) {
-    this.description = description;
-    this.date = date;
-    this.category = category;
-  }
+  Goal(this.description, this.date, this.category, this.notes);
 }

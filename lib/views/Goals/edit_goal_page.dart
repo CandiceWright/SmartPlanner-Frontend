@@ -3,8 +3,10 @@ import 'package:intl/intl.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 
-class NewGoalPage extends StatefulWidget {
-  const NewGoalPage({Key? key, required this.updateGoals}) : super(key: key);
+class EditGoalPage extends StatefulWidget {
+  const EditGoalPage(
+      {Key? key, required this.updateGoal, required this.goalIdx})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -14,19 +16,27 @@ class NewGoalPage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-  final Function updateGoals;
+  final Function updateGoal;
+  final int goalIdx;
 
   @override
-  State<NewGoalPage> createState() => _NewGoalPageState();
+  State<EditGoalPage> createState() => _EditGoalPageState();
 }
 
-class _NewGoalPageState extends State<NewGoalPage> {
+class _EditGoalPageState extends State<EditGoalPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DateTime selectedDate = DateTime.now();
-  var dateTxtController = TextEditingController();
-  var descriptionTxtController = TextEditingController();
-  var notesTxtController = TextEditingController();
-  var categoryTxtController = TextEditingController();
+  late final descriptionTxtController = TextEditingController(
+      text:
+          PlannerService.sharedInstance.user.goals[widget.goalIdx].description);
+  late final dateTxtController = TextEditingController(
+      text: DateFormat.yMMMd().format(
+          PlannerService.sharedInstance.user.goals[widget.goalIdx].date));
+  late final categoryTxtController = TextEditingController(
+      text: PlannerService.sharedInstance.user.goals[widget.goalIdx].category);
+  late final notesTxtController = TextEditingController(
+      text: PlannerService.sharedInstance.user.goals[widget.goalIdx].notes);
+  late var selectedDate =
+      PlannerService.sharedInstance.user.goals[widget.goalIdx].date;
   bool doneBtnDisabled = true;
 
   @override
@@ -34,6 +44,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
     super.initState();
     dateTxtController.addListener(setDoneBtnState);
     descriptionTxtController.addListener(setDoneBtnState);
+    setDoneBtnState();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -50,14 +61,19 @@ class _NewGoalPageState extends State<NewGoalPage> {
       });
   }
 
-  void createGoal() {
+  void editGoal() {
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
     var category = categoryTxtController.text;
 
-    var newGoal = Goal(goalTitle, selectedDate, category, goalNotes);
-    PlannerService.sharedInstance.user.goals.add(newGoal);
-    widget.updateGoals();
+    PlannerService.sharedInstance.user.goals[widget.goalIdx].description =
+        goalTitle;
+    PlannerService.sharedInstance.user.goals[widget.goalIdx].notes = goalNotes;
+    PlannerService.sharedInstance.user.goals[widget.goalIdx].category =
+        category;
+    PlannerService.sharedInstance.user.goals[widget.goalIdx].date =
+        selectedDate;
+    widget.updateGoal();
     _backToGoalsPage();
   }
 
@@ -92,13 +108,13 @@ class _NewGoalPageState extends State<NewGoalPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("New Goal"),
+        title: const Text("Edit Goal"),
         centerTitle: true,
         leading: BackButton(color: Colors.black),
         actions: [
           TextButton(
-            onPressed: doneBtnDisabled ? null : createGoal,
-            child: Text("Done"),
+            onPressed: doneBtnDisabled ? null : editGoal,
+            child: const Text("Done"),
           ),
           // IconButton(
           //   icon: const Icon(Icons.check),

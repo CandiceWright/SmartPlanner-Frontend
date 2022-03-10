@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '/models/goal.dart';
 import 'new_goal_page.dart';
+import 'edit_goal_page.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+//import 'package:confetti/confetti.dart';
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({Key? key}) : super(key: key);
@@ -22,8 +24,7 @@ class GoalsPage extends StatefulWidget {
 }
 
 class _GoalsPageState extends State<GoalsPage> {
-  int _counter = 0;
-  //var goals = PlannerService.sharedInstance.user.goals;
+  //ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
   @override
   void initState() {
@@ -39,6 +40,90 @@ class _GoalsPageState extends State<GoalsPage> {
             builder: (context) => NewGoalPage(updateGoals: _updateGoalsList)));
   }
 
+  void _openEditGoal(int idx) {
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => EditGoalPage(
+                  updateGoal: _updateGoalsList,
+                  goalIdx: idx,
+                )));
+  }
+
+  void showGoalCompleteAnimation() {
+    print("Yayy you did it");
+  }
+
+  void _showGoalContent(Goal goal, int idx) {
+    showDialog(
+      context: context, // user must tap button!
+
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
+          //child: Expanded(
+          //child: Container(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          children: [
+            Container(
+              child: Column(
+                children: [
+                  Text(
+                    DateFormat.yMMMd().format(goal.date),
+                    // style: Theme.of(context).textTheme.subtitle2,
+                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  ),
+                  Padding(
+                    child: Text(
+                      goal.description,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    padding: EdgeInsets.only(bottom: 10, top: 4),
+                  ),
+                  Padding(
+                    child: Image.asset(
+                      "assets/images/goal_icon.png",
+                      height: 60,
+                      width: 60,
+                    ),
+                    padding: EdgeInsets.all(10),
+                  ),
+
+                  // Text(
+                  //   goal.notes,
+                  //   // style: Theme.of(context).textTheme.subtitle2,
+                  //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // ),
+                  ElevatedButton(
+                      onPressed: showGoalCompleteAnimation,
+                      child: const Text(
+                        "I DID IT!",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ))
+                ],
+              ),
+              margin: EdgeInsets.all(10),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: () => {_openEditGoal(idx)},
+                  icon: const Icon(Icons.edit_outlined),
+                ),
+              ],
+            ),
+          ],
+          // ),
+          //),
+        );
+      },
+    );
+  }
+
   void _updateGoalsList() {
     print("I am in update goals");
     setState(() {});
@@ -49,33 +134,49 @@ class _GoalsPageState extends State<GoalsPage> {
     List<Widget> goalsListView = [];
     /*This implementation uses cards*/
     for (int i = 0; i < PlannerService.sharedInstance.user.goals.length; i++) {
-      Widget goalContainerWidget = Card(
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          children: [
-            Container(
-              child: Column(
+      Widget goalContainerWidget = GestureDetector(
+        onTap: () =>
+            {_showGoalContent(PlannerService.sharedInstance.user.goals[i], i)},
+        child: Card(
+          clipBehavior: Clip.antiAlias,
+          child: Row(
+            children: [
+              Image.asset(
+                "assets/images/goal_icon.png",
+                height: 40,
+                width: 40,
+              ),
+              Column(
                 children: [
-                  Text(
-                    DateFormat.yMMMd().format(
-                        PlannerService.sharedInstance.user.goals[i].date),
-                    style: Theme.of(context).textTheme.subtitle2,
+                  Container(
+                    child: Column(
+                      children: [
+                        Text(
+                          DateFormat.yMMMd().format(
+                              PlannerService.sharedInstance.user.goals[i].date),
+                          // style: Theme.of(context).textTheme.subtitle2,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          PlannerService
+                              .sharedInstance.user.goals[i].description,
+                        ),
+                      ],
+                    ),
+                    margin: EdgeInsets.all(15),
                   ),
-                  Text(
-                    PlannerService.sharedInstance.user.goals[i].description,
-                  )
                 ],
               ),
-              margin: EdgeInsets.all(15),
-            ),
-          ],
+            ],
+          ),
+          elevation: 3,
+          margin: EdgeInsets.all(10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          color: Theme.of(context).colorScheme.primary,
         ),
-        elevation: 3,
-        margin: EdgeInsets.all(10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        color: Theme.of(context).colorScheme.primary,
       );
       goalsListView.add(goalContainerWidget);
     }

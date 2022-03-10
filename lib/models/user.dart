@@ -16,9 +16,10 @@ class User {
   User(this.name, this.email) {
     //Goals
     //List<Goal> userGoals = [];
-    Goal goal1 = Goal("100,000 planner subscriptions", DateTime(2022, 3, 11));
-    Goal goal2 =
-        Goal("At least 1,000,000 in my bank accounts", DateTime(2022, 8, 2));
+    Goal goal1 =
+        Goal("100,000 planner subscriptions", DateTime(2022, 3, 11), "", "");
+    Goal goal2 = Goal(
+        "At least 1,000,000 in my bank accounts", DateTime(2022, 8, 2), "", "");
     goals.add(goal1);
     goals.add(goal2);
 
