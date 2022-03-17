@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
+import '/views/Calendar/calendar_page.dart';
 import '/views/Backlog/backlog_page.dart';
 
 class NavigationWrapper extends StatefulWidget {
@@ -19,6 +20,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     BacklogPage(),
+    CalendarPage(),
     GoalsPage(),
   ];
 
@@ -37,6 +39,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -45,6 +48,10 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Backlog',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Calendar',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.track_changes_outlined),

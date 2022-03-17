@@ -10,7 +10,7 @@
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		ht4ZR+4MRWmKN4I5zccDfjDB4CI=
+		lO7Jexslaf2SRfPuFaKASAbi1Ms=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -18,7 +18,7 @@
 		</data>
 		<key>flutter_assets/NOTICES.Z</key>
 		<data>
-		XjG2wKGmQDXz22LCPPTvM+th1QY=
+		BR++i6L3VExZKXKKtKyLqmcdLOU=
 		</data>
 		<key>flutter_assets/assets/images/.DS_Store</key>
 		<data>
@@ -42,11 +42,15 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		2F01FuH7QKnxK3zzQClbhZICBpA=
+		SUNS6BXKcubcn5Rws7TP0zh0+j4=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
 		P7bb/oR3EhwqCIH1M6LyTuBIWYU=
+		</data>
+		<key>flutter_assets/packages/timezone/data/2020a.tzf</key>
+		<data>
+		g5tcm9aJwOa2LvO5PKNI9v4IEM4=
 		</data>
 		<key>flutter_assets/vm_snapshot_data</key>
 		<data>
@@ -59,11 +63,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			ht4ZR+4MRWmKN4I5zccDfjDB4CI=
+			lO7Jexslaf2SRfPuFaKASAbi1Ms=
 			</data>
 			<key>hash2</key>
 			<data>
-			e1t8VZG4WyeKIylmd+oy4GVCxDKQmzAEOdfeCGMgIHk=
+			JVK4Y5+cUVZ/NXJxaTf9GcePRU2gvfgXjg0Z6vuszUQ=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -81,11 +85,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			XjG2wKGmQDXz22LCPPTvM+th1QY=
+			BR++i6L3VExZKXKKtKyLqmcdLOU=
 			</data>
 			<key>hash2</key>
 			<data>
-			pxXT1jjdyf3FOge+eF59RerCjsYCFwF34Qkg/9DPEdY=
+			E22suywMZKmcKAAEmNiX8bKD8fsE8RFagEEhKS2mKZg=
 			</data>
 		</dict>
 		<key>flutter_assets/assets/images/backlog_icon.png</key>
@@ -136,11 +140,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			2F01FuH7QKnxK3zzQClbhZICBpA=
+			SUNS6BXKcubcn5Rws7TP0zh0+j4=
 			</data>
 			<key>hash2</key>
 			<data>
-			fhko9lPTokwsniwAfIBZBJKSANMWEyXgDNK2g1thmY8=
+			2IWRnmwWb4fEqX4dxEGpffLcr3nJLcd1p1FgQ6MXefA=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
@@ -152,6 +156,17 @@
 			<key>hash2</key>
 			<data>
 			x6NX+tjyECiQtyzbbjyY8U2zoZ7GDbJtE+T+k/dzgI0=
+			</data>
+		</dict>
+		<key>flutter_assets/packages/timezone/data/2020a.tzf</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			g5tcm9aJwOa2LvO5PKNI9v4IEM4=
+			</data>
+			<key>hash2</key>
+			<data>
+			pqb0VSFXzevqpiaDzSIHweYx8G5PM7J+AuFVnEHwvwU=
 			</data>
 		</dict>
 		<key>flutter_assets/vm_snapshot_data</key>

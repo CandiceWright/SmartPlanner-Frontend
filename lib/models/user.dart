@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'goal.dart';
 import 'backlog_item.dart';
 import 'habit.dart';
+import 'event.dart';
+import 'package:flutter/material.dart';
 
 class User {
   var name = "";
@@ -12,6 +14,7 @@ class User {
   var backlog = new Map();
   var todayTasks = [];
   var habits = <Habit>[];
+  var allEvents = <Event>[];
 
   User(this.name, this.email) {
     //Goals
@@ -51,6 +54,7 @@ class User {
 
     buildBacklogMap();
     buildHabitList();
+    buildEventList();
   }
 
   void buildBacklogMap() {
@@ -101,5 +105,32 @@ class User {
     habits.add(habit1);
     habits.add(habit2);
     habits.add(habit3);
+  }
+
+  void buildEventList() {
+    final DateTime today = DateTime.now();
+    final DateTime startTime =
+        DateTime(today.year, today.month, today.day, 9, 0, 0);
+    final DateTime endTime = startTime.add(const Duration(hours: 2));
+    allEvents.add(Event(
+        id: 1,
+        eventName: 'Conference',
+        type: "Meeting",
+        from: startTime,
+        to: endTime,
+        background: const Color(0xFFFF80b1),
+        isAllDay: false));
+
+    final DateTime startTime2 =
+        DateTime(today.year, today.month, today.day, 13, 0, 0);
+    final DateTime endTime2 = startTime2.add(const Duration(hours: 2));
+    allEvents.add(Event(
+        id: 1,
+        eventName: 'Conference',
+        type: "Calendar",
+        from: startTime2,
+        to: endTime2,
+        background: const Color(0xFFFF80b1),
+        isAllDay: false));
   }
 }
