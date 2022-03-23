@@ -5,18 +5,33 @@ import 'backlog_item.dart';
 import 'habit.dart';
 import 'event.dart';
 import 'package:flutter/material.dart';
+import '/Themes/custom_theme.dart';
 
 class User {
-  var name = "";
-  var email = "";
+  var name;
+  var username;
+  var profileImage;
+  var email;
+  var password;
+  CustomTheme theme;
+  int themeId;
   var goals = [];
   var backlogItems = <BacklogItem>[];
   var backlog = new Map();
   var todayTasks = [];
   var habits = <Habit>[];
+  bool didStartTomorrowPlanning;
   var allEvents = <Event>[];
 
-  User(this.name, this.email) {
+  User(
+      {required this.name,
+      required this.username,
+      required this.password,
+      required this.email,
+      required this.theme,
+      required this.themeId,
+      this.profileImage,
+      required this.didStartTomorrowPlanning}) {
     //Goals
     //List<Goal> userGoals = [];
     Goal goal1 =
@@ -113,23 +128,23 @@ class User {
         DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
     allEvents.add(Event(
-        id: 1,
+        id: 0,
         eventName: 'Conference',
         type: "Meeting",
-        from: startTime,
-        to: endTime,
+        start: startTime,
+        end: endTime,
         background: const Color(0xFFFF80b1),
         isAllDay: false));
 
     final DateTime startTime2 =
-        DateTime(today.year, today.month, today.day, 13, 0, 0);
+        DateTime(today.year, today.month, today.day + 1, 13, 0, 0);
     final DateTime endTime2 = startTime2.add(const Duration(hours: 2));
     allEvents.add(Event(
         id: 1,
         eventName: 'Conference',
         type: "Calendar",
-        from: startTime2,
-        to: endTime2,
+        start: startTime2,
+        end: endTime2,
         background: const Color(0xFFFF80b1),
         isAllDay: false));
   }

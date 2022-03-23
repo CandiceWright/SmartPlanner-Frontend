@@ -154,11 +154,11 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       child: TextFormField(
                         controller: dateTxtController,
                         readOnly: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: "Complete on or By (Optional)",
                           icon: Icon(
                             Icons.calendar_today,
-                            color: Colors.pink,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         onTap: () => _selectDate(context),
@@ -174,12 +174,10 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     Container(
                       child: TextFormField(
                         controller: categoryTxtController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             hintText: "Life Category",
-                            icon: Icon(
-                              Icons.category_rounded,
-                              color: Colors.pink,
-                            )),
+                            icon: Icon(Icons.category_rounded,
+                                color: Theme.of(context).colorScheme.primary)),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter some text';
@@ -192,11 +190,12 @@ class _NewTaskPageState extends State<NewTaskPage> {
                     Container(
                       child: TextFormField(
                         controller: locationTxtController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             hintText: "Location",
                             icon: Icon(
                               Icons.location_pin,
-                              color: Colors.pink,
+                              //color: Colors.pink,
+                              color: Theme.of(context).colorScheme.primary,
                             )),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
@@ -237,7 +236,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
           ),
           margin: EdgeInsets.all(15),
         ),
-        color: Colors.pink.shade50,
+        //color: Colors.pink.shade50,
         // margin: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
         elevation: 5,

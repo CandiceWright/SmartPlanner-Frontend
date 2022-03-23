@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '../../models/event_data_source.dart';
+import 'new_event_page.dart';
 
 class MonthlyCalendarPage extends StatefulWidget {
   const MonthlyCalendarPage({Key? key}) : super(key: key);
@@ -33,6 +34,17 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
 
   void _openNewCalendarItemPage() {
     //this function needs to change to create new goal
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => NewEventPage(
+                  updateEvents: _updateEvents,
+                  fromPage: "monthly_calendar",
+                )));
+  }
+
+  void _updateEvents() {
+    setState(() {});
   }
 
   List<Widget> buildBacklogListView() {

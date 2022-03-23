@@ -76,8 +76,8 @@ class _BacklogPageState extends State<BacklogPage> {
       Widget expansionTile = ExpansionTile(
         title: Text(key),
         children: expansionTileChildren,
-        trailing:
-            Text(value.length.toString(), style: TextStyle(color: Colors.pink)),
+        trailing: Text(value.length.toString(),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       );
       backloglistview.add(expansionTile);
     });

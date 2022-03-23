@@ -155,12 +155,15 @@ class _GoalsPageState extends State<GoalsPage> {
                           DateFormat.yMMMd().format(
                               PlannerService.sharedInstance.user.goals[i].date),
                           // style: Theme.of(context).textTheme.subtitle2,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
                         ),
                         Text(
                           PlannerService
                               .sharedInstance.user.goals[i].description,
+                          style: const TextStyle(color: Colors.black),
                         ),
                       ],
                     ),
@@ -175,7 +178,7 @@ class _GoalsPageState extends State<GoalsPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
           ),
-          color: Theme.of(context).colorScheme.primary,
+          //color: Theme.of(context).colorScheme.primary,
         ),
       );
       goalsListView.add(goalContainerWidget);

@@ -37,6 +37,9 @@ dependencies:
   intl: ^0.17.0
   syncfusion_flutter_calendar: ^19.4.38
   date_format: ^2.0.5
+  dynamic_themes: ^1.1.0
+  provider: ^6.0.2
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
   flutter_test:

@@ -3,10 +3,10 @@ class BacklogItem {
   DateTime completeBy = DateTime.now();
   bool isComplete;
   //this '?' says that the value can be null
-  String? category;
-  String? location;
-  String? notes;
+  String category;
+  String location;
+  String notes;
 
   BacklogItem(this.description, this.completeBy, this.isComplete,
-      [this.category, this.location, this.notes]);
+      [this.category = "Other", this.location = "", this.notes = ""]);
 }

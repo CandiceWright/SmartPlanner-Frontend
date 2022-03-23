@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
+import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
+import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
+import 'package:practice_planner/views/Calendar/tomorrow_schedule_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'monthly_calendar_page.dart';
+import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
 
@@ -40,7 +45,31 @@ class _CalendarPageState extends State<CalendarPage> {
         CupertinoPageRoute(
             builder: (context) => NewEventPage(
                   updateEvents: _updateEvents,
+                  fromPage: "full_calendar",
                 )));
+  }
+
+  void _openTomorrowSchedulePage() {
+    //this function needs to change to create new goal
+    Navigator.push(context,
+        CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
+  }
+
+  void _openNoTomorrowPlanPage() {
+    //this function needs to change to create new goal
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => const NoTomorrowPlanYetPage()));
+  }
+
+  void openEditEventPage(int id) {
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) =>
+                EditEventPage(updateEvents: _updateEvents, id: id)));
   }
 
   void _goToMonthlyView() {
@@ -52,33 +81,98 @@ class _CalendarPageState extends State<CalendarPage> {
     setState(() {});
   }
 
-  List<Event> _getDataSource() {
-    final List<Event> events = <Event>[];
-    final DateTime today = DateTime.now();
-    final DateTime startTime =
-        DateTime(today.year, today.month, today.day, 9, 0, 0);
-    final DateTime endTime = startTime.add(const Duration(hours: 2));
-    events.add(Event(
-        id: 1,
-        eventName: 'Conference',
-        type: "Meeting",
-        from: startTime,
-        to: endTime,
-        background: const Color(0xFFFF80b1),
-        isAllDay: false));
-
-    final DateTime startTime2 =
-        DateTime(today.year, today.month, today.day, 13, 0, 0);
-    final DateTime endTime2 = startTime2.add(const Duration(hours: 2));
-    events.add(Event(
-        id: 1,
-        eventName: 'Conference',
-        type: "Meeting",
-        from: startTime2,
-        to: endTime2,
-        background: const Color(0xFFFF80b1),
-        isAllDay: false));
-    return events;
+  void calendarTapped(CalendarTapDetails details) {
+    if (details.targetElement == CalendarElement.appointment ||
+        details.targetElement == CalendarElement.agenda) {
+      final Event appointmentDetails = details.appointments![0];
+      var _subjectText = appointmentDetails.eventName;
+      var _dateText = DateFormat('MMMM dd, yyyy')
+          .format(appointmentDetails.start)
+          .toString();
+      var _startTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.start).toString();
+      var _endTimeText =
+          DateFormat('hh:mm a').format(appointmentDetails.end).toString();
+      var _timeDetails = '$_startTimeText - $_endTimeText';
+      // if (appointmentDetails.isAllDay) {
+      //   _timeDetails = 'All day';
+      // } else {
+      //   _timeDetails = '$_startTimeText - $_endTimeText';
+      // }
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Container(
+                child: new Text(
+                  '$_subjectText',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              content: Card(
+                child: Container(
+                  height: 80,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '$_dateText',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 20,
+                        ),
+                      ),
+                      Text(_timeDetails,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 15)),
+                      Text(appointmentDetails.notes)
+                      // Row(
+                      //   children: <Widget>[
+                      //     Text(
+                      //       '$_dateText',
+                      //       style: TextStyle(
+                      //         fontWeight: FontWeight.w400,
+                      //         fontSize: 20,
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      // Row(
+                      //   children: <Widget>[
+                      //     Text(_timeDetails,
+                      //         style: TextStyle(
+                      //             fontWeight: FontWeight.w400, fontSize: 15)),
+                      //   ],
+                      // ),
+                      // Row(
+                      //   children: [
+                      //     Text("Id:" + appointmentDetails.id.toString())
+                      //   ],
+                      // )
+                    ],
+                  ),
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      openEditEventPage(appointmentDetails.id);
+                    },
+                    child: new Text('edit')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: new Text('delete')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: new Text('close'))
+              ],
+            );
+          });
+    }
   }
 
   @override
@@ -103,22 +197,40 @@ class _CalendarPageState extends State<CalendarPage> {
           ],
         ),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.note_alt),
+          tooltip: 'View this backlog item',
+          onPressed: () {
+            setState(() {});
+          },
+        ),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_today),
-            tooltip: 'View this backlog item',
+            tooltip: 'View full calendar',
             onPressed: () {
               _goToMonthlyView();
             },
           ),
           IconButton(
-            icon: const Icon(Icons.note_alt),
-            tooltip: 'View this backlog item',
+            icon: const Icon(Icons.next_week),
+            tooltip: 'Tomorrow',
             onPressed: () {
-              setState(() {});
+              setState(() {
+                if (PlannerService
+                    .sharedInstance.user.didStartTomorrowPlanning) {
+                  _openTomorrowSchedulePage();
+                } else {
+                  _openNoTomorrowPlanPage();
+                }
+              });
             },
           ),
+          // TextButton(
+          //   child: const Text("Tomorrow"),
+          //   onPressed: () => {},
+          // ),
         ],
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here
@@ -127,6 +239,7 @@ class _CalendarPageState extends State<CalendarPage> {
       body: Container(
         child: SfCalendar(
           view: CalendarView.day,
+          onTap: calendarTapped,
           initialDisplayDate: DateTime.now(),
           dataSource:
               EventDataSource(PlannerService.sharedInstance.user.allEvents),

@@ -143,11 +143,11 @@ class _NewGoalPageState extends State<NewGoalPage> {
                       child: TextFormField(
                         controller: dateTxtController,
                         readOnly: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           hintText: "By",
                           icon: Icon(
                             Icons.calendar_today,
-                            color: Colors.pink,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         onTap: () => _selectDate(context),
@@ -163,11 +163,11 @@ class _NewGoalPageState extends State<NewGoalPage> {
                     Container(
                       child: TextFormField(
                         controller: categoryTxtController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             hintText: "Category",
                             icon: Icon(
                               Icons.category_rounded,
-                              color: Colors.pink,
+                              color: Theme.of(context).colorScheme.primary,
                             )),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
@@ -208,7 +208,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
           ),
           margin: EdgeInsets.all(15),
         ),
-        color: Colors.pink.shade50,
+        //color: Colors.pink.shade50,
         // margin: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
         elevation: 5,

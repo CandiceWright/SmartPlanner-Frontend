@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
+import '../Profile/profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,6 +29,19 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     //print(PlannerService.sharedInstance.user.backlog);
+  }
+
+  void openProfileView() {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => ProfilePage(
+                  updateEvents: _updateEvents,
+                )));
+  }
+
+  void _updateEvents() {
+    setState(() {});
   }
 
   List<Widget> buildTodayTaskListView() {
@@ -68,11 +82,12 @@ class _HomePageState extends State<HomePage> {
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.fill,
         child: Container(
-          child: const Text(
+          child: Text(
             "Habits",
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.pink,
+              //color: Theme.of(context).colorScheme.primary,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -235,6 +250,24 @@ class _HomePageState extends State<HomePage> {
     //List<TableRow> habitTableRows = [];
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon: Image.asset(
+              PlannerService.sharedInstance.user.profileImage,
+              // height: 40,
+              // width: 40,
+            ),
+            tooltip: 'Menu',
+            onPressed: () {
+              // handle the press
+              openProfileView();
+            },
+          ),
+        ],
+        iconTheme: IconThemeData(
+          color: Theme.of(context).primaryColor, //change your color here
+        ),
+        automaticallyImplyLeading: false,
         //title: const Text('Home Page'),
         title: Card(
           child: Container(
@@ -250,7 +283,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         DateTime.now().day.toString(),
                         style: TextStyle(
-                            color: Colors.pink,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),
                       ),
@@ -274,11 +307,12 @@ class _HomePageState extends State<HomePage> {
             //margin: EdgeInsets.all(]15),
           ),
           margin: EdgeInsets.all(15),
-          color: Colors.pink.shade50,
+          //color: Colors.pink.shade50,
         ),
       ),
       //body: Text('This is my default text'),
       body: Container(
+        //child: Expanded(
         child: Column(
           children: [
             Container(
@@ -315,6 +349,45 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     child: Table(
                       // border: TableBorder.symmetric(),
+                      border: const TableBorder(
+                        verticalInside:
+                            BorderSide(width: 1, style: BorderStyle.solid),
+                        horizontalInside: BorderSide(width: 1),
+                      ),
+                      columnWidths: const {
+                        0: IntrinsicColumnWidth(),
+                      },
+                      children: habitTableRows,
+                    ),
+                    margin: EdgeInsets.only(top: 20),
+                  ),
+                ],
+              ),
+              margin: EdgeInsets.all(15),
+            ),
+            Container(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          "assets/images/deadline_icon.png",
+                          height: 40,
+                          width: 40,
+                        ),
+                        Text(
+                          "Upcoming Deadlines & Events",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Table(
+                      // border: TableBorder.symmetric(),
                       border: TableBorder(
                         verticalInside:
                             BorderSide(width: 1, style: BorderStyle.solid),
@@ -333,6 +406,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
+        //),
         margin: EdgeInsets.all(15),
       ),
       // body: Column(

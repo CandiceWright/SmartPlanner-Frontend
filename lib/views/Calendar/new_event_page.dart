@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/backlog_item.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
 
 class NewEventPage extends StatefulWidget {
-  const NewEventPage({Key? key, required this.updateEvents}) : super(key: key);
+  const NewEventPage(
+      {Key? key,
+      required this.updateEvents,
+      required this.fromPage,
+      this.event})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -17,6 +23,8 @@ class NewEventPage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
   final Function updateEvents;
+  final String fromPage;
+  final Event? event;
 
   @override
   State<NewEventPage> createState() => _NewGoalPageState();
@@ -33,6 +41,7 @@ class _NewGoalPageState extends State<NewEventPage> {
   var descriptionTxtController = TextEditingController();
   var notesTxtController = TextEditingController();
   var categoryTxtController = TextEditingController();
+  var locationTxtController = TextEditingController();
   var startTimeController = TextEditingController();
   var endTimeController = TextEditingController();
 
@@ -42,7 +51,40 @@ class _NewGoalPageState extends State<NewEventPage> {
   void initState() {
     super.initState();
     startDateTxtController.addListener(setDoneBtnState);
+    endDateTxtController.addListener(setDoneBtnState);
+    startTimeController.addListener(setDoneBtnState);
+    endTimeController.addListener(setDoneBtnState);
     descriptionTxtController.addListener(setDoneBtnState);
+    if (widget.fromPage == "tomorrow") {
+      DateTime tomorrow = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+      startDateTxtController.text = DateFormat.yMMMd().format(tomorrow);
+      endDateTxtController.text = DateFormat.yMMMd().format(tomorrow);
+      selectedStartDate = tomorrow;
+      selectedEndDate = tomorrow;
+    }
+    if (widget.fromPage == "schedule_backlog_item") {
+      descriptionTxtController.text = widget.event!.eventName;
+      startDateTxtController.text =
+          DateFormat.yMMMd().format(widget.event!.start);
+      endDateTxtController.text = DateFormat.yMMMd().format(widget.event!.end);
+      startTimeController.text = formatDate(
+          DateTime(2019, 08, 1, widget.event!.start.hour,
+              widget.event!.start.minute),
+          [hh, ':', nn, " ", am]).toString();
+      categoryTxtController.text = widget.event!.category;
+      locationTxtController.text = widget.event!.location;
+      notesTxtController.text = widget.event!.notes;
+      print("printing start date widget");
+      print(widget.event!.start);
+      selectedStartDate = widget.event!.start;
+      selectedEndDate = widget.event!.end;
+      selectedStartTime = TimeOfDay(
+          hour: widget.event!.start.hour, minute: widget.event!.start.minute);
+      selectedEndTime = TimeOfDay(
+          hour: widget.event!.end.hour, minute: widget.event!.end.minute);
+    }
+    setDoneBtnState();
   }
 
   Future<void> _selectStartDate(BuildContext context) async {
@@ -117,6 +159,7 @@ class _NewGoalPageState extends State<NewEventPage> {
     var eventTitle = descriptionTxtController.text;
     var eventNotes = notesTxtController.text;
     var category = categoryTxtController.text;
+    var eventLocation = locationTxtController.text;
     var startDateTime = DateTime(
         selectedStartDate.year,
         selectedStartDate.month,
@@ -126,13 +169,16 @@ class _NewGoalPageState extends State<NewEventPage> {
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
     var newEvent = Event(
-        id: PlannerService.sharedInstance.user.allEvents.length + 1,
+        id: PlannerService.sharedInstance.user.allEvents.length,
         eventName: eventTitle,
         type: "Calendar",
-        from: startDateTime,
-        to: endDateTime,
+        start: startDateTime,
+        end: endDateTime,
         background: const Color(0xFFFF80b1),
-        isAllDay: false);
+        isAllDay: false,
+        notes: eventNotes,
+        category: category,
+        location: eventLocation);
 
     PlannerService.sharedInstance.user.allEvents.add(newEvent);
     widget.updateEvents();
@@ -142,6 +188,9 @@ class _NewGoalPageState extends State<NewEventPage> {
   void setDoneBtnState() {
     print(descriptionTxtController.text);
     if (startDateTxtController.text != "" &&
+        endDateTxtController.text != "" &&
+        startTimeController.text != "" &&
+        endTimeController.text != "" &&
         descriptionTxtController.text != "") {
       setState(() {
         print("button enabled");
@@ -193,7 +242,7 @@ class _NewGoalPageState extends State<NewEventPage> {
           child: ListView(
             children: [
               Image.asset(
-                "assets/images/goal_icon.png",
+                "assets/images/calendar_icon.png",
                 height: 80,
                 width: 80,
               ),
@@ -224,14 +273,18 @@ class _NewGoalPageState extends State<NewEventPage> {
                             child: TextFormField(
                               controller: startDateTxtController,
                               readOnly: true,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: "Start Date",
                                 icon: Icon(
                                   Icons.calendar_today,
-                                  color: Colors.pink,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
-                              onTap: () => _selectStartDate(context),
+                              onTap: () => {
+                                if (widget.fromPage != "tomorrow" &&
+                                    widget.fromPage != "schedule_backlog_item")
+                                  {_selectStartDate(context)}
+                              },
                               validator: (String? value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter some text';
@@ -247,11 +300,11 @@ class _NewGoalPageState extends State<NewEventPage> {
                             child: TextFormField(
                               controller: startTimeController,
                               readOnly: true,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: "Time",
                                 icon: Icon(
                                   Icons.timer,
-                                  color: Colors.pink,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                               onTap: () => _selectStartTime(context),
@@ -274,14 +327,17 @@ class _NewGoalPageState extends State<NewEventPage> {
                             child: TextFormField(
                               controller: endDateTxtController,
                               readOnly: true,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: "End Date",
                                 icon: Icon(
                                   Icons.calendar_today,
-                                  color: Colors.pink,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
-                              onTap: () => _selectEndDate(context),
+                              onTap: () => {
+                                if (widget.fromPage != "tomorrow")
+                                  {_selectEndDate(context)}
+                              },
                               validator: (String? value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter some text';
@@ -297,11 +353,11 @@ class _NewGoalPageState extends State<NewEventPage> {
                             child: TextFormField(
                               controller: endTimeController,
                               readOnly: true,
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: "Time",
                                 icon: Icon(
                                   Icons.timer,
-                                  color: Colors.pink,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                               onTap: () => _selectEndTime(context),
@@ -341,11 +397,12 @@ class _NewGoalPageState extends State<NewEventPage> {
                     // ),
                     Container(
                       child: TextFormField(
-                        decoration: const InputDecoration(
+                        controller: locationTxtController,
+                        decoration: InputDecoration(
                           hintText: "Location",
                           icon: Icon(
                             Icons.location_pin,
-                            color: Colors.pink,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                         validator: (String? value) {
@@ -360,11 +417,11 @@ class _NewGoalPageState extends State<NewEventPage> {
                     Container(
                       child: TextFormField(
                         controller: categoryTxtController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                             hintText: "Category",
                             icon: Icon(
                               Icons.category_rounded,
-                              color: Colors.pink,
+                              color: Theme.of(context).colorScheme.primary,
                             )),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
@@ -405,7 +462,7 @@ class _NewGoalPageState extends State<NewEventPage> {
           ),
           margin: EdgeInsets.all(15),
         ),
-        color: Colors.pink.shade50,
+        //color: PlannerService.sharedInstance.user.theme.accentColor,
         // margin: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
         elevation: 5,

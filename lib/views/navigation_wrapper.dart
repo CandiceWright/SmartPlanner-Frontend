@@ -59,7 +59,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.pink[300],
+        selectedItemColor: Theme.of(context).primaryColor,
         onTap: _onItemTapped,
       ),
       //home: Text('hello world'),
