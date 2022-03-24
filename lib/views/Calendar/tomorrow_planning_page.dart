@@ -196,10 +196,17 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
 
   void startPlanningFromBacklog() {
     Navigator.pop(context);
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => const ScheduleBacklogItemsPage()));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "BacklogScheduling"),
+        builder: (context) =>
+            ScheduleBacklogItemsPage(updateTomorrowEvents: _updateEvents),
+      ),
+    );
+    // Navigator.push(
+    //     context,
+    //     CupertinoPageRoute(
+    //         builder: (context) => const ScheduleBacklogItemsPage()));
   }
 
   void openEditEventPage(int id) {

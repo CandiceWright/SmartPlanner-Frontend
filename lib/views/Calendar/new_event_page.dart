@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_item.dart';
+import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
+import 'package:flutter/cupertino.dart';
 
 class NewEventPage extends StatefulWidget {
   const NewEventPage(
@@ -71,6 +73,10 @@ class _NewGoalPageState extends State<NewEventPage> {
       startTimeController.text = formatDate(
           DateTime(2019, 08, 1, widget.event!.start.hour,
               widget.event!.start.minute),
+          [hh, ':', nn, " ", am]).toString();
+      endTimeController.text = formatDate(
+          DateTime(
+              2019, 08, 1, widget.event!.end.hour, widget.event!.end.minute),
           [hh, ':', nn, " ", am]).toString();
       categoryTxtController.text = widget.event!.category;
       locationTxtController.text = widget.event!.location;
@@ -155,6 +161,24 @@ class _NewGoalPageState extends State<NewEventPage> {
     }
   }
 
+  _backToTomorrowPage() {
+    //Navigator.popUntil(context, (route) => route.isFirst);
+    //Navigator.popUntil(context, ModalRoute.withName('/tomorrow'));
+    Navigator.of(context).popUntil((route) {
+      return route.settings.name == 'TomorrowPage';
+    });
+    // Navigator.pushAndRemoveUntil(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (BuildContext context) => const TomorrowPlanningPage(),
+    //   ),
+    //   ModalRoute.withName('/tomorrow'),
+    //   // (route) => false,
+    // );
+    //Navigator.push(context,
+    //CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
+  }
+
   void createEvent() {
     var eventTitle = descriptionTxtController.text;
     var eventNotes = notesTxtController.text;
@@ -182,7 +206,11 @@ class _NewGoalPageState extends State<NewEventPage> {
 
     PlannerService.sharedInstance.user.allEvents.add(newEvent);
     widget.updateEvents();
-    _backToEventsPage();
+    if (widget.fromPage == "schedule_backlog_item") {
+      _backToTomorrowPage();
+    } else {
+      _backToEventsPage();
+    }
   }
 
   void setDoneBtnState() {

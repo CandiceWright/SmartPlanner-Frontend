@@ -39,8 +39,16 @@ class _NoTomorrowPlanYetPageState extends State<NoTomorrowPlanYetPage> {
   void planTomorrow() {
     PlannerService.sharedInstance.user.didStartTomorrowPlanning = true;
     Navigator.pop(context);
-    Navigator.push(context,
-        CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return const TomorrowPlanningPage();
+      },
+      settings: const RouteSettings(
+        name: 'TomorrowPage',
+      ),
+    ));
+    // Navigator.push(context,
+    //     CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
   }
 
   @override
@@ -69,13 +77,19 @@ class _NoTomorrowPlanYetPageState extends State<NoTomorrowPlanYetPage> {
           color: Theme.of(context).primaryColor, //change your color here
         ),
       ),
-      body: Container(
-          child: Column(
+      body: Column(
         children: [
+          const Text("How was your day today?"),
+          //add an image here. Something happy. Maybe the journal has a similar character concept to that blob
+          Padding(
+            padding: EdgeInsets.all(12),
+            child: const Text(
+                "Before starting to plan tomorrow, remember to focus on today first! Make planning for tomorrow one of the last things to wrap up your day. And before planning for tomorrow, be sure to update your life backlog and mark any items you're done with as complete!"),
+          ),
           ElevatedButton(
               onPressed: planTomorrow, child: const Text("Let's Plan Tomorrow"))
         ],
-      )), // This trailing comma makes auto-formatting nicer for build methods.
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

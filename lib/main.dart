@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/services/planner_service.dart';
+import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import 'views/Login/login.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
@@ -73,11 +74,6 @@ class MyApp extends StatelessWidget {
         builder: (context, theme) {
           return MaterialApp(
             title: 'Planner App',
-            initialRoute: '/',
-            routes: {
-              // When navigating to the "/" route, build the FirstScreen widget.
-              '/tomorrow': (context) => const TomorrowPlanningPage(),
-            },
             theme: theme,
             // theme: ThemeData(
             //   // This is the theme of your application.

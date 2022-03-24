@@ -9,9 +9,11 @@ import 'monthly_calendar_page.dart';
 import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
+import 'package:date_format/date_format.dart';
 
 class SetBacklogItemTimePage extends StatefulWidget {
-  const SetBacklogItemTimePage({Key? key, required this.backlogItem})
+  const SetBacklogItemTimePage(
+      {Key? key, required this.backlogItem, required this.updateTomorrowEvents})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -23,6 +25,7 @@ class SetBacklogItemTimePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
   final BacklogItem backlogItem;
+  final Function updateTomorrowEvents;
 
   @override
   State<SetBacklogItemTimePage> createState() => _SetBacklogItemTimePageState();
@@ -31,23 +34,77 @@ class SetBacklogItemTimePage extends StatefulWidget {
 class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
   //bool _value = false;
   //var backlog = PlannerService.sharedInstance.user.backlog;
+  TimeOfDay selectedStartTime = TimeOfDay(hour: 00, minute: 00);
+  TimeOfDay selectedEndTime = TimeOfDay(hour: 00, minute: 00);
+  var startTimeController = TextEditingController();
+  var endTimeController = TextEditingController();
+  bool doneBtnDisabled = true;
 
   @override
   void initState() {
     super.initState();
     //print(PlannerService.sharedInstance.user.backlog);
+    startTimeController.addListener(setDoneBtnState);
+    endTimeController.addListener(setDoneBtnState);
   }
 
-  void _openNewCalendarItemPage(Event event) {
+  void _openNewCalendarItemPage() {
     //this function needs to change to create new goal
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => NewEventPage(
-                  updateEvents: _updateEvents,
-                  fromPage: "schedule_backlog_item",
-                  event: event,
-                )));
+    DateTime start = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day + 1,
+        selectedStartTime.hour,
+        selectedStartTime.minute);
+    DateTime end = DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day + 1, selectedEndTime.hour, selectedEndTime.minute);
+    var eventTitle = widget.backlogItem.description;
+    var eventNotes = widget.backlogItem.notes;
+    var category = widget.backlogItem.category;
+    var eventLocation = widget.backlogItem.location;
+    var newEvent = Event(
+        id: PlannerService.sharedInstance.user.allEvents.length,
+        eventName: eventTitle,
+        type: "Calendar",
+        start: start,
+        end: end,
+        background: const Color(0xFFFF80b1),
+        isAllDay: false,
+        notes: eventNotes,
+        category: category,
+        location: eventLocation);
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "NewEvent"),
+        builder: (context) => NewEventPage(
+          updateEvents: widget.updateTomorrowEvents,
+          fromPage: "schedule_backlog_item",
+          event: newEvent,
+        ),
+      ),
+    );
+    // Navigator.push(
+    //     context,
+    //     CupertinoPageRoute(
+    //         builder: (context) => NewEventPage(
+    //               updateEvents: _updateEvents,
+    //               fromPage: "schedule_backlog_item",
+    //               event: newEvent,
+    //             )));
+  }
+
+  void setDoneBtnState() {
+    if (startTimeController.text != "" && endTimeController.text != "") {
+      setState(() {
+        print("button enabled");
+        doneBtnDisabled = false;
+      });
+    } else {
+      setState(() {
+        doneBtnDisabled = true;
+      });
+    }
   }
 
   void openEditEventPage(int id) {
@@ -68,102 +125,42 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     setState(() {});
   }
 
-  void calendarTapped(CalendarTapDetails details) {
-    if (details.targetElement == CalendarElement.appointment ||
-        details.targetElement == CalendarElement.agenda) {
-      final Event appointmentDetails = details.appointments![0];
-      var _subjectText = appointmentDetails.eventName;
-      var _dateText = DateFormat('MMMM dd, yyyy')
-          .format(appointmentDetails.start)
-          .toString();
-      var _startTimeText =
-          DateFormat('hh:mm a').format(appointmentDetails.start).toString();
-      var _endTimeText =
-          DateFormat('hh:mm a').format(appointmentDetails.end).toString();
-      var _timeDetails = '$_startTimeText - $_endTimeText';
-      // if (appointmentDetails.isAllDay) {
-      //   _timeDetails = 'All day';
-      // } else {
-      //   _timeDetails = '$_startTimeText - $_endTimeText';
-      // }
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Container(
-                child: new Text(
-                  '$_subjectText',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              content: Card(
-                child: Container(
-                  height: 80,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '$_dateText',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                      ),
-                      Text(_timeDetails,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 15)),
-                      Text(appointmentDetails.notes)
-                    ],
-                  ),
-                ),
-              ),
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      openEditEventPage(appointmentDetails.id);
-                    },
-                    child: new Text('edit')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: new Text('delete')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: new Text('close'))
-              ],
-            );
-          });
-    } else {
-      DateTime selectedDateTime = details.date!;
-      var eventTitle = widget.backlogItem.description;
-      var eventNotes = widget.backlogItem.notes;
-      var category = widget.backlogItem.category;
-      var eventLocation = widget.backlogItem.location;
-      var startDateTime = DateTime(
-          selectedDateTime.year,
-          selectedDateTime.month,
-          selectedDateTime.day,
-          selectedDateTime.hour,
-          selectedDateTime.minute);
-      var newEvent = Event(
-          id: PlannerService.sharedInstance.user.allEvents.length,
-          eventName: eventTitle,
-          type: "Calendar",
-          start: startDateTime,
-          end: startDateTime,
-          background: const Color(0xFFFF80b1),
-          isAllDay: false,
-          notes: eventNotes,
-          category: category,
-          location: eventLocation);
+  Future<Null> _selectStartTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedStartTime,
+    );
+    if (picked != null) {
+      setState(() {
+        selectedStartTime = picked;
+        String _hour = selectedStartTime.hour.toString();
+        String _minute = selectedStartTime.minute.toString();
+        String _time = _hour + ' : ' + _minute;
+        startTimeController.text = _time;
+        startTimeController.text = formatDate(
+            DateTime(
+                2019, 08, 1, selectedStartTime.hour, selectedStartTime.minute),
+            [hh, ':', nn, " ", am]).toString();
+      });
+    }
+  }
 
-      //PlannerService.sharedInstance.user.allEvents.add(newEvent);
-      //Navigator.pop(context);
-      //Navigator.popUntil(context, ModalRoute.withName("/tomorrow"));
-      _openNewCalendarItemPage(newEvent);
+  Future<Null> _selectEndTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: selectedEndTime,
+    );
+    if (picked != null) {
+      setState(() {
+        selectedEndTime = picked;
+        String _hour = selectedEndTime.hour.toString();
+        String _minute = selectedEndTime.minute.toString();
+        String _time = _hour + ' : ' + _minute;
+        endTimeController.text = _time;
+        endTimeController.text = formatDate(
+            DateTime(2019, 08, 1, selectedEndTime.hour, selectedEndTime.minute),
+            [hh, ':', nn, " ", am]).toString();
+      });
     }
   }
 
@@ -193,7 +190,12 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           ],
         ),
         centerTitle: true,
-        actions: [],
+        actions: [
+          TextButton(
+            onPressed: doneBtnDisabled ? null : _openNewCalendarItemPage,
+            child: const Text("Next"),
+          ),
+        ],
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here
         ),
@@ -203,13 +205,69 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           //children: [
           //Text(widget.backlogItem.description),
           Container(
-        child: SfCalendar(
-          view: CalendarView.day,
-          onTap: calendarTapped,
-          initialDisplayDate: DateTime(DateTime.now().year,
-              DateTime.now().month, DateTime.now().day + 1),
-          dataSource:
-              EventDataSource(PlannerService.sharedInstance.user.allEvents),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Flexible(
+                  child: Padding(
+                    child: TextFormField(
+                      controller: startTimeController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        hintText: "Start",
+                        icon: Icon(
+                          Icons.timer,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      onTap: () => _selectStartTime(context),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                    padding: EdgeInsets.all(20),
+                  ),
+                ),
+                Flexible(
+                  child: Padding(
+                    child: TextFormField(
+                      controller: endTimeController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        hintText: "End",
+                        icon: Icon(
+                          Icons.timer,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                      onTap: () => _selectEndTime(context),
+                      validator: (String? value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                    padding: EdgeInsets.all(20),
+                  ),
+                )
+              ],
+            ),
+            Expanded(
+              child: SfCalendar(
+                view: CalendarView.day,
+                //onTap: calendarTapped,
+                initialDisplayDate: DateTime(DateTime.now().year,
+                    DateTime.now().month, DateTime.now().day + 1),
+                dataSource: EventDataSource(
+                    PlannerService.sharedInstance.user.allEvents),
+              ),
+            )
+          ],
         ),
       ),
       // ],

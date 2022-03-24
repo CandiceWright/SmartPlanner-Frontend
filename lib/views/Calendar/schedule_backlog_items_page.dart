@@ -7,7 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 
 class ScheduleBacklogItemsPage extends StatefulWidget {
-  const ScheduleBacklogItemsPage({Key? key}) : super(key: key);
+  const ScheduleBacklogItemsPage({Key? key, required this.updateTomorrowEvents})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -17,6 +18,8 @@ class ScheduleBacklogItemsPage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
+
+  final Function updateTomorrowEvents;
 
   @override
   State<ScheduleBacklogItemsPage> createState() =>
@@ -45,12 +48,21 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
   }
 
   void setTime(BacklogItem backlogItem) {
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => SetBacklogItemTimePage(
-                  backlogItem: backlogItem,
-                )));
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "SetTime"),
+        builder: (context) => SetBacklogItemTimePage(
+          backlogItem: backlogItem,
+          updateTomorrowEvents: widget.updateTomorrowEvents,
+        ),
+      ),
+    );
+    // Navigator.push(
+    //     context,
+    //     CupertinoPageRoute(
+    //         builder: (context) => SetBacklogItemTimePage(
+    //               backlogItem: backlogItem,
+    //             )));
   }
 
   List<Widget> buildBacklogListView() {
@@ -61,7 +73,6 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
       for (int i = 0; i < value.length; i++) {
         Widget child = CheckboxListTile(
           title: Text(value[i].description),
-          subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy)),
           value: PlannerService.sharedInstance.user.backlog[key][i].isComplete,
           onChanged: (bool? checked) {
             //print(value);
@@ -72,13 +83,6 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
             //   //_value = value!;
             // });
           },
-          secondary: IconButton(
-            icon: const Icon(Icons.visibility_outlined),
-            tooltip: 'View this backlog item',
-            onPressed: () {
-              setState(() {});
-            },
-          ),
           controlAffinity: ListTileControlAffinity.leading,
         );
         expansionTileChildren.add(child);
@@ -108,7 +112,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: const Text("Select Backlog items"),
+        title: const Text("Select Backlog item"),
         centerTitle: true,
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here
@@ -116,7 +120,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
       ),
       body: Column(
         children: [
-          const Text("Which items do you want to schedule for tomorrow?"),
+          const Text("Which item do you want to schedule for tomorrow?"),
           Expanded(
             child: ListView(
               children: backlogListView,
@@ -124,11 +128,11 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openNewBacklogItemPage,
-        tooltip: 'Done.',
-        child: const Icon(Icons.done),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _openNewBacklogItemPage,
+      //   tooltip: 'Done.',
+      //   child: const Icon(Icons.done),
+      // ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

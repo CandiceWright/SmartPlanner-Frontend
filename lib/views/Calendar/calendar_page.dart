@@ -51,8 +51,22 @@ class _CalendarPageState extends State<CalendarPage> {
 
   void _openTomorrowSchedulePage() {
     //this function needs to change to create new goal
-    Navigator.push(context,
-        CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     settings: const RouteSettings(name: "/tomorrow"),
+    //     builder: (context) => const TomorrowPlanningPage(),
+    //   ),
+    // );
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return const TomorrowPlanningPage();
+      },
+      settings: const RouteSettings(
+        name: 'TomorrowPage',
+      ),
+    ));
+    // Navigator.push(context,
+    //     CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
   }
 
   void _openNoTomorrowPlanPage() {
