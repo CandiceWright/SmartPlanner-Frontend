@@ -71,31 +71,31 @@ class _NewGoalPageState extends State<NewEventPage> {
       selectedStartDate = tomorrow;
       selectedEndDate = tomorrow;
     }
-    if (widget.fromPage == "schedule_backlog_item") {
-      descriptionTxtController.text = widget.event!.eventName;
-      startDateTxtController.text =
-          DateFormat.yMMMd().format(widget.event!.start);
-      endDateTxtController.text = DateFormat.yMMMd().format(widget.event!.end);
-      startTimeController.text = formatDate(
-          DateTime(2019, 08, 1, widget.event!.start.hour,
-              widget.event!.start.minute),
-          [hh, ':', nn, " ", am]).toString();
-      endTimeController.text = formatDate(
-          DateTime(
-              2019, 08, 1, widget.event!.end.hour, widget.event!.end.minute),
-          [hh, ':', nn, " ", am]).toString();
-      //categoryTxtController.text = widget.event!.category;
-      locationTxtController.text = widget.event!.location;
-      notesTxtController.text = widget.event!.notes;
-      print("printing start date widget");
-      print(widget.event!.start);
-      selectedStartDate = widget.event!.start;
-      selectedEndDate = widget.event!.end;
-      selectedStartTime = TimeOfDay(
-          hour: widget.event!.start.hour, minute: widget.event!.start.minute);
-      selectedEndTime = TimeOfDay(
-          hour: widget.event!.end.hour, minute: widget.event!.end.minute);
-    }
+    // if (widget.fromPage == "schedule_backlog_item") {
+    //   descriptionTxtController.text = widget.event!.eventName;
+    //   startDateTxtController.text =
+    //       DateFormat.yMMMd().format(widget.event!.start);
+    //   endDateTxtController.text = DateFormat.yMMMd().format(widget.event!.end);
+    //   startTimeController.text = formatDate(
+    //       DateTime(2019, 08, 1, widget.event!.start.hour,
+    //           widget.event!.start.minute),
+    //       [hh, ':', nn, " ", am]).toString();
+    //   endTimeController.text = formatDate(
+    //       DateTime(
+    //           2019, 08, 1, widget.event!.end.hour, widget.event!.end.minute),
+    //       [hh, ':', nn, " ", am]).toString();
+    //   //categoryTxtController.text = widget.event!.category;
+    //   locationTxtController.text = widget.event!.location;
+    //   notesTxtController.text = widget.event!.notes;
+    //   print("printing start date widget");
+    //   print(widget.event!.start);
+    //   selectedStartDate = widget.event!.start;
+    //   selectedEndDate = widget.event!.end;
+    //   selectedStartTime = TimeOfDay(
+    //       hour: widget.event!.start.hour, minute: widget.event!.start.minute);
+    //   selectedEndTime = TimeOfDay(
+    //       hour: widget.event!.end.hour, minute: widget.event!.end.minute);
+    // }
     setDoneBtnState();
   }
 
@@ -173,16 +173,6 @@ class _NewGoalPageState extends State<NewEventPage> {
     Navigator.of(context).popUntil((route) {
       return route.settings.name == 'TomorrowPage';
     });
-    // Navigator.pushAndRemoveUntil(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (BuildContext context) => const TomorrowPlanningPage(),
-    //   ),
-    //   ModalRoute.withName('/tomorrow'),
-    //   // (route) => false,
-    // );
-    //Navigator.push(context,
-    //CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
   }
 
   void createEvent() {
@@ -198,26 +188,23 @@ class _NewGoalPageState extends State<NewEventPage> {
         selectedStartTime.minute);
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
-    var eventType = "";
-    //var backlogItemRef = null;
-    if (widget.fromPage == "schedule_backlog_item") {
-      eventType = "backlog";
-      //backlogItemRef = BacklogMapRef(
-      //categoryName: currChosenCategory.name,
-      //arrayIdx: widget.backlogMapRef!.arrayIdx);
-      PlannerService
-          .sharedInstance
-          .user
-          .backlogMap[widget.backlogMapRef!.categoryName]![
-              widget.backlogMapRef!.arrayIdx]
-          .scheduledDate = startDateTime;
-    } else {
-      eventType = "calendar";
-    }
+    // var eventType = "";
+    // //var backlogItemRef = null;
+    // if (widget.fromPage == "schedule_backlog_item") {
+    //   eventType = "backlog";
+    //   PlannerService
+    //       .sharedInstance
+    //       .user
+    //       .backlogMap[widget.backlogMapRef!.categoryName]![
+    //           widget.backlogMapRef!.arrayIdx]
+    //       .scheduledDate = startDateTime;
+    // } else {
+    //   eventType = "calendar";
+    // }
     var newEvent = Event(
         id: PlannerService.sharedInstance.user.allEvents.length,
         eventName: eventTitle,
-        type: eventType,
+        type: "calendar",
         start: startDateTime,
         end: endDateTime,
         //background: const Color(0xFFFF80b1),
@@ -230,11 +217,11 @@ class _NewGoalPageState extends State<NewEventPage> {
 
     PlannerService.sharedInstance.user.allEvents.add(newEvent);
     widget.updateEvents();
-    if (widget.fromPage == "schedule_backlog_item") {
-      _backToTomorrowPage();
-    } else {
-      _backToEventsPage();
-    }
+    //if (widget.fromPage == "schedule_backlog_item") {
+    // _backToTomorrowPage();
+    //} else {
+    _backToEventsPage();
+    //}
   }
 
   void setDoneBtnState() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/views/Backlog/new_task_page.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
@@ -44,6 +45,8 @@ class _BacklogPageState extends State<BacklogPage> {
     setState(() {});
   }
 
+  void openDialog(BacklogMapRef bmRef) {}
+
   List<Widget> buildBacklogListView() {
     //print("building backlog view");
     List<Widget> todayItems = [];
@@ -61,7 +64,8 @@ class _BacklogPageState extends State<BacklogPage> {
             // style: const TextStyle(
             //     color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy!)),
+          subtitle: Text("Complete on/by " +
+              DateFormat.yMMMd().format(value[i].completeBy!)),
           value:
               PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
           onChanged: (bool? value) {
@@ -72,13 +76,17 @@ class _BacklogPageState extends State<BacklogPage> {
               //_value = value!;
             });
           },
-          secondary: IconButton(
-            icon: const Icon(Icons.visibility_outlined),
-            tooltip: 'View this backlog item',
-            onPressed: () {
-              setState(() {});
-            },
+          secondary: TextButton(
+            child: Text("view"),
+            onPressed: () {},
           ),
+          // secondary: IconButton(
+          //   icon: const Icon(Icons.visibility_outlined),
+          //   tooltip: 'View this backlog item',
+          //   onPressed: () {
+          //     setState(() {});
+          //   },
+          // ),
           controlAffinity: ListTileControlAffinity.leading,
         );
         if (value[i].scheduledDate == null) {

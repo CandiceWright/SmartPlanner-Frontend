@@ -36,7 +36,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   @override
   void initState() {
     super.initState();
-    dateTxtController.addListener(setDoneBtnState);
+    //dateTxtController.addListener(setDoneBtnState);
     descriptionTxtController.addListener(setDoneBtnState);
   }
 
@@ -89,7 +89,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   void setDoneBtnState() {
     print(dateTxtController.text);
     print(descriptionTxtController.text);
-    if (dateTxtController.text != "" && descriptionTxtController.text != "") {
+    if (descriptionTxtController.text != "") {
       setState(() {
         print("button enabled");
         doneBtnDisabled = false;

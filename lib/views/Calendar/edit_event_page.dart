@@ -144,7 +144,7 @@ class _EditEventPageState extends State<EditEventPage> {
     }
   }
 
-  void createEvent() {
+  void editEvent() {
     PlannerService.sharedInstance.user.allEvents[widget.id].eventName =
         descriptionTxtController.text;
     PlannerService.sharedInstance.user.allEvents[widget.id].location =
@@ -171,8 +171,52 @@ class _EditEventPageState extends State<EditEventPage> {
     PlannerService.sharedInstance.user.allEvents[widget.id].start =
         startDateTime;
     PlannerService.sharedInstance.user.allEvents[widget.id].end = endDateTime;
-
     widget.updateEvents();
+
+    //check if you need to update a corresponding backloog item
+    if (PlannerService.sharedInstance.user.allEvents[widget.id].backlogMapRef !=
+        null) {
+      PlannerService
+          .sharedInstance
+          .user
+          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.categoryName]![
+              PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.arrayIdx]
+          .category = currChosenCategory;
+      PlannerService
+          .sharedInstance
+          .user
+          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.categoryName]![
+              PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.arrayIdx]
+          .notes = notesTxtController.text;
+      PlannerService
+          .sharedInstance
+          .user
+          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.categoryName]![
+              PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.arrayIdx]
+          .location = locationTxController.text;
+      PlannerService
+          .sharedInstance
+          .user
+          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.categoryName]![
+              PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.arrayIdx]
+          .description = descriptionTxtController.text;
+      PlannerService
+          .sharedInstance
+          .user
+          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.categoryName]![
+              PlannerService.sharedInstance.user.allEvents[widget.id]
+                  .backlogMapRef!.arrayIdx]
+          .scheduledDate = startDateTime;
+    }
     _backToEventsPage();
   }
 
@@ -207,12 +251,12 @@ class _EditEventPageState extends State<EditEventPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("Edit Event"),
+        title: Text("Edit"),
         centerTitle: true,
         leading: BackButton(color: Colors.black),
         actions: [
           TextButton(
-            onPressed: doneBtnDisabled ? null : createEvent,
+            onPressed: doneBtnDisabled ? null : editEvent,
             child: Text("Done"),
           ),
           // IconButton(

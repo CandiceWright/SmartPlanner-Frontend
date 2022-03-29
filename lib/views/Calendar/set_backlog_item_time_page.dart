@@ -85,25 +85,23 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         location: eventLocation,
         backlogMapRef: widget.bmRef);
 
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        settings: const RouteSettings(name: "NewEvent"),
-        builder: (context) => NewEventPage(
-          updateEvents: widget.updateTomorrowEvents,
-          fromPage: "schedule_backlog_item",
-          event: newEvent,
-          backlogMapRef: widget.bmRef,
-        ),
-      ),
-    );
-    // Navigator.push(
-    //     context,
-    //     CupertinoPageRoute(
-    //         builder: (context) => NewEventPage(
-    //               updateEvents: _updateEvents,
-    //               fromPage: "schedule_backlog_item",
-    //               event: newEvent,
-    //             )));
+    PlannerService.sharedInstance.user.allEvents.add(newEvent);
+    widget.updateTomorrowEvents();
+    Navigator.of(context).popUntil((route) {
+      return route.settings.name == 'TomorrowPage';
+    });
+
+    // Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     settings: const RouteSettings(name: "NewEvent"),
+    //     builder: (context) => NewEventPage(
+    //       updateEvents: widget.updateTomorrowEvents,
+    //       fromPage: "schedule_backlog_item",
+    //       event: newEvent,
+    //       backlogMapRef: widget.bmRef,
+    //     ),
+    //   ),
+    // );
   }
 
   void setDoneBtnState() {
