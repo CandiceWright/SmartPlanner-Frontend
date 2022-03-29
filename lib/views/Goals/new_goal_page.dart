@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 
@@ -28,6 +29,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
   var notesTxtController = TextEditingController();
   var categoryTxtController = TextEditingController();
   bool doneBtnDisabled = true;
+  var currChosenCategory = PlannerService.sharedInstance.user.lifeCategories[0];
 
   @override
   void initState() {
@@ -53,9 +55,9 @@ class _NewGoalPageState extends State<NewGoalPage> {
   void createGoal() {
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
-    var category = categoryTxtController.text;
+    //var category = categoryTxtController.text;
 
-    var newGoal = Goal(goalTitle, selectedDate, category, goalNotes);
+    var newGoal = Goal(goalTitle, selectedDate, currChosenCategory, goalNotes);
     PlannerService.sharedInstance.user.goals.add(newGoal);
     widget.updateGoals();
     _backToGoalsPage();
@@ -161,19 +163,35 @@ class _NewGoalPageState extends State<NewGoalPage> {
                       padding: EdgeInsets.all(20),
                     ),
                     Container(
-                      child: TextFormField(
-                        controller: categoryTxtController,
-                        decoration: InputDecoration(
-                            hintText: "Category",
-                            icon: Icon(
-                              Icons.category_rounded,
-                              color: Theme.of(context).colorScheme.primary,
-                            )),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
+                      child: DropdownButton(
+                        //value: PlannerService.sharedInstance.user.theme.themeId,
+                        value: currChosenCategory,
+                        items: List.generate(
+                            PlannerService.sharedInstance.user.lifeCategories
+                                .length, (int index) {
+                          return DropdownMenuItem(
+                            //value: "pink",
+                            value: PlannerService
+                                .sharedInstance.user.lifeCategories[index],
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.circle,
+                                  color: PlannerService.sharedInstance.user
+                                      .lifeCategories[index].color,
+                                ),
+                                Text(PlannerService.sharedInstance.user
+                                    .lifeCategories[index].name),
+                              ],
+                            ),
+                          );
+                        }),
+
+                        // onChanged: (String? newValue) {
+                        onChanged: (LifeCategory? newValue) {
+                          setState(() {
+                            currChosenCategory = newValue!;
+                          });
                         },
                       ),
                       padding: EdgeInsets.all(20),

@@ -60,16 +60,19 @@ class _GoalsPageState extends State<GoalsPage> {
       context: context, // user must tap button!
 
       builder: (BuildContext context) {
-        return SimpleDialog(
+        return AlertDialog(
           //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
           //child: Expanded(
           //child: Container(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
-          children: [
-            Container(
+          content: Card(
+            child: Container(
+              margin: EdgeInsets.all(10),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     DateFormat.yMMMd().format(goal.date),
@@ -105,17 +108,74 @@ class _GoalsPageState extends State<GoalsPage> {
                       ))
                 ],
               ),
-              margin: EdgeInsets.all(10),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  onPressed: () => {_openEditGoal(idx)},
-                  icon: const Icon(Icons.edit_outlined),
-                ),
-              ],
-            ),
+          ),
+          // [
+          //   Container(
+          //     child: Column(
+          //       children: [
+          //         Text(
+          //           DateFormat.yMMMd().format(goal.date),
+          //           // style: Theme.of(context).textTheme.subtitle2,
+          //           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          //         ),
+          //         Padding(
+          //           child: Text(
+          //             goal.description,
+          //             style: TextStyle(fontSize: 15),
+          //           ),
+          //           padding: EdgeInsets.only(bottom: 10, top: 4),
+          //         ),
+          //         Padding(
+          //           child: Image.asset(
+          //             "assets/images/goal_icon.png",
+          //             height: 60,
+          //             width: 60,
+          //           ),
+          //           padding: EdgeInsets.all(10),
+          //         ),
+
+          //         // Text(
+          //         //   goal.notes,
+          //         //   // style: Theme.of(context).textTheme.subtitle2,
+          //         //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          //         // ),
+          //         ElevatedButton(
+          //             onPressed: showGoalCompleteAnimation,
+          //             child: const Text(
+          //               "I DID IT!",
+          //               style: TextStyle(fontWeight: FontWeight.bold),
+          //             ))
+          //       ],
+          //     ),
+          //     margin: EdgeInsets.all(10),
+          //   ),
+          //   // Row(
+          //   //   mainAxisAlignment: MainAxisAlignment.end,
+          //   //   children: [
+          //   //     IconButton(
+          //   //       onPressed: () => {_openEditGoal(idx)},
+          //   //       icon: const Icon(Icons.edit_outlined),
+          //   //     ),
+          //   //   ],
+          //   // ),
+          // ],
+          actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  _openEditGoal(idx);
+                },
+                child: new Text('edit')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: new Text('delete')),
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: new Text('close'))
           ],
           // ),
           //),
@@ -179,6 +239,7 @@ class _GoalsPageState extends State<GoalsPage> {
             borderRadius: BorderRadius.circular(8.0),
           ),
           //color: Theme.of(context).colorScheme.primary,
+          color: PlannerService.sharedInstance.user.goals[i].category.color,
         ),
       );
       goalsListView.add(goalContainerWidget);

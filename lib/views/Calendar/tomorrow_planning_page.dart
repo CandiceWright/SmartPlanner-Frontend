@@ -165,14 +165,17 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              content: Column(children: [
-                ElevatedButton(
-                    onPressed: startPlanningFromBacklog,
-                    child: Text("Schedule item from my life's backlog")),
-                ElevatedButton(
-                    onPressed: openNewEventPage,
-                    child: Text("Create new task/event")),
-              ]),
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        onPressed: startPlanningFromBacklog,
+                        child: Text("Schedule item from my life's backlog")),
+                    ElevatedButton(
+                        onPressed: openNewEventPage,
+                        child: Text("Create new task/event")),
+                  ]),
               actions: <Widget>[]);
         });
   }

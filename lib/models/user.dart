@@ -42,12 +42,12 @@ class User {
       required this.lifeCategories}) {
     //Goals
     //List<Goal> userGoals = [];
-    Goal goal1 =
-        Goal("100,000 planner subscriptions", DateTime(2022, 3, 11), "", "");
-    Goal goal2 = Goal(
-        "At least 1,000,000 in my bank accounts", DateTime(2022, 8, 2), "", "");
-    goals.add(goal1);
-    goals.add(goal2);
+    // Goal goal1 =
+    //     Goal("100,000 planner subscriptions", DateTime(2022, 3, 11), "", "");
+    // Goal goal2 = Goal(
+    //     "At least 1,000,000 in my bank accounts", DateTime(2022, 8, 2), "", "");
+    // goals.add(goal1);
+    // goals.add(goal2);
 
     //List<BacklogItem> backlogItems = [];
     // BacklogItem bli1 = BacklogItem(description:"Complete backlog feature.",
