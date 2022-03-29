@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_item.dart';
+import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import '/models/goal.dart';
@@ -15,7 +16,8 @@ class NewEventPage extends StatefulWidget {
       {Key? key,
       required this.updateEvents,
       required this.fromPage,
-      this.event})
+      this.event,
+      this.backlogMapRef})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -29,6 +31,7 @@ class NewEventPage extends StatefulWidget {
   final Function updateEvents;
   final String fromPage;
   final Event? event;
+  final BacklogMapRef? backlogMapRef;
 
   @override
   State<NewEventPage> createState() => _NewGoalPageState();
@@ -195,10 +198,26 @@ class _NewGoalPageState extends State<NewEventPage> {
         selectedStartTime.minute);
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
+    var eventType = "";
+    //var backlogItemRef = null;
+    if (widget.fromPage == "schedule_backlog_item") {
+      eventType = "backlog";
+      //backlogItemRef = BacklogMapRef(
+      //categoryName: currChosenCategory.name,
+      //arrayIdx: widget.backlogMapRef!.arrayIdx);
+      PlannerService
+          .sharedInstance
+          .user
+          .backlogMap[widget.backlogMapRef!.categoryName]![
+              widget.backlogMapRef!.arrayIdx]
+          .scheduledDate = startDateTime;
+    } else {
+      eventType = "calendar";
+    }
     var newEvent = Event(
         id: PlannerService.sharedInstance.user.allEvents.length,
         eventName: eventTitle,
-        type: "Calendar",
+        type: eventType,
         start: startDateTime,
         end: endDateTime,
         //background: const Color(0xFFFF80b1),
@@ -206,7 +225,8 @@ class _NewGoalPageState extends State<NewEventPage> {
         isAllDay: false,
         notes: eventNotes,
         category: currChosenCategory,
-        location: eventLocation);
+        location: eventLocation,
+        backlogMapRef: widget.backlogMapRef);
 
     PlannerService.sharedInstance.user.allEvents.add(newEvent);
     widget.updateEvents();

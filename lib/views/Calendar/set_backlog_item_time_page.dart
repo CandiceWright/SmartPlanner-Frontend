@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_item.dart';
+import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,7 +14,10 @@ import 'package:date_format/date_format.dart';
 
 class SetBacklogItemTimePage extends StatefulWidget {
   const SetBacklogItemTimePage(
-      {Key? key, required this.backlogItem, required this.updateTomorrowEvents})
+      {Key? key,
+      required this.backlogItem,
+      required this.updateTomorrowEvents,
+      required this.bmRef})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -26,6 +30,7 @@ class SetBacklogItemTimePage extends StatefulWidget {
   // always marked "final".
   final BacklogItem backlogItem;
   final Function updateTomorrowEvents;
+  final BacklogMapRef bmRef;
 
   @override
   State<SetBacklogItemTimePage> createState() => _SetBacklogItemTimePageState();
@@ -62,17 +67,23 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     var eventNotes = widget.backlogItem.notes;
     var category = widget.backlogItem.category;
     var eventLocation = widget.backlogItem.location;
+    PlannerService
+        .sharedInstance
+        .user
+        .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+        .scheduledDate = start;
     var newEvent = Event(
         id: PlannerService.sharedInstance.user.allEvents.length,
         eventName: eventTitle,
-        type: "Backlog",
+        type: "backlog",
         start: start,
         end: end,
-        background: const Color(0xFFFF80b1),
+        background: widget.backlogItem.category.color,
         isAllDay: false,
         notes: eventNotes,
         category: category,
-        location: eventLocation);
+        location: eventLocation,
+        backlogMapRef: widget.bmRef);
 
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -81,6 +92,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           updateEvents: widget.updateTomorrowEvents,
           fromPage: "schedule_backlog_item",
           event: newEvent,
+          backlogMapRef: widget.bmRef,
         ),
       ),
     );

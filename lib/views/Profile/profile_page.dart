@@ -44,7 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
   void createCategory() {
     var category = LifeCategory(nameTxtController.text, pickerColor);
     PlannerService.sharedInstance.user.lifeCategories.add(category);
-    PlannerService.sharedInstance.user.backlogMap[nameTxtController.text] = [];
+    PlannerService.sharedInstance.user.backlogMap[category.name] = [];
+    PlannerService.sharedInstance.user.LifeCategoriesColorMap[category.name] =
+        pickerColor;
     setState(() {
       nameTxtController.text = "";
       hasSelectedColor = false;

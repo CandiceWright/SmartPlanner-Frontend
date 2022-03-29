@@ -19,12 +19,16 @@ class User {
   var goals = [];
   var backlogItems = <BacklogItem>[];
   //var backlogMap = <String, List<BacklogItem>>{};
+  //var otherCategory = LifeCategory("Other", const Color(0xFFFF80b1));
   Map<String, List<BacklogItem>> backlogMap = {"Other": []};
   var todayTasks = [];
   var habits = <Habit>[];
   bool didStartTomorrowPlanning;
   var allEvents = <Event>[];
   var lifeCategories = <LifeCategory>[];
+  Map<String, Color> LifeCategoriesColorMap = {
+    "Other": const Color(0xFFFF80b1)
+  };
 
   User(
       {required this.name,
@@ -79,21 +83,24 @@ class User {
   void buildBacklogMap() {
     print("I am building backlog");
     for (int i = 0; i < backlogItems.length; i++) {
-      print("I am in for loop");
-      print(backlogItems[i].category);
-      if (backlogItems[i].category == "") {
-        if (backlogMap.containsKey("Other")) {
-          backlogMap["Other"]!.add(backlogItems[i]);
-        } else {
-          backlogMap["Other"] = [backlogItems[i]];
-        }
+      if (backlogMap.containsKey(backlogItems[i].category)) {
+        backlogMap[backlogItems[i].category]!.add(backlogItems[i]);
       } else {
-        if (backlogMap.containsKey(backlogItems[i].category)) {
-          backlogMap[backlogItems[i].category]!.add(backlogItems[i]);
-        } else {
-          backlogMap[backlogItems[i].category.name] = [backlogItems[i]];
-        }
+        backlogMap[backlogItems[i].category.name] = [backlogItems[i]];
       }
+      // if (backlogItems[i].category.name == "") {
+      //   if (backlogMap.containsKey("Other")) {
+      //     backlogMap["Other"]!.add(backlogItems[i]);
+      //   } else {
+      //     backlogMap["Other"] = [backlogItems[i]];
+      //   }
+      // } else {
+      //   if (backlogMap.containsKey(backlogItems[i].category)) {
+      //     backlogMap[backlogItems[i].category]!.add(backlogItems[i]);
+      //   } else {
+      //     backlogMap[backlogItems[i].category.name] = [backlogItems[i]];
+      //   }
+      // }
     }
     //print(backlog);
     buildTodayTaskList();

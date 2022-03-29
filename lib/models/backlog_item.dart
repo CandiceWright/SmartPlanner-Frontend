@@ -2,8 +2,9 @@ import 'package:practice_planner/models/life_category.dart';
 
 class BacklogItem {
   String description = "";
-  DateTime? completeBy = DateTime.now();
+  DateTime? completeBy;
   bool? isComplete = false;
+  DateTime? scheduledDate;
   //this '?' says that the value can be null
   LifeCategory category;
   String location;

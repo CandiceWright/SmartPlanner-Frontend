@@ -47,48 +47,6 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
     setState(() {});
   }
 
-  List<Widget> buildBacklogListView() {
-    print("building backlog view");
-    List<Widget> backloglistview = [];
-    PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
-      List<Widget> expansionTileChildren = [];
-      for (int i = 0; i < value.length; i++) {
-        Widget child = CheckboxListTile(
-          title: Text(value[i].description),
-          subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy!)),
-          value:
-              PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
-          onChanged: (bool? value) {
-            print(value);
-            setState(() {
-              PlannerService
-                  .sharedInstance.user.backlogMap[key]![i].isComplete = value;
-              //_value = value!;
-            });
-          },
-          secondary: IconButton(
-            icon: const Icon(Icons.visibility_outlined),
-            tooltip: 'View this backlog item',
-            onPressed: () {
-              setState(() {});
-            },
-          ),
-          controlAffinity: ListTileControlAffinity.leading,
-        );
-        expansionTileChildren.add(child);
-      }
-      Widget expansionTile = ExpansionTile(
-        title: Text(key),
-        children: expansionTileChildren,
-        trailing:
-            Text(value.length.toString(), style: TextStyle(color: Colors.pink)),
-      );
-      backloglistview.add(expansionTile);
-    });
-
-    return backloglistview;
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -97,7 +55,7 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    List<Widget> backlogListView = buildBacklogListView();
+    // List<Widget> backlogListView = buildBacklogListView();
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by

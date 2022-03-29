@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:practice_planner/models/backlog_item.dart';
+import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/views/Backlog/new_task_page.dart';
 import 'package:practice_planner/views/Calendar/set_backlog_item_time_page.dart';
 import '/services/planner_service.dart';
@@ -47,13 +48,14 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
     setState(() {});
   }
 
-  void setTime(BacklogItem backlogItem) {
+  void setTime(BacklogItem backlogItem, BacklogMapRef bmRef) {
     Navigator.of(context).push(
       MaterialPageRoute(
         settings: const RouteSettings(name: "SetTime"),
         builder: (context) => SetBacklogItemTimePage(
           backlogItem: backlogItem,
           updateTomorrowEvents: widget.updateTomorrowEvents,
+          bmRef: bmRef,
         ),
       ),
     );
@@ -77,7 +79,8 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
               PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
           onChanged: (bool? checked) {
             //print(value);
-            setTime(value[i]);
+            BacklogMapRef bmRef = BacklogMapRef(categoryName: key, arrayIdx: i);
+            setTime(value[i], bmRef);
             // setState(() {
             //   PlannerService.sharedInstance.user.backlog[key][i].isComplete =
             //       value;

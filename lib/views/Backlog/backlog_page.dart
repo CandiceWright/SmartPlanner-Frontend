@@ -45,13 +45,22 @@ class _BacklogPageState extends State<BacklogPage> {
   }
 
   List<Widget> buildBacklogListView() {
-    print("building backlog view");
+    //print("building backlog view");
+    List<Widget> todayItems = [];
+    List<Widget> tomorrowItems = [];
+
+    //build unscheduled backlog
     List<Widget> backloglistview = [];
     PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
-      List<Widget> expansionTileChildren = [];
+      List<Widget> unscheduledExpansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
+        //if (value[i].scheduledDate == null) {
         Widget child = CheckboxListTile(
-          title: Text(value[i].description),
+          title: Text(
+            value[i].description,
+            // style: const TextStyle(
+            //     color: Colors.black, fontWeight: FontWeight.bold),
+          ),
           subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy!)),
           value:
               PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
@@ -72,19 +81,59 @@ class _BacklogPageState extends State<BacklogPage> {
           ),
           controlAffinity: ListTileControlAffinity.leading,
         );
-        expansionTileChildren.add(child);
+        if (value[i].scheduledDate == null) {
+          unscheduledExpansionTileChildren.add(child);
+        }
+        //}
+        else {
+          if (value[i].scheduledDate == DateTime.now()) {
+            todayItems.add(child);
+          } else {
+            tomorrowItems.add(child);
+          }
+        }
       }
       Widget expansionTile = ExpansionTile(
         title: Text(key),
         initiallyExpanded: true,
-        children: expansionTileChildren,
-        trailing: Text(value.length.toString(),
+        children: unscheduledExpansionTileChildren,
+        leading: Icon(
+          Icons.circle,
+          color: PlannerService.sharedInstance.user.LifeCategoriesColorMap[key],
+        ),
+        trailing: Text(unscheduledExpansionTileChildren.length.toString(),
             style: TextStyle(color: Theme.of(context).colorScheme.primary)),
       );
-      backloglistview.add(expansionTile);
+      backloglistview.add(expansionTile); //1 per category
     });
+    //return backloglistview;
 
-    return backloglistview;
+    Widget todayExpansionTile = ExpansionTile(
+      title: const Text("Working on Today"),
+      //initiallyExpanded: true,
+      children: todayItems,
+    );
+
+    Widget tomorrowExpansionTile = ExpansionTile(
+      title: const Text("Working on Tomorrow"),
+      //initiallyExpanded: true,
+      children: tomorrowItems,
+    );
+
+    Widget unscheduledExpansionTile = ExpansionTile(
+      title: const Text("Backlog"),
+      initiallyExpanded: true,
+      children: backloglistview,
+      // trailing: Text(value.length.toString(),style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+    );
+
+    List<Widget> expansionTiles = [
+      todayExpansionTile,
+      tomorrowExpansionTile,
+      unscheduledExpansionTile
+    ];
+
+    return expansionTiles;
   }
 
   @override
