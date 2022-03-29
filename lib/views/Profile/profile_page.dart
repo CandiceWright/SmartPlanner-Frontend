@@ -1,7 +1,9 @@
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/Themes/app_themes.dart';
+import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
@@ -25,137 +27,37 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DateTime selectedStartDate = DateTime.now();
-  TimeOfDay selectedStartTime = TimeOfDay(hour: 00, minute: 00);
-  DateTime selectedEndDate = DateTime.now();
-  TimeOfDay selectedEndTime = TimeOfDay(hour: 00, minute: 00);
-  var startDateTxtController = TextEditingController();
-  var endDateTxtController = TextEditingController();
-  var descriptionTxtController = TextEditingController();
-  var notesTxtController = TextEditingController();
-  var categoryTxtController = TextEditingController();
-  var locationTxtController = TextEditingController();
-  var startTimeController = TextEditingController();
-  var endTimeController = TextEditingController();
-
+  var nameTxtController = TextEditingController();
   bool doneBtnDisabled = true;
+  bool hasSelectedColor = false;
+  // create some values
+  Color pickerColor = Color(0xff443a49);
+  Color currentColor = Color(0xff443a49);
 
   @override
   void initState() {
     super.initState();
-    startDateTxtController.addListener(setDoneBtnState);
-    endDateTxtController.addListener(setDoneBtnState);
-    startTimeController.addListener(setDoneBtnState);
-    endTimeController.addListener(setDoneBtnState);
-    descriptionTxtController.addListener(setDoneBtnState);
+    nameTxtController.addListener(setDoneBtnState);
+    setDoneBtnState();
   }
 
-  Future<void> _selectStartDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedStartDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != selectedStartDate)
-      setState(() {
-        selectedStartDate = picked;
-        startDateTxtController.text =
-            DateFormat.yMMMd().format(selectedStartDate);
-        //print(DateFormat.yMMMd().format(selectedDate));
-      });
-  }
-
-  Future<void> _selectEndDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedEndDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != selectedEndDate)
-      setState(() {
-        selectedEndDate = picked;
-        endDateTxtController.text = DateFormat.yMMMd().format(selectedEndDate);
-        //print(DateFormat.yMMMd().format(selectedDate));
-      });
-  }
-
-  Future<Null> _selectStartTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: selectedStartTime,
-    );
-    if (picked != null) {
-      setState(() {
-        selectedStartTime = picked;
-        String _hour = selectedStartTime.hour.toString();
-        String _minute = selectedStartTime.minute.toString();
-        String _time = _hour + ' : ' + _minute;
-        startTimeController.text = _time;
-        startTimeController.text = formatDate(
-            DateTime(
-                2019, 08, 1, selectedStartTime.hour, selectedStartTime.minute),
-            [hh, ':', nn, " ", am]).toString();
-      });
-    }
-  }
-
-  Future<Null> _selectEndTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: selectedEndTime,
-    );
-    if (picked != null) {
-      setState(() {
-        selectedEndTime = picked;
-        String _hour = selectedEndTime.hour.toString();
-        String _minute = selectedEndTime.minute.toString();
-        String _time = _hour + ' : ' + _minute;
-        endTimeController.text = _time;
-        endTimeController.text = formatDate(
-            DateTime(2019, 08, 1, selectedEndTime.hour, selectedEndTime.minute),
-            [hh, ':', nn, " ", am]).toString();
-      });
-    }
-  }
-
-  void createEvent() {
-    var eventTitle = descriptionTxtController.text;
-    var eventNotes = notesTxtController.text;
-    var category = categoryTxtController.text;
-    var eventLocation = locationTxtController.text;
-    var startDateTime = DateTime(
-        selectedStartDate.year,
-        selectedStartDate.month,
-        selectedStartDate.day,
-        selectedStartTime.hour,
-        selectedStartTime.minute);
-    var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
-        selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
-    var newEvent = Event(
-        id: PlannerService.sharedInstance.user.allEvents.length,
-        eventName: eventTitle,
-        type: "Calendar",
-        start: startDateTime,
-        end: endDateTime,
-        background: const Color(0xFFFF80b1),
-        isAllDay: false,
-        notes: eventNotes,
-        category: category,
-        location: eventLocation);
-
-    PlannerService.sharedInstance.user.allEvents.add(newEvent);
-    widget.updateEvents();
-    _backToEventsPage();
+  void createCategory() {
+    var category = LifeCategory(nameTxtController.text, pickerColor);
+    PlannerService.sharedInstance.user.lifeCategories.add(category);
+    PlannerService.sharedInstance.user.backlogMap[nameTxtController.text] = [];
+    setState(() {
+      nameTxtController.text = "";
+      hasSelectedColor = false;
+    });
+    setDoneBtnState();
+    Navigator.pop(context);
   }
 
   void setDoneBtnState() {
-    print(descriptionTxtController.text);
-    if (startDateTxtController.text != "" &&
-        endDateTxtController.text != "" &&
-        startTimeController.text != "" &&
-        endTimeController.text != "" &&
-        descriptionTxtController.text != "") {
+    print("I am in set done button state");
+    print(nameTxtController.text);
+    print(hasSelectedColor);
+    if (nameTxtController.text != "" && hasSelectedColor) {
       setState(() {
         print("button enabled");
         doneBtnDisabled = false;
@@ -167,8 +69,136 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void _backToEventsPage() {
-    Navigator.pop(context);
+// ValueChanged<Color> callback
+  void changeColor(Color color) {
+    print("I am in change color");
+    setState(() {
+      pickerColor = color;
+      hasSelectedColor = true;
+    });
+    setDoneBtnState();
+  }
+
+  Widget dialogContent(StateSetter setDialogState) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: TextFormField(
+              controller: nameTxtController,
+              onChanged: (text) {
+                setDialogState(() {
+                  if (nameTxtController.text != "" && hasSelectedColor) {
+                    setState(() {
+                      print("button enabled");
+                      doneBtnDisabled = false;
+                    });
+                  } else {
+                    setState(() {
+                      doneBtnDisabled = true;
+                    });
+                  }
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "Name",
+                icon: Icon(
+                  Icons.description,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
+          ),
+          ColorPicker(
+            pickerColor: pickerColor,
+            onColorChanged: (color) {
+              setDialogState(() {
+                pickerColor = color;
+                hasSelectedColor = true;
+                if (nameTxtController.text != "" && hasSelectedColor) {
+                  setState(() {
+                    print("button enabled");
+                    doneBtnDisabled = false;
+                  });
+                } else {
+                  setState(() {
+                    doneBtnDisabled = true;
+                  });
+                }
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showAddCategoryDialog() async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Container(
+                child: const Text(
+                  "New Category",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              content: dialogContent(setDialogState),
+              // Container(
+              //   child: Column(
+              //     mainAxisSize: MainAxisSize.min,
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: [
+              //       Padding(
+              //         padding: EdgeInsets.only(bottom: 8),
+              //         child: TextFormField(
+              //           controller: nameTxtController,
+              //           decoration: InputDecoration(
+              //             hintText: "Name",
+              //             icon: Icon(
+              //               Icons.description,
+              //               color: Theme.of(context).colorScheme.primary,
+              //             ),
+              //           ),
+              //           validator: (String? value) {
+              //             if (value == null || value.isEmpty) {
+              //               return 'Please enter some text';
+              //             }
+              //             return null;
+              //           },
+              //         ),
+              //       ),
+              //       ColorPicker(
+              //         pickerColor: pickerColor,
+              //         onColorChanged: changeColor,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: doneBtnDisabled ? null : createCategory,
+                    child: const Text('Create')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel')),
+              ],
+            );
+          });
+        });
   }
 
   @override
@@ -193,15 +223,6 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Container(
           child: ListView(
             children: [
-              // Padding(
-              //   padding: EdgeInsets.all(10),
-              //   child: Text(
-              //     PlannerService.sharedInstance.user.username,
-              //     textAlign: TextAlign.center,
-              //     style: const TextStyle(fontWeight: FontWeight.bold),
-              //   ),
-              // ),
-
               Image.asset(
                 PlannerService.sharedInstance.user.profileImage,
                 height: 80,
@@ -263,14 +284,78 @@ class _ProfilePageState extends State<ProfilePage> {
                       });
                     },
                   ),
+                  Card(
+                    child: Column(
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Text(
+                              "My Life Categories",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            )),
+                        // Padding(
+                        //   padding: EdgeInsets.all(5),
+                        //   child: Row(
+                        //     children: [
+                        //       Text(
+                        //         "MY LIFE CATTEGORIES",
+                        //         style: TextStyle(fontWeight: FontWeight.bold),
+                        //         textAlign: TextAlign.center,
+                        //       ),
+                        //       TextButton(
+                        //           onPressed: () => {}, child: Text("Add New"))
+                        //     ],
+                        //   ),
+                        // ),
+                        Container(
+                          height: 80.0,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: List.generate(
+                                PlannerService.sharedInstance.user
+                                    .lifeCategories.length, (int index) {
+                              return Card(
+                                color: Colors.blue[index * 100],
+                                child:
+                                    Flex(direction: Axis.horizontal, children: [
+                                  Column(
+                                    //width: 50.0,
+                                    //height: 50.0,
+                                    children: [
+                                      Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Text(PlannerService
+                                              .sharedInstance
+                                              .user
+                                              .lifeCategories[index]
+                                              .name)),
+                                      Icon(
+                                        Icons.circle,
+                                        color: PlannerService.sharedInstance
+                                            .user.lifeCategories[index].color,
+                                      ),
+                                    ],
+                                  )
+                                ]),
+                              );
+                            }),
+                          ),
+                          color: Colors.white,
+                        ),
+                        TextButton(
+                            onPressed: () => {showAddCategoryDialog()},
+                            child: Text("Add New")),
+                      ],
+                    ),
+                    color: Colors.white,
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
                 ],
               )
-
-              // Column(
-              //   children: [
-              //     Text(PlannerService.sharedInstance.user.username),
-              //   ],
-              // )
             ],
           ),
           margin: EdgeInsets.all(15),

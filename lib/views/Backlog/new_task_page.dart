@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/life_category.dart';
 import '/models/backlog_item.dart';
 import '/services/planner_service.dart';
 
@@ -26,10 +27,11 @@ class _NewTaskPageState extends State<NewTaskPage> {
   DateTime selectedDate = DateTime.now();
   var dateTxtController = TextEditingController();
   var descriptionTxtController = TextEditingController();
-  var categoryTxtController = TextEditingController();
+  //var categoryTxtController = TextEditingController();
   var locationTxtController = TextEditingController();
   var notesTxtController = TextEditingController();
   bool doneBtnDisabled = true;
+  var currChosenCategory = PlannerService.sharedInstance.user.lifeCategories[0];
 
   @override
   void initState() {
@@ -56,22 +58,26 @@ class _NewTaskPageState extends State<NewTaskPage> {
     var taskTitle = descriptionTxtController.text;
     // var goalDate = dateTxtController.text;
     var newBacklogItem = BacklogItem(
-        taskTitle,
-        selectedDate,
-        false,
-        categoryTxtController.text,
-        locationTxtController.text,
-        notesTxtController.text);
-    if (newBacklogItem.category == "") {
-      if (PlannerService.sharedInstance.user.backlog.containsKey("Other")) {
-        PlannerService.sharedInstance.user.backlog["Other"].add(newBacklogItem);
-      } else {
-        PlannerService.sharedInstance.user.backlog["Other"] = [newBacklogItem];
-      }
-    } else {
-      PlannerService.sharedInstance.user.backlog[newBacklogItem.category]
-          .add(newBacklogItem);
-    }
+        description: taskTitle,
+        completeBy: selectedDate,
+        isComplete: false,
+        category: currChosenCategory,
+        //categoryTxtController.text,
+        location: locationTxtController.text,
+        notes: notesTxtController.text);
+
+    PlannerService.sharedInstance.user.backlogMap[currChosenCategory.name]!
+        .add(newBacklogItem);
+    // if (newBacklogItem.category == "") {
+    //   if (PlannerService.sharedInstance.user.backlog.containsKey("Other")) {
+    //     PlannerService.sharedInstance.user.backlog["Other"].add(newBacklogItem);
+    //   } else {
+    //     PlannerService.sharedInstance.user.backlog["Other"] = [newBacklogItem];
+    //   }
+    // } else {
+    //   PlannerService.sharedInstance.user.backlog[newBacklogItem.category]
+    //       .add(newBacklogItem);
+    // }
     if (DateFormat.yMMMd().format(selectedDate) ==
         DateFormat.yMMMd().format(DateTime.now())) {
       PlannerService.sharedInstance.user.todayTasks.add(newBacklogItem);
@@ -172,21 +178,70 @@ class _NewTaskPageState extends State<NewTaskPage> {
                       padding: EdgeInsets.all(20),
                     ),
                     Container(
-                      child: TextFormField(
-                        controller: categoryTxtController,
-                        decoration: InputDecoration(
-                            hintText: "Life Category",
-                            icon: Icon(Icons.category_rounded,
-                                color: Theme.of(context).colorScheme.primary)),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
+                      child: DropdownButton(
+                        //value: PlannerService.sharedInstance.user.theme.themeId,
+                        value: currChosenCategory,
+                        items: List.generate(
+                            PlannerService.sharedInstance.user.lifeCategories
+                                .length, (int index) {
+                          return DropdownMenuItem(
+                            //value: "pink",
+                            value: PlannerService
+                                .sharedInstance.user.lifeCategories[index],
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.circle,
+                                  color: PlannerService.sharedInstance.user
+                                      .lifeCategories[index].color,
+                                ),
+                                Text(PlannerService.sharedInstance.user
+                                    .lifeCategories[index].name),
+                              ],
+                            ),
+                          );
+                        }),
+
+                        // onChanged: (String? newValue) {
+                        onChanged: (LifeCategory? newValue) {
+                          setState(() {
+                            currChosenCategory = newValue!;
+                          });
                         },
                       ),
+                      // child: TextFormField(
+                      //   controller: categoryTxtController,
+                      //   decoration: InputDecoration(
+                      //       hintText: "Category",
+                      //       icon: Icon(
+                      //         Icons.category_rounded,
+                      //         color: Theme.of(context).colorScheme.primary,
+                      //       )),
+                      //   validator: (String? value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Please enter some text';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
                       padding: EdgeInsets.all(20),
                     ),
+                    // Container(
+                    //   child: TextFormField(
+                    //     controller: categoryTxtController,
+                    //     decoration: InputDecoration(
+                    //         hintText: "Life Category",
+                    //         icon: Icon(Icons.category_rounded,
+                    //             color: Theme.of(context).colorScheme.primary)),
+                    //     validator: (String? value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return 'Please enter some text';
+                    //       }
+                    //       return null;
+                    //     },
+                    //   ),
+                    //   padding: EdgeInsets.all(20),
+                    // ),
                     Container(
                       child: TextFormField(
                         controller: locationTxtController,

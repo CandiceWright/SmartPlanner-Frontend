@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
@@ -28,16 +29,16 @@ class _EditEventPageState extends State<EditEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late var selectedStartDate =
       PlannerService.sharedInstance.user.allEvents[widget.id].start;
-  //DateTime selectedStartDate = DateTime.now();
+
   late var selectedStartTime =
       TimeOfDay(hour: selectedStartDate.hour, minute: selectedStartDate.minute);
-  //TimeOfDay selectedStartTime = TimeOfDay(hour: 00, minute: 00);
+
   late var selectedEndDate =
       PlannerService.sharedInstance.user.allEvents[widget.id].end;
-  //DateTime selectedEndDate = DateTime.now();
+
   late var selectedEndTime =
       TimeOfDay(hour: selectedEndDate.hour, minute: selectedEndDate.minute);
-  //TimeOfDay selectedEndTime = TimeOfDay(hour: 00, minute: 00);
+
   late final startDateTxtController = TextEditingController(
       text: DateFormat.yMMMd().format(
           PlannerService.sharedInstance.user.allEvents[widget.id].start));
@@ -48,8 +49,8 @@ class _EditEventPageState extends State<EditEventPage> {
       text: PlannerService.sharedInstance.user.allEvents[widget.id].eventName);
   late final notesTxtController = TextEditingController(
       text: PlannerService.sharedInstance.user.allEvents[widget.id].notes);
-  late final categoryTxtController = TextEditingController(
-      text: PlannerService.sharedInstance.user.allEvents[widget.id].category);
+  //late final categoryTxtController = TextEditingController(
+  //text: PlannerService.sharedInstance.user.allEvents[widget.id].category);
   late final startTimeController = TextEditingController(
       text: formatDate(
           PlannerService.sharedInstance.user.allEvents[widget.id].start,
@@ -61,6 +62,7 @@ class _EditEventPageState extends State<EditEventPage> {
   late final locationTxController = TextEditingController(
       text: PlannerService.sharedInstance.user.allEvents[widget.id].location);
   bool doneBtnDisabled = false;
+  var currChosenCategory = PlannerService.sharedInstance.user.lifeCategories[0];
 
   @override
   void initState() {
@@ -150,7 +152,9 @@ class _EditEventPageState extends State<EditEventPage> {
     PlannerService.sharedInstance.user.allEvents[widget.id].notes =
         notesTxtController.text;
     PlannerService.sharedInstance.user.allEvents[widget.id].category =
-        categoryTxtController.text;
+        currChosenCategory;
+    //PlannerService.sharedInstance.user.allEvents[widget.id].category =
+    //categoryTxtController.text;
     var startDateTime = DateTime(
         selectedStartDate.year,
         selectedStartDate.month,
@@ -392,23 +396,72 @@ class _EditEventPageState extends State<EditEventPage> {
                       padding: EdgeInsets.all(20),
                     ),
                     Container(
-                      child: TextFormField(
-                        controller: categoryTxtController,
-                        decoration: InputDecoration(
-                            hintText: "Category",
-                            icon: Icon(
-                              Icons.category_rounded,
-                              color: Theme.of(context).colorScheme.primary,
-                            )),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
+                      child: DropdownButton(
+                        //value: PlannerService.sharedInstance.user.theme.themeId,
+                        value: currChosenCategory,
+                        items: List.generate(
+                            PlannerService.sharedInstance.user.lifeCategories
+                                .length, (int index) {
+                          return DropdownMenuItem(
+                            //value: "pink",
+                            value: PlannerService
+                                .sharedInstance.user.lifeCategories[index],
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.circle,
+                                  color: PlannerService.sharedInstance.user
+                                      .lifeCategories[index].color,
+                                ),
+                                Text(PlannerService.sharedInstance.user
+                                    .lifeCategories[index].name),
+                              ],
+                            ),
+                          );
+                        }),
+
+                        // onChanged: (String? newValue) {
+                        onChanged: (LifeCategory? newValue) {
+                          setState(() {
+                            currChosenCategory = newValue!;
+                          });
                         },
                       ),
+                      // child: TextFormField(
+                      //   controller: categoryTxtController,
+                      //   decoration: InputDecoration(
+                      //       hintText: "Category",
+                      //       icon: Icon(
+                      //         Icons.category_rounded,
+                      //         color: Theme.of(context).colorScheme.primary,
+                      //       )),
+                      //   validator: (String? value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Please enter some text';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
                       padding: EdgeInsets.all(20),
                     ),
+                    // Container(
+                    //   child: TextFormField(
+                    //     controller: categoryTxtController,
+                    //     decoration: InputDecoration(
+                    //         hintText: "Category",
+                    //         icon: Icon(
+                    //           Icons.category_rounded,
+                    //           color: Theme.of(context).colorScheme.primary,
+                    //         )),
+                    //     validator: (String? value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return 'Please enter some text';
+                    //       }
+                    //       return null;
+                    //     },
+                    //   ),
+                    //   padding: EdgeInsets.all(20),
+                    // ),
                     Container(
                       child: TextFormField(
                         controller: notesTxtController,

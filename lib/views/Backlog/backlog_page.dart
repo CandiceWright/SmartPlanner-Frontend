@@ -47,18 +47,19 @@ class _BacklogPageState extends State<BacklogPage> {
   List<Widget> buildBacklogListView() {
     print("building backlog view");
     List<Widget> backloglistview = [];
-    PlannerService.sharedInstance.user.backlog.forEach((key, value) {
+    PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
       List<Widget> expansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
         Widget child = CheckboxListTile(
           title: Text(value[i].description),
-          subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy)),
-          value: PlannerService.sharedInstance.user.backlog[key][i].isComplete,
+          subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy!)),
+          value:
+              PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
           onChanged: (bool? value) {
             print(value);
             setState(() {
-              PlannerService.sharedInstance.user.backlog[key][i].isComplete =
-                  value;
+              PlannerService
+                  .sharedInstance.user.backlogMap[key]![i].isComplete = value;
               //_value = value!;
             });
           },
@@ -75,6 +76,7 @@ class _BacklogPageState extends State<BacklogPage> {
       }
       Widget expansionTile = ExpansionTile(
         title: Text(key),
+        initiallyExpanded: true,
         children: expansionTileChildren,
         trailing: Text(value.length.toString(),
             style: TextStyle(color: Theme.of(context).colorScheme.primary)),

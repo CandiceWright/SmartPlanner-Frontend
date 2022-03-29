@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice_planner/models/life_category.dart';
 
 class Event {
   String eventName;
@@ -6,7 +7,7 @@ class Event {
   DateTime end;
   Color? background;
   String notes;
-  String category;
+  LifeCategory category;
   String location;
   bool isAllDay;
   int id;
@@ -19,7 +20,7 @@ class Event {
       this.background,
       this.isAllDay = false,
       this.notes = "",
-      this.category = "Other",
+      required this.category,
       required this.type,
       this.location = ""});
 }

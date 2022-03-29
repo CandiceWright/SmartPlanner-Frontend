@@ -65,7 +65,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     var newEvent = Event(
         id: PlannerService.sharedInstance.user.allEvents.length,
         eventName: eventTitle,
-        type: "Calendar",
+        type: "Backlog",
         start: start,
         end: end,
         background: const Color(0xFFFF80b1),

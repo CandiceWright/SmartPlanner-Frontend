@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/life_category.dart';
 import 'goal.dart';
 import 'backlog_item.dart';
 import 'habit.dart';
@@ -17,11 +18,13 @@ class User {
   int themeId;
   var goals = [];
   var backlogItems = <BacklogItem>[];
-  var backlog = new Map();
+  //var backlogMap = <String, List<BacklogItem>>{};
+  Map<String, List<BacklogItem>> backlogMap = {"Other": []};
   var todayTasks = [];
   var habits = <Habit>[];
   bool didStartTomorrowPlanning;
   var allEvents = <Event>[];
+  var lifeCategories = <LifeCategory>[];
 
   User(
       {required this.name,
@@ -31,7 +34,8 @@ class User {
       required this.theme,
       required this.themeId,
       this.profileImage,
-      required this.didStartTomorrowPlanning}) {
+      required this.didStartTomorrowPlanning,
+      required this.lifeCategories}) {
     //Goals
     //List<Goal> userGoals = [];
     Goal goal1 =
@@ -42,30 +46,30 @@ class User {
     goals.add(goal2);
 
     //List<BacklogItem> backlogItems = [];
-    BacklogItem bli1 = BacklogItem("Complete backlog feature.",
-        DateTime(2022, 3, 6), false, "Planner Business");
-    BacklogItem bli2 = BacklogItem(
-        "Complete Homepage.", DateTime(2022, 3, 9), false, "Planner Business");
-    BacklogItem bli3 = BacklogItem("Complete Calendar Feature.",
-        DateTime(2022, 3, 6), false, "Planner Business");
-    BacklogItem bli4 = BacklogItem("Complete assistant feature.",
-        DateTime(2022, 3, 11), false, "Planner Business");
-    BacklogItem bli5 = BacklogItem("Complete Server and connect to front end.",
-        DateTime(2022, 3, 16), false, "Planner Business");
-    BacklogItem bli6 =
-        BacklogItem("Get nails done.", DateTime(2022, 3, 3), false, "Personal");
-    BacklogItem bli7 =
-        BacklogItem("Wash Clothes.", DateTime(2022, 3, 3), false, "Personal");
+    // BacklogItem bli1 = BacklogItem(description:"Complete backlog feature.",
+    //     completeBy: DateTime(2022, 3, 6), isComplete: false, category: L);
+    // BacklogItem bli2 = BacklogItem(
+    //     "Complete Homepage.", DateTime(2022, 3, 9), false, "Planner Business");
+    // BacklogItem bli3 = BacklogItem("Complete Calendar Feature.",
+    //     DateTime(2022, 3, 6), false, "Planner Business");
+    // BacklogItem bli4 = BacklogItem("Complete assistant feature.",
+    //     DateTime(2022, 3, 11), false, "Planner Business");
+    // BacklogItem bli5 = BacklogItem("Complete Server and connect to front end.",
+    //     DateTime(2022, 3, 16), false, "Planner Business");
+    // BacklogItem bli6 =
+    //     BacklogItem("Get nails done.", DateTime(2022, 3, 3), false, "Personal");
+    // BacklogItem bli7 =
+    //     BacklogItem("Wash Clothes.", DateTime(2022, 3, 3), false, "Personal");
 
-    backlogItems.add(bli1);
-    backlogItems.add(bli2);
-    backlogItems.add(bli3);
-    backlogItems.add(bli4);
-    backlogItems.add(bli5);
-    backlogItems.add(bli6);
-    backlogItems.add(bli7);
+    // backlogItems.add(bli1);
+    // backlogItems.add(bli2);
+    // backlogItems.add(bli3);
+    // backlogItems.add(bli4);
+    // backlogItems.add(bli5);
+    // backlogItems.add(bli6);
+    // backlogItems.add(bli7);
 
-    print(backlogItems);
+    //print(backlogItems);
 
     buildBacklogMap();
     buildHabitList();
@@ -78,16 +82,16 @@ class User {
       print("I am in for loop");
       print(backlogItems[i].category);
       if (backlogItems[i].category == "") {
-        if (backlog.containsKey("Other")) {
-          backlog["Other"].add(backlogItems[i]);
+        if (backlogMap.containsKey("Other")) {
+          backlogMap["Other"]!.add(backlogItems[i]);
         } else {
-          backlog["Other"] = [backlogItems[i]];
+          backlogMap["Other"] = [backlogItems[i]];
         }
       } else {
-        if (backlog.containsKey(backlogItems[i].category)) {
-          backlog[backlogItems[i].category].add(backlogItems[i]);
+        if (backlogMap.containsKey(backlogItems[i].category)) {
+          backlogMap[backlogItems[i].category]!.add(backlogItems[i]);
         } else {
-          backlog[backlogItems[i].category] = [backlogItems[i]];
+          backlogMap[backlogItems[i].category.name] = [backlogItems[i]];
         }
       }
     }
@@ -100,10 +104,10 @@ class User {
     print("I am building task list for today");
     print("printing current date");
     print(DateFormat.yMMMd().format(DateTime.now()));
-    backlog.forEach((key, value) {
+    backlogMap.forEach((key, value) {
       for (int i = 0; i < value.length; i++) {
         print(value[i].completeBy);
-        if (DateFormat.yMMMd().format(value[i].completeBy) ==
+        if (DateFormat.yMMMd().format(value[i].completeBy!) ==
             DateFormat.yMMMd().format(DateTime.now())) {
           todayTasks.add(value[i]);
         }
@@ -133,6 +137,7 @@ class User {
         type: "Meeting",
         start: startTime,
         end: endTime,
+        category: LifeCategory("All", const Color(0xFFFF80b1)),
         background: const Color(0xFFFF80b1),
         isAllDay: false));
 
@@ -146,6 +151,7 @@ class User {
         start: startTime2,
         end: endTime2,
         background: const Color(0xFFFF80b1),
+        category: LifeCategory("All", const Color(0xFFFF80b1)),
         isAllDay: false));
   }
 }

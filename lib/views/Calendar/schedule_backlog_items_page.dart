@@ -68,12 +68,13 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
   List<Widget> buildBacklogListView() {
     print("building backlog view");
     List<Widget> backloglistview = [];
-    PlannerService.sharedInstance.user.backlog.forEach((key, value) {
+    PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
       List<Widget> expansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
         Widget child = CheckboxListTile(
           title: Text(value[i].description),
-          value: PlannerService.sharedInstance.user.backlog[key][i].isComplete,
+          value:
+              PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
           onChanged: (bool? checked) {
             //print(value);
             setTime(value[i]);

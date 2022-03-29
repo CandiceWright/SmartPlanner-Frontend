@@ -3,6 +3,7 @@ import 'package:practice_planner/Themes/app_themes.dart';
 import 'package:practice_planner/Themes/blue_theme.dart';
 import 'package:practice_planner/Themes/pink_theme.dart';
 import 'package:practice_planner/Themes/custom_theme.dart';
+import 'package:practice_planner/models/life_category.dart';
 import '/models/user.dart';
 import '/models/goal.dart';
 
@@ -16,7 +17,10 @@ class PlannerService {
       profileImage: "assets/images/profile_pic_icon.png",
       themeId: AppThemes.pink,
       theme: PinkTheme(),
-      didStartTomorrowPlanning: false);
+      didStartTomorrowPlanning: false,
+      lifeCategories: [
+        LifeCategory("Other", const Color(0xFFFF80b1)),
+      ]);
 
   Map<String, CustomTheme> themeColorMap = {
     "pink": PinkTheme(),

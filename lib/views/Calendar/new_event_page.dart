@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_item.dart';
+import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
@@ -42,10 +44,11 @@ class _NewGoalPageState extends State<NewEventPage> {
   var endDateTxtController = TextEditingController();
   var descriptionTxtController = TextEditingController();
   var notesTxtController = TextEditingController();
-  var categoryTxtController = TextEditingController();
+  //var categoryTxtController = TextEditingController();
   var locationTxtController = TextEditingController();
   var startTimeController = TextEditingController();
   var endTimeController = TextEditingController();
+  var currChosenCategory = PlannerService.sharedInstance.user.lifeCategories[0];
 
   bool doneBtnDisabled = true;
 
@@ -78,7 +81,7 @@ class _NewGoalPageState extends State<NewEventPage> {
           DateTime(
               2019, 08, 1, widget.event!.end.hour, widget.event!.end.minute),
           [hh, ':', nn, " ", am]).toString();
-      categoryTxtController.text = widget.event!.category;
+      //categoryTxtController.text = widget.event!.category;
       locationTxtController.text = widget.event!.location;
       notesTxtController.text = widget.event!.notes;
       print("printing start date widget");
@@ -182,7 +185,7 @@ class _NewGoalPageState extends State<NewEventPage> {
   void createEvent() {
     var eventTitle = descriptionTxtController.text;
     var eventNotes = notesTxtController.text;
-    var category = categoryTxtController.text;
+    //var category = categoryTxtController.text;
     var eventLocation = locationTxtController.text;
     var startDateTime = DateTime(
         selectedStartDate.year,
@@ -198,10 +201,11 @@ class _NewGoalPageState extends State<NewEventPage> {
         type: "Calendar",
         start: startDateTime,
         end: endDateTime,
-        background: const Color(0xFFFF80b1),
+        //background: const Color(0xFFFF80b1),
+        background: currChosenCategory.color,
         isAllDay: false,
         notes: eventNotes,
-        category: category,
+        category: currChosenCategory,
         location: eventLocation);
 
     PlannerService.sharedInstance.user.allEvents.add(newEvent);
@@ -443,21 +447,52 @@ class _NewGoalPageState extends State<NewEventPage> {
                       padding: EdgeInsets.all(20),
                     ),
                     Container(
-                      child: TextFormField(
-                        controller: categoryTxtController,
-                        decoration: InputDecoration(
-                            hintText: "Category",
-                            icon: Icon(
-                              Icons.category_rounded,
-                              color: Theme.of(context).colorScheme.primary,
-                            )),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
+                      child: DropdownButton(
+                        //value: PlannerService.sharedInstance.user.theme.themeId,
+                        value: currChosenCategory,
+                        items: List.generate(
+                            PlannerService.sharedInstance.user.lifeCategories
+                                .length, (int index) {
+                          return DropdownMenuItem(
+                            //value: "pink",
+                            value: PlannerService
+                                .sharedInstance.user.lifeCategories[index],
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.circle,
+                                  color: PlannerService.sharedInstance.user
+                                      .lifeCategories[index].color,
+                                ),
+                                Text(PlannerService.sharedInstance.user
+                                    .lifeCategories[index].name),
+                              ],
+                            ),
+                          );
+                        }),
+
+                        // onChanged: (String? newValue) {
+                        onChanged: (LifeCategory? newValue) {
+                          setState(() {
+                            currChosenCategory = newValue!;
+                          });
                         },
                       ),
+                      // child: TextFormField(
+                      //   controller: categoryTxtController,
+                      //   decoration: InputDecoration(
+                      //       hintText: "Category",
+                      //       icon: Icon(
+                      //         Icons.category_rounded,
+                      //         color: Theme.of(context).colorScheme.primary,
+                      //       )),
+                      //   validator: (String? value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Please enter some text';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
                       padding: EdgeInsets.all(20),
                     ),
                     Container(

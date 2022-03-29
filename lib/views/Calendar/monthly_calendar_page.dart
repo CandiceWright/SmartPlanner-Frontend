@@ -50,18 +50,19 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
   List<Widget> buildBacklogListView() {
     print("building backlog view");
     List<Widget> backloglistview = [];
-    PlannerService.sharedInstance.user.backlog.forEach((key, value) {
+    PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
       List<Widget> expansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
         Widget child = CheckboxListTile(
           title: Text(value[i].description),
-          subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy)),
-          value: PlannerService.sharedInstance.user.backlog[key][i].isComplete,
+          subtitle: Text(DateFormat.yMMMd().format(value[i].completeBy!)),
+          value:
+              PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
           onChanged: (bool? value) {
             print(value);
             setState(() {
-              PlannerService.sharedInstance.user.backlog[key][i].isComplete =
-                  value;
+              PlannerService
+                  .sharedInstance.user.backlogMap[key]![i].isComplete = value;
               //_value = value!;
             });
           },
