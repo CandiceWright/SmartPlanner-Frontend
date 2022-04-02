@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
+import 'package:practice_planner/views/Calendar/notes_page.dart';
+import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_schedule_page.dart';
 import '/services/planner_service.dart';
@@ -40,6 +42,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   void _openNewCalendarItemPage() {
     //this function needs to change to create new goal
+    Navigator.pop(context);
     Navigator.push(
         context,
         CupertinoPageRoute(
@@ -95,6 +98,72 @@ class _CalendarPageState extends State<CalendarPage> {
     setState(() {});
   }
 
+  void deleteEvent(int idx) {
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to delete?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    PlannerService.sharedInstance.user.allEvents.removeAt(idx);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: Text('yes, delete')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('cancel'))
+            ],
+          );
+        });
+  }
+
+  void startPlanningFromBacklog() {
+    Navigator.pop(context);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "BacklogScheduling"),
+        builder: (context) => ScheduleBacklogItemsPage(
+            updateTomorrowEvents: _updateEvents, fromPage: "today"),
+      ),
+    );
+    // Navigator.push(
+    //     context,
+    //     CupertinoPageRoute(
+    //         builder: (context) => const ScheduleBacklogItemsPage()));
+  }
+
+  void _openNewCalendarItemDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        onPressed: startPlanningFromBacklog,
+                        child: const Text(
+                            "Add item from my life's backlog to today's schedule")),
+                    ElevatedButton(
+                        onPressed: _openNewCalendarItemPage,
+                        child: const Text("Create new task/event")),
+                  ]),
+              actions: <Widget>[]);
+        });
+  }
+
   void calendarTapped(CalendarTapDetails details) {
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
@@ -140,29 +209,6 @@ class _CalendarPageState extends State<CalendarPage> {
                           style: TextStyle(
                               fontWeight: FontWeight.w400, fontSize: 15)),
                       Text(appointmentDetails.notes)
-                      // Row(
-                      //   children: <Widget>[
-                      //     Text(
-                      //       '$_dateText',
-                      //       style: TextStyle(
-                      //         fontWeight: FontWeight.w400,
-                      //         fontSize: 20,
-                      //       ),
-                      //     ),
-                      //   ],
-                      // ),
-                      // Row(
-                      //   children: <Widget>[
-                      //     Text(_timeDetails,
-                      //         style: TextStyle(
-                      //             fontWeight: FontWeight.w400, fontSize: 15)),
-                      //   ],
-                      // ),
-                      // Row(
-                      //   children: [
-                      //     Text("Id:" + appointmentDetails.id.toString())
-                      //   ],
-                      // )
                     ],
                   ),
                 ),
@@ -175,7 +221,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     child: new Text('edit')),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      deleteEvent(appointmentDetails.id);
                     },
                     child: new Text('delete')),
                 TextButton(
@@ -204,10 +250,6 @@ class _CalendarPageState extends State<CalendarPage> {
         title: Column(
           children: [
             const Text("Today"),
-            // Text(
-            //   DateFormat.yMMMd().format(DateTime.now()),
-            //   style: Theme.of(context).textTheme.subtitle1,
-            // ),
           ],
         ),
         centerTitle: true,
@@ -215,7 +257,13 @@ class _CalendarPageState extends State<CalendarPage> {
           icon: const Icon(Icons.note_alt),
           tooltip: 'View this backlog item',
           onPressed: () {
-            setState(() {});
+            //setState(() {});
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => const NotesPage(
+                          fromPage: "Today",
+                        )));
           },
         ),
         automaticallyImplyLeading: false,
@@ -261,7 +309,8 @@ class _CalendarPageState extends State<CalendarPage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: _openNewCalendarItemPage,
+        //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
+        onPressed: _openNewCalendarItemDialog,
         tooltip: 'Create new event.',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

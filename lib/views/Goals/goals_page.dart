@@ -55,6 +55,37 @@ class _GoalsPageState extends State<GoalsPage> {
     print("Yayy you did it");
   }
 
+  void deleteBacklogItem(int idx) {
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to delete?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('yes, delete'),
+                onPressed: () {
+                  PlannerService.sharedInstance.user.goals.removeAt(idx);
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('cancel'))
+            ],
+          );
+        });
+  }
+
   void _showGoalContent(Goal goal, int idx) {
     showDialog(
       context: context, // user must tap button!
@@ -110,56 +141,6 @@ class _GoalsPageState extends State<GoalsPage> {
               ),
             ),
           ),
-          // [
-          //   Container(
-          //     child: Column(
-          //       children: [
-          //         Text(
-          //           DateFormat.yMMMd().format(goal.date),
-          //           // style: Theme.of(context).textTheme.subtitle2,
-          //           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-          //         ),
-          //         Padding(
-          //           child: Text(
-          //             goal.description,
-          //             style: TextStyle(fontSize: 15),
-          //           ),
-          //           padding: EdgeInsets.only(bottom: 10, top: 4),
-          //         ),
-          //         Padding(
-          //           child: Image.asset(
-          //             "assets/images/goal_icon.png",
-          //             height: 60,
-          //             width: 60,
-          //           ),
-          //           padding: EdgeInsets.all(10),
-          //         ),
-
-          //         // Text(
-          //         //   goal.notes,
-          //         //   // style: Theme.of(context).textTheme.subtitle2,
-          //         //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          //         // ),
-          //         ElevatedButton(
-          //             onPressed: showGoalCompleteAnimation,
-          //             child: const Text(
-          //               "I DID IT!",
-          //               style: TextStyle(fontWeight: FontWeight.bold),
-          //             ))
-          //       ],
-          //     ),
-          //     margin: EdgeInsets.all(10),
-          //   ),
-          //   // Row(
-          //   //   mainAxisAlignment: MainAxisAlignment.end,
-          //   //   children: [
-          //   //     IconButton(
-          //   //       onPressed: () => {_openEditGoal(idx)},
-          //   //       icon: const Icon(Icons.edit_outlined),
-          //   //     ),
-          //   //   ],
-          //   // ),
-          // ],
           actions: <Widget>[
             TextButton(
                 onPressed: () {
@@ -168,7 +149,7 @@ class _GoalsPageState extends State<GoalsPage> {
                 child: new Text('edit')),
             TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  deleteBacklogItem(idx);
                 },
                 child: new Text('delete')),
             TextButton(

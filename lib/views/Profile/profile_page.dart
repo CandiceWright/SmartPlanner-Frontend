@@ -28,10 +28,13 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   var nameTxtController = TextEditingController();
+  var editCategoryTxtController = TextEditingController();
+  bool saveEditCategoryBtnDisabled = false;
   bool doneBtnDisabled = true;
   bool hasSelectedColor = false;
   // create some values
   Color pickerColor = Color(0xff443a49);
+  Color editPickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
 
   @override
@@ -157,37 +160,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               content: dialogContent(setDialogState),
-              // Container(
-              //   child: Column(
-              //     mainAxisSize: MainAxisSize.min,
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: [
-              //       Padding(
-              //         padding: EdgeInsets.only(bottom: 8),
-              //         child: TextFormField(
-              //           controller: nameTxtController,
-              //           decoration: InputDecoration(
-              //             hintText: "Name",
-              //             icon: Icon(
-              //               Icons.description,
-              //               color: Theme.of(context).colorScheme.primary,
-              //             ),
-              //           ),
-              //           validator: (String? value) {
-              //             if (value == null || value.isEmpty) {
-              //               return 'Please enter some text';
-              //             }
-              //             return null;
-              //           },
-              //         ),
-              //       ),
-              //       ColorPicker(
-              //         pickerColor: pickerColor,
-              //         onColorChanged: changeColor,
-              //       ),
-              //     ],
-              //   ),
-              // ),
               actions: <Widget>[
                 TextButton(
                     onPressed: doneBtnDisabled ? null : createCategory,
@@ -202,6 +174,142 @@ class _ProfilePageState extends State<ProfilePage> {
           });
         });
   }
+
+  showEditCategoryDialog(int idx) async {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Container(
+                child: Text(
+                  PlannerService.sharedInstance.user.lifeCategories[idx].name,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              content: editDialogContent(setDialogState, idx),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: saveEditCategoryBtnDisabled
+                        ? null
+                        : () {
+                            editCategory(idx);
+                          },
+                    child: const Text('Save')),
+                TextButton(
+                    onPressed: () {
+                      deleteCategory(idx);
+                    },
+                    child: const Text('Delete')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel')),
+              ],
+            );
+          });
+        });
+  }
+
+  editDialogContent(StateSetter setDialogState, int idx) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: TextFormField(
+              controller: editCategoryTxtController,
+              //initialValue:
+              //PlannerService.sharedInstance.user.lifeCategories[idx].name,
+              onChanged: (text) {
+                setDialogState(() {
+                  if (editCategoryTxtController.text != "" &&
+                      hasSelectedColor) {
+                    setState(() {
+                      print("button enabled");
+                      saveEditCategoryBtnDisabled = false;
+                    });
+                  } else {
+                    setState(() {
+                      saveEditCategoryBtnDisabled = true;
+                    });
+                  }
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "Name",
+                icon: Icon(
+                  Icons.description,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
+          ),
+          ColorPicker(
+            pickerColor: editPickerColor,
+            onColorChanged: (color) {
+              setDialogState(() {
+                editPickerColor = color;
+                hasSelectedColor = true;
+                if (editCategoryTxtController.text != "" && hasSelectedColor) {
+                  setState(() {
+                    print("button enabled");
+                    saveEditCategoryBtnDisabled = false;
+                  });
+                } else {
+                  setState(() {
+                    saveEditCategoryBtnDisabled = true;
+                  });
+                }
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void editCategory(int idx) {
+    var oldCategoryName =
+        PlannerService.sharedInstance.user.lifeCategories[idx].name;
+    if (PlannerService.sharedInstance.user.lifeCategories[idx].name !=
+        editCategoryTxtController.text) {
+      //need to change the category backlog map
+      var backlogArr =
+          PlannerService.sharedInstance.user.backlogMap[oldCategoryName];
+      //create a new map entry for the new name and delete the old
+      PlannerService.sharedInstance.user
+          .backlogMap[editCategoryTxtController.text] = backlogArr!;
+      PlannerService.sharedInstance.user.backlogMap.remove(oldCategoryName);
+      PlannerService.sharedInstance.user.lifeCategories[idx].name =
+          editCategoryTxtController.text;
+      PlannerService.sharedInstance.user.lifeCategories[idx].color =
+          editPickerColor;
+      PlannerService.sharedInstance.user.LifeCategoriesColorMap
+          .remove(oldCategoryName);
+      PlannerService.sharedInstance.user
+              .LifeCategoriesColorMap[editCategoryTxtController.text] =
+          editPickerColor;
+    } else {
+      PlannerService.sharedInstance.user.lifeCategories[idx].color =
+          editPickerColor;
+      PlannerService.sharedInstance.user
+          .LifeCategoriesColorMap[oldCategoryName] = editPickerColor;
+    }
+    setState(() {});
+    Navigator.pop(context);
+  }
+
+  void deleteCategory(int idx) {}
 
   @override
   Widget build(BuildContext context) {
@@ -296,20 +404,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               style: TextStyle(fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             )),
-                        // Padding(
-                        //   padding: EdgeInsets.all(5),
-                        //   child: Row(
-                        //     children: [
-                        //       Text(
-                        //         "MY LIFE CATTEGORIES",
-                        //         style: TextStyle(fontWeight: FontWeight.bold),
-                        //         textAlign: TextAlign.center,
-                        //       ),
-                        //       TextButton(
-                        //           onPressed: () => {}, child: Text("Add New"))
-                        //     ],
-                        //   ),
-                        // ),
                         Container(
                           height: 80.0,
                           child: ListView(
@@ -317,30 +411,47 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: List.generate(
                                 PlannerService.sharedInstance.user
                                     .lifeCategories.length, (int index) {
-                              return Card(
-                                color: Colors.blue[index * 100],
-                                child:
-                                    Flex(direction: Axis.horizontal, children: [
-                                  Column(
-                                    //width: 50.0,
-                                    //height: 50.0,
-                                    children: [
-                                      Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Text(PlannerService
-                                              .sharedInstance
-                                              .user
-                                              .lifeCategories[index]
-                                              .name)),
-                                      Icon(
-                                        Icons.circle,
-                                        color: PlannerService.sharedInstance
-                                            .user.lifeCategories[index].color,
-                                      ),
-                                    ],
-                                  )
-                                ]),
-                              );
+                              return GestureDetector(
+                                  onTap: () {
+                                    //print("I tapped.");
+                                    editCategoryTxtController.text =
+                                        PlannerService.sharedInstance.user
+                                            .lifeCategories[index].name;
+                                    editPickerColor = PlannerService
+                                        .sharedInstance
+                                        .user
+                                        .lifeCategories[index]
+                                        .color;
+                                    showEditCategoryDialog(index);
+                                  },
+                                  child: Card(
+                                    color: Colors.blue[index * 100],
+                                    child: Flex(
+                                        direction: Axis.horizontal,
+                                        children: [
+                                          Column(
+                                            //width: 50.0,
+                                            //height: 50.0,
+                                            children: [
+                                              Padding(
+                                                  padding: EdgeInsets.all(10),
+                                                  child: Text(PlannerService
+                                                      .sharedInstance
+                                                      .user
+                                                      .lifeCategories[index]
+                                                      .name)),
+                                              Icon(
+                                                Icons.circle,
+                                                color: PlannerService
+                                                    .sharedInstance
+                                                    .user
+                                                    .lifeCategories[index]
+                                                    .color,
+                                              ),
+                                            ],
+                                          )
+                                        ]),
+                                  ));
                             }),
                           ),
                           color: Colors.white,

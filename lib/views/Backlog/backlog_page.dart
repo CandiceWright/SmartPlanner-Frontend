@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:practice_planner/models/backlog_item.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
+import 'package:practice_planner/views/Backlog/edit_task_page.dart';
 import 'package:practice_planner/views/Backlog/new_task_page.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
@@ -45,7 +47,119 @@ class _BacklogPageState extends State<BacklogPage> {
     setState(() {});
   }
 
-  void openDialog(BacklogMapRef bmRef) {}
+  openEditBacklogItemPage(int idx, String category) {
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => EditTaskPage(
+                  updateBacklog: _updateBacklog,
+                  id: idx,
+                  category: category,
+                )));
+  }
+
+  void _updateBacklog() {
+    setState(() {});
+  }
+
+  void deleteBacklogItem(int idx, String key) {
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to delete?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    PlannerService.sharedInstance.user.backlogMap[key]!
+                        .removeAt(idx);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: Text('yes, delete')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('cancel'))
+            ],
+          );
+        });
+  }
+
+  void openDialog(BacklogItem backlogItem, int idx, String key) {
+    if (backlogItem.scheduledDate == null) {
+      //item is not scheduled
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Container(
+                child: Text(
+                  backlogItem.description,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              content:
+                  //Card(
+                  //child: Container(
+                  //child: Column(
+                  Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Complete on/by " +
+                        DateFormat.yMMMd().format(backlogItem.completeBy!),
+                    style: const TextStyle(
+                      // fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(backlogItem.notes)
+                ],
+              ),
+              //),
+              //),
+              actions: <Widget>[
+                TextButton(
+                  child: new Text('edit'),
+                  onPressed: () {
+                    openEditBacklogItemPage(idx, key);
+                  },
+                ),
+                TextButton(
+                    onPressed: () {
+                      deleteBacklogItem(idx, key);
+                    },
+                    child: new Text('delete')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: new Text('close'))
+              ],
+            );
+          });
+    } else {
+      var tomorrow = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+      if (backlogItem.scheduledDate == tomorrow) {
+        //scheduled for tomorrow
+
+      } else {
+        //today
+
+      }
+    }
+  }
 
   List<Widget> buildBacklogListView() {
     //print("building backlog view");
@@ -77,8 +191,10 @@ class _BacklogPageState extends State<BacklogPage> {
             });
           },
           secondary: TextButton(
-            child: Text("view"),
-            onPressed: () {},
+            child: const Text("view"),
+            onPressed: () {
+              openDialog(value[i], i, key);
+            },
           ),
           // secondary: IconButton(
           //   icon: const Icon(Icons.visibility_outlined),
