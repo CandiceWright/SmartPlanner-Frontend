@@ -17,6 +17,7 @@ class User {
   CustomTheme theme;
   int themeId;
   var goals = [];
+  var accomplishedGoals = [];
   var backlogItems = <BacklogItem>[];
   //var backlogMap = <String, List<BacklogItem>>{};
   //var otherCategory = LifeCategory("Other", const Color(0xFFFF80b1));

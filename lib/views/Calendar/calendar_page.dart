@@ -164,6 +164,46 @@ class _CalendarPageState extends State<CalendarPage> {
         });
   }
 
+  void unscheduleEvent(int id) {
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to unschedule this backlog item?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            content: const Text(
+                "This will not delete the backlog item, it will just be removed from your calendar."),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    var backlogItemRef = PlannerService
+                        .sharedInstance.user.allEvents[id].backlogMapRef;
+                    PlannerService
+                        .sharedInstance
+                        .user
+                        .backlogMap[backlogItemRef!.categoryName]![
+                            backlogItemRef.arrayIdx]
+                        .scheduledDate = null;
+                    PlannerService.sharedInstance.user.allEvents.removeAt(id);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: const Text('yes, unschedule')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('cancel'))
+            ],
+          );
+        });
+  }
+
   void calendarTapped(CalendarTapDetails details) {
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
@@ -182,56 +222,108 @@ class _CalendarPageState extends State<CalendarPage> {
       // } else {
       //   _timeDetails = '$_startTimeText - $_endTimeText';
       // }
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Container(
-                child: new Text(
-                  '$_subjectText',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              content: Card(
-                child: Container(
-                  height: 80,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '$_dateText',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 20,
-                        ),
-                      ),
-                      Text(_timeDetails,
-                          style: TextStyle(
-                              fontWeight: FontWeight.w400, fontSize: 15)),
-                      Text(appointmentDetails.notes)
-                    ],
+
+      if (appointmentDetails.backlogMapRef != null) {
+        //is a backlog item
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Container(
+                  child: new Text(
+                    '$_subjectText',
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-              actions: <Widget>[
-                TextButton(
+                content: Card(
+                  child: Container(
+                    height: 80,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '$_dateText',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Text(_timeDetails,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15)),
+                        Text(appointmentDetails.notes)
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('unschedule'),
                     onPressed: () {
-                      openEditEventPage(appointmentDetails.id);
+                      unscheduleEvent(appointmentDetails.id);
+                      // Navigator.of(context).pop();
                     },
-                    child: new Text('edit')),
-                TextButton(
-                    onPressed: () {
-                      deleteEvent(appointmentDetails.id);
-                    },
-                    child: new Text('delete')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: new Text('close'))
-              ],
-            );
-          });
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('close'))
+                ],
+              );
+            });
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Container(
+                  child: new Text(
+                    '$_subjectText',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                content: Card(
+                  child: Container(
+                    height: 80,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '$_dateText',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 20,
+                          ),
+                        ),
+                        Text(_timeDetails,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 15)),
+                        Text(appointmentDetails.notes)
+                      ],
+                    ),
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        openEditEventPage(appointmentDetails.id);
+                      },
+                      child: new Text('edit')),
+                  TextButton(
+                      onPressed: () {
+                        deleteEvent(appointmentDetails.id);
+                      },
+                      child: new Text('delete')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: new Text('close'))
+                ],
+              );
+            });
+      }
     }
   }
 

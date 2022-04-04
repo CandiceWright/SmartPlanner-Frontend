@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 
 class ScheduleBacklogItemsPage extends StatefulWidget {
-  const ScheduleBacklogItemsPage({Key? key, required this.updateTomorrowEvents})
+  const ScheduleBacklogItemsPage(
+      {Key? key, required this.updateTomorrowEvents, required this.fromPage})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -21,6 +22,7 @@ class ScheduleBacklogItemsPage extends StatefulWidget {
   // always marked "final".
 
   final Function updateTomorrowEvents;
+  final String fromPage;
 
   @override
   State<ScheduleBacklogItemsPage> createState() =>
@@ -53,10 +55,10 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
       MaterialPageRoute(
         settings: const RouteSettings(name: "SetTime"),
         builder: (context) => SetBacklogItemTimePage(
-          backlogItem: backlogItem,
-          updateTomorrowEvents: widget.updateTomorrowEvents,
-          bmRef: bmRef,
-        ),
+            backlogItem: backlogItem,
+            updateEvents: widget.updateTomorrowEvents,
+            bmRef: bmRef,
+            fromPage: widget.fromPage),
       ),
     );
     // Navigator.push(

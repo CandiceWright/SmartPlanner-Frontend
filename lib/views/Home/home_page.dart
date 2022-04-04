@@ -313,28 +313,8 @@ class _HomePageState extends State<HomePage> {
       //body: Text('This is my default text'),
       body: Container(
         //child: Expanded(
-        child: Column(
+        child: ListView(
           children: [
-            Container(
-              child: Column(
-                children: [
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: const Text(
-                      "Today...",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                  ),
-                  Container(
-                    child: Column(
-                      children: todayTasksView,
-                    ),
-                  ),
-                ],
-              ),
-              margin: EdgeInsets.all(15),
-            ),
             Container(
               child: Column(
                 children: [

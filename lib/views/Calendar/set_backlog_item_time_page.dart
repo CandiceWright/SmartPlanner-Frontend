@@ -16,8 +16,9 @@ class SetBacklogItemTimePage extends StatefulWidget {
   const SetBacklogItemTimePage(
       {Key? key,
       required this.backlogItem,
-      required this.updateTomorrowEvents,
-      required this.bmRef})
+      required this.updateEvents,
+      required this.bmRef,
+      required this.fromPage})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -29,8 +30,9 @@ class SetBacklogItemTimePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
   final BacklogItem backlogItem;
-  final Function updateTomorrowEvents;
+  final Function updateEvents;
   final BacklogMapRef bmRef;
+  final String fromPage;
 
   @override
   State<SetBacklogItemTimePage> createState() => _SetBacklogItemTimePageState();
@@ -53,31 +55,55 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     endTimeController.addListener(setDoneBtnState);
   }
 
-  void _openNewCalendarItemPage() {
+  void _saveNewCalendarItem() {
     //this function needs to change to create new goal
-    DateTime start = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day + 1,
-        selectedStartTime.hour,
-        selectedStartTime.minute);
-    DateTime end = DateTime(DateTime.now().year, DateTime.now().month,
-        DateTime.now().day + 1, selectedEndTime.hour, selectedEndTime.minute);
+    DateTime startDate;
+    DateTime endDate;
+    if (widget.fromPage == "tomorrow") {
+      startDate = DateTime(
+          DateTime.now().year,
+          DateTime.now().month,
+          DateTime.now().day + 1,
+          selectedStartTime.hour,
+          selectedStartTime.minute);
+      endDate = DateTime(DateTime.now().year, DateTime.now().month,
+          DateTime.now().day + 1, selectedEndTime.hour, selectedEndTime.minute);
+      PlannerService
+              .sharedInstance
+              .user
+              .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+              .scheduledDate =
+          DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day + 1);
+    } else {
+      startDate = DateTime(DateTime.now().year, DateTime.now().month,
+          DateTime.now().day, selectedStartTime.hour, selectedStartTime.minute);
+      endDate = DateTime(DateTime.now().year, DateTime.now().month,
+          DateTime.now().day, selectedEndTime.hour, selectedEndTime.minute);
+      PlannerService
+              .sharedInstance
+              .user
+              .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+              .scheduledDate =
+          DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    }
+
     var eventTitle = widget.backlogItem.description;
     var eventNotes = widget.backlogItem.notes;
     var category = widget.backlogItem.category;
     var eventLocation = widget.backlogItem.location;
-    PlannerService
-        .sharedInstance
-        .user
-        .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-        .scheduledDate = start;
+    // PlannerService
+    //     .sharedInstance
+    //     .user
+    //     .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+    //     .scheduledDate = startDate;
     var newEvent = Event(
         id: PlannerService.sharedInstance.user.allEvents.length,
         eventName: eventTitle,
         type: "backlog",
-        start: start,
-        end: end,
+        start: startDate,
+        end: endDate,
         background: widget.backlogItem.category.color,
         isAllDay: false,
         notes: eventNotes,
@@ -86,10 +112,21 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         backlogMapRef: widget.bmRef);
 
     PlannerService.sharedInstance.user.allEvents.add(newEvent);
-    widget.updateTomorrowEvents();
-    Navigator.of(context).popUntil((route) {
-      return route.settings.name == 'TomorrowPage';
-    });
+    PlannerService
+        .sharedInstance
+        .user
+        .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+        .calendarItemRef = newEvent.id;
+    widget.updateEvents();
+    if (widget.fromPage == "tomorrow") {
+      Navigator.of(context).popUntil((route) {
+        return route.settings.name == 'TomorrowPage';
+      });
+    } else {
+      Navigator.of(context).popUntil((route) {
+        return route.settings.name == 'navigaionPage';
+      });
+    }
 
     // Navigator.of(context).push(
     //   MaterialPageRoute(
@@ -202,8 +239,8 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         centerTitle: true,
         actions: [
           TextButton(
-            onPressed: doneBtnDisabled ? null : _openNewCalendarItemPage,
-            child: const Text("Next"),
+            onPressed: doneBtnDisabled ? null : _saveNewCalendarItem,
+            child: const Text("Ok"),
           ),
         ],
         iconTheme: IconThemeData(
@@ -271,8 +308,11 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
               child: SfCalendar(
                 view: CalendarView.day,
                 //onTap: calendarTapped,
-                initialDisplayDate: DateTime(DateTime.now().year,
-                    DateTime.now().month, DateTime.now().day + 1),
+                initialDisplayDate: widget.fromPage == "tomorrow"
+                    ? DateTime(DateTime.now().year, DateTime.now().month,
+                        DateTime.now().day + 1)
+                    : DateTime(DateTime.now().year, DateTime.now().month,
+                        DateTime.now().day),
                 dataSource: EventDataSource(
                     PlannerService.sharedInstance.user.allEvents),
               ),

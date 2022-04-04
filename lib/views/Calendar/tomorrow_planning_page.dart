@@ -136,7 +136,39 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
         });
   }
 
+  void deleteEvent(int idx) {
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to delete?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    PlannerService.sharedInstance.user.allEvents.removeAt(idx);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  child: const Text('yes, delete')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('cancel'))
+            ],
+          );
+        });
+  }
+
   void calendarTapped(CalendarTapDetails details) {
+    print("printing appoinment id for tomorrow calendar");
+    print(details.appointments);
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
       final Event appointmentDetails = details.appointments![0];
@@ -243,7 +275,7 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                       child: const Text('edit')),
                   TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
+                        deleteEvent(appointmentDetails.id);
                       },
                       child: const Text('delete')),
                   TextButton(
@@ -269,10 +301,11 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                   children: [
                     ElevatedButton(
                         onPressed: startPlanningFromBacklog,
-                        child: Text("Schedule item from my life's backlog")),
+                        child:
+                            const Text("Schedule item from my life's backlog")),
                     ElevatedButton(
                         onPressed: openNewEventPage,
-                        child: Text("Create new task/event")),
+                        child: const Text("Create new task/event")),
                   ]),
               actions: <Widget>[]);
         });

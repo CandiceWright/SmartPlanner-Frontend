@@ -94,7 +94,46 @@ class _BacklogPageState extends State<BacklogPage> {
         });
   }
 
-  void openDialog(BacklogItem backlogItem, int idx, String key) {
+  void unscheduleBacklogItem(int idx, String key) {
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to unschedule this backlog item?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            content: const Text(
+                "This will not delete the backlog item, it will just be removed from your calendar."),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('yes, unschedule'),
+                onPressed: () {
+                  PlannerService.sharedInstance.user.backlogMap[key]![idx]
+                      .scheduledDate = null;
+                  int calendarItemRef = PlannerService.sharedInstance.user
+                      .backlogMap[key]![idx].calendarItemRef!;
+                  //remove this even from the calendar
+                  PlannerService.sharedInstance.user.allEvents
+                      .removeAt(calendarItemRef);
+                  setState(() {});
+                  Navigator.pop(context);
+                },
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('cancel'))
+            ],
+          );
+        });
+  }
+
+  void openViewDialog(BacklogItem backlogItem, int idx, String key) {
     if (backlogItem.scheduledDate == null) {
       //item is not scheduled
       showDialog(
@@ -149,15 +188,60 @@ class _BacklogPageState extends State<BacklogPage> {
             );
           });
     } else {
-      var tomorrow = DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
-      if (backlogItem.scheduledDate == tomorrow) {
-        //scheduled for tomorrow
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Container(
+                child: Text(
+                  backlogItem.description,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              content:
+                  //Card(
+                  //child: Container(
+                  //child: Column(
+                  Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Complete on/by " +
+                        DateFormat.yMMMd().format(backlogItem.completeBy!),
+                    style: const TextStyle(
+                      // fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(backlogItem.notes)
+                ],
+              ),
+              //),
+              //),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('unschedule'),
+                  onPressed: () {
+                    unscheduleBacklogItem(idx, key);
+                  },
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('close'))
+              ],
+            );
+          });
+      // var tomorrow = DateTime(
+      //     DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
+      // if (backlogItem.scheduledDate == tomorrow) {
+      //   //scheduled for tomorrow
 
-      } else {
-        //today
+      // } else { //today
 
-      }
+      // }
     }
   }
 
@@ -171,8 +255,7 @@ class _BacklogPageState extends State<BacklogPage> {
     PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
       List<Widget> unscheduledExpansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
-        //if (value[i].scheduledDate == null) {
-        Widget child = CheckboxListTile(
+        Widget child = ListTile(
           title: Text(
             value[i].description,
             // style: const TextStyle(
@@ -180,22 +263,28 @@ class _BacklogPageState extends State<BacklogPage> {
           ),
           subtitle: Text("Complete on/by " +
               DateFormat.yMMMd().format(value[i].completeBy!)),
-          value:
-              PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
-          onChanged: (bool? value) {
-            print(value);
-            setState(() {
-              PlannerService
-                  .sharedInstance.user.backlogMap[key]![i].isComplete = value;
-              //_value = value!;
-            });
-          },
-          secondary: TextButton(
-            child: const Text("view"),
-            onPressed: () {
-              openDialog(value[i], i, key);
+          leading: Checkbox(
+            value: PlannerService
+                .sharedInstance.user.backlogMap[key]![i].isComplete,
+            shape: const CircleBorder(),
+            onChanged: (bool? value) {
+              print(value);
+              setState(() {
+                PlannerService
+                    .sharedInstance.user.backlogMap[key]![i].isComplete = value;
+                //_value = value!;
+              });
             },
           ),
+          onTap: () {
+            openViewDialog(value[i], i, key);
+          },
+          // secondary: TextButton(
+          //   child: const Text("view"),
+          //   onPressed: () {
+          //     openViewDialog(value[i], i, key);
+          //   },
+          // ),
           // secondary: IconButton(
           //   icon: const Icon(Icons.visibility_outlined),
           //   tooltip: 'View this backlog item',
@@ -203,14 +292,54 @@ class _BacklogPageState extends State<BacklogPage> {
           //     setState(() {});
           //   },
           // ),
-          controlAffinity: ListTileControlAffinity.leading,
         );
+        // Widget child = CheckboxListTile(
+        //   title: Text(
+        //     value[i].description,
+        //     // style: const TextStyle(
+        //     //     color: Colors.black, fontWeight: FontWeight.bold),
+        //   ),
+        //   subtitle: Text("Complete on/by " +
+        //       DateFormat.yMMMd().format(value[i].completeBy!)),
+        //   value:
+        //       PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
+        //   shape: const CircleBorder(),
+        //   onChanged: (bool? value) {
+        //     print(value);
+        //     setState(() {
+        //       PlannerService
+        //           .sharedInstance.user.backlogMap[key]![i].isComplete = value;
+        //       //_value = value!;
+        //     });
+        //   },
+        //   secondary: TextButton(
+        //     child: const Text("view"),
+        //     onPressed: () {
+        //       openViewDialog(value[i], i, key);
+        //     },
+        //   ),
+        //   // secondary: IconButton(
+        //   //   icon: const Icon(Icons.visibility_outlined),
+        //   //   tooltip: 'View this backlog item',
+        //   //   onPressed: () {
+        //   //     setState(() {});
+        //   //   },
+        //   // ),
+        //   controlAffinity: ListTileControlAffinity.leading,
+        // );
         if (value[i].scheduledDate == null) {
           unscheduledExpansionTileChildren.add(child);
         }
         //}
         else {
-          if (value[i].scheduledDate == DateTime.now()) {
+          print("printing scheduled dates");
+          print(value[i].scheduledDate);
+          var test = DateTime(
+              DateTime.now().year, DateTime.now().month, DateTime.now().day);
+          print(test);
+          if (value[i].scheduledDate ==
+              DateTime(DateTime.now().year, DateTime.now().month,
+                  DateTime.now().day)) {
             todayItems.add(child);
           } else {
             tomorrowItems.add(child);
@@ -278,83 +407,6 @@ class _BacklogPageState extends State<BacklogPage> {
       ),
       body: Column(
         children: [
-          // SingleChildScrollView(
-          //   child: Card(
-          //       child: Container(
-          //         child: Column(
-          //           children: [
-          //             CheckboxListTile(
-          //               title: Text("Test task 1"),
-          //               value: false,
-          //               onChanged: (bool? value) {
-          //                 print(value);
-          //                 setState(() {
-          //                   _value = value!;
-          //                 });
-          //               },
-          //               secondary: IconButton(
-          //                 icon: const Icon(Icons.visibility_outlined),
-          //                 tooltip: 'View this backlog item',
-          //                 onPressed: () {
-          //                   setState(() {});
-          //                 },
-          //               ),
-          //               controlAffinity: ListTileControlAffinity.leading,
-          //             ),
-          //             CheckboxListTile(
-          //               title: Text("Test task 1"),
-          //               value: false,
-          //               onChanged: (bool? value) {
-          //                 print(value);
-          //                 setState(() {
-          //                   _value = value!;
-          //                 });
-          //               },
-          //               secondary: IconButton(
-          //                 icon: const Icon(Icons.visibility_outlined),
-          //                 tooltip: 'View this backlog item',
-          //                 onPressed: () {
-          //                   setState(() {});
-          //                 },
-          //               ),
-          //               controlAffinity: ListTileControlAffinity.leading,
-          //             ),
-          //             CheckboxListTile(
-          //               title: Text("Test task 1"),
-          //               value: false,
-          //               onChanged: (bool? value) {
-          //                 print(value);
-          //                 setState(() {
-          //                   _value = value!;
-          //                 });
-          //               },
-          //               secondary: IconButton(
-          //                 icon: const Icon(Icons.visibility_outlined),
-          //                 tooltip: 'View this backlog item',
-          //                 onPressed: () {
-          //                   setState(() {});
-          //                 },
-          //               ),
-          //               controlAffinity: ListTileControlAffinity.leading,
-          //             )
-          //           ],
-          //         ),
-          //       ),
-          //       color: Colors.pink.shade50,
-          //       // margin: EdgeInsets.all(20),
-          //       margin:
-          //           EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
-          //       elevation: 5,
-          //       shape: RoundedRectangleBorder(
-          //         borderRadius: BorderRadius.circular(10.0),
-          //       )),
-          // ),
-          // const Divider(
-          //   thickness: 0.5,
-          //   indent: 20,
-          //   endIndent: 0,
-          //   color: Colors.grey,
-          // ),
           Expanded(
             child: ListView(
               children: backlogListView,
@@ -362,55 +414,7 @@ class _BacklogPageState extends State<BacklogPage> {
           )
         ],
       ),
-      // body: Column(
-      //   children: [
-      //     Card(
-      //         child: Container(
-      //           child: Column(
-      //             children: [
-      //               CheckboxListTile(
-      //                 title: Text("Test task 1"),
-      //                 value: false,
-      //                 onChanged: (bool? value) {
-      //                   print(value);
-      //                   setState(() {
-      //                     _value = value!;
-      //                   });
-      //                 },
-      //                 secondary: IconButton(
-      //                   icon: const Icon(Icons.visibility_outlined),
-      //                   tooltip: 'View this backlog item',
-      //                   onPressed: () {
-      //                     setState(() {});
-      //                   },
-      //                 ),
-      //                 controlAffinity: ListTileControlAffinity.leading,
-      //               )
-      //             ],
-      //           ),
-      //         ),
-      //         color: Colors.pink.shade50,
-      //         // margin: EdgeInsets.all(20),
-      //         margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
-      //         elevation: 5,
-      //         shape: RoundedRectangleBorder(
-      //           borderRadius: BorderRadius.circular(10.0),
-      //         )),
-      //     const Divider(
-      //       thickness: 0.5,
-      //       indent: 20,
-      //       endIndent: 0,
-      //       color: Colors.grey,
-      //     ),
-      //     Expanded(
-      //       child: ListView(
-      //         children: backlogListView,
-      //       ),
-      //     )
-      //   ],
-      // ),
-      // margin: EdgeInsets.all(15),
-      // ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: _openNewBacklogItemPage,
         tooltip: 'Create new task.',

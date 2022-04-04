@@ -17,8 +17,16 @@ class _LoginPageState extends State<LoginPage> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   var questionIndex = 0;
   void login() {
-    Navigator.push(
-        context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return const NavigationWrapper();
+      },
+      settings: const RouteSettings(
+        name: 'navigaionPage',
+      ),
+    ));
+    // Navigator.push(
+    //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
   }
 
   @override

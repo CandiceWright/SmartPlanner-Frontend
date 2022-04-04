@@ -76,6 +76,11 @@ class _EditGoalPageState extends State<EditGoalPage> {
         currChosenCategory;
     PlannerService.sharedInstance.user.goals[widget.goalIdx].date =
         selectedDate;
+    PlannerService.sharedInstance.user.goals.sort((goal1, goal2) {
+      DateTime goal1Date = goal1.date;
+      DateTime goal2Date = goal2.date;
+      return goal1Date.compareTo(goal2Date);
+    });
     widget.updateGoal();
     _backToGoalsPage();
   }

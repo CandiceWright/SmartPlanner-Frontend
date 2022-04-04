@@ -9,6 +9,7 @@ class BacklogItem {
   LifeCategory category;
   String location;
   String notes;
+  int? calendarItemRef;
 
   BacklogItem(
       {required this.description,

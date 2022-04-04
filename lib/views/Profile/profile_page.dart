@@ -8,6 +8,7 @@ import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key, required this.updateEvents}) : super(key: key);
@@ -36,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Color pickerColor = Color(0xff443a49);
   Color editPickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -311,6 +313,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void deleteCategory(int idx) {}
 
+  Future pickImage() async {
+    await _picker.pickImage(source: ImageSource.gallery);
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -333,10 +339,15 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Container(
           child: ListView(
             children: [
-              Image.asset(
-                PlannerService.sharedInstance.user.profileImage,
-                height: 80,
-                width: 80,
+              GestureDetector(
+                onTap: () {
+                  pickImage();
+                },
+                child: Image.asset(
+                  PlannerService.sharedInstance.user.profileImage,
+                  height: 80,
+                  width: 80,
+                ),
               ),
               Column(
                 children: [
