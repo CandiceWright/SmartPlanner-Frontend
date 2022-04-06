@@ -5,11 +5,14 @@ import 'package:practice_planner/models/backlog_item.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'calendar_page.dart';
 
 class NewEventPage extends StatefulWidget {
   const NewEventPage(
@@ -176,6 +179,14 @@ class _NewGoalPageState extends State<NewEventPage> {
   }
 
   void createEvent() {
+    final List<Event> events = <Event>[];
+    if (CalendarPage.selectedEvent != null) {
+      CalendarPage.events.appointments!.removeAt(CalendarPage
+          .events.appointments!
+          .indexOf(CalendarPage.selectedEvent));
+      CalendarPage.events.notifyListeners(CalendarDataSourceAction.remove,
+          <Event>[]..add(CalendarPage.selectedEvent!));
+    }
     var eventTitle = descriptionTxtController.text;
     var eventNotes = notesTxtController.text;
     //var category = categoryTxtController.text;
@@ -188,40 +199,33 @@ class _NewGoalPageState extends State<NewEventPage> {
         selectedStartTime.minute);
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
-    // var eventType = "";
-    // //var backlogItemRef = null;
-    // if (widget.fromPage == "schedule_backlog_item") {
-    //   eventType = "backlog";
-    //   PlannerService
-    //       .sharedInstance
-    //       .user
-    //       .backlogMap[widget.backlogMapRef!.categoryName]![
-    //           widget.backlogMapRef!.arrayIdx]
-    //       .scheduledDate = startDateTime;
-    // } else {
-    //   eventType = "calendar";
-    // }
-    var newEvent = Event(
-        id: PlannerService.sharedInstance.user.allEvents.length,
-        eventName: eventTitle,
-        type: "calendar",
-        start: startDateTime,
-        end: endDateTime,
-        //background: const Color(0xFFFF80b1),
-        background: currChosenCategory.color,
-        isAllDay: false,
-        notes: eventNotes,
-        category: currChosenCategory,
-        location: eventLocation,
-        backlogMapRef: widget.backlogMapRef);
 
-    PlannerService.sharedInstance.user.allEvents.add(newEvent);
-    widget.updateEvents();
-    //if (widget.fromPage == "schedule_backlog_item") {
-    // _backToTomorrowPage();
-    //} else {
+    int id = PlannerService.sharedInstance.user.allEvents.length;
+    var newEvent = Event(
+      id: id,
+      eventName: eventTitle,
+      type: "calendar",
+      start: startDateTime,
+      end: endDateTime,
+      //background: const Color(0xFFFF80b1),
+      background: currChosenCategory.color,
+      isAllDay: false,
+      notes: eventNotes,
+      category: currChosenCategory,
+      location: eventLocation,
+    );
+
+    events.add(newEvent);
+
+    CalendarPage.events.appointments!.add(events[0]);
+
+    CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
+    PlannerService.sharedInstance.user.allEvents =
+        CalendarPage.events.appointments! as List<Event>;
+
+    CalendarPage.selectedEvent = null;
+
     _backToEventsPage();
-    //}
   }
 
   void setDoneBtnState() {

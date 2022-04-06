@@ -5,6 +5,7 @@ import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'calendar_page.dart';
 import 'monthly_calendar_page.dart';
 import 'edit_event_page.dart';
 import '../../models/event.dart';
@@ -84,8 +85,9 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
           onTap: calendarTapped,
           initialDisplayDate: DateTime(DateTime.now().year,
               DateTime.now().month, DateTime.now().day + 1),
-          dataSource:
-              EventDataSource(PlannerService.sharedInstance.user.allEvents),
+          dataSource: CalendarPage.events,
+
+          //EventDataSource(PlannerService.sharedInstance.user.allEvents),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -112,20 +114,32 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                 "This will not delete the backlog item, it will just be removed from your calendar."),
             actions: <Widget>[
               TextButton(
-                  onPressed: () {
-                    var backlogItemRef = PlannerService
-                        .sharedInstance.user.allEvents[id].backlogMapRef;
+                child: const Text('yes, unschedule'),
+                onPressed: () {
+                  if (CalendarPage.selectedEvent != null) {
+                    CalendarPage.events.appointments!.removeAt(CalendarPage
+                        .events.appointments!
+                        .indexOf(CalendarPage.selectedEvent));
+                    CalendarPage.events.notifyListeners(
+                        CalendarDataSourceAction.remove,
+                        <Event>[]..add(CalendarPage.selectedEvent!));
+                    PlannerService.sharedInstance.user.allEvents =
+                        CalendarPage.events.appointments! as List<Event>;
+                    var backlogItemRef =
+                        CalendarPage.selectedEvent!.backlogMapRef;
+
                     PlannerService
                         .sharedInstance
                         .user
                         .backlogMap[backlogItemRef!.categoryName]![
                             backlogItemRef.arrayIdx]
                         .scheduledDate = null;
-                    PlannerService.sharedInstance.user.allEvents.removeAt(id);
+                    CalendarPage.selectedEvent = null;
                     setState(() {});
                     Navigator.pop(context);
-                  },
-                  child: const Text('yes, unschedule')),
+                  }
+                },
+              ),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -150,12 +164,23 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
             ),
             actions: <Widget>[
               TextButton(
-                  onPressed: () {
-                    PlannerService.sharedInstance.user.allEvents.removeAt(idx);
+                child: const Text('yes, delete'),
+                onPressed: () {
+                  if (CalendarPage.selectedEvent != null) {
+                    CalendarPage.events.appointments!.removeAt(CalendarPage
+                        .events.appointments!
+                        .indexOf(CalendarPage.selectedEvent));
+                    CalendarPage.events.notifyListeners(
+                        CalendarDataSourceAction.remove,
+                        <Event>[]..add(CalendarPage.selectedEvent!));
+                    PlannerService.sharedInstance.user.allEvents =
+                        CalendarPage.events.appointments! as List<Event>;
+                    CalendarPage.selectedEvent = null;
                     setState(() {});
                     Navigator.pop(context);
-                  },
-                  child: const Text('yes, delete')),
+                  }
+                },
+              ),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -181,6 +206,8 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
       var _endTimeText =
           DateFormat('hh:mm a').format(appointmentDetails.end).toString();
       var _timeDetails = '$_startTimeText - $_endTimeText';
+      CalendarPage.selectedEvent = appointmentDetails;
+
       // if (appointmentDetails.isAllDay) {
       //   _timeDetails = 'All day';
       // } else {

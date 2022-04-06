@@ -11,7 +11,7 @@ class PlannerService {
   static var sharedInstance = PlannerService();
   var user = User(
       name: "",
-      email: "",
+      email: "candicew@gmail.com",
       username: "Candicew",
       password: "hi",
       profileImage: "assets/images/profile_pic_icon.png",

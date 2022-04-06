@@ -1,3 +1,6 @@
+//library event_calendar;
+//part 'edit_event_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
@@ -14,6 +17,8 @@ import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
 
+//part 'edit_event_page.dart';
+
 class CalendarPage extends StatefulWidget {
   const CalendarPage({Key? key}) : super(key: key);
 
@@ -28,15 +33,23 @@ class CalendarPage extends StatefulWidget {
 
   @override
   State<CalendarPage> createState() => _CalendarPageState();
+  static Event? selectedEvent;
+  static late EventDataSource events;
+  //EventDataSource(PlannerService.sharedInstance.user.allEvents);
 }
 
 class _CalendarPageState extends State<CalendarPage> {
+  // static Event? _selectedAppointment;
+  // static late EventDataSource _events;
+  //EventDataSource(PlannerService.sharedInstance.user.allEvents);
   //bool _value = false;
   //var backlog = PlannerService.sharedInstance.user.backlog;
 
   @override
   void initState() {
     super.initState();
+    CalendarPage.events =
+        EventDataSource(PlannerService.sharedInstance.user.allEvents);
     //print(PlannerService.sharedInstance.user.backlog);
   }
 
@@ -85,8 +98,12 @@ class _CalendarPageState extends State<CalendarPage> {
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) =>
-                EditEventPage(updateEvents: _updateEvents, id: id)));
+            builder: (context) => EditEventPage(
+                  updateEvents: _updateEvents,
+                  id: id,
+                  // dataSource: _events,
+                  // selectedEvent: _selectedAppointment,
+                )));
   }
 
   void _goToMonthlyView() {
@@ -113,9 +130,23 @@ class _CalendarPageState extends State<CalendarPage> {
             actions: <Widget>[
               TextButton(
                   onPressed: () {
-                    PlannerService.sharedInstance.user.allEvents.removeAt(idx);
-                    setState(() {});
-                    Navigator.pop(context);
+                    if (CalendarPage.selectedEvent != null) {
+                      CalendarPage.events.appointments!.removeAt(CalendarPage
+                          .events.appointments!
+                          .indexOf(CalendarPage.selectedEvent));
+                      CalendarPage.events.notifyListeners(
+                          CalendarDataSourceAction.remove,
+                          <Event>[]..add(CalendarPage.selectedEvent!));
+                      PlannerService.sharedInstance.user.allEvents =
+                          CalendarPage.events.appointments! as List<Event>;
+                      // PlannerService.sharedInstance.user.allEvents
+                      //     .removeAt(idx);
+                      // PlannerService.sharedInstance.user.allEventsMap
+                      //     .remove(idx);
+                      CalendarPage.selectedEvent = null;
+                      setState(() {});
+                      Navigator.pop(context);
+                    }
                   },
                   child: Text('yes, delete')),
               TextButton(
@@ -137,10 +168,6 @@ class _CalendarPageState extends State<CalendarPage> {
             updateTomorrowEvents: _updateEvents, fromPage: "today"),
       ),
     );
-    // Navigator.push(
-    //     context,
-    //     CupertinoPageRoute(
-    //         builder: (context) => const ScheduleBacklogItemsPage()));
   }
 
   void _openNewCalendarItemDialog() {
@@ -181,17 +208,30 @@ class _CalendarPageState extends State<CalendarPage> {
             actions: <Widget>[
               TextButton(
                   onPressed: () {
-                    var backlogItemRef = PlannerService
-                        .sharedInstance.user.allEvents[id].backlogMapRef;
-                    PlannerService
-                        .sharedInstance
-                        .user
-                        .backlogMap[backlogItemRef!.categoryName]![
-                            backlogItemRef.arrayIdx]
-                        .scheduledDate = null;
-                    PlannerService.sharedInstance.user.allEvents.removeAt(id);
-                    setState(() {});
-                    Navigator.pop(context);
+                    //delete event & unschedule backlog item
+                    if (CalendarPage.selectedEvent != null) {
+                      CalendarPage.events.appointments!.removeAt(CalendarPage
+                          .events.appointments!
+                          .indexOf(CalendarPage.selectedEvent));
+                      CalendarPage.events.notifyListeners(
+                          CalendarDataSourceAction.remove,
+                          <Event>[]..add(CalendarPage.selectedEvent!));
+                      PlannerService.sharedInstance.user.allEvents =
+                          CalendarPage.events.appointments! as List<Event>;
+
+                      var backlogItemRef =
+                          CalendarPage.selectedEvent!.backlogMapRef;
+
+                      PlannerService
+                          .sharedInstance
+                          .user
+                          .backlogMap[backlogItemRef!.categoryName]![
+                              backlogItemRef.arrayIdx]
+                          .scheduledDate = null;
+                      CalendarPage.selectedEvent = null;
+                      setState(() {});
+                      Navigator.pop(context);
+                    }
                   },
                   child: const Text('yes, unschedule')),
               TextButton(
@@ -217,11 +257,7 @@ class _CalendarPageState extends State<CalendarPage> {
       var _endTimeText =
           DateFormat('hh:mm a').format(appointmentDetails.end).toString();
       var _timeDetails = '$_startTimeText - $_endTimeText';
-      // if (appointmentDetails.isAllDay) {
-      //   _timeDetails = 'All day';
-      // } else {
-      //   _timeDetails = '$_startTimeText - $_endTimeText';
-      // }
+      CalendarPage.selectedEvent = appointmentDetails;
 
       if (appointmentDetails.backlogMapRef != null) {
         //is a backlog item
@@ -395,8 +431,8 @@ class _CalendarPageState extends State<CalendarPage> {
           view: CalendarView.day,
           onTap: calendarTapped,
           initialDisplayDate: DateTime.now(),
-          dataSource:
-              EventDataSource(PlannerService.sharedInstance.user.allEvents),
+          dataSource: CalendarPage.events,
+          //EventDataSource(PlannerService.sharedInstance.user.allEvents),
         ),
       ),
 

@@ -6,6 +6,7 @@ import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'calendar_page.dart';
 import 'monthly_calendar_page.dart';
 import 'edit_event_page.dart';
 import '../../models/event.dart';
@@ -56,7 +57,8 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
   }
 
   void _saveNewCalendarItem() {
-    //this function needs to change to create new goal
+    final List<Event> events = <Event>[];
+
     DateTime startDate;
     DateTime endDate;
     if (widget.fromPage == "tomorrow") {
@@ -93,11 +95,6 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     var eventNotes = widget.backlogItem.notes;
     var category = widget.backlogItem.category;
     var eventLocation = widget.backlogItem.location;
-    // PlannerService
-    //     .sharedInstance
-    //     .user
-    //     .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-    //     .scheduledDate = startDate;
     var newEvent = Event(
         id: PlannerService.sharedInstance.user.allEvents.length,
         eventName: eventTitle,
@@ -111,12 +108,21 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         location: eventLocation,
         backlogMapRef: widget.bmRef);
 
-    PlannerService.sharedInstance.user.allEvents.add(newEvent);
+    //PlannerService.sharedInstance.user.allEvents.add(newEvent);
+    events.add(newEvent);
+
+    CalendarPage.events.appointments!.add(events[0]);
+
+    CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
+    PlannerService.sharedInstance.user.allEvents =
+        CalendarPage.events.appointments! as List<Event>;
+
+    CalendarPage.selectedEvent = null;
     PlannerService
         .sharedInstance
         .user
         .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-        .calendarItemRef = newEvent.id;
+        .calendarItemRef = newEvent.id; //I am going to need to update
     widget.updateEvents();
     if (widget.fromPage == "tomorrow") {
       Navigator.of(context).popUntil((route) {

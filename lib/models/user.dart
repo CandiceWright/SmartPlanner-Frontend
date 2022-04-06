@@ -26,6 +26,7 @@ class User {
   var habits = <Habit>[];
   bool didStartTomorrowPlanning;
   var allEvents = <Event>[];
+  var allEventsMap = <int, Event>{};
   var lifeCategories = <LifeCategory>[];
   Map<String, Color> LifeCategoriesColorMap = {
     "Other": const Color(0xFFFF80b1)
@@ -78,7 +79,7 @@ class User {
 
     buildBacklogMap();
     buildHabitList();
-    buildEventList();
+    //buildEventList();
   }
 
   void buildBacklogMap() {

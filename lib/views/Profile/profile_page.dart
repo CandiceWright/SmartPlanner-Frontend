@@ -28,10 +28,15 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  var nameTxtController = TextEditingController();
+  var categoryNameTxtController = TextEditingController();
+  var emailTxtConroller =
+      TextEditingController(text: PlannerService.sharedInstance.user.email);
+  var usernameTxtFieldController =
+      TextEditingController(text: PlannerService.sharedInstance.user.username);
   var editCategoryTxtController = TextEditingController();
   bool saveEditCategoryBtnDisabled = false;
-  bool doneBtnDisabled = true;
+  bool categoryDoneBtnDisabled = true;
+  bool accountDetailsDoneBtnDisabled = true;
   bool hasSelectedColor = false;
   // create some values
   Color pickerColor = Color(0xff443a49);
@@ -42,36 +47,65 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    nameTxtController.addListener(setDoneBtnState);
-    setDoneBtnState();
+    categoryNameTxtController.addListener(setCategoryDoneBtnState);
+    emailTxtConroller.addListener(setAccountUpdateBtnState);
+    usernameTxtFieldController.addListener(setAccountUpdateBtnState);
+    setCategoryDoneBtnState();
+    setAccountUpdateBtnState();
   }
 
   void createCategory() {
-    var category = LifeCategory(nameTxtController.text, pickerColor);
+    var category = LifeCategory(categoryNameTxtController.text, pickerColor);
     PlannerService.sharedInstance.user.lifeCategories.add(category);
     PlannerService.sharedInstance.user.backlogMap[category.name] = [];
     PlannerService.sharedInstance.user.LifeCategoriesColorMap[category.name] =
         pickerColor;
     setState(() {
-      nameTxtController.text = "";
+      categoryNameTxtController.text = "";
       hasSelectedColor = false;
     });
-    setDoneBtnState();
+    setCategoryDoneBtnState();
     Navigator.pop(context);
   }
 
-  void setDoneBtnState() {
-    print("I am in set done button state");
-    print(nameTxtController.text);
-    print(hasSelectedColor);
-    if (nameTxtController.text != "" && hasSelectedColor) {
+  void setAccountUpdateBtnState() {
+    print("printing email ttext");
+    print(emailTxtConroller.text);
+    if ((usernameTxtFieldController.text != "" ||
+            emailTxtConroller.text != "") &&
+        (usernameTxtFieldController.text !=
+                PlannerService.sharedInstance.user.username ||
+            emailTxtConroller.text !=
+                PlannerService.sharedInstance.user.email)) {
       setState(() {
-        print("button enabled");
-        doneBtnDisabled = false;
+        accountDetailsDoneBtnDisabled = false;
       });
     } else {
       setState(() {
-        doneBtnDisabled = true;
+        accountDetailsDoneBtnDisabled = true;
+      });
+    }
+  }
+
+  void saveAccountUpdates() {
+    PlannerService.sharedInstance.user.username =
+        usernameTxtFieldController.text;
+    PlannerService.sharedInstance.user.email = emailTxtConroller.text;
+    setAccountUpdateBtnState();
+  }
+
+  void setCategoryDoneBtnState() {
+    print("I am in set done button state");
+    print(categoryNameTxtController.text);
+    print(hasSelectedColor);
+    if (categoryNameTxtController.text != "" && hasSelectedColor) {
+      setState(() {
+        print("button enabled");
+        categoryDoneBtnDisabled = false;
+      });
+    } else {
+      setState(() {
+        categoryDoneBtnDisabled = true;
       });
     }
   }
@@ -83,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
       pickerColor = color;
       hasSelectedColor = true;
     });
-    setDoneBtnState();
+    setCategoryDoneBtnState();
   }
 
   Widget dialogContent(StateSetter setDialogState) {
@@ -95,17 +129,18 @@ class _ProfilePageState extends State<ProfilePage> {
           Padding(
             padding: EdgeInsets.only(bottom: 8),
             child: TextFormField(
-              controller: nameTxtController,
+              controller: categoryNameTxtController,
               onChanged: (text) {
                 setDialogState(() {
-                  if (nameTxtController.text != "" && hasSelectedColor) {
+                  if (categoryNameTxtController.text != "" &&
+                      hasSelectedColor) {
                     setState(() {
                       print("button enabled");
-                      doneBtnDisabled = false;
+                      categoryDoneBtnDisabled = false;
                     });
                   } else {
                     setState(() {
-                      doneBtnDisabled = true;
+                      categoryDoneBtnDisabled = true;
                     });
                   }
                 });
@@ -131,14 +166,14 @@ class _ProfilePageState extends State<ProfilePage> {
               setDialogState(() {
                 pickerColor = color;
                 hasSelectedColor = true;
-                if (nameTxtController.text != "" && hasSelectedColor) {
+                if (categoryNameTxtController.text != "" && hasSelectedColor) {
                   setState(() {
                     print("button enabled");
-                    doneBtnDisabled = false;
+                    categoryDoneBtnDisabled = false;
                   });
                 } else {
                   setState(() {
-                    doneBtnDisabled = true;
+                    categoryDoneBtnDisabled = true;
                   });
                 }
               });
@@ -164,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
               content: dialogContent(setDialogState),
               actions: <Widget>[
                 TextButton(
-                    onPressed: doneBtnDisabled ? null : createCategory,
+                    onPressed: categoryDoneBtnDisabled ? null : createCategory,
                     child: const Text('Create')),
                 TextButton(
                     onPressed: () {
@@ -198,11 +233,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             editCategory(idx);
                           },
                     child: const Text('Save')),
-                TextButton(
-                    onPressed: () {
-                      deleteCategory(idx);
-                    },
-                    child: const Text('Delete')),
+                // TextButton(
+                //     onPressed: () {
+                //       deleteCategory(idx);
+                //     },
+                //     child: const Text('Delete')),
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -436,7 +471,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     showEditCategoryDialog(index);
                                   },
                                   child: Card(
-                                    color: Colors.blue[index * 100],
+                                    //color: Colors.blue[index * 100],
                                     child: Flex(
                                         direction: Axis.horizontal,
                                         children: [
@@ -473,11 +508,78 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                     color: Colors.white,
-                    elevation: 5,
+                    //elevation: 5,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
+                  Card(
+                    child: Column(
+                      children: [
+                        Padding(
+                            padding: EdgeInsets.all(8),
+                            child: Text(
+                              "Account Details",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.center,
+                            )),
+                        Padding(
+                          padding: EdgeInsets.all(4),
+                          child: TextFormField(
+                            controller: usernameTxtFieldController,
+                            decoration: InputDecoration(
+                              hintText: "Username",
+                              icon: Icon(
+                                Icons.person,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            onTap: () {},
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(4),
+                          child: TextFormField(
+                            controller: emailTxtConroller,
+                            decoration: InputDecoration(
+                              hintText: "Email",
+                              icon: Icon(
+                                Icons.email,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            onTap: () {},
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        TextButton(
+                            onPressed: accountDetailsDoneBtnDisabled
+                                ? null
+                                : saveAccountUpdates,
+                            child: Text("Save")),
+                        TextButton(
+                            onPressed: () => {showAddCategoryDialog()},
+                            child: Text("Change Password")),
+                      ],
+                    ),
+                    color: Colors.white,
+                    //elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                  ),
+                  ElevatedButton(onPressed: () {}, child: Text("Log Out")),
                 ],
               )
             ],
@@ -487,7 +589,7 @@ class _ProfilePageState extends State<ProfilePage> {
         //color: Colors.pink.shade50,
         // margin: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
-        elevation: 5,
+        //elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),

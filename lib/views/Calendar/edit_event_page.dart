@@ -1,13 +1,24 @@
+//part of event_calendar;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/life_category.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'calendar_page.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
+//import 'package:calendar_page.dart';
 
 class EditEventPage extends StatefulWidget {
-  const EditEventPage({Key? key, required this.updateEvents, required this.id})
+  const EditEventPage(
+      {Key? key,
+      required this.updateEvents,
+      required this.id,
+      this.selectedEvent,
+      this.dataSource})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -20,6 +31,8 @@ class EditEventPage extends StatefulWidget {
   // always marked "final".
   final Function updateEvents;
   final int id;
+  final Event? selectedEvent;
+  final EventDataSource? dataSource;
 
   @override
   State<EditEventPage> createState() => _EditEventPageState();
@@ -27,42 +40,35 @@ class EditEventPage extends StatefulWidget {
 
 class _EditEventPageState extends State<EditEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late var selectedStartDate =
-      PlannerService.sharedInstance.user.allEvents[widget.id].start;
+
+  late var selectedStartDate = CalendarPage.selectedEvent!.start;
 
   late var selectedStartTime =
       TimeOfDay(hour: selectedStartDate.hour, minute: selectedStartDate.minute);
 
-  late var selectedEndDate =
-      PlannerService.sharedInstance.user.allEvents[widget.id].end;
+  late var selectedEndDate = CalendarPage.selectedEvent!.end;
 
   late var selectedEndTime =
       TimeOfDay(hour: selectedEndDate.hour, minute: selectedEndDate.minute);
 
-  late final startDateTxtController = TextEditingController(
-      text: DateFormat.yMMMd().format(
-          PlannerService.sharedInstance.user.allEvents[widget.id].start));
-  late final endDateTxtController = TextEditingController(
-      text: DateFormat.yMMMd()
-          .format(PlannerService.sharedInstance.user.allEvents[widget.id].end));
-  late final descriptionTxtController = TextEditingController(
-      text: PlannerService.sharedInstance.user.allEvents[widget.id].eventName);
-  late final notesTxtController = TextEditingController(
-      text: PlannerService.sharedInstance.user.allEvents[widget.id].notes);
-  //late final categoryTxtController = TextEditingController(
-  //text: PlannerService.sharedInstance.user.allEvents[widget.id].category);
+  late final startDateTxtController =
+      TextEditingController(text: DateFormat.yMMMd().format(selectedStartDate));
+  late final endDateTxtController =
+      TextEditingController(text: DateFormat.yMMMd().format(selectedEndDate));
+
+  late final descriptionTxtController =
+      TextEditingController(text: CalendarPage.selectedEvent!.eventName);
+  late final notesTxtController =
+      TextEditingController(text: CalendarPage.selectedEvent!.notes);
+
   late final startTimeController = TextEditingController(
-      text: formatDate(
-          PlannerService.sharedInstance.user.allEvents[widget.id].start,
-          [hh, ':', nn, " ", am]).toString());
+      text: formatDate(selectedStartDate, [hh, ':', nn, " ", am]).toString());
   late final endTimeController = TextEditingController(
-      text: formatDate(
-          PlannerService.sharedInstance.user.allEvents[widget.id].end,
-          [hh, ':', nn, " ", am]).toString());
-  late final locationTxController = TextEditingController(
-      text: PlannerService.sharedInstance.user.allEvents[widget.id].location);
+      text: formatDate(selectedEndDate, [hh, ':', nn, " ", am]).toString());
+  late final locationTxController =
+      TextEditingController(text: CalendarPage.selectedEvent!.location);
   bool doneBtnDisabled = false;
-  var currChosenCategory = PlannerService.sharedInstance.user.lifeCategories[0];
+  late LifeCategory currChosenCategory = CalendarPage.selectedEvent!.category;
 
   @override
   void initState() {
@@ -145,78 +151,51 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   void editEvent() {
-    PlannerService.sharedInstance.user.allEvents[widget.id].eventName =
-        descriptionTxtController.text;
-    PlannerService.sharedInstance.user.allEvents[widget.id].location =
-        locationTxController.text;
-    PlannerService.sharedInstance.user.allEvents[widget.id].notes =
-        notesTxtController.text;
-    PlannerService.sharedInstance.user.allEvents[widget.id].category =
-        currChosenCategory;
-    //PlannerService.sharedInstance.user.allEvents[widget.id].category =
-    //categoryTxtController.text;
+    final List<Event> events = <Event>[];
+    if (CalendarPage.selectedEvent != null) {
+      CalendarPage.events.appointments!.removeAt(CalendarPage
+          .events.appointments!
+          .indexOf(CalendarPage.selectedEvent));
+      CalendarPage.events.notifyListeners(CalendarDataSourceAction.remove,
+          <Event>[]..add(CalendarPage.selectedEvent!));
+    }
+    var eventTitle = descriptionTxtController.text;
+    var eventNotes = notesTxtController.text;
+    //var category = categoryTxtController.text;
+    var eventLocation = locationTxController.text;
     var startDateTime = DateTime(
         selectedStartDate.year,
         selectedStartDate.month,
         selectedStartDate.day,
         selectedStartTime.hour,
-        selectedStartTime.minute,
-        0);
-    print("printing start selected");
-    print(startDateTime);
+        selectedStartTime.minute);
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
-        selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute, 0);
-    print("printing end selected");
-    print(endDateTime);
-    PlannerService.sharedInstance.user.allEvents[widget.id].start =
-        startDateTime;
-    PlannerService.sharedInstance.user.allEvents[widget.id].end = endDateTime;
-    widget.updateEvents();
+        selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
 
-    //check if you need to update a corresponding backloog item
-    if (PlannerService.sharedInstance.user.allEvents[widget.id].backlogMapRef !=
-        null) {
-      PlannerService
-          .sharedInstance
-          .user
-          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.categoryName]![
-              PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.arrayIdx]
-          .category = currChosenCategory;
-      PlannerService
-          .sharedInstance
-          .user
-          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.categoryName]![
-              PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.arrayIdx]
-          .notes = notesTxtController.text;
-      PlannerService
-          .sharedInstance
-          .user
-          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.categoryName]![
-              PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.arrayIdx]
-          .location = locationTxController.text;
-      PlannerService
-          .sharedInstance
-          .user
-          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.categoryName]![
-              PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.arrayIdx]
-          .description = descriptionTxtController.text;
-      PlannerService
-          .sharedInstance
-          .user
-          .backlogMap[PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.categoryName]![
-              PlannerService.sharedInstance.user.allEvents[widget.id]
-                  .backlogMapRef!.arrayIdx]
-          .scheduledDate = startDateTime;
-    }
+    int id = PlannerService.sharedInstance.user.allEvents.length;
+    var newEvent = Event(
+      id: id,
+      eventName: eventTitle,
+      type: "calendar",
+      start: startDateTime,
+      end: endDateTime,
+      //background: const Color(0xFFFF80b1),
+      background: currChosenCategory.color,
+      isAllDay: false,
+      notes: eventNotes,
+      category: currChosenCategory,
+      location: eventLocation,
+    );
+
+    events.add(newEvent);
+
+    CalendarPage.events.appointments!.add(events[0]);
+
+    CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
+    PlannerService.sharedInstance.user.allEvents =
+        CalendarPage.events.appointments! as List<Event>;
+    CalendarPage.selectedEvent = null;
+
     _backToEventsPage();
   }
 
@@ -398,28 +377,6 @@ class _EditEventPageState extends State<EditEventPage> {
                         )
                       ],
                     ),
-
-                    // Container(
-                    //   child: TextFormField(
-                    //     controller: toDateTxtController,
-                    //     readOnly: true,
-                    //     decoration: const InputDecoration(
-                    //       hintText: "To",
-                    //       icon: Icon(
-                    //         Icons.calendar_today,
-                    //         color: Colors.pink,
-                    //       ),
-                    //     ),
-                    //     onTap: () => _selectToDate(context),
-                    //     validator: (String? value) {
-                    //       if (value == null || value.isEmpty) {
-                    //         return 'Please enter some text';
-                    //       }
-                    //       return null;
-                    //     },
-                    //   ),
-                    //   padding: EdgeInsets.all(20),
-                    // ),
                     Container(
                       child: TextFormField(
                         controller: locationTxController,
@@ -464,48 +421,15 @@ class _EditEventPageState extends State<EditEventPage> {
                           );
                         }),
 
-                        // onChanged: (String? newValue) {
                         onChanged: (LifeCategory? newValue) {
+                          // onChanged: (newValue) {
                           setState(() {
                             currChosenCategory = newValue!;
                           });
                         },
                       ),
-                      // child: TextFormField(
-                      //   controller: categoryTxtController,
-                      //   decoration: InputDecoration(
-                      //       hintText: "Category",
-                      //       icon: Icon(
-                      //         Icons.category_rounded,
-                      //         color: Theme.of(context).colorScheme.primary,
-                      //       )),
-                      //   validator: (String? value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please enter some text';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
                       padding: EdgeInsets.all(20),
                     ),
-                    // Container(
-                    //   child: TextFormField(
-                    //     controller: categoryTxtController,
-                    //     decoration: InputDecoration(
-                    //         hintText: "Category",
-                    //         icon: Icon(
-                    //           Icons.category_rounded,
-                    //           color: Theme.of(context).colorScheme.primary,
-                    //         )),
-                    //     validator: (String? value) {
-                    //       if (value == null || value.isEmpty) {
-                    //         return 'Please enter some text';
-                    //       }
-                    //       return null;
-                    //     },
-                    //   ),
-                    //   padding: EdgeInsets.all(20),
-                    // ),
                     Container(
                       child: TextFormField(
                         controller: notesTxtController,
