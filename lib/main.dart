@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
-import 'views/Login/login.dart';
+import 'views/Login/welcome_page.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import '/Themes/app_themes.dart';
 
@@ -101,7 +101,7 @@ class MyApp extends StatelessWidget {
             //           fontWeight: FontWeight.bold),
             //       elevation: 0),
             // ),
-            home: const LoginPage(),
+            home: const WelcomePage(),
           );
         });
   }
