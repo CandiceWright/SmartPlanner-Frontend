@@ -10,7 +10,7 @@
 		</data>
 		<key>flutter_assets/AssetManifest.json</key>
 		<data>
-		xdblImGdOdlJqUdn69vFO+FFC+g=
+		tqlmE1JMJZ0TiprHXT33H5v05EU=
 		</data>
 		<key>flutter_assets/FontManifest.json</key>
 		<data>
@@ -56,6 +56,10 @@
 		<data>
 		vZPMY7Xx7ozJCOO3eQIsK4D1IBU=
 		</data>
+		<key>flutter_assets/assets/images/planit_logo.png</key>
+		<data>
+		LD5PN6dsV6jsr1/EyWBOXmmyZXA=
+		</data>
 		<key>flutter_assets/assets/images/profile_pic_icon.png</key>
 		<data>
 		jCCMlwqqxvPI2v+eXZUigPNMb7c=
@@ -74,7 +78,7 @@
 		</data>
 		<key>flutter_assets/kernel_blob.bin</key>
 		<data>
-		q4BFdvd1FxJgzSAihA/DodXB5lE=
+		Bn5SXyQehPnmz364fTJq55hepxo=
 		</data>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>
 		<data>
@@ -95,11 +99,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			xdblImGdOdlJqUdn69vFO+FFC+g=
+			tqlmE1JMJZ0TiprHXT33H5v05EU=
 			</data>
 			<key>hash2</key>
 			<data>
-			gG91d7xP4VdBWYV68m9QKlKddFEnUCm/8GDtuaqYcV4=
+			N+MY0OoybaPTl3r4+POv0xyO5ZyGmxoPq8sIflr7TRs=
 			</data>
 		</dict>
 		<key>flutter_assets/FontManifest.json</key>
@@ -212,6 +216,17 @@
 			CzFzzezDTOUafm6TQQbU8KcDgtAufFks3FxdjKyNBUQ=
 			</data>
 		</dict>
+		<key>flutter_assets/assets/images/planit_logo.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			LD5PN6dsV6jsr1/EyWBOXmmyZXA=
+			</data>
+			<key>hash2</key>
+			<data>
+			1PmvgVj5Q618v7atkBPr/jNPPSyMGyYEWfWfquqfgoU=
+			</data>
+		</dict>
 		<key>flutter_assets/assets/images/profile_pic_icon.png</key>
 		<dict>
 			<key>hash</key>
@@ -260,11 +275,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			q4BFdvd1FxJgzSAihA/DodXB5lE=
+			Bn5SXyQehPnmz364fTJq55hepxo=
 			</data>
 			<key>hash2</key>
 			<data>
-			jTmTjmessPE/iRrsfEJ5rwhw932epulVK9sjWFQCWI4=
+			ym/NDMrkjze1kUTgeh0zahj+h8nDftvw29lxkkSgZ9g=
 			</data>
 		</dict>
 		<key>flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf</key>

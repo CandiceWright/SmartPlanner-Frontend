@@ -4,6 +4,8 @@ import 'package:practice_planner/main.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/navigation_wrapper.dart';
+import '/views/Login/login.dart';
+import '/views/Login/signup.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({Key? key}) : super(key: key);
@@ -17,13 +19,28 @@ class _WelcomePageState extends State<WelcomePage> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   var questionIndex = 0;
   void login() {
+    print("I am in login function");
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
-        return const NavigationWrapper();
+        return const LoginPage();
       },
-      settings: const RouteSettings(
-        name: 'navigaionPage',
-      ),
+      // settings: const RouteSettings(
+      //   name: 'navigaionPage',
+      // ),
+    ));
+    // Navigator.push(
+    //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
+  }
+
+  void signup() {
+    print("I am in signup function");
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return const SignupPage();
+      },
+      // settings: const RouteSettings(
+      //   name: 'navigaionPage',
+      // ),
     ));
     // Navigator.push(
     //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
@@ -98,7 +115,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   FractionallySizedBox(
                     widthFactor: 0.5,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: login,
                       child: Text(
                         "Login",
                         style: TextStyle(fontSize: 18),
@@ -117,7 +134,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         style: TextStyle(color: Colors.white),
                       ),
                       TextButton(
-                          onPressed: () {},
+                          onPressed: signup,
                           child: Text(
                             "Sign Up",
                             style: TextStyle(
