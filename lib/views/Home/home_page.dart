@@ -82,17 +82,17 @@ class _HomePageState extends State<HomePage> {
       TableCell(
         verticalAlignment: TableCellVerticalAlignment.fill,
         child: Container(
-          child: Text(
-            "Habits",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              //color: Theme.of(context).colorScheme.primary,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
+            // child: Text(
+            //   "Habits",
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(
+            //     //color: Theme.of(context).colorScheme.primary,
+            //     color: Colors.black,
+            //     fontWeight: FontWeight.bold,
+            //   ),
+            // ),
+            //margin: EdgeInsets.only(left: 10, right: 10),
             ),
-          ),
-          margin: EdgeInsets.only(left: 10, right: 10),
-        ),
       ),
       TableCell(
           child: Container(child: Text("S", textAlign: TextAlign.center))),
@@ -269,8 +269,30 @@ class _HomePageState extends State<HomePage> {
         ),
         automaticallyImplyLeading: false,
         //title: const Text('Home Page'),
+        // flexibleSpace: Container(
+        //   decoration: BoxDecoration(
+        //       image: DecorationImage(
+        //           image: AssetImage(
+        //             "assets/images/login_screens_background.png",
+        //           ),
+        //           fit: BoxFit.fill)),
+        // ),
+        // title: Text(
+        //   "My PLANIT",
+        //   style: TextStyle(color: Colors.white),
+        // ),
+        // centerTitle: true,
+
         title: Card(
+          semanticContainer: true,
+          clipBehavior: Clip.antiAliasWithSaveLayer,
           child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/login_screens_background.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
             child: Row(
               children: [
                 Container(
@@ -295,12 +317,20 @@ class _HomePageState extends State<HomePage> {
                   // margin: EdgeInsets.only(bottom: 10),
                   padding: EdgeInsets.all(5),
                 ),
-                Container(
-                  child: Text(
-                    "Today's a new day!",
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                )
+                const Text(
+                  "Welcome to my PLANIT",
+                  style: TextStyle(
+                      fontStyle: FontStyle.italic, color: Colors.white),
+                  // textAlign: TextAlign.right,
+                ),
+                // Container(
+                //   child: const Text(
+                //     "ON MY PLANIT",
+                //     style: TextStyle(
+                //         fontStyle: FontStyle.italic, color: Colors.white),
+                //     textAlign: TextAlign.center,
+                //   ),
+                // )
               ],
             ),
             //padding: EdgeInsets.all(30),
@@ -321,7 +351,7 @@ class _HomePageState extends State<HomePage> {
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "This week...",
+                      "This Week's Habits...",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
@@ -329,11 +359,11 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     child: Table(
                       // border: TableBorder.symmetric(),
-                      border: const TableBorder(
-                        verticalInside:
-                            BorderSide(width: 1, style: BorderStyle.solid),
-                        horizontalInside: BorderSide(width: 1),
-                      ),
+                      // border: const TableBorder(
+                      //   verticalInside:
+                      //       BorderSide(width: 1, style: BorderStyle.solid),
+                      //   horizontalInside: BorderSide(width: 1),
+                      // ),
                       columnWidths: const {
                         0: IntrinsicColumnWidth(),
                       },

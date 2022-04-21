@@ -19,8 +19,8 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
-    BacklogPage(),
     CalendarPage(),
+    BacklogPage(),
     GoalsPage(),
   ];
 
@@ -46,12 +46,12 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Backlog',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
             label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Backlog',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.track_changes_outlined),

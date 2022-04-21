@@ -41,9 +41,20 @@ class _NotesPageState extends State<NotesPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: const Text("Notes"),
+        title: const Text(
+          "Notes",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
-        automaticallyImplyLeading: false,
+        //automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    "assets/images/login_screens_background.png",
+                  ),
+                  fit: BoxFit.fill)),
+        ),
         actions: [
           TextButton(
               onPressed: () {

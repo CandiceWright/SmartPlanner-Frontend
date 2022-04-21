@@ -371,77 +371,183 @@ class _CalendarPageState extends State<CalendarPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Column(
-          children: [
-            const Text("Today"),
-          ],
+    return Stack(
+      children: [
+        Image.asset(
+          "assets/images/login_screens_background.png",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
         ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.note_alt),
-          tooltip: 'View this backlog item',
-          onPressed: () {
-            //setState(() {});
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) => const NotesPage(
-                          fromPage: "Today",
-                        )));
-          },
-        ),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.calendar_today),
-            tooltip: 'View full calendar',
-            onPressed: () {
-              _goToMonthlyView();
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.next_week),
-            tooltip: 'Tomorrow',
-            onPressed: () {
-              setState(() {
-                if (PlannerService
-                    .sharedInstance.user.didStartTomorrowPlanning) {
-                  _openTomorrowSchedulePage();
-                } else {
-                  _openNoTomorrowPlanPage();
-                }
-              });
-            },
-          ),
-          // TextButton(
-          //   child: const Text("Tomorrow"),
-          //   onPressed: () => {},
-          // ),
-        ],
-        iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor, //change your color here
-        ),
-      ),
-      body: Container(
-        child: SfCalendar(
-          view: CalendarView.day,
-          onTap: calendarTapped,
-          initialDisplayDate: DateTime.now(),
-          dataSource: CalendarPage.events,
-          //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-        ),
-      ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
 
-      floatingActionButton: FloatingActionButton(
-        //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
-        onPressed: _openNewCalendarItemDialog,
-        tooltip: 'Create new event.',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            backgroundColor: Colors.transparent,
+
+            title: Column(
+              children: const [
+                Text(
+                  "Today",
+                  style: TextStyle(color: Colors.white),
+                ),
+                // Image.asset(
+                //   "assets/images/pink_planit_today.png",
+                // ),
+              ],
+            ),
+            centerTitle: true,
+            leading: IconButton(
+              icon: const Icon(Icons.note_alt),
+              tooltip: 'View this backlog item',
+              onPressed: () {
+                //setState(() {});
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => const NotesPage(
+                              fromPage: "Today",
+                            )));
+              },
+            ),
+            automaticallyImplyLeading: false,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.calendar_today),
+                tooltip: 'View full calendar',
+                onPressed: () {
+                  _goToMonthlyView();
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.next_week),
+                tooltip: 'Tomorrow',
+                onPressed: () {
+                  setState(() {
+                    if (PlannerService
+                        .sharedInstance.user.didStartTomorrowPlanning) {
+                      _openTomorrowSchedulePage();
+                    } else {
+                      _openNoTomorrowPlanPage();
+                    }
+                  });
+                },
+              ),
+              // TextButton(
+              //   child: const Text("Tomorrow"),
+              //   onPressed: () => {},
+              // ),
+            ],
+            iconTheme: IconThemeData(
+              color: Theme.of(context).primaryColor, //change your color here
+            ),
+          ),
+          body: Container(
+            child: SfCalendar(
+              headerStyle: CalendarHeaderStyle(
+                textStyle: TextStyle(color: Colors.white),
+                // textAlign: TextAlign.center,
+              ),
+              view: CalendarView.day,
+              onTap: calendarTapped,
+              initialDisplayDate: DateTime.now(),
+              dataSource: CalendarPage.events,
+              cellBorderColor: Colors.white,
+              timeSlotViewSettings: TimeSlotViewSettings(
+                  timeInterval: Duration(minutes: 30),
+                  timeFormat: 'h:mm',
+                  timeTextStyle: TextStyle(
+                    color: Colors.white,
+                  )),
+              //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+            ),
+          ),
+
+          floatingActionButton: FloatingActionButton(
+            //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
+            onPressed: _openNewCalendarItemDialog,
+            tooltip: 'Create new event.',
+            child: const Icon(Icons.add),
+          ), // This trailing comma makes auto-formatting nicer for build methods.
+        )
+      ],
     );
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     // Here we take the value from the MyHomePage object that was created by
+    //     // the App.build method, and use it to set our appbar title.
+    //     title: Column(
+    //       children: [
+    //         const Text("Today"),
+    //         // Image.asset(
+    //         //   "assets/images/pink_planit_today.png",
+    //         // ),
+    //       ],
+    //     ),
+    //     centerTitle: true,
+    //     leading: IconButton(
+    //       icon: const Icon(Icons.note_alt),
+    //       tooltip: 'View this backlog item',
+    //       onPressed: () {
+    //         //setState(() {});
+    //         Navigator.push(
+    //             context,
+    //             CupertinoPageRoute(
+    //                 builder: (context) => const NotesPage(
+    //                       fromPage: "Today",
+    //                     )));
+    //       },
+    //     ),
+    //     automaticallyImplyLeading: false,
+    //     actions: [
+    //       IconButton(
+    //         icon: const Icon(Icons.calendar_today),
+    //         tooltip: 'View full calendar',
+    //         onPressed: () {
+    //           _goToMonthlyView();
+    //         },
+    //       ),
+    //       IconButton(
+    //         icon: const Icon(Icons.next_week),
+    //         tooltip: 'Tomorrow',
+    //         onPressed: () {
+    //           setState(() {
+    //             if (PlannerService
+    //                 .sharedInstance.user.didStartTomorrowPlanning) {
+    //               _openTomorrowSchedulePage();
+    //             } else {
+    //               _openNoTomorrowPlanPage();
+    //             }
+    //           });
+    //         },
+    //       ),
+    //       // TextButton(
+    //       //   child: const Text("Tomorrow"),
+    //       //   onPressed: () => {},
+    //       // ),
+    //     ],
+    //     iconTheme: IconThemeData(
+    //       color: Theme.of(context).primaryColor, //change your color here
+    //     ),
+    //   ),
+    //   body: Container(
+    //     child: SfCalendar(
+    //       view: CalendarView.day,
+    //       onTap: calendarTapped,
+    //       initialDisplayDate: DateTime.now(),
+    //       dataSource: CalendarPage.events,
+    //       //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+    //     ),
+    //   ),
+
+    //   floatingActionButton: FloatingActionButton(
+    //     //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
+    //     onPressed: _openNewCalendarItemDialog,
+    //     tooltip: 'Create new event.',
+    //     child: const Icon(Icons.add),
+    //   ), // This trailing comma makes auto-formatting nicer for build methods.
+    // );
   }
 }

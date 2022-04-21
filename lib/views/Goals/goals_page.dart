@@ -109,6 +109,7 @@ class _GoalsPageState extends State<GoalsPage> {
             borderRadius: BorderRadius.circular(20.0),
           ),
           content: Card(
+            elevation: 1,
             child: Container(
               margin: EdgeInsets.all(10),
               child: Column(
@@ -127,14 +128,14 @@ class _GoalsPageState extends State<GoalsPage> {
                     ),
                     padding: EdgeInsets.only(bottom: 10, top: 4),
                   ),
-                  Padding(
-                    child: Image.asset(
-                      "assets/images/goal_icon.png",
-                      height: 60,
-                      width: 60,
-                    ),
-                    padding: EdgeInsets.all(10),
-                  ),
+                  // Padding(
+                  //   child: Image.asset(
+                  //     "assets/images/goal_icon.png",
+                  //     height: 60,
+                  //     width: 60,
+                  //   ),
+                  //   padding: EdgeInsets.all(10),
+                  // ),
 
                   // Text(
                   //   goal.notes,
@@ -259,68 +260,78 @@ class _GoalsPageState extends State<GoalsPage> {
 
     //List<Widget> goalsListView = buildGoalsListView();
 
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: const Text("Goals"),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            onPressed: () {
-              goToAccomplishedGoals();
-            },
-            icon: Icon(Icons.done_all),
-            color: Colors.pink,
-          )
-          // GestureDetector(
-          //   onTap: () {},
-          //   child: Image.asset(
-          //     "assets/images/goal_icon.png",
-          //     // height: 40,
-          //     // width: 40,
-          //   ),
-          // )
-        ],
-      ),
-      body: Stack(
-        children: [
-          Align(
-            child: ConfettiWidget(
-              confettiController: _controllerCenter,
-              blastDirectionality: BlastDirectionality
-                  .explosive, // don't specify a direction, blast randomly
-              shouldLoop: false,
-              colors: const [
-                Colors.green,
-                Colors.blue,
-                Colors.pink,
-                Colors.orange,
-                Colors.purple
-              ],
-            ),
-            alignment: Alignment.center,
+    return Stack(
+      children: [
+        Image.asset(
+          "assets/images/login_screens_background.png",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            title: const Text("Goals", style: TextStyle(color: Colors.white)),
+            centerTitle: true,
+            backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
+
+            actions: [
+              IconButton(
+                onPressed: () {
+                  goToAccomplishedGoals();
+                },
+                icon: Icon(Icons.done),
+                //color: Colors.pink,
+              )
+              // GestureDetector(
+              //   onTap: () {},
+              //   child: Image.asset(
+              //     "assets/images/goal_icon.png",
+              //     // height: 40,
+              //     // width: 40,
+              //   ),
+              // )
+            ],
           ),
-          Container(
-            child: ListView(
-              //children: goalsListView,
-              children: List.generate(
-                  PlannerService.sharedInstance.user.goals.length, (int index) {
-                return GestureDetector(
-                  onTap: () => {
-                    _showGoalContent(
-                        PlannerService.sharedInstance.user.goals[index], index)
-                  },
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/images/goal_icon.png",
-                          height: 40,
-                          width: 40,
-                        ),
-                        Column(
+          body: Stack(
+            children: [
+              Align(
+                child: ConfettiWidget(
+                  confettiController: _controllerCenter,
+                  blastDirectionality: BlastDirectionality
+                      .explosive, // don't specify a direction, blast randomly
+                  shouldLoop: false,
+                  colors: const [
+                    Colors.green,
+                    Colors.blue,
+                    Colors.pink,
+                    Colors.orange,
+                    Colors.purple
+                  ],
+                ),
+                alignment: Alignment.center,
+              ),
+              Container(
+                child: ListView(
+                  //children: goalsListView,
+                  children: List.generate(
+                      PlannerService.sharedInstance.user.goals.length,
+                      (int index) {
+                    return GestureDetector(
+                      onTap: () => {
+                        _showGoalContent(
+                            PlannerService.sharedInstance.user.goals[index],
+                            index)
+                      },
+                      child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        child:
+                            //Row(
+                            //children: [
+                            Column(
                           children: [
                             Container(
                               child: Column(
@@ -330,50 +341,97 @@ class _GoalsPageState extends State<GoalsPage> {
                                         .sharedInstance.user.goals[index].date),
                                     // style: Theme.of(context).textTheme.subtitle2,
                                     style: const TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 25,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black),
+                                        color: Colors.white),
                                   ),
                                   Text(
                                     PlannerService.sharedInstance.user
                                         .goals[index].description,
-                                    style: const TextStyle(color: Colors.black),
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ],
                               ),
                               margin: EdgeInsets.all(15),
                             ),
+                            // Image.asset(
+                            //   "assets/images/goal_icon.png",
+                            //   height: 40,
+                            //   width: 40,
+                            // ),
                           ],
                         ),
-                      ],
-                    ),
-                    elevation: 3,
-                    margin: EdgeInsets.all(10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    //color: Theme.of(context).colorScheme.primary,
-                    color: PlannerService
-                        .sharedInstance.user.goals[index].category.color,
-                  ),
-                );
-              }),
-            ),
-            margin: EdgeInsets.all(15),
+
+                        elevation: 3,
+                        margin: EdgeInsets.all(10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50.0),
+                        ),
+                        //color: Theme.of(context).colorScheme.primary,
+                        color: PlannerService
+                            .sharedInstance.user.goals[index].category.color,
+                      ),
+
+                      // child: Padding(
+                      //   padding: EdgeInsets.all(10),
+                      //   child: Container(
+                      //     //constraints: BoxConstraints
+                      //     //.expand(), //alignment: Alignment.bottomCenter,
+                      //     width: 200,
+                      //     height: 200,
+                      //     decoration: BoxDecoration(
+                      //         // The child of a round Card should be in round shape
+
+                      //         shape: BoxShape.circle,
+                      //         color: Colors.blue[100]),
+                      //     child: Column(
+                      //       mainAxisAlignment: MainAxisAlignment.center,
+                      //       children: [
+                      //         Text(
+                      //           DateFormat.yMMMd().format(PlannerService
+                      //               .sharedInstance.user.goals[index].date),
+                      //           // style: Theme.of(context).textTheme.subtitle2,
+                      //           style: const TextStyle(
+                      //               fontSize: 20,
+                      //               fontWeight: FontWeight.bold,
+                      //               color: Colors.black),
+                      //         ),
+                      //         Text(
+                      //           PlannerService.sharedInstance.user.goals[index]
+                      //               .description,
+                      //           style: const TextStyle(color: Colors.black),
+                      //         ),
+                      //         Padding(
+                      //           padding: EdgeInsets.all(7),
+                      //           child: Image.asset(
+                      //             "assets/images/goal_icon.png",
+                      //             height: 40,
+                      //             width: 40,
+                      //           ),
+                      //         )
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      //),
+                    );
+                  }),
+                ),
+                margin: EdgeInsets.all(15),
+              ),
+            ],
           ),
-        ],
-      ),
-      // body: Container(
-      //   child: ListView(
-      //     children: goalsListView,
-      //   ),
-      //   margin: EdgeInsets.all(15),
-      // ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openNewGoalPage,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+          floatingActionButton: FloatingActionButton(
+            onPressed: _openNewGoalPage,
+            tooltip: 'Increment',
+            child: const Icon(Icons.add),
+          ), // This trailing comma makes auto-formatting nicer for build methods.
+        )
+      ],
     );
   }
 }

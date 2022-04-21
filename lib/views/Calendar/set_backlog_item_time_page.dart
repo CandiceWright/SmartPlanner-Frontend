@@ -231,10 +231,15 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         // the App.build method, and use it to set our appbar title.
         title: Column(
           children: [
-            const Text("Select Time"),
+            const Text(
+              "Select Time",
+              style: TextStyle(color: Colors.white),
+            ),
             Text(
               widget.backlogItem.description,
-              style: Theme.of(context).textTheme.subtitle2,
+              style: TextStyle(
+                  fontSize: Theme.of(context).textTheme.subtitle2!.fontSize,
+                  color: Colors.white),
             ),
             // Text(
             //   DateFormat.yMMMd().format(DateTime.now()),
@@ -243,6 +248,14 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           ],
         ),
         centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    "assets/images/login_screens_background.png",
+                  ),
+                  fit: BoxFit.fill)),
+        ),
         actions: [
           TextButton(
             onPressed: doneBtnDisabled ? null : _saveNewCalendarItem,

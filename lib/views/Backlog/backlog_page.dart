@@ -26,6 +26,7 @@ class BacklogPage extends StatefulWidget {
 class _BacklogPageState extends State<BacklogPage> {
   //bool _value = false;
   //var backlog = PlannerService.sharedInstance.user.backlog;
+  FontWeight? expandedTileFontWeight = FontWeight.bold;
 
   @override
   void initState() {
@@ -348,7 +349,7 @@ class _BacklogPageState extends State<BacklogPage> {
       }
       Widget expansionTile = ExpansionTile(
         title: Text(key),
-        initiallyExpanded: true,
+        //initiallyExpanded: true,
         children: unscheduledExpansionTileChildren,
         leading: Icon(
           Icons.circle,
@@ -374,8 +375,23 @@ class _BacklogPageState extends State<BacklogPage> {
     );
 
     Widget unscheduledExpansionTile = ExpansionTile(
-      title: const Text("Backlog"),
+      title: Text(
+        "Backlog",
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: expandedTileFontWeight,
+        ),
+      ),
       initiallyExpanded: true,
+      onExpansionChanged: (expanded) {
+        setState(() {
+          if (expanded) {
+            expandedTileFontWeight = FontWeight.bold;
+          } else {
+            expandedTileFontWeight = FontWeight.normal;
+          }
+        });
+      },
       children: backloglistview,
       // trailing: Text(value.length.toString(),style: TextStyle(color: Theme.of(context).colorScheme.primary)),
     );
@@ -402,8 +418,20 @@ class _BacklogPageState extends State<BacklogPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: const Text("Life Backlog"),
+        title: const Text(
+          "Backlog",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
+        automaticallyImplyLeading: false,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    "assets/images/login_screens_background.png",
+                  ),
+                  fit: BoxFit.fill)),
+        ),
       ),
       body: Column(
         children: [

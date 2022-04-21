@@ -38,7 +38,7 @@ class AppThemes {
   };
   late MaterialColor bluePrimarySwatch = Colors.blue;
   // late MaterialColor bluePrimarySwatch =
-  //     MaterialColor(Colors.blue[900]!.value, _blueMap);
+  //     MaterialColor(Colors.blue[700]!.value, _blueMap);
 
   late MaterialColor blueAccentSwatch =
       MaterialColor(Colors.blue[50]!.value, _blueMap);

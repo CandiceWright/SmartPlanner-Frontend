@@ -51,8 +51,11 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Column(
-          children: [
-            const Text("Tomorrow"),
+          children: const [
+            Text(
+              "Tomorrow",
+              style: TextStyle(color: Colors.white),
+            ),
             // Text(
             //   DateFormat.yMMMd().format(DateTime.now()),
             //   style: Theme.of(context).textTheme.subtitle1,
@@ -60,6 +63,14 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
           ],
         ),
         centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    "assets/images/login_screens_background.png",
+                  ),
+                  fit: BoxFit.fill)),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.note_alt),

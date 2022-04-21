@@ -113,192 +113,395 @@ class _NewTaskPageState extends State<NewTaskPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("New Task"),
-        centerTitle: true,
-        leading: BackButton(color: Colors.black),
-        actions: [
-          TextButton(
-            onPressed: doneBtnDisabled ? null : createBacklogItem,
-            child: Text("Done"),
-          ),
-        ],
-      ),
-      body: Card(
-        child: Container(
-          child: ListView(
-            children: [
-              Image.asset(
-                "assets/images/backlog_icon.png",
-                height: 80,
-                width: 80,
-              ),
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: TextFormField(
-                        controller: descriptionTxtController,
-                        decoration: const InputDecoration(
-                          hintText: "What's the task?",
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                      ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    Container(
-                      child: TextFormField(
-                        controller: dateTxtController,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                          hintText: "Complete on or By (Optional)",
-                          icon: Icon(
-                            Icons.calendar_today,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                        onTap: () => _selectDate(context),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                      ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    Container(
-                      child: DropdownButton(
-                        //value: PlannerService.sharedInstance.user.theme.themeId,
-                        value: currChosenCategory,
-                        items: List.generate(
-                            PlannerService.sharedInstance.user.lifeCategories
-                                .length, (int index) {
-                          return DropdownMenuItem(
-                            //value: "pink",
-                            value: PlannerService
-                                .sharedInstance.user.lifeCategories[index],
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.circle,
-                                  color: PlannerService.sharedInstance.user
-                                      .lifeCategories[index].color,
-                                ),
-                                Text(PlannerService.sharedInstance.user
-                                    .lifeCategories[index].name),
-                              ],
-                            ),
-                          );
-                        }),
+    return Stack(
+      children: [
+        Image.asset(
+          "assets/images/login_screens_background.png",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            backgroundColor: Colors.transparent,
 
-                        // onChanged: (String? newValue) {
-                        onChanged: (LifeCategory? newValue) {
-                          setState(() {
-                            currChosenCategory = newValue!;
-                          });
-                        },
-                      ),
-                      // child: TextFormField(
-                      //   controller: categoryTxtController,
-                      //   decoration: InputDecoration(
-                      //       hintText: "Category",
-                      //       icon: Icon(
-                      //         Icons.category_rounded,
-                      //         color: Theme.of(context).colorScheme.primary,
-                      //       )),
-                      //   validator: (String? value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please enter some text';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    // Container(
-                    //   child: TextFormField(
-                    //     controller: categoryTxtController,
-                    //     decoration: InputDecoration(
-                    //         hintText: "Life Category",
-                    //         icon: Icon(Icons.category_rounded,
-                    //             color: Theme.of(context).colorScheme.primary)),
-                    //     validator: (String? value) {
-                    //       if (value == null || value.isEmpty) {
-                    //         return 'Please enter some text';
-                    //       }
-                    //       return null;
-                    //     },
-                    //   ),
-                    //   padding: EdgeInsets.all(20),
-                    // ),
-                    Container(
-                      child: TextFormField(
-                        controller: locationTxtController,
-                        decoration: InputDecoration(
-                            hintText: "Location",
-                            icon: Icon(
-                              Icons.location_pin,
-                              //color: Colors.pink,
-                              color: Theme.of(context).colorScheme.primary,
-                            )),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                      ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    Container(
-                      child: TextFormField(
-                        controller: notesTxtController,
-                        decoration: const InputDecoration(
-                          hintText: "Notes",
-                          fillColor: Colors.white,
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        maxLines: null,
-                        minLines: 10,
-                      ),
-                      padding: EdgeInsets.all(20),
-                      margin: EdgeInsets.only(top: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                  ],
-                ),
-              )
+            title: const Text(
+              "New Task",
+              style: TextStyle(color: Colors.white),
+            ),
+            centerTitle: true,
+            //leading: BackButton(color: Colors.black),
+            actions: [
+              TextButton(
+                onPressed: doneBtnDisabled ? null : createBacklogItem,
+                child: Text("Done"),
+              ),
             ],
           ),
-          margin: EdgeInsets.all(15),
-        ),
-        //color: Colors.pink.shade50,
-        // margin: EdgeInsets.all(20),
-        margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-      ),
+          body: Card(
+            child: Container(
+              child: ListView(
+                children: [
+                  // Image.asset(
+                  //   "assets/images/backlog_icon.png",
+                  //   height: 80,
+                  //   width: 80,
+                  // ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          child: TextFormField(
+                            controller: descriptionTxtController,
+                            decoration: const InputDecoration(
+                              hintText: "What's the task?",
+                            ),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          padding: EdgeInsets.all(20),
+                        ),
+                        Container(
+                          child: TextFormField(
+                            controller: dateTxtController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText: "Complete on or By (Optional)",
+                              icon: Icon(
+                                Icons.calendar_today,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            onTap: () => _selectDate(context),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          padding: EdgeInsets.all(20),
+                        ),
+                        Container(
+                          child: DropdownButton(
+                            //value: PlannerService.sharedInstance.user.theme.themeId,
+                            value: currChosenCategory,
+                            items: List.generate(
+                                PlannerService.sharedInstance.user
+                                    .lifeCategories.length, (int index) {
+                              return DropdownMenuItem(
+                                //value: "pink",
+                                value: PlannerService
+                                    .sharedInstance.user.lifeCategories[index],
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: PlannerService.sharedInstance.user
+                                          .lifeCategories[index].color,
+                                    ),
+                                    Text(PlannerService.sharedInstance.user
+                                        .lifeCategories[index].name),
+                                  ],
+                                ),
+                              );
+                            }),
+
+                            // onChanged: (String? newValue) {
+                            onChanged: (LifeCategory? newValue) {
+                              setState(() {
+                                currChosenCategory = newValue!;
+                              });
+                            },
+                          ),
+                          // child: TextFormField(
+                          //   controller: categoryTxtController,
+                          //   decoration: InputDecoration(
+                          //       hintText: "Category",
+                          //       icon: Icon(
+                          //         Icons.category_rounded,
+                          //         color: Theme.of(context).colorScheme.primary,
+                          //       )),
+                          //   validator: (String? value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'Please enter some text';
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
+                          padding: EdgeInsets.all(20),
+                        ),
+                        // Container(
+                        //   child: TextFormField(
+                        //     controller: categoryTxtController,
+                        //     decoration: InputDecoration(
+                        //         hintText: "Life Category",
+                        //         icon: Icon(Icons.category_rounded,
+                        //             color: Theme.of(context).colorScheme.primary)),
+                        //     validator: (String? value) {
+                        //       if (value == null || value.isEmpty) {
+                        //         return 'Please enter some text';
+                        //       }
+                        //       return null;
+                        //     },
+                        //   ),
+                        //   padding: EdgeInsets.all(20),
+                        // ),
+                        Container(
+                          child: TextFormField(
+                            controller: locationTxtController,
+                            decoration: InputDecoration(
+                                hintText: "Location",
+                                icon: Icon(
+                                  Icons.location_pin,
+                                  //color: Colors.pink,
+                                  color: Theme.of(context).colorScheme.primary,
+                                )),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                          ),
+                          padding: EdgeInsets.all(20),
+                        ),
+                        Container(
+                          child: TextFormField(
+                            controller: notesTxtController,
+                            decoration: const InputDecoration(
+                              hintText: "Notes",
+                              fillColor: Colors.white,
+                            ),
+                            validator: (String? value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter some text';
+                              }
+                              return null;
+                            },
+                            maxLines: null,
+                            minLines: 10,
+                          ),
+                          padding: EdgeInsets.all(20),
+                          margin: EdgeInsets.only(top: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              margin: EdgeInsets.all(15),
+            ),
+            //color: Colors.pink.shade50,
+            // margin: EdgeInsets.all(20),
+            margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
+            elevation: 5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+          ),
+        )
+      ],
     );
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     // Here we take the value from the MyHomePage object that was created by
+    //     // the App.build method, and use it to set our appbar title.
+    //     title: Text("New Task"),
+    //     centerTitle: true,
+    //     leading: BackButton(color: Colors.black),
+    //     actions: [
+    //       TextButton(
+    //         onPressed: doneBtnDisabled ? null : createBacklogItem,
+    //         child: Text("Done"),
+    //       ),
+    //     ],
+    //   ),
+    //   body: Card(
+    //     child: Container(
+    //       child: ListView(
+    //         children: [
+    //           Image.asset(
+    //             "assets/images/backlog_icon.png",
+    //             height: 80,
+    //             width: 80,
+    //           ),
+    //           Form(
+    //             key: _formKey,
+    //             child: Column(
+    //               crossAxisAlignment: CrossAxisAlignment.start,
+    //               children: <Widget>[
+    //                 Container(
+    //                   child: TextFormField(
+    //                     controller: descriptionTxtController,
+    //                     decoration: const InputDecoration(
+    //                       hintText: "What's the task?",
+    //                     ),
+    //                     validator: (String? value) {
+    //                       if (value == null || value.isEmpty) {
+    //                         return 'Please enter some text';
+    //                       }
+    //                       return null;
+    //                     },
+    //                   ),
+    //                   padding: EdgeInsets.all(20),
+    //                 ),
+    //                 Container(
+    //                   child: TextFormField(
+    //                     controller: dateTxtController,
+    //                     readOnly: true,
+    //                     decoration: InputDecoration(
+    //                       hintText: "Complete on or By (Optional)",
+    //                       icon: Icon(
+    //                         Icons.calendar_today,
+    //                         color: Theme.of(context).colorScheme.primary,
+    //                       ),
+    //                     ),
+    //                     onTap: () => _selectDate(context),
+    //                     validator: (String? value) {
+    //                       if (value == null || value.isEmpty) {
+    //                         return 'Please enter some text';
+    //                       }
+    //                       return null;
+    //                     },
+    //                   ),
+    //                   padding: EdgeInsets.all(20),
+    //                 ),
+    //                 Container(
+    //                   child: DropdownButton(
+    //                     //value: PlannerService.sharedInstance.user.theme.themeId,
+    //                     value: currChosenCategory,
+    //                     items: List.generate(
+    //                         PlannerService.sharedInstance.user.lifeCategories
+    //                             .length, (int index) {
+    //                       return DropdownMenuItem(
+    //                         //value: "pink",
+    //                         value: PlannerService
+    //                             .sharedInstance.user.lifeCategories[index],
+    //                         child: Row(
+    //                           children: [
+    //                             Icon(
+    //                               Icons.circle,
+    //                               color: PlannerService.sharedInstance.user
+    //                                   .lifeCategories[index].color,
+    //                             ),
+    //                             Text(PlannerService.sharedInstance.user
+    //                                 .lifeCategories[index].name),
+    //                           ],
+    //                         ),
+    //                       );
+    //                     }),
+
+    //                     // onChanged: (String? newValue) {
+    //                     onChanged: (LifeCategory? newValue) {
+    //                       setState(() {
+    //                         currChosenCategory = newValue!;
+    //                       });
+    //                     },
+    //                   ),
+    //                   // child: TextFormField(
+    //                   //   controller: categoryTxtController,
+    //                   //   decoration: InputDecoration(
+    //                   //       hintText: "Category",
+    //                   //       icon: Icon(
+    //                   //         Icons.category_rounded,
+    //                   //         color: Theme.of(context).colorScheme.primary,
+    //                   //       )),
+    //                   //   validator: (String? value) {
+    //                   //     if (value == null || value.isEmpty) {
+    //                   //       return 'Please enter some text';
+    //                   //     }
+    //                   //     return null;
+    //                   //   },
+    //                   // ),
+    //                   padding: EdgeInsets.all(20),
+    //                 ),
+    //                 // Container(
+    //                 //   child: TextFormField(
+    //                 //     controller: categoryTxtController,
+    //                 //     decoration: InputDecoration(
+    //                 //         hintText: "Life Category",
+    //                 //         icon: Icon(Icons.category_rounded,
+    //                 //             color: Theme.of(context).colorScheme.primary)),
+    //                 //     validator: (String? value) {
+    //                 //       if (value == null || value.isEmpty) {
+    //                 //         return 'Please enter some text';
+    //                 //       }
+    //                 //       return null;
+    //                 //     },
+    //                 //   ),
+    //                 //   padding: EdgeInsets.all(20),
+    //                 // ),
+    //                 Container(
+    //                   child: TextFormField(
+    //                     controller: locationTxtController,
+    //                     decoration: InputDecoration(
+    //                         hintText: "Location",
+    //                         icon: Icon(
+    //                           Icons.location_pin,
+    //                           //color: Colors.pink,
+    //                           color: Theme.of(context).colorScheme.primary,
+    //                         )),
+    //                     validator: (String? value) {
+    //                       if (value == null || value.isEmpty) {
+    //                         return 'Please enter some text';
+    //                       }
+    //                       return null;
+    //                     },
+    //                   ),
+    //                   padding: EdgeInsets.all(20),
+    //                 ),
+    //                 Container(
+    //                   child: TextFormField(
+    //                     controller: notesTxtController,
+    //                     decoration: const InputDecoration(
+    //                       hintText: "Notes",
+    //                       fillColor: Colors.white,
+    //                     ),
+    //                     validator: (String? value) {
+    //                       if (value == null || value.isEmpty) {
+    //                         return 'Please enter some text';
+    //                       }
+    //                       return null;
+    //                     },
+    //                     maxLines: null,
+    //                     minLines: 10,
+    //                   ),
+    //                   padding: EdgeInsets.all(20),
+    //                   margin: EdgeInsets.only(top: 10),
+    //                   decoration: BoxDecoration(
+    //                     color: Colors.white,
+    //                     borderRadius: BorderRadius.circular(8.0),
+    //                   ),
+    //                 ),
+    //               ],
+    //             ),
+    //           )
+    //         ],
+    //       ),
+    //       margin: EdgeInsets.all(15),
+    //     ),
+    //     //color: Colors.pink.shade50,
+    //     // margin: EdgeInsets.all(20),
+    //     margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
+    //     elevation: 5,
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(10.0),
+    //     ),
+    //   ),
+    // );
   }
 }

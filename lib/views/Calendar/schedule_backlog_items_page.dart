@@ -205,15 +205,42 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: const Text("Select Backlog item"),
+        // ignore: prefer_const_constructors
+        title: const Text(
+          "Select Backlog item",
+          style: TextStyle(color: Colors.white),
+        ),
+        bottom: PreferredSize(
+            child: Align(
+              alignment: Alignment.center,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 10),
+                child: Text(
+                  "Which item do you want to schedule?",
+                  style: TextStyle(color: Colors.white),
+                  //textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            preferredSize: Size.fromHeight(10.0)),
+
         centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    "assets/images/login_screens_background.png",
+                  ),
+                  fit: BoxFit.fill)),
+        ),
+
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here
         ),
       ),
       body: Column(
         children: [
-          const Text("Which item do you want to schedule for tomorrow?"),
+          // const Text("Which item do you want to schedule for tomorrow?"),
           Expanded(
             child: ListView(
               children: backlogListView,

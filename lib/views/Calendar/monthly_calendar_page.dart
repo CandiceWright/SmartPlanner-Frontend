@@ -61,8 +61,11 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Column(
-          children: [
-            const Text("Calendar"),
+          children: const [
+            Text(
+              "Calendar",
+              style: TextStyle(color: Colors.white),
+            ),
             // Text(
             //   DateFormat.yMMMd().format(DateTime.now()),
             //   style: Theme.of(context).textTheme.subtitle1,
@@ -70,6 +73,14 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
           ],
         ),
         centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    "assets/images/login_screens_background.png",
+                  ),
+                  fit: BoxFit.fill)),
+        ),
 
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here
