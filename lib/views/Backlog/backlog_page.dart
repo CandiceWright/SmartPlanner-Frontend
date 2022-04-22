@@ -363,13 +363,19 @@ class _BacklogPageState extends State<BacklogPage> {
     //return backloglistview;
 
     Widget todayExpansionTile = ExpansionTile(
-      title: const Text("Working on Today"),
+      title: const Text(
+        "Today",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
       //initiallyExpanded: true,
       children: todayItems,
     );
 
     Widget tomorrowExpansionTile = ExpansionTile(
-      title: const Text("Working on Tomorrow"),
+      title: const Text(
+        "Tomorrow",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      ),
       //initiallyExpanded: true,
       children: tomorrowItems,
     );
@@ -378,9 +384,9 @@ class _BacklogPageState extends State<BacklogPage> {
       title: Text(
         "Backlog",
         style: TextStyle(
-          color: Colors.black,
-          fontWeight: expandedTileFontWeight,
-        ),
+            color: Colors.black,
+            fontWeight: expandedTileFontWeight,
+            fontSize: 18),
       ),
       initiallyExpanded: true,
       onExpansionChanged: (expanded) {

@@ -19,7 +19,7 @@ class PlannerService {
       theme: PinkTheme(),
       didStartTomorrowPlanning: false,
       lifeCategories: [
-        LifeCategory("Other", const Color(0xFFFF80b1)),
+        // LifeCategory("Other", const Color(0xFFFF80b1)),
       ]);
 
   Map<String, CustomTheme> themeColorMap = {

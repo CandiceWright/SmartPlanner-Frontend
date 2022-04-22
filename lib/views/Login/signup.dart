@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/main.dart';
+import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/Login/login.dart';
 import '/views/Goals/goals_page.dart';
@@ -32,6 +33,12 @@ class _SignupPageState extends State<SignupPage> {
 
   void signup() {
     //call sign up server route and then go to home of app
+
+    //create first category! "Other"
+    var otherCategory = LifeCategory("Other", Colors.grey);
+    PlannerService.sharedInstance.user.LifeCategoriesColorMap["Other"] =
+        otherCategory.color;
+    PlannerService.sharedInstance.user.lifeCategories.add(otherCategory);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const NavigationWrapper();

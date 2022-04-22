@@ -21,6 +21,8 @@ class _LoginPageState extends State<LoginPage> {
   var questionIndex = 0;
   void login() {
     //validate login and if successful, go to home of app
+    PlannerService.sharedInstance.user.LifeCategoriesColorMap["Other"] =
+        Theme.of(context).colorScheme.primary;
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const NavigationWrapper();

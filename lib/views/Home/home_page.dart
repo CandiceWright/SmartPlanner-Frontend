@@ -9,6 +9,8 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -41,6 +43,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     //print(PlannerService.sharedInstance.user.backlog);
     newHabitTextController.addListener(setSaveHabitBtnState);
+    editHabitTxtController.addListener(setEditHabitBtnState);
   }
 
   void openProfileView() {
@@ -267,14 +270,6 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          icon: Image.asset(
-            "assets/images/pink_planit.png",
-            //height: 100,
-            //width: 100,
-          ),
-          onPressed: () {},
-        ),
         actions: [
           IconButton(
             icon: Image.asset(
@@ -350,6 +345,7 @@ class _HomePageState extends State<HomePage> {
                 const Text(
                   "PLANIT of CANDY",
                   style: TextStyle(
+                    
                       fontStyle: FontStyle.italic, color: Colors.white),
                   // textAlign: TextAlign.right,
                 ),
@@ -442,7 +438,50 @@ class _HomePageState extends State<HomePage> {
                                       style: TextStyle(color: Colors.black),
                                     ),
                                     onPressed: () {
-                                      habitClicked(i);
+                                      print("Buttton was pressed");
+                                      //habitClicked(i);
+                                      setEditHabitBtnState();
+                                      editHabitTxtController.text =
+                                          PlannerService.sharedInstance.user
+                                              .habits[i].description;
+                                      showDialog(
+                                          context: context,
+                                          barrierColor: Colors.black26,
+                                          builder: (context) => AlertDialog(
+                                                title: Text("Edit"),
+                                                content: TextFormField(
+                                                  controller:
+                                                      editHabitTxtController,
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    hintText: "Description",
+                                                  ),
+                                                  validator: (String? value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return 'Please enter some text';
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                      child: const Text('save'),
+                                                      onPressed:
+                                                          saveHabitBtnDisabled
+                                                              ? null
+                                                              : saveNewHabit),
+                                                  TextButton(
+                                                    child: const Text('cancel'),
+                                                    onPressed: () {
+                                                      newHabitTextController
+                                                          .text = "";
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  )
+                                                ],
+                                              ));
                                     },
                                   ),
                                   margin: EdgeInsets.only(left: 10, right: 10),
@@ -622,6 +661,14 @@ class _HomePageState extends State<HomePage> {
                         dataSource: EventDataSource(
                             PlannerService.sharedInstance.user.allEvents +
                                 PlannerService.sharedInstance.user.goals),
+                        scheduleViewSettings: const ScheduleViewSettings(
+                            hideEmptyScheduleWeek: true,
+                            monthHeaderSettings: MonthHeaderSettings(
+                              monthFormat: 'MMMM, yyyy',
+                              height: 60,
+                              textAlign: TextAlign.center,
+                              backgroundColor: Color(0xFF3700AD),
+                            )),
                         // scheduleViewSettings: ScheduleViewSettings(
                         //   appointmentItemHeight: 70,
                         // ),
@@ -731,6 +778,19 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void setEditHabitBtnState() {
+    if (editHabitTxtController.text != "") {
+      setState(() {
+        print("button enabled");
+        editHabitBtnDisabled = false;
+      });
+    } else {
+      setState(() {
+        editHabitBtnDisabled = true;
+      });
+    }
+  }
+
   void setSaveHabitBtnState() {
     print("I am ttyping");
     if (newHabitTextController.text != "") {
@@ -776,22 +836,33 @@ class _HomePageState extends State<HomePage> {
   // }
 
   habitClicked(int idx) {
-    //editHabitTxtController.text =
-    //PlannerService.sharedInstance.user.habits[idx].description;
-    showDialog(
-      context: context, // user must tap button!
-
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setDialogState) {
+    print("in habit clicked func");
+    editHabitTxtController.text =
+        PlannerService.sharedInstance.user.habits[idx].description;
+    Future<void>.delayed(
+      const Duration(), // OR const Duration(milliseconds: 500),
+      () => showDialog(
+        context: context, // user must tap button!
+        builder: (BuildContext context) {
+          //return StatefulBuilder(builder: (context, setDialogState) {
           return AlertDialog(
-            //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
-            //child: Expanded(
-            //child: Container(
             title: const Text("New Habit"),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
             ),
-            content: showHabitDialogContent(setDialogState, idx),
+            //content: showHabitDialogContent(setDialogState, idx),
+            content: TextFormField(
+              controller: editHabitTxtController,
+              decoration: const InputDecoration(
+                hintText: "Description",
+              ),
+              validator: (String? value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+            ),
             actions: <Widget>[
               TextButton(
                   child: const Text('save'),
@@ -799,17 +870,52 @@ class _HomePageState extends State<HomePage> {
               TextButton(
                 child: const Text('cancel'),
                 onPressed: () {
-                  newHabitTextController.text = "";
                   Navigator.of(context).pop();
                 },
               )
             ],
-            // ),
-            //),
           );
-        });
-      },
+          //});
+        },
+      ),
     );
+    // showDialog(
+    //   context: context, // user must tap button!
+    //   builder: (BuildContext context) {
+    //     //return StatefulBuilder(builder: (context, setDialogState) {
+    //     return AlertDialog(
+    //       title: const Text("New Habit"),
+    //       shape: RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.circular(20.0),
+    //       ),
+    //       //content: showHabitDialogContent(setDialogState, idx),
+    //       content: TextFormField(
+    //         controller: editHabitTxtController,
+    //         decoration: const InputDecoration(
+    //           hintText: "Description",
+    //         ),
+    //         validator: (String? value) {
+    //           if (value == null || value.isEmpty) {
+    //             return 'Please enter some text';
+    //           }
+    //           return null;
+    //         },
+    //       ),
+    //       actions: <Widget>[
+    //         TextButton(
+    //             child: const Text('save'),
+    //             onPressed: editHabitBtnDisabled ? null : editHabit(idx)),
+    //         TextButton(
+    //           child: const Text('cancel'),
+    //           onPressed: () {
+    //             Navigator.of(context).pop();
+    //           },
+    //         )
+    //       ],
+    //     );
+    //     //});
+    //   },
+    // );
   }
 
   showHabitDialogContent(StateSetter setDialogState, int idx) {
@@ -842,10 +948,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   editHabit(int idx) {
-    setState(() {
-      PlannerService.sharedInstance.user.habits[idx].description =
-          editHabitTxtController.text;
-    });
+    //setState(() {
+    PlannerService.sharedInstance.user.habits[idx].description =
+        editHabitTxtController.text;
+    //});
     Navigator.of(context).pop();
   }
 }

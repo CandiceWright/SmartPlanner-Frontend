@@ -29,7 +29,7 @@ class User {
   var allEventsMap = <int, Event>{};
   var lifeCategories = <LifeCategory>[];
   Map<String, Color> LifeCategoriesColorMap = {
-    "Other": const Color(0xFFFF80b1)
+    // "Other": const Color(0xFFFF80b1)
   };
 
   User(
