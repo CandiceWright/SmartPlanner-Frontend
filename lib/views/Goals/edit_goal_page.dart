@@ -31,15 +31,15 @@ class _EditGoalPageState extends State<EditGoalPage> {
           PlannerService.sharedInstance.user.goals[widget.goalIdx].description);
   late final dateTxtController = TextEditingController(
       text: DateFormat.yMMMd().format(
-          PlannerService.sharedInstance.user.goals[widget.goalIdx].date));
+          PlannerService.sharedInstance.user.goals[widget.goalIdx].start));
   //late final categoryTxtController = TextEditingController(
   //text: PlannerService.sharedInstance.user.goals[widget.goalIdx].category);
   late final notesTxtController = TextEditingController(
       text: PlannerService.sharedInstance.user.goals[widget.goalIdx].notes);
   late var selectedDate =
-      PlannerService.sharedInstance.user.goals[widget.goalIdx].date;
+      PlannerService.sharedInstance.user.goals[widget.goalIdx].start;
   bool doneBtnDisabled = true;
-  late var currChosenCategory =
+  late LifeCategory currChosenCategory =
       PlannerService.sharedInstance.user.goals[widget.goalIdx].category;
 
   @override
@@ -77,8 +77,8 @@ class _EditGoalPageState extends State<EditGoalPage> {
     PlannerService.sharedInstance.user.goals[widget.goalIdx].date =
         selectedDate;
     PlannerService.sharedInstance.user.goals.sort((goal1, goal2) {
-      DateTime goal1Date = goal1.date;
-      DateTime goal2Date = goal2.date;
+      DateTime goal1Date = goal1.start;
+      DateTime goal2Date = goal2.start;
       return goal1Date.compareTo(goal2Date);
     });
     widget.updateGoal();
@@ -210,7 +210,7 @@ class _EditGoalPageState extends State<EditGoalPage> {
                         }),
 
                         // onChanged: (String? newValue) {
-                        onChanged: (newValue) {
+                        onChanged: (LifeCategory? newValue) {
                           setState(() {
                             currChosenCategory = newValue!;
                           });

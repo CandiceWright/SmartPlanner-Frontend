@@ -3,24 +3,26 @@ import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/life_category.dart';
 
 class Event {
-  String eventName;
+  String description;
+  DateTime? date;
   DateTime start;
   DateTime end;
-  Color? background;
+  Color background;
   String notes;
   LifeCategory category;
-  String location;
+  String? location;
   bool isAllDay;
-  int id;
+  //int id;
   String type;
   BacklogMapRef?
       backlogMapRef; //if a backlog item is scheduled on the calendar, this reference will link the backlog item to its calendar event
   Event(
-      {required this.id,
-      required this.eventName,
+      {
+      //required this.id,
+      required this.description,
       required this.start,
       required this.end,
-      this.background,
+      required this.background,
       this.isAllDay = false,
       this.notes = "",
       required this.category,

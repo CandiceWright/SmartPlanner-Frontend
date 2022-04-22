@@ -46,13 +46,14 @@ class _TomorrowSchedulePageState extends State<TomorrowSchedulePage> {
                 )));
   }
 
-  void openEditEventPage(int id) {
+  void openEditEventPage() {
     Navigator.pop(context);
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) =>
-                EditEventPage(updateEvents: _updateEvents, id: id)));
+            builder: (context) => EditEventPage(
+                  updateEvents: _updateEvents,
+                )));
   }
 
   void _goToMonthlyView() {
@@ -68,7 +69,7 @@ class _TomorrowSchedulePageState extends State<TomorrowSchedulePage> {
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
       final Event appointmentDetails = details.appointments![0];
-      var _subjectText = appointmentDetails.eventName;
+      var _subjectText = appointmentDetails.description;
       var _dateText = DateFormat('MMMM dd, yyyy')
           .format(appointmentDetails.start)
           .toString();
@@ -116,7 +117,7 @@ class _TomorrowSchedulePageState extends State<TomorrowSchedulePage> {
               actions: <Widget>[
                 TextButton(
                     onPressed: () {
-                      openEditEventPage(appointmentDetails.id);
+                      openEditEventPage();
                     },
                     child: new Text('edit')),
                 TextButton(

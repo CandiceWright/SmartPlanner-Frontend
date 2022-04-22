@@ -16,7 +16,7 @@ class User {
   var password;
   CustomTheme theme;
   int themeId;
-  var goals = [];
+  var goals = <Event>[];
   var accomplishedGoals = [];
   var backlogItems = <BacklogItem>[];
   //var backlogMap = <String, List<BacklogItem>>{};
@@ -42,41 +42,6 @@ class User {
       this.profileImage,
       required this.didStartTomorrowPlanning,
       required this.lifeCategories}) {
-    //Goals
-    //List<Goal> userGoals = [];
-    // Goal goal1 =
-    //     Goal("100,000 planner subscriptions", DateTime(2022, 3, 11), "", "");
-    // Goal goal2 = Goal(
-    //     "At least 1,000,000 in my bank accounts", DateTime(2022, 8, 2), "", "");
-    // goals.add(goal1);
-    // goals.add(goal2);
-
-    //List<BacklogItem> backlogItems = [];
-    // BacklogItem bli1 = BacklogItem(description:"Complete backlog feature.",
-    //     completeBy: DateTime(2022, 3, 6), isComplete: false, category: L);
-    // BacklogItem bli2 = BacklogItem(
-    //     "Complete Homepage.", DateTime(2022, 3, 9), false, "Planner Business");
-    // BacklogItem bli3 = BacklogItem("Complete Calendar Feature.",
-    //     DateTime(2022, 3, 6), false, "Planner Business");
-    // BacklogItem bli4 = BacklogItem("Complete assistant feature.",
-    //     DateTime(2022, 3, 11), false, "Planner Business");
-    // BacklogItem bli5 = BacklogItem("Complete Server and connect to front end.",
-    //     DateTime(2022, 3, 16), false, "Planner Business");
-    // BacklogItem bli6 =
-    //     BacklogItem("Get nails done.", DateTime(2022, 3, 3), false, "Personal");
-    // BacklogItem bli7 =
-    //     BacklogItem("Wash Clothes.", DateTime(2022, 3, 3), false, "Personal");
-
-    // backlogItems.add(bli1);
-    // backlogItems.add(bli2);
-    // backlogItems.add(bli3);
-    // backlogItems.add(bli4);
-    // backlogItems.add(bli5);
-    // backlogItems.add(bli6);
-    // backlogItems.add(bli7);
-
-    //print(backlogItems);
-
     buildBacklogMap();
     buildHabitList();
     //buildEventList();
@@ -90,19 +55,6 @@ class User {
       } else {
         backlogMap[backlogItems[i].category.name] = [backlogItems[i]];
       }
-      // if (backlogItems[i].category.name == "") {
-      //   if (backlogMap.containsKey("Other")) {
-      //     backlogMap["Other"]!.add(backlogItems[i]);
-      //   } else {
-      //     backlogMap["Other"] = [backlogItems[i]];
-      //   }
-      // } else {
-      //   if (backlogMap.containsKey(backlogItems[i].category)) {
-      //     backlogMap[backlogItems[i].category]!.add(backlogItems[i]);
-      //   } else {
-      //     backlogMap[backlogItems[i].category.name] = [backlogItems[i]];
-      //   }
-      // }
     }
     //print(backlog);
     buildTodayTaskList();
@@ -141,8 +93,8 @@ class User {
         DateTime(today.year, today.month, today.day, 9, 0, 0);
     final DateTime endTime = startTime.add(const Duration(hours: 2));
     allEvents.add(Event(
-        id: 0,
-        eventName: 'Conference',
+        //id: 0,
+        description: 'Conference',
         type: "Meeting",
         start: startTime,
         end: endTime,
@@ -154,8 +106,8 @@ class User {
         DateTime(today.year, today.month, today.day + 1, 13, 0, 0);
     final DateTime endTime2 = startTime2.add(const Duration(hours: 2));
     allEvents.add(Event(
-        id: 1,
-        eventName: 'Conference',
+        //id: 1,
+        description: 'Conference',
         type: "Calendar",
         start: startTime2,
         end: endTime2,

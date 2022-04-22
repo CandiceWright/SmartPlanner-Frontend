@@ -1,5 +1,11 @@
+// ignore_for_file: avoid_unnecessary_containers
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:practice_planner/models/event_data_source.dart';
+import 'package:practice_planner/models/habit.dart';
+import 'package:practice_planner/views/Calendar/calendar_page.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
@@ -15,6 +21,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var todayTasks = PlannerService.sharedInstance.user.todayTasks;
+  var newHabitTextController = TextEditingController();
+  var editHabitTxtController = TextEditingController();
+  bool editHabitBtnDisabled = false;
+  bool saveHabitBtnDisabled = true;
+
   var daysMap = {
     1: "Mon",
     2: "Tues",
@@ -29,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     //print(PlannerService.sharedInstance.user.backlog);
+    newHabitTextController.addListener(setSaveHabitBtnState);
   }
 
   void openProfileView() {
@@ -115,9 +127,15 @@ class _HomePageState extends State<HomePage> {
         TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
           child: Container(
-            child: Text(
-              PlannerService.sharedInstance.user.habits[i].description,
-              textAlign: TextAlign.center,
+            child: TextButton(
+              child: Text(
+                PlannerService.sharedInstance.user.habits[i].description,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.black),
+              ),
+              onPressed: () {
+                //showHabitDialog(i);
+              },
             ),
             margin: EdgeInsets.only(left: 10, right: 10),
           ),
@@ -244,12 +262,19 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     //MaterialApp is a flutter class which has a constructor
-    // List<Widget> goalsListView = buildGoalsListView();
-    List<Widget> todayTasksView = buildTodayTaskListView();
-    List<TableRow> habitTableRows = buildHabitsView();
-    //List<TableRow> habitTableRows = [];
+    //List<Widget> todayTasksView = buildTodayTaskListView();
+    //List<TableRow> habitTableRows = buildHabitsView();
+
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Image.asset(
+            "assets/images/pink_planit.png",
+            //height: 100,
+            //width: 100,
+          ),
+          onPressed: () {},
+        ),
         actions: [
           IconButton(
             icon: Image.asset(
@@ -317,34 +342,32 @@ class _HomePageState extends State<HomePage> {
                   // margin: EdgeInsets.only(bottom: 10),
                   padding: EdgeInsets.all(5),
                 ),
+                // Container(
+                //   child: Column(
+                //     children: [],
+                //   ),
+                // ),
                 const Text(
-                  "Welcome to my PLANIT",
+                  "PLANIT of CANDY",
                   style: TextStyle(
                       fontStyle: FontStyle.italic, color: Colors.white),
                   // textAlign: TextAlign.right,
                 ),
-                // Container(
-                //   child: const Text(
-                //     "ON MY PLANIT",
-                //     style: TextStyle(
-                //         fontStyle: FontStyle.italic, color: Colors.white),
-                //     textAlign: TextAlign.center,
-                //   ),
-                // )
               ],
             ),
-            //padding: EdgeInsets.all(30),
-            //margin: EdgeInsets.all(]15),
           ),
           margin: EdgeInsets.all(15),
-          //color: Colors.pink.shade50,
         ),
       ),
-      //body: Text('This is my default text'),
       body: Container(
         //child: Expanded(
         child: ListView(
           children: [
+            // Image.asset(
+            //   "assets/images/pink_planit.png",
+            //   height: 100,
+            //   width: 100,
+            // ),
             Container(
               child: Column(
                 children: [
@@ -358,19 +381,215 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Container(
                     child: Table(
-                      // border: TableBorder.symmetric(),
-                      // border: const TableBorder(
-                      //   verticalInside:
-                      //       BorderSide(width: 1, style: BorderStyle.solid),
-                      //   horizontalInside: BorderSide(width: 1),
-                      // ),
                       columnWidths: const {
                         0: IntrinsicColumnWidth(),
                       },
-                      children: habitTableRows,
+                      children: [
+                            TableRow(children: [
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.fill,
+                                child: Container(
+                                    // child: Text(
+                                    //   "Habits",
+                                    //   textAlign: TextAlign.center,
+                                    //   style: TextStyle(
+                                    //     //color: Theme.of(context).colorScheme.primary,
+                                    //     color: Colors.black,
+                                    //     fontWeight: FontWeight.bold,
+                                    //   ),
+                                    // ),
+                                    //margin: EdgeInsets.only(left: 10, right: 10),
+                                    ),
+                              ),
+                              TableCell(
+                                  child: Container(
+                                      child: const Text("S",
+                                          textAlign: TextAlign.center))),
+                              TableCell(
+                                  child: const Text("M",
+                                      textAlign: TextAlign.center)),
+                              TableCell(
+                                  child:
+                                      Text("T", textAlign: TextAlign.center)),
+                              TableCell(
+                                  child:
+                                      Text("W", textAlign: TextAlign.center)),
+                              TableCell(
+                                  child:
+                                      Text("TH", textAlign: TextAlign.center)),
+                              TableCell(
+                                  child:
+                                      Text("F", textAlign: TextAlign.center)),
+                              TableCell(
+                                  child:
+                                      Text("S", textAlign: TextAlign.center)),
+                            ])
+                          ] +
+                          List.generate(
+                              PlannerService.sharedInstance.user.habits.length,
+                              (int i) {
+                            return TableRow(children: [
+                              TableCell(
+                                verticalAlignment:
+                                    TableCellVerticalAlignment.middle,
+                                child: Container(
+                                  child: TextButton(
+                                    child: Text(
+                                      PlannerService.sharedInstance.user
+                                          .habits[i].description,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    onPressed: () {
+                                      habitClicked(i);
+                                    },
+                                  ),
+                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                ),
+                              ),
+                              TableCell(
+                                child: Container(
+                                  child: Checkbox(
+                                    shape: CircleBorder(),
+                                    value: PlannerService.sharedInstance.user
+                                        .habits[i].habitTrackerMap["Sunday"]!,
+                                    onChanged: (bool? value) {
+                                      print(value);
+                                      setState(() {
+                                        PlannerService
+                                            .sharedInstance
+                                            .user
+                                            .habits[i]
+                                            .habitTrackerMap["Sunday"] = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                child: Container(
+                                  child: Checkbox(
+                                    shape: CircleBorder(),
+                                    value: PlannerService.sharedInstance.user
+                                        .habits[i].habitTrackerMap["Mon"]!,
+                                    onChanged: (bool? value) {
+                                      print(value);
+                                      setState(() {
+                                        PlannerService
+                                            .sharedInstance
+                                            .user
+                                            .habits[i]
+                                            .habitTrackerMap["Mon"] = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                child: Container(
+                                  child: Checkbox(
+                                    shape: CircleBorder(),
+                                    value: PlannerService.sharedInstance.user
+                                        .habits[i].habitTrackerMap["Tues"]!,
+                                    onChanged: (bool? value) {
+                                      print(value);
+                                      setState(() {
+                                        PlannerService
+                                            .sharedInstance
+                                            .user
+                                            .habits[i]
+                                            .habitTrackerMap["Tues"] = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                child: Container(
+                                  child: Checkbox(
+                                    shape: CircleBorder(),
+                                    value: PlannerService.sharedInstance.user
+                                        .habits[i].habitTrackerMap["Wed"]!,
+                                    onChanged: (bool? value) {
+                                      print(value);
+                                      setState(() {
+                                        PlannerService
+                                            .sharedInstance
+                                            .user
+                                            .habits[i]
+                                            .habitTrackerMap["Wed"] = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                child: Container(
+                                  child: Checkbox(
+                                    shape: CircleBorder(),
+                                    value: PlannerService.sharedInstance.user
+                                        .habits[i].habitTrackerMap["Thurs"]!,
+                                    onChanged: (bool? value) {
+                                      print(value);
+                                      setState(() {
+                                        PlannerService
+                                            .sharedInstance
+                                            .user
+                                            .habits[i]
+                                            .habitTrackerMap["Thurs"] = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                child: Container(
+                                  child: Checkbox(
+                                    shape: CircleBorder(),
+                                    value: PlannerService.sharedInstance.user
+                                        .habits[i].habitTrackerMap["Friday"]!,
+                                    onChanged: (bool? value) {
+                                      print(value);
+                                      setState(() {
+                                        PlannerService
+                                            .sharedInstance
+                                            .user
+                                            .habits[i]
+                                            .habitTrackerMap["Friday"] = value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              TableCell(
+                                child: Container(
+                                  child: Checkbox(
+                                    shape: CircleBorder(),
+                                    value: PlannerService.sharedInstance.user
+                                        .habits[i].habitTrackerMap["Saturday"]!,
+                                    onChanged: (bool? value) {
+                                      print(value);
+                                      setState(() {
+                                        PlannerService
+                                                .sharedInstance
+                                                .user
+                                                .habits[i]
+                                                .habitTrackerMap["Saturday"] =
+                                            value!;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ]);
+                          }),
                     ),
                     margin: EdgeInsets.only(top: 20),
                   ),
+                  TextButton(
+                      onPressed: addNewHabitClicked,
+                      child: Text("Add New Habit"))
                 ],
               ),
               margin: EdgeInsets.all(15),
@@ -397,17 +616,16 @@ class _HomePageState extends State<HomePage> {
                   ),
                   //Column(children: [ListTile(leading: ,)],)
                   Container(
-                    child: Table(
-                      // border: TableBorder.symmetric(),
-                      border: TableBorder(
-                        verticalInside:
-                            BorderSide(width: 1, style: BorderStyle.solid),
-                        horizontalInside: BorderSide(width: 1),
+                    child: Container(
+                      child: SfCalendar(
+                        view: CalendarView.schedule,
+                        dataSource: EventDataSource(
+                            PlannerService.sharedInstance.user.allEvents +
+                                PlannerService.sharedInstance.user.goals),
+                        // scheduleViewSettings: ScheduleViewSettings(
+                        //   appointmentItemHeight: 70,
+                        // ),
                       ),
-                      columnWidths: const {
-                        0: IntrinsicColumnWidth(),
-                      },
-                      children: habitTableRows,
                     ),
                     margin: EdgeInsets.only(top: 20),
                   ),
@@ -426,5 +644,208 @@ class _HomePageState extends State<HomePage> {
       //   ],
       // ),
     );
+  }
+
+  addNewHabitClicked() {
+    showDialog(
+      context: context, // user must tap button!
+
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return AlertDialog(
+            //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
+            //child: Expanded(
+            //child: Container(
+            title: const Text("New Habit"),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            content: addNewHabitDialogContent(setDialogState),
+            // content: TextFormField(
+            //   controller: newHabitTextController,
+            //   decoration: const InputDecoration(
+            //     hintText: "Description",
+            //   ),
+            //   validator: (String? value) {
+            //     if (value == null || value.isEmpty) {
+            //       return 'Please enter some text';
+            //     }
+            //     return null;
+            //   },
+            // ),
+            actions: <Widget>[
+              TextButton(
+                  child: const Text('save'),
+                  onPressed: saveHabitBtnDisabled ? null : saveNewHabit),
+              TextButton(
+                child: const Text('cancel'),
+                onPressed: () {
+                  newHabitTextController.text = "";
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+            // ),
+            //),
+          );
+        });
+      },
+    );
+  }
+
+  void saveNewHabit() {
+    var newHabit = Habit(newHabitTextController.text);
+    setState(() {
+      PlannerService.sharedInstance.user.habits.add(newHabit);
+      newHabitTextController.text = "";
+    });
+    Navigator.of(context).pop();
+  }
+
+  addNewHabitDialogContent(StateSetter setDialogState) {
+    return TextFormField(
+      controller: newHabitTextController,
+      onChanged: (text) {
+        setDialogState(() {
+          if (text != "") {
+            setState(() {
+              print("button enabled");
+              saveHabitBtnDisabled = false;
+            });
+          } else {
+            setState(() {
+              saveHabitBtnDisabled = true;
+            });
+          }
+        });
+      },
+      decoration: const InputDecoration(
+        hintText: "Description",
+      ),
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  void setSaveHabitBtnState() {
+    print("I am ttyping");
+    if (newHabitTextController.text != "") {
+      setState(() {
+        print("button enabled");
+        saveHabitBtnDisabled = false;
+      });
+    } else {
+      setState(() {
+        saveHabitBtnDisabled = true;
+      });
+    }
+  }
+
+  // showHabitDialog(int idx) async {
+  //   showDialog(
+  //       context: context, // user must tap button!
+  //       builder: (BuildContext context) {
+  //         return StatefulBuilder(builder: (context, setDialogState) {
+  //         return AlertDialog(
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(20.0),
+  //           ),
+  //           content: ,
+  //           actions: <Widget>[
+  //             TextButton(
+  //                 child: const Text('save'),
+  //                 onPressed: editHabitBtnDisabled ? null : editHabit(idx)),
+  //             TextButton(
+  //               child: const Text('cancel'),
+  //               onPressed: () {
+  //                 newHabitTextController.text = "";
+  //                 Navigator.of(context).pop();
+  //               },
+  //             )
+  //           ],
+  //           // ),
+  //           //),
+  //         );
+  //       });
+  //   },
+  //   );
+  // }
+
+  habitClicked(int idx) {
+    //editHabitTxtController.text =
+    //PlannerService.sharedInstance.user.habits[idx].description;
+    showDialog(
+      context: context, // user must tap button!
+
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return AlertDialog(
+            //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
+            //child: Expanded(
+            //child: Container(
+            title: const Text("New Habit"),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            content: showHabitDialogContent(setDialogState, idx),
+            actions: <Widget>[
+              TextButton(
+                  child: const Text('save'),
+                  onPressed: editHabitBtnDisabled ? null : editHabit(idx)),
+              TextButton(
+                child: const Text('cancel'),
+                onPressed: () {
+                  newHabitTextController.text = "";
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+            // ),
+            //),
+          );
+        });
+      },
+    );
+  }
+
+  showHabitDialogContent(StateSetter setDialogState, int idx) {
+    return TextFormField(
+      controller: editHabitTxtController,
+      onChanged: (text) {
+        setDialogState(() {
+          if (text != "") {
+            setState(() {
+              print("button enabled");
+              editHabitBtnDisabled = false;
+            });
+          } else {
+            setState(() {
+              editHabitBtnDisabled = true;
+            });
+          }
+        });
+      },
+      decoration: const InputDecoration(
+        hintText: "Description",
+      ),
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  editHabit(int idx) {
+    setState(() {
+      PlannerService.sharedInstance.user.habits[idx].description =
+          editHabitTxtController.text;
+    });
+    Navigator.of(context).pop();
   }
 }

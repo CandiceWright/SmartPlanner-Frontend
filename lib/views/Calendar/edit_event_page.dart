@@ -16,7 +16,7 @@ class EditEventPage extends StatefulWidget {
   const EditEventPage(
       {Key? key,
       required this.updateEvents,
-      required this.id,
+      //required this.id,
       this.selectedEvent,
       this.dataSource})
       : super(key: key);
@@ -30,7 +30,7 @@ class EditEventPage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
   final Function updateEvents;
-  final int id;
+  //final int id;
   final Event? selectedEvent;
   final EventDataSource? dataSource;
 
@@ -57,7 +57,7 @@ class _EditEventPageState extends State<EditEventPage> {
       TextEditingController(text: DateFormat.yMMMd().format(selectedEndDate));
 
   late final descriptionTxtController =
-      TextEditingController(text: CalendarPage.selectedEvent!.eventName);
+      TextEditingController(text: CalendarPage.selectedEvent!.description);
   late final notesTxtController =
       TextEditingController(text: CalendarPage.selectedEvent!.notes);
 
@@ -172,10 +172,10 @@ class _EditEventPageState extends State<EditEventPage> {
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
 
-    int id = PlannerService.sharedInstance.user.allEvents.length;
+    //int id = PlannerService.sharedInstance.user.allEvents.length;
     var newEvent = Event(
-      id: id,
-      eventName: eventTitle,
+      //id: id,
+      description: eventTitle,
       type: "calendar",
       start: startDateTime,
       end: endDateTime,

@@ -109,7 +109,7 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
     );
   }
 
-  void unscheduleEvent(int id) {
+  void unscheduleEvent() {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -161,7 +161,7 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
         });
   }
 
-  void deleteEvent(int idx) {
+  void deleteEvent() {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -208,7 +208,7 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
       final Event appointmentDetails = details.appointments![0];
-      var _subjectText = appointmentDetails.eventName;
+      var _subjectText = appointmentDetails.description;
       var _dateText = DateFormat('MMMM dd, yyyy')
           .format(appointmentDetails.start)
           .toString();
@@ -261,7 +261,7 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                   TextButton(
                     child: const Text('unschedule'),
                     onPressed: () {
-                      unscheduleEvent(appointmentDetails.id);
+                      unscheduleEvent();
                       // Navigator.of(context).pop();
                     },
                   ),
@@ -308,12 +308,12 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                 actions: <Widget>[
                   TextButton(
                       onPressed: () {
-                        openEditEventPage(appointmentDetails.id);
+                        openEditEventPage();
                       },
                       child: const Text('edit')),
                   TextButton(
                       onPressed: () {
-                        deleteEvent(appointmentDetails.id);
+                        deleteEvent();
                       },
                       child: const Text('delete')),
                   TextButton(
@@ -383,12 +383,13 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
     //         builder: (context) => const ScheduleBacklogItemsPage()));
   }
 
-  void openEditEventPage(int id) {
+  void openEditEventPage() {
     Navigator.pop(context);
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) =>
-                EditEventPage(updateEvents: _updateEvents, id: id)));
+            builder: (context) => EditEventPage(
+                  updateEvents: _updateEvents,
+                )));
   }
 }

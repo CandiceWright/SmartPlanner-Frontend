@@ -39,12 +39,6 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  // static Event? _selectedAppointment;
-  // static late EventDataSource _events;
-  //EventDataSource(PlannerService.sharedInstance.user.allEvents);
-  //bool _value = false;
-  //var backlog = PlannerService.sharedInstance.user.backlog;
-
   @override
   void initState() {
     super.initState();
@@ -93,14 +87,14 @@ class _CalendarPageState extends State<CalendarPage> {
             builder: (context) => const NoTomorrowPlanYetPage()));
   }
 
-  void openEditEventPage(int id) {
+  void openEditEventPage() {
     Navigator.pop(context);
     Navigator.push(
         context,
         CupertinoPageRoute(
             builder: (context) => EditEventPage(
                   updateEvents: _updateEvents,
-                  id: id,
+                  //id: id,
                   // dataSource: _events,
                   // selectedEvent: _selectedAppointment,
                 )));
@@ -115,7 +109,7 @@ class _CalendarPageState extends State<CalendarPage> {
     setState(() {});
   }
 
-  void deleteEvent(int idx) {
+  void deleteEvent() {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -191,7 +185,7 @@ class _CalendarPageState extends State<CalendarPage> {
         });
   }
 
-  void unscheduleEvent(int id) {
+  void unscheduleEvent() {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -248,7 +242,7 @@ class _CalendarPageState extends State<CalendarPage> {
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
       final Event appointmentDetails = details.appointments![0];
-      var _subjectText = appointmentDetails.eventName;
+      var _subjectText = appointmentDetails.description;
       var _dateText = DateFormat('MMMM dd, yyyy')
           .format(appointmentDetails.start)
           .toString();
@@ -296,7 +290,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   TextButton(
                     child: const Text('unschedule'),
                     onPressed: () {
-                      unscheduleEvent(appointmentDetails.id);
+                      unscheduleEvent();
                       // Navigator.of(context).pop();
                     },
                   ),
@@ -343,12 +337,12 @@ class _CalendarPageState extends State<CalendarPage> {
                 actions: <Widget>[
                   TextButton(
                       onPressed: () {
-                        openEditEventPage(appointmentDetails.id);
+                        openEditEventPage();
                       },
                       child: new Text('edit')),
                   TextButton(
                       onPressed: () {
-                        deleteEvent(appointmentDetails.id);
+                        deleteEvent();
                       },
                       child: new Text('delete')),
                   TextButton(

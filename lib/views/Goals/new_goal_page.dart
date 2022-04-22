@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
@@ -57,11 +58,24 @@ class _NewGoalPageState extends State<NewGoalPage> {
     var goalNotes = notesTxtController.text;
     //var category = categoryTxtController.text;
 
-    var newGoal = Goal(goalTitle, selectedDate, currChosenCategory, goalNotes);
+    var newGoal = Event(
+      //id: id,
+      description: goalTitle,
+      type: "goal",
+      start: selectedDate,
+      end: selectedDate,
+      //background: const Color(0xFFFF80b1),
+      background: currChosenCategory.color,
+      isAllDay: false,
+      notes: goalNotes,
+      category: currChosenCategory,
+    );
+
+    //var newGoal = Goal(goalTitle, selectedDate, currChosenCategory, goalNotes);
     PlannerService.sharedInstance.user.goals.add(newGoal);
     PlannerService.sharedInstance.user.goals.sort((goal1, goal2) {
-      DateTime goal1Date = goal1.date;
-      DateTime goal2Date = goal2.date;
+      DateTime goal1Date = goal1.start;
+      DateTime goal2Date = goal2.start;
       return goal1Date.compareTo(goal2Date);
     });
     widget.updateGoals();

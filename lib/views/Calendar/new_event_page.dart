@@ -200,10 +200,10 @@ class _NewGoalPageState extends State<NewEventPage> {
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
 
-    int id = PlannerService.sharedInstance.user.allEvents.length;
+    //int id = PlannerService.sharedInstance.user.allEvents.length;
     var newEvent = Event(
-      id: id,
-      eventName: eventTitle,
+      //id: id,
+      description: eventTitle,
       type: "calendar",
       start: startDateTime,
       end: endDateTime,

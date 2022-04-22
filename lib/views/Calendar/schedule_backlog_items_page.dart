@@ -216,7 +216,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
               child: Padding(
                 padding: EdgeInsets.only(bottom: 10),
                 child: Text(
-                  "Which item do you want to schedule?",
+                  "Which item do you want to schedule for tomorrow?",
                   style: TextStyle(color: Colors.white),
                   //textAlign: TextAlign.center,
                 ),

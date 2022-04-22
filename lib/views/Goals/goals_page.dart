@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/views/Goals/accomplished_goals_page.dart';
 import '/models/goal.dart';
 import 'new_goal_page.dart';
@@ -96,7 +97,7 @@ class _GoalsPageState extends State<GoalsPage> {
         });
   }
 
-  void _showGoalContent(Goal goal, int idx) {
+  void _showGoalContent(Event goal, int idx) {
     showDialog(
       context: context, // user must tap button!
 
@@ -117,7 +118,7 @@ class _GoalsPageState extends State<GoalsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    DateFormat.yMMMd().format(goal.date),
+                    DateFormat.yMMMd().format(goal.start),
                     // style: Theme.of(context).textTheme.subtitle2,
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
@@ -214,8 +215,8 @@ class _GoalsPageState extends State<GoalsPage> {
                     child: Column(
                       children: [
                         Text(
-                          DateFormat.yMMMd().format(
-                              PlannerService.sharedInstance.user.goals[i].date),
+                          DateFormat.yMMMd().format(PlannerService
+                              .sharedInstance.user.goals[i].start),
                           // style: Theme.of(context).textTheme.subtitle2,
                           style: const TextStyle(
                               fontSize: 20,
@@ -338,7 +339,10 @@ class _GoalsPageState extends State<GoalsPage> {
                                 children: [
                                   Text(
                                     DateFormat.yMMMd().format(PlannerService
-                                        .sharedInstance.user.goals[index].date),
+                                        .sharedInstance
+                                        .user
+                                        .goals[index]
+                                        .start),
                                     // style: Theme.of(context).textTheme.subtitle2,
                                     style: const TextStyle(
                                         fontSize: 25,

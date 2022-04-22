@@ -96,8 +96,8 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     var category = widget.backlogItem.category;
     var eventLocation = widget.backlogItem.location;
     var newEvent = Event(
-        id: PlannerService.sharedInstance.user.allEvents.length,
-        eventName: eventTitle,
+        //id: PlannerService.sharedInstance.user.allEvents.length,
+        description: eventTitle,
         type: "backlog",
         start: startDate,
         end: endDate,
@@ -118,11 +118,11 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         CalendarPage.events.appointments! as List<Event>;
 
     CalendarPage.selectedEvent = null;
-    PlannerService
-        .sharedInstance
-        .user
-        .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-        .calendarItemRef = newEvent.id; //I am going to need to update
+    // PlannerService
+    //     .sharedInstance
+    //     .user
+    //     .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+    //     .calendarItemRef = newEvent.id; //I am going to need to update
     widget.updateEvents();
     if (widget.fromPage == "tomorrow") {
       Navigator.of(context).popUntil((route) {
@@ -165,8 +165,9 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) =>
-                EditEventPage(updateEvents: _updateEvents, id: id)));
+            builder: (context) => EditEventPage(
+                  updateEvents: _updateEvents,
+                )));
   }
 
   void _goToMonthlyView() {
