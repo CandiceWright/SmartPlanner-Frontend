@@ -1,6 +1,7 @@
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/Themes/app_themes.dart';
 import 'package:practice_planner/models/life_category.dart';
@@ -377,6 +378,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
             title: Text(
               PlannerService.sharedInstance.user.username,
+              // style: GoogleFonts.roboto(
+              //   textStyle: const TextStyle(
+              //     color: Colors.white,
+              //   ),
+              // ),
               style: const TextStyle(color: Colors.white),
             ),
             centerTitle: true,
@@ -461,6 +467,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                 padding: EdgeInsets.all(8),
                                 child: Text(
                                   "My Life Categories",
+                                  // style: GoogleFonts.roboto(
+                                  //   textStyle: const TextStyle(
+                                  //     fontWeight: FontWeight.bold,
+                                  //   ),
+                                  // ),
                                   style: TextStyle(fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.center,
                                 )),

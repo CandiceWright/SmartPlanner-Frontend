@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/views/Goals/accomplished_goals_page.dart';
 import '/models/goal.dart';
@@ -274,7 +275,14 @@ class _GoalsPageState extends State<GoalsPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            title: const Text("Goals", style: TextStyle(color: Colors.white)),
+            title: Text("Goals",
+                //   style: GoogleFonts.roboto(
+                //     textStyle: const TextStyle(
+                //       color: Colors.white,
+                //     ),
+                //   ),
+                // ),
+                style: TextStyle(color: Colors.white)),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,

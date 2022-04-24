@@ -11,7 +11,6 @@ import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -342,12 +341,19 @@ class _HomePageState extends State<HomePage> {
                 //     children: [],
                 //   ),
                 // ),
-                const Text(
-                  "PLANIT of CANDY",
-                  style: TextStyle(
-                    
-                      fontStyle: FontStyle.italic, color: Colors.white),
-                  // textAlign: TextAlign.right,
+                Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: Text(
+                    "PLANIT of CANDY",
+                    style: GoogleFonts.roboto(
+                      textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18),
+                    ),
+                    //fontStyle: FontStyle.italic, color: Colors.white),
+                    // textAlign: TextAlign.right,
+                  ),
                 ),
               ],
             ),
@@ -367,12 +373,14 @@ class _HomePageState extends State<HomePage> {
             Container(
               child: Column(
                 children: [
-                  const Align(
+                  Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "This Week's Habits...",
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: GoogleFonts.roboto(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
                     ),
                   ),
                   Container(
@@ -435,7 +443,12 @@ class _HomePageState extends State<HomePage> {
                                       PlannerService.sharedInstance.user
                                           .habits[i].description,
                                       textAlign: TextAlign.center,
-                                      style: TextStyle(color: Colors.black),
+                                      style: GoogleFonts.openSans(
+                                        textStyle: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      //style: TextStyle(color: Colors.black),
                                     ),
                                     onPressed: () {
                                       print("Buttton was pressed");
@@ -647,8 +660,10 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Text(
                           "Upcoming Deadlines & Events",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                          style: GoogleFonts.roboto(
+                            textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
                         ),
                       ],
                     ),

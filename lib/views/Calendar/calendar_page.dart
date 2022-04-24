@@ -2,6 +2,7 @@
 //part 'edit_event_page.dart';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
@@ -382,9 +383,14 @@ class _CalendarPageState extends State<CalendarPage> {
             backgroundColor: Colors.transparent,
 
             title: Column(
-              children: const [
+              children: [
                 Text(
                   "Today",
+                  // style: GoogleFonts.roboto(
+                  //   textStyle: const TextStyle(
+                  //     color: Colors.white,
+                  //   ),
+                  // ),
                   style: TextStyle(color: Colors.white),
                 ),
                 // Image.asset(

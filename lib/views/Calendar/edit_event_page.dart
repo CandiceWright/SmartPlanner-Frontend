@@ -87,20 +87,41 @@ class _EditEventPageState extends State<EditEventPage> {
         initialDate: selectedStartDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
-    if (picked != null && picked != selectedStartDate)
+    //lastDate: selectedEndDate);
+    if (picked != null && picked != selectedStartDate) {
       setState(() {
         selectedStartDate = picked;
         startDateTxtController.text =
             DateFormat.yMMMd().format(selectedStartDate);
+        if (selectedStartDate.compareTo(selectedEndDate) > 0) {
+          //startTime is after
+          selectedEndDate = selectedStartDate;
+          endDateTxtController.text =
+              DateFormat.yMMMd().format(selectedEndDate);
+        }
         //print(DateFormat.yMMMd().format(selectedDate));
       });
+    }
+    // final DateTime? picked = await showDatePicker(
+    //     context: context,
+    //     initialDate: selectedStartDate,
+    //     firstDate: DateTime(2015, 8),
+    //     lastDate: DateTime(2101));
+    // if (picked != null && picked != selectedStartDate)
+    //   setState(() {
+    //     selectedStartDate = picked;
+    //     startDateTxtController.text =
+    //         DateFormat.yMMMd().format(selectedStartDate);
+    //     //print(DateFormat.yMMMd().format(selectedDate));
+    //   });
   }
 
   Future<void> _selectEndDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedEndDate,
-        firstDate: DateTime(2015, 8),
+        //firstDate: DateTime(2015, 8),
+        firstDate: selectedStartDate,
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedEndDate)
       setState(() {
@@ -108,6 +129,17 @@ class _EditEventPageState extends State<EditEventPage> {
         endDateTxtController.text = DateFormat.yMMMd().format(selectedEndDate);
         //print(DateFormat.yMMMd().format(selectedDate));
       });
+    // final DateTime? picked = await showDatePicker(
+    //     context: context,
+    //     initialDate: selectedEndDate,
+    //     firstDate: DateTime(2015, 8),
+    //     lastDate: DateTime(2101));
+    // if (picked != null && picked != selectedEndDate)
+    //   setState(() {
+    //     selectedEndDate = picked;
+    //     endDateTxtController.text = DateFormat.yMMMd().format(selectedEndDate);
+    //     //print(DateFormat.yMMMd().format(selectedDate));
+    //   });
   }
 
   Future<Null> _selectStartTime(BuildContext context) async {

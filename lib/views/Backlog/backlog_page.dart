@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:practice_planner/models/backlog_item.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/views/Backlog/edit_task_page.dart';
@@ -363,18 +364,24 @@ class _BacklogPageState extends State<BacklogPage> {
     //return backloglistview;
 
     Widget todayExpansionTile = ExpansionTile(
-      title: const Text(
+      title: Text(
         "Today",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: GoogleFonts.openSans(
+          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        //style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
       //initiallyExpanded: true,
       children: todayItems,
     );
 
     Widget tomorrowExpansionTile = ExpansionTile(
-      title: const Text(
+      title: Text(
         "Tomorrow",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: GoogleFonts.openSans(
+          textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        //style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
       //initiallyExpanded: true,
       children: tomorrowItems,
@@ -382,11 +389,17 @@ class _BacklogPageState extends State<BacklogPage> {
 
     Widget unscheduledExpansionTile = ExpansionTile(
       title: Text(
-        "Backlog",
-        style: TextStyle(
-            color: Colors.black,
-            fontWeight: expandedTileFontWeight,
-            fontSize: 18),
+        "Another Day",
+        style: GoogleFonts.roboto(
+          textStyle: TextStyle(
+              color: Colors.black,
+              fontWeight: expandedTileFontWeight,
+              fontSize: 18),
+        ),
+        // style: TextStyle(
+        //     color: Colors.black,
+        //     fontWeight: expandedTileFontWeight,
+        //     fontSize: 18),
       ),
       initiallyExpanded: true,
       onExpansionChanged: (expanded) {
@@ -424,9 +437,14 @@ class _BacklogPageState extends State<BacklogPage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: const Text(
+        title: Text(
           "Backlog",
-          style: TextStyle(color: Colors.white),
+          style: GoogleFonts.roboto(
+            textStyle: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          //style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,

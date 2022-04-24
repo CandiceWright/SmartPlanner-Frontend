@@ -44,6 +44,7 @@ class _NewGoalPageState extends State<NewEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime selectedStartDate = DateTime.now();
   TimeOfDay selectedStartTime = TimeOfDay(hour: 00, minute: 00);
+  //DateTime selectedEndDate = DateTime.now();
   DateTime selectedEndDate = DateTime.now();
   TimeOfDay selectedEndTime = TimeOfDay(hour: 00, minute: 00);
   var startDateTxtController = TextEditingController();
@@ -74,31 +75,7 @@ class _NewGoalPageState extends State<NewEventPage> {
       selectedStartDate = tomorrow;
       selectedEndDate = tomorrow;
     }
-    // if (widget.fromPage == "schedule_backlog_item") {
-    //   descriptionTxtController.text = widget.event!.eventName;
-    //   startDateTxtController.text =
-    //       DateFormat.yMMMd().format(widget.event!.start);
-    //   endDateTxtController.text = DateFormat.yMMMd().format(widget.event!.end);
-    //   startTimeController.text = formatDate(
-    //       DateTime(2019, 08, 1, widget.event!.start.hour,
-    //           widget.event!.start.minute),
-    //       [hh, ':', nn, " ", am]).toString();
-    //   endTimeController.text = formatDate(
-    //       DateTime(
-    //           2019, 08, 1, widget.event!.end.hour, widget.event!.end.minute),
-    //       [hh, ':', nn, " ", am]).toString();
-    //   //categoryTxtController.text = widget.event!.category;
-    //   locationTxtController.text = widget.event!.location;
-    //   notesTxtController.text = widget.event!.notes;
-    //   print("printing start date widget");
-    //   print(widget.event!.start);
-    //   selectedStartDate = widget.event!.start;
-    //   selectedEndDate = widget.event!.end;
-    //   selectedStartTime = TimeOfDay(
-    //       hour: widget.event!.start.hour, minute: widget.event!.start.minute);
-    //   selectedEndTime = TimeOfDay(
-    //       hour: widget.event!.end.hour, minute: widget.event!.end.minute);
-    // }
+
     setDoneBtnState();
   }
 
@@ -108,20 +85,29 @@ class _NewGoalPageState extends State<NewEventPage> {
         initialDate: selectedStartDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
-    if (picked != null && picked != selectedStartDate)
+    //lastDate: selectedEndDate);
+    if (picked != null && picked != selectedStartDate) {
       setState(() {
         selectedStartDate = picked;
         startDateTxtController.text =
             DateFormat.yMMMd().format(selectedStartDate);
+        if (selectedStartDate.compareTo(selectedEndDate) > 0) {
+          //startTime is after
+          selectedEndDate = selectedStartDate;
+          endDateTxtController.text =
+              DateFormat.yMMMd().format(selectedEndDate);
+        }
         //print(DateFormat.yMMMd().format(selectedDate));
       });
+    }
   }
 
   Future<void> _selectEndDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedEndDate,
-        firstDate: DateTime(2015, 8),
+        //firstDate: DateTime(2015, 8),
+        firstDate: selectedStartDate,
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedEndDate)
       setState(() {
@@ -153,9 +139,9 @@ class _NewGoalPageState extends State<NewEventPage> {
 
   Future<Null> _selectEndTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: selectedEndTime,
-    );
+        context: context,
+        //initialTime: selectedEndTime,
+        initialTime: selectedStartTime);
     if (picked != null) {
       setState(() {
         selectedEndTime = picked;
@@ -283,7 +269,8 @@ class _NewGoalPageState extends State<NewEventPage> {
                 onPressed: doneBtnDisabled ? null : createEvent,
                 child: const Text(
                   "Done",
-                  style: TextStyle(color: Colors.white),
+
+                  ///style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
