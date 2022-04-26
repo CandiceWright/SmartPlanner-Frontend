@@ -166,17 +166,14 @@ class _NewGoalPageState extends State<NewEventPage> {
 
   void createEvent() {
     final List<Event> events = <Event>[];
-    if (CalendarPage.selectedEvent != null) {
-      CalendarPage.events.appointments!.removeAt(CalendarPage
-          .events.appointments!
-          .indexOf(CalendarPage.selectedEvent));
-      CalendarPage.events.notifyListeners(CalendarDataSourceAction.remove,
-          <Event>[]..add(CalendarPage.selectedEvent!));
-    }
-    var eventTitle = descriptionTxtController.text;
-    var eventNotes = notesTxtController.text;
-    //var category = categoryTxtController.text;
-    var eventLocation = locationTxtController.text;
+    //I'm nott sure why I added he code below so I commented out for now
+    // if (CalendarPage.selectedEvent != null) {
+    //   CalendarPage.events.appointments!.removeAt(CalendarPage
+    //       .events.appointments!
+    //       .indexOf(CalendarPage.selectedEvent));
+    //   CalendarPage.events.notifyListeners(CalendarDataSourceAction.remove,
+    //       <Event>[]..add(CalendarPage.selectedEvent!));
+    // }
     var startDateTime = DateTime(
         selectedStartDate.year,
         selectedStartDate.month,
@@ -186,32 +183,56 @@ class _NewGoalPageState extends State<NewEventPage> {
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
 
-    //int id = PlannerService.sharedInstance.user.allEvents.length;
-    var newEvent = Event(
-      //id: id,
-      description: eventTitle,
-      type: "calendar",
-      start: startDateTime,
-      end: endDateTime,
-      //background: const Color(0xFFFF80b1),
-      background: currChosenCategory.color,
-      isAllDay: false,
-      notes: eventNotes,
-      category: currChosenCategory,
-      location: eventLocation,
-    );
+    if (startDateTime.compareTo(endDateTime) > 0) {
+      //startDate is after end date which can't happen
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Fix Dates"),
+              content: Text("Start date must be before end date."),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Ok'))
+              ],
+            );
+          });
+    } else {
+      var eventTitle = descriptionTxtController.text;
+      var eventNotes = notesTxtController.text;
+      //var category = categoryTxtController.text;
+      var eventLocation = locationTxtController.text;
 
-    events.add(newEvent);
+      //int id = PlannerService.sharedInstance.user.allEvents.length;
+      var newEvent = Event(
+        //id: id,
+        description: eventTitle,
+        type: "calendar",
+        start: startDateTime,
+        end: endDateTime,
+        //background: const Color(0xFFFF80b1),
+        background: currChosenCategory.color,
+        isAllDay: false,
+        notes: eventNotes,
+        category: currChosenCategory,
+        location: eventLocation,
+      );
 
-    CalendarPage.events.appointments!.add(events[0]);
+      events.add(newEvent);
 
-    CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
-    PlannerService.sharedInstance.user.allEvents =
-        CalendarPage.events.appointments! as List<Event>;
+      CalendarPage.events.appointments!.add(events[0]);
 
-    CalendarPage.selectedEvent = null;
+      CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
+      PlannerService.sharedInstance.user.allEvents =
+          CalendarPage.events.appointments! as List<Event>;
 
-    _backToEventsPage();
+      CalendarPage.selectedEvent = null;
+
+      _backToEventsPage();
+    }
   }
 
   void setDoneBtnState() {

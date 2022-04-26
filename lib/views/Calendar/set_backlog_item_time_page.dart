@@ -59,92 +59,142 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
   void _saveNewCalendarItem() {
     final List<Event> events = <Event>[];
 
-    DateTime startDate;
-    DateTime endDate;
+    DateTime startDateTime;
+    DateTime endDateTime;
     if (widget.fromPage == "tomorrow") {
-      startDate = DateTime(
+      startDateTime = DateTime(
           DateTime.now().year,
           DateTime.now().month,
           DateTime.now().day + 1,
           selectedStartTime.hour,
           selectedStartTime.minute);
-      endDate = DateTime(DateTime.now().year, DateTime.now().month,
+      endDateTime = DateTime(DateTime.now().year, DateTime.now().month,
           DateTime.now().day + 1, selectedEndTime.hour, selectedEndTime.minute);
-      PlannerService
-              .sharedInstance
-              .user
-              .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-              .scheduledDate =
-          DateTime(DateTime.now().year, DateTime.now().month,
-              DateTime.now().day + 1);
+      if (startDateTime.compareTo(endDateTime) > 0) {
+        //startDate is after end date which can't happen
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Fix Time"),
+                content: Text("Start time must be before end time."),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Ok'))
+                ],
+              );
+            });
+      } else {
+        PlannerService
+            .sharedInstance
+            .user
+            .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+            .scheduledDate = startDateTime;
+        var eventTitle = widget.backlogItem.description;
+        var eventNotes = widget.backlogItem.notes;
+        var category = widget.backlogItem.category;
+        var eventLocation = widget.backlogItem.location;
+        var newEvent = Event(
+            //id: PlannerService.sharedInstance.user.allEvents.length,
+            description: eventTitle,
+            type: "backlog",
+            start: startDateTime,
+            end: endDateTime,
+            background: widget.backlogItem.category.color,
+            isAllDay: false,
+            notes: eventNotes,
+            category: category,
+            location: eventLocation,
+            backlogMapRef: widget.bmRef);
+
+        //PlannerService.sharedInstance.user.allEvents.add(newEvent);
+        events.add(newEvent);
+
+        CalendarPage.events.appointments!.add(events[0]);
+
+        CalendarPage.events
+            .notifyListeners(CalendarDataSourceAction.add, events);
+        PlannerService.sharedInstance.user.allEvents =
+            CalendarPage.events.appointments! as List<Event>;
+
+        CalendarPage.selectedEvent = null;
+        widget.updateEvents();
+        Navigator.of(context).popUntil((route) {
+          return route.settings.name == 'TomorrowPage';
+        });
+        // PlannerService
+        //         .sharedInstance
+        //         .user
+        //         .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+        //         .scheduledDate =
+        //     DateTime(DateTime.now().year, DateTime.now().month,
+        //         DateTime.now().day + 1);
+      }
     } else {
-      startDate = DateTime(DateTime.now().year, DateTime.now().month,
+      startDateTime = DateTime(DateTime.now().year, DateTime.now().month,
           DateTime.now().day, selectedStartTime.hour, selectedStartTime.minute);
-      endDate = DateTime(DateTime.now().year, DateTime.now().month,
+      endDateTime = DateTime(DateTime.now().year, DateTime.now().month,
           DateTime.now().day, selectedEndTime.hour, selectedEndTime.minute);
-      PlannerService
-              .sharedInstance
-              .user
-              .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-              .scheduledDate =
-          DateTime(
-              DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      if (startDateTime.compareTo(endDateTime) > 0) {
+        //startDate is after end date which can't happen
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Fix Time"),
+                content: Text("Start time must be before end time."),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Ok'))
+                ],
+              );
+            });
+      } else {
+        PlannerService
+            .sharedInstance
+            .user
+            .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+            .scheduledDate = startDateTime;
+        var eventTitle = widget.backlogItem.description;
+        var eventNotes = widget.backlogItem.notes;
+        var category = widget.backlogItem.category;
+        var eventLocation = widget.backlogItem.location;
+        var newEvent = Event(
+            //id: PlannerService.sharedInstance.user.allEvents.length,
+            description: eventTitle,
+            type: "backlog",
+            start: startDateTime,
+            end: endDateTime,
+            background: widget.backlogItem.category.color,
+            isAllDay: false,
+            notes: eventNotes,
+            category: category,
+            location: eventLocation,
+            backlogMapRef: widget.bmRef);
+
+        //PlannerService.sharedInstance.user.allEvents.add(newEvent);
+        events.add(newEvent);
+
+        CalendarPage.events.appointments!.add(events[0]);
+
+        CalendarPage.events
+            .notifyListeners(CalendarDataSourceAction.add, events);
+        PlannerService.sharedInstance.user.allEvents =
+            CalendarPage.events.appointments! as List<Event>;
+
+        CalendarPage.selectedEvent = null;
+        widget.updateEvents();
+        Navigator.of(context).popUntil((route) {
+          return route.settings.name == 'navigaionPage';
+        });
+      }
     }
-
-    var eventTitle = widget.backlogItem.description;
-    var eventNotes = widget.backlogItem.notes;
-    var category = widget.backlogItem.category;
-    var eventLocation = widget.backlogItem.location;
-    var newEvent = Event(
-        //id: PlannerService.sharedInstance.user.allEvents.length,
-        description: eventTitle,
-        type: "backlog",
-        start: startDate,
-        end: endDate,
-        background: widget.backlogItem.category.color,
-        isAllDay: false,
-        notes: eventNotes,
-        category: category,
-        location: eventLocation,
-        backlogMapRef: widget.bmRef);
-
-    //PlannerService.sharedInstance.user.allEvents.add(newEvent);
-    events.add(newEvent);
-
-    CalendarPage.events.appointments!.add(events[0]);
-
-    CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
-    PlannerService.sharedInstance.user.allEvents =
-        CalendarPage.events.appointments! as List<Event>;
-
-    CalendarPage.selectedEvent = null;
-    // PlannerService
-    //     .sharedInstance
-    //     .user
-    //     .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-    //     .calendarItemRef = newEvent.id; //I am going to need to update
-    widget.updateEvents();
-    if (widget.fromPage == "tomorrow") {
-      Navigator.of(context).popUntil((route) {
-        return route.settings.name == 'TomorrowPage';
-      });
-    } else {
-      Navigator.of(context).popUntil((route) {
-        return route.settings.name == 'navigaionPage';
-      });
-    }
-
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     settings: const RouteSettings(name: "NewEvent"),
-    //     builder: (context) => NewEventPage(
-    //       updateEvents: widget.updateTomorrowEvents,
-    //       fromPage: "schedule_backlog_item",
-    //       event: newEvent,
-    //       backlogMapRef: widget.bmRef,
-    //     ),
-    //   ),
-    // );
   }
 
   void setDoneBtnState() {

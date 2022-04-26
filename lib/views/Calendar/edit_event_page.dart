@@ -191,10 +191,6 @@ class _EditEventPageState extends State<EditEventPage> {
       CalendarPage.events.notifyListeners(CalendarDataSourceAction.remove,
           <Event>[]..add(CalendarPage.selectedEvent!));
     }
-    var eventTitle = descriptionTxtController.text;
-    var eventNotes = notesTxtController.text;
-    //var category = categoryTxtController.text;
-    var eventLocation = locationTxController.text;
     var startDateTime = DateTime(
         selectedStartDate.year,
         selectedStartDate.month,
@@ -203,32 +199,55 @@ class _EditEventPageState extends State<EditEventPage> {
         selectedStartTime.minute);
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
+    if (startDateTime.compareTo(endDateTime) > 0) {
+      //startDate is after end date which can't happen
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Fix Dates"),
+              content: Text("Start date must be before end date."),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Ok'))
+              ],
+            );
+          });
+    } else {
+      var eventTitle = descriptionTxtController.text;
+      var eventNotes = notesTxtController.text;
+      //var category = categoryTxtController.text;
+      var eventLocation = locationTxController.text;
 
-    //int id = PlannerService.sharedInstance.user.allEvents.length;
-    var newEvent = Event(
-      //id: id,
-      description: eventTitle,
-      type: "calendar",
-      start: startDateTime,
-      end: endDateTime,
-      //background: const Color(0xFFFF80b1),
-      background: currChosenCategory.color,
-      isAllDay: false,
-      notes: eventNotes,
-      category: currChosenCategory,
-      location: eventLocation,
-    );
+      //int id = PlannerService.sharedInstance.user.allEvents.length;
+      var newEvent = Event(
+        //id: id,
+        description: eventTitle,
+        type: "calendar",
+        start: startDateTime,
+        end: endDateTime,
+        //background: const Color(0xFFFF80b1),
+        background: currChosenCategory.color,
+        isAllDay: false,
+        notes: eventNotes,
+        category: currChosenCategory,
+        location: eventLocation,
+      );
 
-    events.add(newEvent);
+      events.add(newEvent);
 
-    CalendarPage.events.appointments!.add(events[0]);
+      CalendarPage.events.appointments!.add(events[0]);
 
-    CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
-    PlannerService.sharedInstance.user.allEvents =
-        CalendarPage.events.appointments! as List<Event>;
-    CalendarPage.selectedEvent = null;
+      CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
+      PlannerService.sharedInstance.user.allEvents =
+          CalendarPage.events.appointments! as List<Event>;
+      CalendarPage.selectedEvent = null;
 
-    _backToEventsPage();
+      _backToEventsPage();
+    }
   }
 
   void setDoneBtnState() {
