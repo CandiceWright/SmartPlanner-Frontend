@@ -436,14 +436,40 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           DropdownMenuItem(
                             //value: "neutral",
-                            value: AppThemes.neutral,
+                            value: AppThemes.green,
                             child: Row(
                               children: const [
                                 Icon(
                                   Icons.circle,
-                                  color: Colors.brown,
+                                  color: Colors.green,
                                 ),
-                                Text("Neutral")
+                                Text("Green")
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            //value: "neutral",
+                            value: AppThemes.orange,
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Icons.circle,
+                                  color: Colors.orange,
+                                ),
+                                Text("Orange")
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            //value: "neutral",
+                            value: AppThemes.grey,
+                            child: Row(
+                              children: const [
+                                Icon(
+                                  Icons.circle,
+                                  color: Colors.grey,
+                                ),
+                                Text("Grey")
                               ],
                             ),
                           ),
@@ -496,6 +522,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                         showEditCategoryDialog(index);
                                       },
                                       child: Card(
+                                        color: Colors.white,
+                                        elevation: 3,
+                                        shadowColor: PlannerService
+                                            .sharedInstance
+                                            .user
+                                            .lifeCategories[index]
+                                            .color,
                                         //color: Colors.blue[index * 100],
                                         child: Flex(
                                             direction: Axis.horizontal,
@@ -530,7 +563,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                             TextButton(
                                 onPressed: () => {showAddCategoryDialog()},
-                                child: Text("Add New")),
+                                child: Text(
+                                  "Add New",
+                                  style: TextStyle(color: Colors.black),
+                                )),
                           ],
                         ),
                         color: Colors.white,

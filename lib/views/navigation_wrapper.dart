@@ -4,6 +4,7 @@ import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
 import '/views/Calendar/calendar_page.dart';
 import '/views/Backlog/backlog_page.dart';
+import 'Dictionary/dictionary.dart';
 
 class NavigationWrapper extends StatefulWidget {
   const NavigationWrapper({Key? key}) : super(key: key);
@@ -19,9 +20,10 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
-    CalendarPage(),
     BacklogPage(),
+    CalendarPage(),
     GoalsPage(),
+    DictionaryPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -46,16 +48,20 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendar',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.list),
             label: 'Backlog',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.track_changes_outlined),
             label: 'Goals',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book_outlined),
+            label: 'Dictionary',
           ),
         ],
         currentIndex: _selectedIndex,

@@ -17,6 +17,7 @@ class User {
   CustomTheme theme;
   int themeId;
   var goals = <Event>[];
+  var planitDictionary = <String, String>{};
   var accomplishedGoals = [];
   var backlogItems = <BacklogItem>[];
   //var backlogMap = <String, List<BacklogItem>>{};

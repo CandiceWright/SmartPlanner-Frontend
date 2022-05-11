@@ -53,9 +53,37 @@ class MyApp extends StatelessWidget {
                   fontWeight: FontWeight.bold),
               elevation: 0),
         ),
-        AppThemes.neutral: ThemeData(
-          cardColor: AppThemes().neutralAccentSwatch,
-          primarySwatch: AppThemes().neutralPrimarySwatch,
+        AppThemes.green: ThemeData(
+          cardColor: AppThemes().greenAccentSwatch,
+          primarySwatch: AppThemes().greenPrimarySwatch,
+          backgroundColor: Colors.white,
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              centerTitle: false,
+              titleTextStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: kToolbarHeight / 2,
+                  fontWeight: FontWeight.bold),
+              elevation: 0),
+        ),
+        AppThemes.orange: ThemeData(
+          cardColor: AppThemes().orangeAccentSwatch,
+          primarySwatch: AppThemes().orangePrimarySwatch,
+          backgroundColor: Colors.white,
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.white,
+              centerTitle: false,
+              titleTextStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: kToolbarHeight / 2,
+                  fontWeight: FontWeight.bold),
+              elevation: 0),
+        ),
+        AppThemes.grey: ThemeData(
+          cardColor: AppThemes().greyAccentSwatch,
+          primarySwatch: AppThemes().greyPrimarySwatch,
           backgroundColor: Colors.white,
           scaffoldBackgroundColor: Colors.white,
           appBarTheme: const AppBarTheme(

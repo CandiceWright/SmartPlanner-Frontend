@@ -440,7 +440,11 @@ class _GoalsPageState extends State<GoalsPage> {
           floatingActionButton: FloatingActionButton(
             onPressed: _openNewGoalPage,
             tooltip: 'Increment',
-            child: const Icon(Icons.add),
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
           ), // This trailing comma makes auto-formatting nicer for build methods.
         )
       ],

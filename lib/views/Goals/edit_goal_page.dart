@@ -138,11 +138,11 @@ class _EditGoalPageState extends State<EditGoalPage> {
         child: Container(
           child: ListView(
             children: [
-              Image.asset(
-                "assets/images/goal_icon.png",
-                height: 80,
-                width: 80,
-              ),
+              // Image.asset(
+              //   "assets/images/goal_icon.png",
+              //   height: 80,
+              //   width: 80,
+              // ),
               Form(
                 key: _formKey,
                 child: Column(

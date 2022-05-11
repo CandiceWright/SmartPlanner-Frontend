@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class AppThemes {
   static const int pink = 0;
   static const int blue = 1;
-  static const int neutral = 2;
+  static const int green = 2;
+  static const int orange = 3;
+  static const int grey = 4;
 
   final Map<int, Color> _pinkMap = {
     50: Colors.pink.shade50,
@@ -43,22 +45,60 @@ class AppThemes {
   late MaterialColor blueAccentSwatch =
       MaterialColor(Colors.blue[50]!.value, _blueMap);
 
-  final Map<int, Color> _neutralMap = {
-    50: Colors.brown.shade50,
-    100: Colors.brown.shade100,
-    200: Colors.brown.shade200,
-    300: Colors.brown.shade300,
-    400: Colors.brown.shade400,
-    500: Colors.brown.shade500,
-    600: Colors.brown.shade600,
-    700: Colors.brown.shade700,
-    800: Colors.brown.shade800,
-    900: Colors.brown.shade900,
+  final Map<int, Color> _greenMap = {
+    50: Colors.green.shade50,
+    100: Colors.green.shade100,
+    200: Colors.green.shade200,
+    300: Colors.green.shade300,
+    400: Colors.green.shade400,
+    500: Colors.green.shade500,
+    600: Colors.green.shade600,
+    700: Colors.green.shade700,
+    800: Colors.green.shade800,
+    900: Colors.green.shade900,
   };
 
-  late MaterialColor neutralPrimarySwatch =
-      MaterialColor(Colors.brown[700]!.value, _neutralMap);
+  late MaterialColor greenPrimarySwatch =
+      MaterialColor(Colors.green[700]!.value, _greenMap);
 
-  late MaterialColor neutralAccentSwatch =
-      MaterialColor(Colors.brown[100]!.value, _neutralMap);
+  late MaterialColor greenAccentSwatch =
+      MaterialColor(Colors.green[50]!.value, _greenMap);
+
+  final Map<int, Color> _orangeMap = {
+    50: Colors.orange.shade50,
+    100: Colors.orange.shade100,
+    200: Colors.orange.shade200,
+    300: Colors.orange.shade300,
+    400: Colors.orange.shade400,
+    500: Colors.orange.shade500,
+    600: Colors.orange.shade600,
+    700: Colors.orange.shade700,
+    800: Colors.orange.shade800,
+    900: Colors.orange.shade900,
+  };
+
+  late MaterialColor orangePrimarySwatch =
+      MaterialColor(Colors.orange[900]!.value, _orangeMap);
+
+  late MaterialColor orangeAccentSwatch =
+      MaterialColor(Colors.orange[50]!.value, _orangeMap);
+
+  final Map<int, Color> _greyMap = {
+    50: Colors.grey.shade50,
+    100: Colors.grey.shade100,
+    200: Colors.grey.shade200,
+    300: Colors.grey.shade300,
+    400: Colors.grey.shade400,
+    500: Colors.grey.shade500,
+    600: Colors.grey.shade600,
+    700: Colors.grey.shade700,
+    800: Colors.grey.shade800,
+    900: Colors.grey.shade900,
+  };
+
+  late MaterialColor greyPrimarySwatch =
+      MaterialColor(Colors.grey[800]!.value, _greyMap);
+
+  late MaterialColor greyAccentSwatch =
+      MaterialColor(Colors.grey[100]!.value, _greyMap);
 }

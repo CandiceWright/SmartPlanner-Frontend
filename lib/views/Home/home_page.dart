@@ -23,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var todayTasks = PlannerService.sharedInstance.user.todayTasks;
   var newHabitTextController = TextEditingController();
+  var planitMessageTxtController = TextEditingController();
   var editHabitTxtController = TextEditingController();
   bool editHabitBtnDisabled = false;
   bool saveHabitBtnDisabled = true;
@@ -370,6 +371,23 @@ class _HomePageState extends State<HomePage> {
             //   height: 100,
             //   width: 100,
             // ),
+            // Container(
+            //   child: TextFormField(
+            //     controller: planitMessageTxtController,
+            //     decoration: const InputDecoration(
+            //       hintText: "My Planit Message",
+            //       fillColor: Colors.white,
+            //     ),
+            //     validator: (String? value) {
+            //       if (value == null || value.isEmpty) {
+            //         return 'Please enter some text';
+            //       }
+            //       return null;
+            //     },
+            //     maxLines: null,
+            //     minLines: 4,
+            //   ),
+            // ),
             Container(
               child: Column(
                 children: [
@@ -651,22 +669,29 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Align(
                     alignment: Alignment.centerLeft,
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          "assets/images/deadline_icon.png",
-                          height: 40,
-                          width: 40,
-                        ),
-                        Text(
-                          "Upcoming Deadlines & Events",
-                          style: GoogleFonts.roboto(
-                            textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16),
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      "Upcoming Deadlines & Events",
+                      style: GoogleFonts.roboto(
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
                     ),
+                    // child: Row(
+                    //   children: [
+                    //     Image.asset(
+                    //       "assets/images/deadline_icon.png",
+                    //       height: 40,
+                    //       width: 40,
+                    //     ),
+                    //     Text(
+                    //       "Upcoming Deadlines & Events",
+                    //       style: GoogleFonts.roboto(
+                    //         textStyle: const TextStyle(
+                    //             fontWeight: FontWeight.bold, fontSize: 16),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ),
                   //Column(children: [ListTile(leading: ,)],)
                   Container(

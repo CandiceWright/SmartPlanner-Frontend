@@ -400,7 +400,10 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
             centerTitle: true,
             leading: IconButton(
-              icon: const Icon(Icons.note_alt),
+              icon: const Icon(
+                Icons.note_alt,
+                color: Colors.white,
+              ),
               tooltip: 'View this backlog item',
               onPressed: () {
                 //setState(() {});
@@ -422,7 +425,10 @@ class _CalendarPageState extends State<CalendarPage> {
                 },
               ),
               IconButton(
-                icon: const Icon(Icons.next_week),
+                icon: const Icon(
+                  Icons.next_week,
+                  color: Colors.white,
+                ),
                 tooltip: 'Tomorrow',
                 onPressed: () {
                   setState(() {
@@ -469,7 +475,11 @@ class _CalendarPageState extends State<CalendarPage> {
             //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
             onPressed: _openNewCalendarItemDialog,
             tooltip: 'Create new event.',
-            child: const Icon(Icons.add),
+            child: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            backgroundColor: Theme.of(context).primaryColor,
           ), // This trailing comma makes auto-formatting nicer for build methods.
         )
       ],
