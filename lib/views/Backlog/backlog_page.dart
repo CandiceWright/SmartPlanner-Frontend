@@ -80,7 +80,7 @@ class _BacklogPageState extends State<BacklogPage> {
             actions: <Widget>[
               TextButton(
                   onPressed: () {
-                    PlannerService.sharedInstance.user.backlogMap[key]!
+                    PlannerService.sharedInstance.user!.backlogMap[key]!
                         .removeAt(idx);
                     setState(() {});
                     Navigator.pop(context);
@@ -114,12 +114,12 @@ class _BacklogPageState extends State<BacklogPage> {
               TextButton(
                 child: const Text('yes, unschedule'),
                 onPressed: () {
-                  PlannerService.sharedInstance.user.backlogMap[key]![idx]
+                  PlannerService.sharedInstance.user!.backlogMap[key]![idx]
                       .scheduledDate = null;
-                  int calendarItemRef = PlannerService.sharedInstance.user
+                  int calendarItemRef = PlannerService.sharedInstance.user!
                       .backlogMap[key]![idx].calendarItemRef!;
                   //remove this even from the calendar
-                  PlannerService.sharedInstance.user.allEvents
+                  PlannerService.sharedInstance.user!.allEvents
                       .removeAt(calendarItemRef);
                   setState(() {});
                   Navigator.pop(context);
@@ -254,7 +254,7 @@ class _BacklogPageState extends State<BacklogPage> {
 
     //build unscheduled backlog
     List<Widget> backloglistview = [];
-    PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
+    PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
       List<Widget> unscheduledExpansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
         Widget child = ListTile(
@@ -267,13 +267,13 @@ class _BacklogPageState extends State<BacklogPage> {
               DateFormat.yMMMd().format(value[i].completeBy!)),
           leading: Checkbox(
             value: PlannerService
-                .sharedInstance.user.backlogMap[key]![i].isComplete,
+                .sharedInstance.user!.backlogMap[key]![i].isComplete,
             shape: const CircleBorder(),
             onChanged: (bool? value) {
               print(value);
               setState(() {
-                PlannerService
-                    .sharedInstance.user.backlogMap[key]![i].isComplete = value;
+                PlannerService.sharedInstance.user!.backlogMap[key]![i]
+                    .isComplete = value;
                 //_value = value!;
               });
             },
@@ -354,7 +354,8 @@ class _BacklogPageState extends State<BacklogPage> {
         children: unscheduledExpansionTileChildren,
         leading: Icon(
           Icons.circle,
-          color: PlannerService.sharedInstance.user.LifeCategoriesColorMap[key],
+          color:
+              PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key],
         ),
         trailing: Text(unscheduledExpansionTileChildren.length.toString(),
             style: TextStyle(color: Theme.of(context).colorScheme.primary)),

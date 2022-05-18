@@ -33,23 +33,23 @@ class EditTaskPage extends StatefulWidget {
 class _EditTaskPageState extends State<EditTaskPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late var selectedDate = PlannerService
-      .sharedInstance.user.backlogMap[widget.category]![widget.id].completeBy;
+      .sharedInstance.user!.backlogMap[widget.category]![widget.id].completeBy;
   late var descriptionTxtController = TextEditingController(
-      text: PlannerService.sharedInstance.user
+      text: PlannerService.sharedInstance.user!
           .backlogMap[widget.category]![widget.id].description);
   late var locationTxtController = TextEditingController(
-      text: PlannerService.sharedInstance.user
+      text: PlannerService.sharedInstance.user!
           .backlogMap[widget.category]![widget.id].location);
   late var notesTxtController = TextEditingController(
       text: PlannerService
-          .sharedInstance.user.backlogMap[widget.category]![widget.id].notes);
+          .sharedInstance.user!.backlogMap[widget.category]![widget.id].notes);
   late var dateTxtController = TextEditingController(
-      text: DateFormat.yMMMd().format(PlannerService.sharedInstance.user
+      text: DateFormat.yMMMd().format(PlannerService.sharedInstance.user!
           .backlogMap[widget.category]![widget.id].completeBy!));
 
   bool doneBtnDisabled = true;
   late var currChosenCategory = PlannerService
-      .sharedInstance.user.backlogMap[widget.category]![widget.id].category;
+      .sharedInstance.user!.backlogMap[widget.category]![widget.id].category;
 
   @override
   void initState() {
@@ -74,28 +74,31 @@ class _EditTaskPageState extends State<EditTaskPage> {
   }
 
   void editBacklogItem() {
-    PlannerService.sharedInstance.user.backlogMap[widget.category]![widget.id]
+    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
         .description = descriptionTxtController.text;
-    PlannerService.sharedInstance.user.backlogMap[widget.category]![widget.id]
+    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
         .completeBy = selectedDate;
-    PlannerService.sharedInstance.user.backlogMap[widget.category]![widget.id]
+    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
         .location = locationTxtController.text;
-    PlannerService.sharedInstance.user.backlogMap[widget.category]![widget.id]
+    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
         .notes = notesTxtController.text;
 
     if (currChosenCategory !=
-        PlannerService.sharedInstance.user
+        PlannerService.sharedInstance.user!
             .backlogMap[widget.category]![widget.id].category) {
       //category was changed
       var backlogItem = PlannerService
-          .sharedInstance.user.backlogMap[widget.category]![widget.id];
-      PlannerService.sharedInstance.user.backlogMap[widget.category]!
+          .sharedInstance.user!.backlogMap[widget.category]![widget.id];
+      PlannerService.sharedInstance.user!.backlogMap[widget.category]!
           .removeAt(widget.id); //delete from old category
       backlogItem.category = currChosenCategory;
-      PlannerService.sharedInstance.user.backlogMap[currChosenCategory.name]!
+      PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
           .add(backlogItem);
     } else {
-      PlannerService.sharedInstance.user.backlogMap[widget.category]![widget.id]
+      PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[widget.category]![widget.id]
           .category = currChosenCategory;
     }
 
@@ -197,20 +200,20 @@ class _EditTaskPageState extends State<EditTaskPage> {
                         //value: PlannerService.sharedInstance.user.theme.themeId,
                         value: currChosenCategory,
                         items: List.generate(
-                            PlannerService.sharedInstance.user.lifeCategories
+                            PlannerService.sharedInstance.user!.lifeCategories
                                 .length, (int index) {
                           return DropdownMenuItem(
                             //value: "pink",
                             value: PlannerService
-                                .sharedInstance.user.lifeCategories[index],
+                                .sharedInstance.user!.lifeCategories[index],
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.circle,
-                                  color: PlannerService.sharedInstance.user
+                                  color: PlannerService.sharedInstance.user!
                                       .lifeCategories[index].color,
                                 ),
-                                Text(PlannerService.sharedInstance.user
+                                Text(PlannerService.sharedInstance.user!
                                     .lifeCategories[index].name),
                               ],
                             ),

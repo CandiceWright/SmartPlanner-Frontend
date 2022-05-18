@@ -1,20 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/life_category.dart';
-import 'goal.dart';
 import 'backlog_item.dart';
 import 'habit.dart';
 import 'event.dart';
 import 'package:flutter/material.dart';
-import '/Themes/custom_theme.dart';
 
 class User {
-  var name;
-  var username;
+  //var name;
+  var planitName;
   var profileImage;
   var email;
-  var password;
-  CustomTheme theme;
+  //CustomTheme theme;
   int themeId;
   var goals = <Event>[];
   var planitDictionary = <String, String>{};
@@ -34,11 +31,10 @@ class User {
   };
 
   User(
-      {required this.name,
-      required this.username,
-      required this.password,
+      {required this.planitName,
+      //required this.username,
       required this.email,
-      required this.theme,
+      //required this.theme,
       required this.themeId,
       this.profileImage,
       required this.didStartTomorrowPlanning,

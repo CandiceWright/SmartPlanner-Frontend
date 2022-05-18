@@ -31,9 +31,9 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   var categoryNameTxtController = TextEditingController();
   var emailTxtConroller =
-      TextEditingController(text: PlannerService.sharedInstance.user.email);
-  var usernameTxtFieldController =
-      TextEditingController(text: PlannerService.sharedInstance.user.username);
+      TextEditingController(text: PlannerService.sharedInstance.user!.email);
+  var usernameTxtFieldController = TextEditingController(
+      text: PlannerService.sharedInstance.user!.planitName);
   var editCategoryTxtController = TextEditingController();
   bool saveEditCategoryBtnDisabled = false;
   bool categoryDoneBtnDisabled = true;
@@ -57,9 +57,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void createCategory() {
     var category = LifeCategory(categoryNameTxtController.text, pickerColor);
-    PlannerService.sharedInstance.user.lifeCategories.add(category);
-    PlannerService.sharedInstance.user.backlogMap[category.name] = [];
-    PlannerService.sharedInstance.user.LifeCategoriesColorMap[category.name] =
+    PlannerService.sharedInstance.user!.lifeCategories.add(category);
+    PlannerService.sharedInstance.user!.backlogMap[category.name] = [];
+    PlannerService.sharedInstance.user!.LifeCategoriesColorMap[category.name] =
         pickerColor;
     setState(() {
       categoryNameTxtController.text = "";
@@ -75,9 +75,9 @@ class _ProfilePageState extends State<ProfilePage> {
     if ((usernameTxtFieldController.text != "" ||
             emailTxtConroller.text != "") &&
         (usernameTxtFieldController.text !=
-                PlannerService.sharedInstance.user.username ||
+                PlannerService.sharedInstance.user!.planitName ||
             emailTxtConroller.text !=
-                PlannerService.sharedInstance.user.email)) {
+                PlannerService.sharedInstance.user!.email)) {
       setState(() {
         accountDetailsDoneBtnDisabled = false;
       });
@@ -89,9 +89,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void saveAccountUpdates() {
-    PlannerService.sharedInstance.user.username =
+    PlannerService.sharedInstance.user!.planitName =
         usernameTxtFieldController.text;
-    PlannerService.sharedInstance.user.email = emailTxtConroller.text;
+    PlannerService.sharedInstance.user!.email = emailTxtConroller.text;
     setAccountUpdateBtnState();
   }
 
@@ -221,7 +221,7 @@ class _ProfilePageState extends State<ProfilePage> {
             return AlertDialog(
               title: Container(
                 child: Text(
-                  PlannerService.sharedInstance.user.lifeCategories[idx].name,
+                  PlannerService.sharedInstance.user!.lifeCategories[idx].name,
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -318,29 +318,29 @@ class _ProfilePageState extends State<ProfilePage> {
 
   void editCategory(int idx) {
     var oldCategoryName =
-        PlannerService.sharedInstance.user.lifeCategories[idx].name;
-    if (PlannerService.sharedInstance.user.lifeCategories[idx].name !=
+        PlannerService.sharedInstance.user!.lifeCategories[idx].name;
+    if (PlannerService.sharedInstance.user!.lifeCategories[idx].name !=
         editCategoryTxtController.text) {
       //need to change the category backlog map
       var backlogArr =
-          PlannerService.sharedInstance.user.backlogMap[oldCategoryName];
+          PlannerService.sharedInstance.user!.backlogMap[oldCategoryName];
       //create a new map entry for the new name and delete the old
-      PlannerService.sharedInstance.user
+      PlannerService.sharedInstance.user!
           .backlogMap[editCategoryTxtController.text] = backlogArr!;
-      PlannerService.sharedInstance.user.backlogMap.remove(oldCategoryName);
-      PlannerService.sharedInstance.user.lifeCategories[idx].name =
+      PlannerService.sharedInstance.user!.backlogMap.remove(oldCategoryName);
+      PlannerService.sharedInstance.user!.lifeCategories[idx].name =
           editCategoryTxtController.text;
-      PlannerService.sharedInstance.user.lifeCategories[idx].color =
+      PlannerService.sharedInstance.user!.lifeCategories[idx].color =
           editPickerColor;
-      PlannerService.sharedInstance.user.LifeCategoriesColorMap
+      PlannerService.sharedInstance.user!.LifeCategoriesColorMap
           .remove(oldCategoryName);
-      PlannerService.sharedInstance.user
+      PlannerService.sharedInstance.user!
               .LifeCategoriesColorMap[editCategoryTxtController.text] =
           editPickerColor;
     } else {
-      PlannerService.sharedInstance.user.lifeCategories[idx].color =
+      PlannerService.sharedInstance.user!.lifeCategories[idx].color =
           editPickerColor;
-      PlannerService.sharedInstance.user
+      PlannerService.sharedInstance.user!
           .LifeCategoriesColorMap[oldCategoryName] = editPickerColor;
     }
     setState(() {});
@@ -377,7 +377,7 @@ class _ProfilePageState extends State<ProfilePage> {
             backgroundColor: Colors.transparent,
 
             title: Text(
-              PlannerService.sharedInstance.user.username,
+              PlannerService.sharedInstance.user!.planitName,
               // style: GoogleFonts.roboto(
               //   textStyle: const TextStyle(
               //     color: Colors.white,
@@ -397,7 +397,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       pickImage();
                     },
                     child: Image.asset(
-                      PlannerService.sharedInstance.user.profileImage,
+                      PlannerService.sharedInstance.user!.profileImage,
                       height: 80,
                       width: 80,
                     ),
@@ -406,7 +406,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       DropdownButton(
                         //value: PlannerService.sharedInstance.user.theme.themeId,
-                        value: PlannerService.sharedInstance.user.themeId,
+                        value: PlannerService.sharedInstance.user!.themeId,
                         items: [
                           DropdownMenuItem(
                             //value: "pink",
@@ -477,7 +477,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         // onChanged: (String? newValue) {
                         onChanged: (int? newValue) {
                           setState(() {
-                            PlannerService.sharedInstance.user.themeId =
+                            PlannerService.sharedInstance.user!.themeId =
                                 newValue!;
 
                             //     PlannerService
@@ -506,17 +506,17 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: ListView(
                                 scrollDirection: Axis.horizontal,
                                 children: List.generate(
-                                    PlannerService.sharedInstance.user
+                                    PlannerService.sharedInstance.user!
                                         .lifeCategories.length, (int index) {
                                   return GestureDetector(
                                       onTap: () {
                                         //print("I tapped.");
                                         editCategoryTxtController.text =
-                                            PlannerService.sharedInstance.user
+                                            PlannerService.sharedInstance.user!
                                                 .lifeCategories[index].name;
                                         editPickerColor = PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .lifeCategories[index]
                                             .color;
                                         showEditCategoryDialog(index);
@@ -526,7 +526,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         elevation: 3,
                                         shadowColor: PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .lifeCategories[index]
                                             .color,
                                         //color: Colors.blue[index * 100],
@@ -542,14 +542,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                                           EdgeInsets.all(10),
                                                       child: Text(PlannerService
                                                           .sharedInstance
-                                                          .user
+                                                          .user!
                                                           .lifeCategories[index]
                                                           .name)),
                                                   Icon(
                                                     Icons.circle,
                                                     color: PlannerService
                                                         .sharedInstance
-                                                        .user
+                                                        .user!
                                                         .lifeCategories[index]
                                                         .color,
                                                   ),

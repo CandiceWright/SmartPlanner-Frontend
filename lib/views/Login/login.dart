@@ -18,10 +18,10 @@ class _LoginPageState extends State<LoginPage> {
   var emailTextController = TextEditingController();
   var passwordTextController = TextEditingController();
   //<MyApp> tells flutter that this state belongs to MyApp Widget
-  var questionIndex = 0;
+  //var questionIndex = 0;
   void login() {
     //validate login and if successful, go to home of app
-    PlannerService.sharedInstance.user.LifeCategoriesColorMap["Other"] =
+    PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
         Theme.of(context).colorScheme.primary;
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {

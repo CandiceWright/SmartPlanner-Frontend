@@ -58,9 +58,9 @@ class _GoalsPageState extends State<GoalsPage> {
   }
 
   void showGoalCompleteAnimation(int idx) {
-    PlannerService.sharedInstance.user.accomplishedGoals.add(
-        PlannerService.sharedInstance.user.goals[idx]); //move to accomplished
-    PlannerService.sharedInstance.user.goals.removeAt(idx);
+    PlannerService.sharedInstance.user!.accomplishedGoals.add(
+        PlannerService.sharedInstance.user!.goals[idx]); //move to accomplished
+    PlannerService.sharedInstance.user!.goals.removeAt(idx);
     _updateGoalsList();
     Navigator.pop(context);
     _controllerCenter.play();
@@ -83,7 +83,7 @@ class _GoalsPageState extends State<GoalsPage> {
               TextButton(
                 child: Text('yes, delete'),
                 onPressed: () {
-                  PlannerService.sharedInstance.user.goals.removeAt(idx);
+                  PlannerService.sharedInstance.user!.goals.removeAt(idx);
                   setState(() {});
                   Navigator.pop(context);
                 },
@@ -197,10 +197,10 @@ class _GoalsPageState extends State<GoalsPage> {
     print("building goals list view");
     List<Widget> goalsListView = [];
     /*This implementation uses cards*/
-    for (int i = 0; i < PlannerService.sharedInstance.user.goals.length; i++) {
+    for (int i = 0; i < PlannerService.sharedInstance.user!.goals.length; i++) {
       Widget goalContainerWidget = GestureDetector(
         onTap: () =>
-            {_showGoalContent(PlannerService.sharedInstance.user.goals[i], i)},
+            {_showGoalContent(PlannerService.sharedInstance.user!.goals[i], i)},
         child: Card(
           clipBehavior: Clip.antiAlias,
           child: Row(
@@ -217,7 +217,7 @@ class _GoalsPageState extends State<GoalsPage> {
                       children: [
                         Text(
                           DateFormat.yMMMd().format(PlannerService
-                              .sharedInstance.user.goals[i].start),
+                              .sharedInstance.user!.goals[i].start),
                           // style: Theme.of(context).textTheme.subtitle2,
                           style: const TextStyle(
                               fontSize: 20,
@@ -226,7 +226,7 @@ class _GoalsPageState extends State<GoalsPage> {
                         ),
                         Text(
                           PlannerService
-                              .sharedInstance.user.goals[i].description,
+                              .sharedInstance.user!.goals[i].description,
                           style: const TextStyle(color: Colors.black),
                         ),
                       ],
@@ -243,7 +243,7 @@ class _GoalsPageState extends State<GoalsPage> {
             borderRadius: BorderRadius.circular(8.0),
           ),
           //color: Theme.of(context).colorScheme.primary,
-          color: PlannerService.sharedInstance.user.goals[i].category.color,
+          color: PlannerService.sharedInstance.user!.goals[i].category.color,
         ),
       );
       goalsListView.add(goalContainerWidget);
@@ -327,12 +327,12 @@ class _GoalsPageState extends State<GoalsPage> {
                 child: ListView(
                   //children: goalsListView,
                   children: List.generate(
-                      PlannerService.sharedInstance.user.goals.length,
+                      PlannerService.sharedInstance.user!.goals.length,
                       (int index) {
                     return GestureDetector(
                       onTap: () => {
                         _showGoalContent(
-                            PlannerService.sharedInstance.user.goals[index],
+                            PlannerService.sharedInstance.user!.goals[index],
                             index)
                       },
                       child: Card(
@@ -348,7 +348,7 @@ class _GoalsPageState extends State<GoalsPage> {
                                   Text(
                                     DateFormat.yMMMd().format(PlannerService
                                         .sharedInstance
-                                        .user
+                                        .user!
                                         .goals[index]
                                         .start),
                                     // style: Theme.of(context).textTheme.subtitle2,
@@ -358,7 +358,7 @@ class _GoalsPageState extends State<GoalsPage> {
                                         color: Colors.white),
                                   ),
                                   Text(
-                                    PlannerService.sharedInstance.user
+                                    PlannerService.sharedInstance.user!
                                         .goals[index].description,
                                     style: const TextStyle(
                                         color: Colors.black,
@@ -385,7 +385,7 @@ class _GoalsPageState extends State<GoalsPage> {
                         ),
                         //color: Theme.of(context).colorScheme.primary,
                         color: PlannerService
-                            .sharedInstance.user.goals[index].category.color,
+                            .sharedInstance.user!.goals[index].category.color,
                       ),
 
                       // child: Padding(

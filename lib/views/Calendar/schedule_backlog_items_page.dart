@@ -76,7 +76,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
 
     //build unscheduled backlog
     List<Widget> backloglistview = [];
-    PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
+    PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
       List<Widget> unscheduledExpansionTileChildren = [];
       for (int i = 0; i < value.length; i++) {
         if (value[i].scheduledDate == null && !value[i].isComplete!) {
@@ -87,7 +87,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
               //     color: Colors.black, fontWeight: FontWeight.bold),
             ),
             value: PlannerService
-                .sharedInstance.user.backlogMap[key]![i].isComplete,
+                .sharedInstance.user!.backlogMap[key]![i].isComplete,
             onChanged: (bool? checked) {
               //print(value);
               BacklogMapRef bmRef =
@@ -119,7 +119,8 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
         children: unscheduledExpansionTileChildren,
         leading: Icon(
           Icons.circle,
-          color: PlannerService.sharedInstance.user.LifeCategoriesColorMap[key],
+          color:
+              PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key],
         ),
         trailing: Text(unscheduledExpansionTileChildren.length.toString(),
             style: TextStyle(color: Theme.of(context).colorScheme.primary)),

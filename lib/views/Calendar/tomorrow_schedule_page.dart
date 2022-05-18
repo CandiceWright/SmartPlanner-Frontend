@@ -189,7 +189,7 @@ class _TomorrowSchedulePageState extends State<TomorrowSchedulePage> {
           initialDisplayDate: DateTime(DateTime.now().year,
               DateTime.now().month, DateTime.now().day + 1),
           dataSource:
-              EventDataSource(PlannerService.sharedInstance.user.allEvents),
+              EventDataSource(PlannerService.sharedInstance.user!.allEvents),
         ),
       ),
 

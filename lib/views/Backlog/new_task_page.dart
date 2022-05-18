@@ -31,7 +31,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
   var locationTxtController = TextEditingController();
   var notesTxtController = TextEditingController();
   bool doneBtnDisabled = true;
-  var currChosenCategory = PlannerService.sharedInstance.user.lifeCategories[0];
+  var currChosenCategory =
+      PlannerService.sharedInstance.user!.lifeCategories[0];
 
   @override
   void initState() {
@@ -66,7 +67,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
         location: locationTxtController.text,
         notes: notesTxtController.text);
 
-    PlannerService.sharedInstance.user.backlogMap[currChosenCategory.name]!
+    PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
         .add(newBacklogItem);
     // if (newBacklogItem.category == "") {
     //   if (PlannerService.sharedInstance.user.backlog.containsKey("Other")) {
@@ -80,7 +81,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
     // }
     if (DateFormat.yMMMd().format(selectedDate) ==
         DateFormat.yMMMd().format(DateTime.now())) {
-      PlannerService.sharedInstance.user.todayTasks.add(newBacklogItem);
+      PlannerService.sharedInstance.user!.todayTasks.add(newBacklogItem);
     }
     widget.updateBacklog();
     _backToBacklogPage();
@@ -196,20 +197,20 @@ class _NewTaskPageState extends State<NewTaskPage> {
                             //value: PlannerService.sharedInstance.user.theme.themeId,
                             value: currChosenCategory,
                             items: List.generate(
-                                PlannerService.sharedInstance.user
+                                PlannerService.sharedInstance.user!
                                     .lifeCategories.length, (int index) {
                               return DropdownMenuItem(
                                 //value: "pink",
                                 value: PlannerService
-                                    .sharedInstance.user.lifeCategories[index],
+                                    .sharedInstance.user!.lifeCategories[index],
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.circle,
-                                      color: PlannerService.sharedInstance.user
+                                      color: PlannerService.sharedInstance.user!
                                           .lifeCategories[index].color,
                                     ),
-                                    Text(PlannerService.sharedInstance.user
+                                    Text(PlannerService.sharedInstance.user!
                                         .lifeCategories[index].name),
                                   ],
                                 ),

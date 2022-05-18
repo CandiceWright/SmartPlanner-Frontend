@@ -63,18 +63,20 @@ class _HomePageState extends State<HomePage> {
     print("building today tasks widget");
     List<Widget> todayTasksWidgets = [];
     for (int i = 0;
-        i < PlannerService.sharedInstance.user.todayTasks.length;
+        i < PlannerService.sharedInstance.user!.todayTasks.length;
         i++) {
       Widget taskWidget = CheckboxListTile(
         title:
-            Text(PlannerService.sharedInstance.user.todayTasks[i].description),
-        value: PlannerService.sharedInstance.user.todayTasks[i].isComplete,
-        selected: PlannerService.sharedInstance.user.todayTasks[i].isComplete,
+            Text(PlannerService.sharedInstance.user!.todayTasks[i].description),
+        value: PlannerService.sharedInstance.user!.todayTasks[i].isComplete,
+        selected: PlannerService.sharedInstance.user!.todayTasks[i].isComplete,
         onChanged: (bool? value) {
           print(value);
           setState(() {
-            PlannerService.sharedInstance.user.todayTasks[i].isComplete = value;
-            PlannerService.sharedInstance.user.todayTasks[i].isComplete = value;
+            PlannerService.sharedInstance.user!.todayTasks[i].isComplete =
+                value;
+            PlannerService.sharedInstance.user!.todayTasks[i].isComplete =
+                value;
           });
         },
         secondary: IconButton(
@@ -121,9 +123,11 @@ class _HomePageState extends State<HomePage> {
 
     tableRows.add(headerRow);
     print("printing size of habits size");
-    print(PlannerService.sharedInstance.user.habits.length);
+    print(PlannerService.sharedInstance.user!.habits.length);
 
-    for (int i = 0; i < PlannerService.sharedInstance.user.habits.length; i++) {
+    for (int i = 0;
+        i < PlannerService.sharedInstance.user!.habits.length;
+        i++) {
       //print("printing habit tracker map at Sunday");
       //print(PlannerService.sharedInstance.user.habits[i].habitTrackerMap["Sunday"]);
       TableRow tableRow = TableRow(children: [
@@ -132,7 +136,7 @@ class _HomePageState extends State<HomePage> {
           child: Container(
             child: TextButton(
               child: Text(
-                PlannerService.sharedInstance.user.habits[i].description,
+                PlannerService.sharedInstance.user!.habits[i].description,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.black),
               ),
@@ -148,11 +152,11 @@ class _HomePageState extends State<HomePage> {
             child: Checkbox(
               shape: CircleBorder(),
               value: PlannerService
-                  .sharedInstance.user.habits[i].habitTrackerMap["Sunday"]!,
+                  .sharedInstance.user!.habits[i].habitTrackerMap["Sunday"]!,
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
-                  PlannerService.sharedInstance.user.habits[i]
+                  PlannerService.sharedInstance.user!.habits[i]
                       .habitTrackerMap["Sunday"] = value!;
                 });
               },
@@ -164,11 +168,11 @@ class _HomePageState extends State<HomePage> {
             child: Checkbox(
               shape: CircleBorder(),
               value: PlannerService
-                  .sharedInstance.user.habits[i].habitTrackerMap["Mon"]!,
+                  .sharedInstance.user!.habits[i].habitTrackerMap["Mon"]!,
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
-                  PlannerService.sharedInstance.user.habits[i]
+                  PlannerService.sharedInstance.user!.habits[i]
                       .habitTrackerMap["Mon"] = value!;
                 });
               },
@@ -180,11 +184,11 @@ class _HomePageState extends State<HomePage> {
             child: Checkbox(
               shape: CircleBorder(),
               value: PlannerService
-                  .sharedInstance.user.habits[i].habitTrackerMap["Tues"]!,
+                  .sharedInstance.user!.habits[i].habitTrackerMap["Tues"]!,
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
-                  PlannerService.sharedInstance.user.habits[i]
+                  PlannerService.sharedInstance.user!.habits[i]
                       .habitTrackerMap["Tues"] = value!;
                 });
               },
@@ -196,11 +200,11 @@ class _HomePageState extends State<HomePage> {
             child: Checkbox(
               shape: CircleBorder(),
               value: PlannerService
-                  .sharedInstance.user.habits[i].habitTrackerMap["Wed"]!,
+                  .sharedInstance.user!.habits[i].habitTrackerMap["Wed"]!,
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
-                  PlannerService.sharedInstance.user.habits[i]
+                  PlannerService.sharedInstance.user!.habits[i]
                       .habitTrackerMap["Wed"] = value!;
                 });
               },
@@ -212,11 +216,11 @@ class _HomePageState extends State<HomePage> {
             child: Checkbox(
               shape: CircleBorder(),
               value: PlannerService
-                  .sharedInstance.user.habits[i].habitTrackerMap["Thurs"]!,
+                  .sharedInstance.user!.habits[i].habitTrackerMap["Thurs"]!,
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
-                  PlannerService.sharedInstance.user.habits[i]
+                  PlannerService.sharedInstance.user!.habits[i]
                       .habitTrackerMap["Thurs"] = value!;
                 });
               },
@@ -228,11 +232,11 @@ class _HomePageState extends State<HomePage> {
             child: Checkbox(
               shape: CircleBorder(),
               value: PlannerService
-                  .sharedInstance.user.habits[i].habitTrackerMap["Friday"]!,
+                  .sharedInstance.user!.habits[i].habitTrackerMap["Friday"]!,
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
-                  PlannerService.sharedInstance.user.habits[i]
+                  PlannerService.sharedInstance.user!.habits[i]
                       .habitTrackerMap["Friday"] = value!;
                 });
               },
@@ -244,11 +248,11 @@ class _HomePageState extends State<HomePage> {
             child: Checkbox(
               shape: CircleBorder(),
               value: PlannerService
-                  .sharedInstance.user.habits[i].habitTrackerMap["Saturday"]!,
+                  .sharedInstance.user!.habits[i].habitTrackerMap["Saturday"]!,
               onChanged: (bool? value) {
                 print(value);
                 setState(() {
-                  PlannerService.sharedInstance.user.habits[i]
+                  PlannerService.sharedInstance.user!.habits[i]
                       .habitTrackerMap["Saturday"] = value!;
                 });
               },
@@ -273,7 +277,7 @@ class _HomePageState extends State<HomePage> {
         actions: [
           IconButton(
             icon: Image.asset(
-              PlannerService.sharedInstance.user.profileImage,
+              PlannerService.sharedInstance.user!.profileImage,
               // height: 40,
               // width: 40,
             ),
@@ -449,7 +453,7 @@ class _HomePageState extends State<HomePage> {
                             ])
                           ] +
                           List.generate(
-                              PlannerService.sharedInstance.user.habits.length,
+                              PlannerService.sharedInstance.user!.habits.length,
                               (int i) {
                             return TableRow(children: [
                               TableCell(
@@ -458,7 +462,7 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: TextButton(
                                     child: Text(
-                                      PlannerService.sharedInstance.user
+                                      PlannerService.sharedInstance.user!
                                           .habits[i].description,
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.openSans(
@@ -473,7 +477,7 @@ class _HomePageState extends State<HomePage> {
                                       //habitClicked(i);
                                       setEditHabitBtnState();
                                       editHabitTxtController.text =
-                                          PlannerService.sharedInstance.user
+                                          PlannerService.sharedInstance.user!
                                               .habits[i].description;
                                       showDialog(
                                           context: context,
@@ -522,14 +526,14 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: Checkbox(
                                     shape: CircleBorder(),
-                                    value: PlannerService.sharedInstance.user
+                                    value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Sunday"]!,
                                     onChanged: (bool? value) {
                                       print(value);
                                       setState(() {
                                         PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .habits[i]
                                             .habitTrackerMap["Sunday"] = value!;
                                       });
@@ -541,14 +545,14 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: Checkbox(
                                     shape: CircleBorder(),
-                                    value: PlannerService.sharedInstance.user
+                                    value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Mon"]!,
                                     onChanged: (bool? value) {
                                       print(value);
                                       setState(() {
                                         PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .habits[i]
                                             .habitTrackerMap["Mon"] = value!;
                                       });
@@ -560,14 +564,14 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: Checkbox(
                                     shape: CircleBorder(),
-                                    value: PlannerService.sharedInstance.user
+                                    value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Tues"]!,
                                     onChanged: (bool? value) {
                                       print(value);
                                       setState(() {
                                         PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .habits[i]
                                             .habitTrackerMap["Tues"] = value!;
                                       });
@@ -579,14 +583,14 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: Checkbox(
                                     shape: CircleBorder(),
-                                    value: PlannerService.sharedInstance.user
+                                    value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Wed"]!,
                                     onChanged: (bool? value) {
                                       print(value);
                                       setState(() {
                                         PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .habits[i]
                                             .habitTrackerMap["Wed"] = value!;
                                       });
@@ -598,14 +602,14 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: Checkbox(
                                     shape: CircleBorder(),
-                                    value: PlannerService.sharedInstance.user
+                                    value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Thurs"]!,
                                     onChanged: (bool? value) {
                                       print(value);
                                       setState(() {
                                         PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .habits[i]
                                             .habitTrackerMap["Thurs"] = value!;
                                       });
@@ -617,14 +621,14 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: Checkbox(
                                     shape: CircleBorder(),
-                                    value: PlannerService.sharedInstance.user
+                                    value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Friday"]!,
                                     onChanged: (bool? value) {
                                       print(value);
                                       setState(() {
                                         PlannerService
                                             .sharedInstance
-                                            .user
+                                            .user!
                                             .habits[i]
                                             .habitTrackerMap["Friday"] = value!;
                                       });
@@ -636,14 +640,14 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   child: Checkbox(
                                     shape: CircleBorder(),
-                                    value: PlannerService.sharedInstance.user
+                                    value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Saturday"]!,
                                     onChanged: (bool? value) {
                                       print(value);
                                       setState(() {
                                         PlannerService
                                                 .sharedInstance
-                                                .user
+                                                .user!
                                                 .habits[i]
                                                 .habitTrackerMap["Saturday"] =
                                             value!;
@@ -699,8 +703,8 @@ class _HomePageState extends State<HomePage> {
                       child: SfCalendar(
                         view: CalendarView.schedule,
                         dataSource: EventDataSource(
-                            PlannerService.sharedInstance.user.allEvents +
-                                PlannerService.sharedInstance.user.goals),
+                            PlannerService.sharedInstance.user!.allEvents +
+                                PlannerService.sharedInstance.user!.goals),
                         scheduleViewSettings: const ScheduleViewSettings(
                             hideEmptyScheduleWeek: true,
                             monthHeaderSettings: MonthHeaderSettings(
@@ -783,7 +787,7 @@ class _HomePageState extends State<HomePage> {
   void saveNewHabit() {
     var newHabit = Habit(newHabitTextController.text);
     setState(() {
-      PlannerService.sharedInstance.user.habits.add(newHabit);
+      PlannerService.sharedInstance.user!.habits.add(newHabit);
       newHabitTextController.text = "";
     });
     Navigator.of(context).pop();
@@ -878,7 +882,7 @@ class _HomePageState extends State<HomePage> {
   habitClicked(int idx) {
     print("in habit clicked func");
     editHabitTxtController.text =
-        PlannerService.sharedInstance.user.habits[idx].description;
+        PlannerService.sharedInstance.user!.habits[idx].description;
     Future<void>.delayed(
       const Duration(), // OR const Duration(milliseconds: 500),
       () => showDialog(
@@ -989,7 +993,7 @@ class _HomePageState extends State<HomePage> {
 
   editHabit(int idx) {
     //setState(() {
-    PlannerService.sharedInstance.user.habits[idx].description =
+    PlannerService.sharedInstance.user!.habits[idx].description =
         editHabitTxtController.text;
     //});
     Navigator.of(context).pop();

@@ -1,0 +1,236 @@
+import 'dart:convert';
+
+import 'package:dynamic_themes/dynamic_themes.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:practice_planner/main.dart';
+import 'package:practice_planner/models/life_category.dart';
+import 'package:practice_planner/services/planner_service.dart';
+import 'package:practice_planner/views/Login/login.dart';
+import '../../Themes/app_themes.dart';
+import '../../models/user.dart';
+import '/views/Goals/goals_page.dart';
+import '/views/navigation_wrapper.dart';
+import 'package:http/http.dart' as http;
+
+class ChooseThemePage extends StatefulWidget {
+  const ChooseThemePage({
+    Key? key,
+    required this.email,
+    required this.planitName,
+  }) : super(key: key);
+
+  final String email;
+  final String planitName;
+
+  @override
+  State<ChooseThemePage> createState() => _ChooseThemePageState();
+}
+
+//The widget can be recreated, but the state is attached to the user interface
+class _ChooseThemePageState extends State<ChooseThemePage> {
+  //var planitNameTextController = TextEditingController();
+  int themeId = 0;
+  //<MyApp> tells flutter that this state belongs to MyApp Widget
+  var questionIndex = 0;
+
+  void signup() async {
+    //call sign up server route and then go to home of app
+    var url = Uri.parse('http://localhost:7343/theme/');
+    //var response = await http.post(url);
+    var body = {'theme': themeId, 'email': widget.email};
+    String bodyF = jsonEncode(body);
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      DynamicTheme.of(context)!.setTheme(themeId);
+      var user = User(
+          planitName: widget.planitName,
+          email: widget.email,
+          profileImage: "assets/images/profile_pic_icon.png",
+          themeId: themeId,
+          //theme: PinkTheme(),
+          didStartTomorrowPlanning: false,
+          lifeCategories: [
+            // LifeCategory("Other", const Color(0xFFFF80b1)),
+          ]);
+      PlannerService.sharedInstance.user = user;
+      PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
+          Theme.of(context).colorScheme.primary;
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) {
+          return const NavigationWrapper();
+        },
+        settings: const RouteSettings(
+          name: 'navigaionPage',
+        ),
+      ));
+    } else {
+      //404 error, show an alert
+
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //MaterialApp is a flutter class which has a constructor
+
+    return Stack(
+      children: [
+        Image.asset(
+          "assets/images/login_screens_background.png",
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          fit: BoxFit.cover,
+        ),
+        Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            // Here we take the value from the MyHomePage object that was created by
+            // the App.build method, and use it to set our appbar title.
+            automaticallyImplyLeading: false,
+            backgroundColor: Colors.transparent,
+            elevation: 0.0,
+          ),
+          body: ListView(
+            children: [
+              Padding(
+                child: Image.asset(
+                  "assets/images/planit_logo.png",
+                ),
+                padding: EdgeInsets.all(10),
+              ),
+              Container(
+                margin: EdgeInsets.all(15),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Choose a color theme for your planit",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    DropdownButton(
+                      //value: PlannerService.sharedInstance.user.theme.themeId,
+                      value: themeId,
+                      style: TextStyle(color: Colors.white),
+                      items: [
+                        DropdownMenuItem(
+                          //value: "pink",
+                          value: AppThemes.pink,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: AppThemes().pinkPrimarySwatch,
+                              ),
+                              Text(
+                                "Pink",
+                                style: TextStyle(
+                                    color: AppThemes().pinkPrimarySwatch),
+                              )
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          //value: "blue",
+                          value: AppThemes.blue,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: AppThemes().bluePrimarySwatch,
+                              ),
+                              Text("Blue",
+                                  style: TextStyle(
+                                      color: AppThemes().bluePrimarySwatch))
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          //value: "neutral",
+                          value: AppThemes.green,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: AppThemes().greenPrimarySwatch,
+                              ),
+                              Text("Green",
+                                  style: TextStyle(
+                                      color: AppThemes().greenPrimarySwatch))
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          //value: "neutral",
+                          value: AppThemes.orange,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: AppThemes().orangePrimarySwatch,
+                              ),
+                              Text("Orange",
+                                  style: TextStyle(
+                                      color: AppThemes().orangePrimarySwatch))
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          //value: "neutral",
+                          value: AppThemes.grey,
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                color: AppThemes().greyPrimarySwatch,
+                              ),
+                              Text("Grey",
+                                  style: TextStyle(
+                                      color: AppThemes().greyPrimarySwatch))
+                            ],
+                          ),
+                        ),
+                      ],
+                      // onChanged: (String? newValue) {
+                      onChanged: (int? newValue) {
+                        setState(() {
+                          themeId = newValue!;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          persistentFooterButtons: [
+            Container(
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  FractionallySizedBox(
+                    widthFactor: 0.5,
+                    child: ElevatedButton(
+                      onPressed: signup,
+                      child: Text(
+                        "Let's Go",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                            const Color(0xffef41a8)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ],
+    );
+  }
+}

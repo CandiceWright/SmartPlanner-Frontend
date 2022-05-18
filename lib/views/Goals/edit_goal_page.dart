@@ -27,20 +27,20 @@ class EditGoalPage extends StatefulWidget {
 class _EditGoalPageState extends State<EditGoalPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late final descriptionTxtController = TextEditingController(
-      text:
-          PlannerService.sharedInstance.user.goals[widget.goalIdx].description);
+      text: PlannerService
+          .sharedInstance.user!.goals[widget.goalIdx].description);
   late final dateTxtController = TextEditingController(
       text: DateFormat.yMMMd().format(
-          PlannerService.sharedInstance.user.goals[widget.goalIdx].start));
+          PlannerService.sharedInstance.user!.goals[widget.goalIdx].start));
   //late final categoryTxtController = TextEditingController(
   //text: PlannerService.sharedInstance.user.goals[widget.goalIdx].category);
   late final notesTxtController = TextEditingController(
-      text: PlannerService.sharedInstance.user.goals[widget.goalIdx].notes);
+      text: PlannerService.sharedInstance.user!.goals[widget.goalIdx].notes);
   late var selectedDate =
-      PlannerService.sharedInstance.user.goals[widget.goalIdx].start;
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].start;
   bool doneBtnDisabled = true;
   late LifeCategory currChosenCategory =
-      PlannerService.sharedInstance.user.goals[widget.goalIdx].category;
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].category;
 
   @override
   void initState() {
@@ -69,14 +69,14 @@ class _EditGoalPageState extends State<EditGoalPage> {
     var goalNotes = notesTxtController.text;
     //var category = categoryTxtController.text;
 
-    PlannerService.sharedInstance.user.goals[widget.goalIdx].description =
+    PlannerService.sharedInstance.user!.goals[widget.goalIdx].description =
         goalTitle;
-    PlannerService.sharedInstance.user.goals[widget.goalIdx].notes = goalNotes;
-    PlannerService.sharedInstance.user.goals[widget.goalIdx].category =
+    PlannerService.sharedInstance.user!.goals[widget.goalIdx].notes = goalNotes;
+    PlannerService.sharedInstance.user!.goals[widget.goalIdx].category =
         currChosenCategory;
-    PlannerService.sharedInstance.user.goals[widget.goalIdx].date =
+    PlannerService.sharedInstance.user!.goals[widget.goalIdx].date =
         selectedDate;
-    PlannerService.sharedInstance.user.goals.sort((goal1, goal2) {
+    PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
       DateTime goal1Date = goal1.start;
       DateTime goal2Date = goal2.start;
       return goal1Date.compareTo(goal2Date);
@@ -189,20 +189,20 @@ class _EditGoalPageState extends State<EditGoalPage> {
                         //value: PlannerService.sharedInstance.user.theme.themeId,
                         value: currChosenCategory,
                         items: List.generate(
-                            PlannerService.sharedInstance.user.lifeCategories
+                            PlannerService.sharedInstance.user!.lifeCategories
                                 .length, (int index) {
                           return DropdownMenuItem(
                             //value: "pink",
                             value: PlannerService
-                                .sharedInstance.user.lifeCategories[index],
+                                .sharedInstance.user!.lifeCategories[index],
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.circle,
-                                  color: PlannerService.sharedInstance.user
+                                  color: PlannerService.sharedInstance.user!
                                       .lifeCategories[index].color,
                                 ),
-                                Text(PlannerService.sharedInstance.user
+                                Text(PlannerService.sharedInstance.user!
                                     .lifeCategories[index].name),
                               ],
                             ),

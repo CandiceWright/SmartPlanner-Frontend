@@ -57,7 +57,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
               TextButton(
                 child: Text('yes, delete'),
                 onPressed: () {
-                  PlannerService.sharedInstance.user.goals.removeAt(idx);
+                  PlannerService.sharedInstance.user!.goals.removeAt(idx);
                   setState(() {});
                   Navigator.pop(context);
                 },
@@ -196,12 +196,12 @@ class _DictionaryPageState extends State<DictionaryPage> {
                 child: ListView(
                   //children: goalsListView,
                   children: List.generate(
-                      PlannerService.sharedInstance.user.planitDictionary
+                      PlannerService.sharedInstance.user!.planitDictionary
                           .length, (int index) {
                     return GestureDetector(
                       onTap: () => {
                         _showGoalContent(
-                            PlannerService.sharedInstance.user.goals[index],
+                            PlannerService.sharedInstance.user!.goals[index],
                             index)
                       },
                       child: Card(
@@ -217,7 +217,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                                   Text(
                                     DateFormat.yMMMd().format(PlannerService
                                         .sharedInstance
-                                        .user
+                                        .user!
                                         .goals[index]
                                         .start),
                                     // style: Theme.of(context).textTheme.subtitle2,
@@ -227,7 +227,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                                         color: Colors.white),
                                   ),
                                   Text(
-                                    PlannerService.sharedInstance.user
+                                    PlannerService.sharedInstance.user!
                                         .goals[index].description,
                                     style: const TextStyle(
                                         color: Colors.black,
@@ -254,7 +254,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                         ),
                         //color: Theme.of(context).colorScheme.primary,
                         color: PlannerService
-                            .sharedInstance.user.goals[index].category.color,
+                            .sharedInstance.user!.goals[index].category.color,
                       ),
                     );
                   }),

@@ -30,7 +30,8 @@ class _NewGoalPageState extends State<NewGoalPage> {
   var notesTxtController = TextEditingController();
   var categoryTxtController = TextEditingController();
   bool doneBtnDisabled = true;
-  var currChosenCategory = PlannerService.sharedInstance.user.lifeCategories[0];
+  var currChosenCategory =
+      PlannerService.sharedInstance.user!.lifeCategories[0];
 
   @override
   void initState() {
@@ -72,8 +73,8 @@ class _NewGoalPageState extends State<NewGoalPage> {
     );
 
     //var newGoal = Goal(goalTitle, selectedDate, currChosenCategory, goalNotes);
-    PlannerService.sharedInstance.user.goals.add(newGoal);
-    PlannerService.sharedInstance.user.goals.sort((goal1, goal2) {
+    PlannerService.sharedInstance.user!.goals.add(newGoal);
+    PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
       DateTime goal1Date = goal1.start;
       DateTime goal2Date = goal2.start;
       return goal1Date.compareTo(goal2Date);
@@ -203,20 +204,20 @@ class _NewGoalPageState extends State<NewGoalPage> {
                             //value: PlannerService.sharedInstance.user.theme.themeId,
                             value: currChosenCategory,
                             items: List.generate(
-                                PlannerService.sharedInstance.user
+                                PlannerService.sharedInstance.user!
                                     .lifeCategories.length, (int index) {
                               return DropdownMenuItem(
                                 //value: "pink",
                                 value: PlannerService
-                                    .sharedInstance.user.lifeCategories[index],
+                                    .sharedInstance.user!.lifeCategories[index],
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.circle,
-                                      color: PlannerService.sharedInstance.user
+                                      color: PlannerService.sharedInstance.user!
                                           .lifeCategories[index].color,
                                     ),
-                                    Text(PlannerService.sharedInstance.user
+                                    Text(PlannerService.sharedInstance.user!
                                         .lifeCategories[index].name),
                                   ],
                                 ),

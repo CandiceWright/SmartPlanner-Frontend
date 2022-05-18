@@ -242,7 +242,7 @@ class _EditEventPageState extends State<EditEventPage> {
       CalendarPage.events.appointments!.add(events[0]);
 
       CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
-      PlannerService.sharedInstance.user.allEvents =
+      PlannerService.sharedInstance.user!.allEvents =
           CalendarPage.events.appointments! as List<Event>;
       CalendarPage.selectedEvent = null;
 
@@ -452,20 +452,20 @@ class _EditEventPageState extends State<EditEventPage> {
                         //value: PlannerService.sharedInstance.user.theme.themeId,
                         value: currChosenCategory,
                         items: List.generate(
-                            PlannerService.sharedInstance.user.lifeCategories
+                            PlannerService.sharedInstance.user!.lifeCategories
                                 .length, (int index) {
                           return DropdownMenuItem(
                             //value: "pink",
                             value: PlannerService
-                                .sharedInstance.user.lifeCategories[index],
+                                .sharedInstance.user!.lifeCategories[index],
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.circle,
-                                  color: PlannerService.sharedInstance.user
+                                  color: PlannerService.sharedInstance.user!
                                       .lifeCategories[index].color,
                                 ),
-                                Text(PlannerService.sharedInstance.user
+                                Text(PlannerService.sharedInstance.user!
                                     .lifeCategories[index].name),
                               ],
                             ),

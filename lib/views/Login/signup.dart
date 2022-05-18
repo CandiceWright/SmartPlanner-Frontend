@@ -4,8 +4,10 @@ import 'package:practice_planner/main.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/Login/login.dart';
+import 'package:practice_planner/views/Login/planit_name_page.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/navigation_wrapper.dart';
+import 'package:http/http.dart' as http;
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -31,22 +33,41 @@ class _SignupPageState extends State<SignupPage> {
     //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
   }
 
-  void signup() {
+  void signup() async {
+    var email = emailTextController.text;
+    var password = passwordTextController.text;
     //call sign up server route and then go to home of app
+    var url = Uri.parse('http://localhost:7343/email/' + email);
+    var response = await http.get(url);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.body == "no user exists") {
+      //can go to the next page to get planit name
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => PlanitNamePage(
+                    email: email,
+                    password: password,
+                  )));
+    } else {
+      //show alert that user already exists with that email
+    }
 
     //create first category! "Other"
-    var otherCategory = LifeCategory("Other", Colors.grey);
-    PlannerService.sharedInstance.user.LifeCategoriesColorMap["Other"] =
-        otherCategory.color;
-    PlannerService.sharedInstance.user.lifeCategories.add(otherCategory);
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) {
-        return const NavigationWrapper();
-      },
-      settings: const RouteSettings(
-        name: 'navigaionPage',
-      ),
-    ));
+    // var otherCategory = LifeCategory("Other", Colors.grey);
+    // PlannerService.sharedInstance.user.LifeCategoriesColorMap["Other"] =
+    //     otherCategory.color;
+    // PlannerService.sharedInstance.user.lifeCategories.add(otherCategory);
+    // Navigator.of(context).push(MaterialPageRoute(
+    //   builder: (context) {
+    //     return const NavigationWrapper();
+    //   },
+    //   settings: const RouteSettings(
+    //     name: 'navigaionPage',
+    //   ),
+    // ));
   }
 
   @override
@@ -86,6 +107,8 @@ class _SignupPageState extends State<SignupPage> {
                       padding: EdgeInsets.all(5),
                       child: TextFormField(
                         controller: emailTextController,
+                        enableSuggestions: false,
+                        autocorrect: false,
                         decoration: const InputDecoration(
                           hintText: "Email",
                           icon: Icon(
@@ -102,34 +125,37 @@ class _SignupPageState extends State<SignupPage> {
                           }
                           return null;
                         },
-                        style: TextStyle(color: Colors.white),
+                        //style: TextStyle(color: Colors.white),
                       ),
                     ),
+                    // Padding(
+                    //   padding: EdgeInsets.all(5),
+                    //   child: TextFormField(
+                    //     controller: emailTextController,
+                    //     decoration: const InputDecoration(
+                    //         hintText: "Username",
+                    //         icon: Icon(
+                    //           Icons.person,
+                    //           color: Colors.white,
+                    //         ),
+                    //         border: OutlineInputBorder(),
+                    //         filled: true,
+                    //         fillColor: Colors.white),
+                    //     validator: (String? value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return 'Please enter password';
+                    //       }
+                    //       return null;
+                    //     },
+                    //   ),
+                    // ),
                     Padding(
                       padding: EdgeInsets.all(5),
                       child: TextFormField(
-                        controller: emailTextController,
-                        decoration: const InputDecoration(
-                            hintText: "Username",
-                            icon: Icon(
-                              Icons.person,
-                              color: Colors.white,
-                            ),
-                            border: OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.white),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter password';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: TextFormField(
-                        controller: emailTextController,
+                        controller: passwordTextController,
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
                         decoration: const InputDecoration(
                             hintText: "Password",
                             icon: Icon(

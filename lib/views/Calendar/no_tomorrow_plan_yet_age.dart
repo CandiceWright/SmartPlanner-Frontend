@@ -37,7 +37,7 @@ class _NoTomorrowPlanYetPageState extends State<NoTomorrowPlanYetPage> {
   }
 
   void planTomorrow() {
-    PlannerService.sharedInstance.user.didStartTomorrowPlanning = true;
+    PlannerService.sharedInstance.user!.didStartTomorrowPlanning = true;
     Navigator.pop(context);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {

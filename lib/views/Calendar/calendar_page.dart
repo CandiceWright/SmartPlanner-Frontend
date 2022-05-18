@@ -44,7 +44,7 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     super.initState();
     CalendarPage.events =
-        EventDataSource(PlannerService.sharedInstance.user.allEvents);
+        EventDataSource(PlannerService.sharedInstance.user!.allEvents);
     //print(PlannerService.sharedInstance.user.backlog);
   }
 
@@ -132,7 +132,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       CalendarPage.events.notifyListeners(
                           CalendarDataSourceAction.remove,
                           <Event>[]..add(CalendarPage.selectedEvent!));
-                      PlannerService.sharedInstance.user.allEvents =
+                      PlannerService.sharedInstance.user!.allEvents =
                           CalendarPage.events.appointments! as List<Event>;
                       // PlannerService.sharedInstance.user.allEvents
                       //     .removeAt(idx);
@@ -211,7 +211,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       CalendarPage.events.notifyListeners(
                           CalendarDataSourceAction.remove,
                           <Event>[]..add(CalendarPage.selectedEvent!));
-                      PlannerService.sharedInstance.user.allEvents =
+                      PlannerService.sharedInstance.user!.allEvents =
                           CalendarPage.events.appointments! as List<Event>;
 
                       var backlogItemRef =
@@ -219,7 +219,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
                       PlannerService
                           .sharedInstance
-                          .user
+                          .user!
                           .backlogMap[backlogItemRef!.categoryName]![
                               backlogItemRef.arrayIdx]
                           .scheduledDate = null;
@@ -433,7 +433,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 onPressed: () {
                   setState(() {
                     if (PlannerService
-                        .sharedInstance.user.didStartTomorrowPlanning) {
+                        .sharedInstance.user!.didStartTomorrowPlanning) {
                       _openTomorrowSchedulePage();
                     } else {
                       _openNoTomorrowPlanPage();

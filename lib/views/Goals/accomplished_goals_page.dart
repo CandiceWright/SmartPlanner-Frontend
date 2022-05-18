@@ -33,16 +33,16 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
   }
 
   void moveGoal(int idx) {
-    PlannerService.sharedInstance.user.goals
-        .add(PlannerService.sharedInstance.user.accomplishedGoals[idx]);
+    PlannerService.sharedInstance.user!.goals
+        .add(PlannerService.sharedInstance.user!.accomplishedGoals[idx]);
     //sort goals list again
-    PlannerService.sharedInstance.user.goals.sort((goal1, goal2) {
+    PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
       DateTime goal1Date = goal1.start;
       DateTime goal2Date = goal2.start;
       return goal1Date.compareTo(goal2Date);
     });
     //delete from accomplishedGoals
-    PlannerService.sharedInstance.user.accomplishedGoals.removeAt(idx);
+    PlannerService.sharedInstance.user!.accomplishedGoals.removeAt(idx);
     _updateGoalsList();
     widget.updateGoals();
     Navigator.pop(context);
@@ -138,12 +138,13 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
       body: Container(
         child: ListView(
           children: List.generate(
-              PlannerService.sharedInstance.user.accomplishedGoals.length,
+              PlannerService.sharedInstance.user!.accomplishedGoals.length,
               (int index) {
             return GestureDetector(
               onTap: () => {
                 _showGoalContent(
-                    PlannerService.sharedInstance.user.accomplishedGoals[index],
+                    PlannerService
+                        .sharedInstance.user!.accomplishedGoals[index],
                     index)
               },
               child: Card(
@@ -163,7 +164,7 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
                               Text(
                                 DateFormat.yMMMd().format(PlannerService
                                     .sharedInstance
-                                    .user
+                                    .user!
                                     .accomplishedGoals[index]
                                     .date),
                                 // style: Theme.of(context).textTheme.subtitle2,
@@ -173,7 +174,7 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
                                     color: Colors.black),
                               ),
                               Text(
-                                PlannerService.sharedInstance.user
+                                PlannerService.sharedInstance.user!
                                     .accomplishedGoals[index].description,
                                 style: const TextStyle(color: Colors.black),
                               ),
@@ -191,7 +192,7 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
                   borderRadius: BorderRadius.circular(8.0),
                 ),
                 //color: Theme.of(context).colorScheme.primary,
-                color: PlannerService.sharedInstance.user
+                color: PlannerService.sharedInstance.user!
                     .accomplishedGoals[index].category.color,
               ),
             );

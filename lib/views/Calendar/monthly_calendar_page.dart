@@ -90,7 +90,7 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
         child: SfCalendar(
           view: CalendarView.month,
           dataSource:
-              EventDataSource(PlannerService.sharedInstance.user.allEvents),
+              EventDataSource(PlannerService.sharedInstance.user!.allEvents),
           viewNavigationMode: ViewNavigationMode.snap,
           monthViewSettings: MonthViewSettings(showAgenda: true),
           timeSlotViewSettings: const TimeSlotViewSettings(
