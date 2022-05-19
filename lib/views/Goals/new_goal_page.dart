@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
+import 'package:http/http.dart' as http;
 
 class NewGoalPage extends StatefulWidget {
   const NewGoalPage({Key? key, required this.updateGoals}) : super(key: key);
@@ -54,33 +57,55 @@ class _NewGoalPageState extends State<NewGoalPage> {
       });
   }
 
-  void createGoal() {
+  void createGoal() async {
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
-    //var category = categoryTxtController.text;
+    var body = {
+      'description': goalTitle,
+      'type': "goal",
+      'start': selectedDate,
+      'end': selectedDate,
+      'notes': goalNotes,
+      'category': currChosenCategory.id,
+      'isAllDay': true
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
 
-    var newGoal = Event(
-      //id: id,
-      description: goalTitle,
-      type: "goal",
-      start: selectedDate,
-      end: selectedDate,
-      //background: const Color(0xFFFF80b1),
-      background: currChosenCategory.color,
-      isAllDay: false,
-      notes: goalNotes,
-      category: currChosenCategory,
-    );
+    var url = Uri.parse('http://localhost:7343/goals');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
-    //var newGoal = Goal(goalTitle, selectedDate, currChosenCategory, goalNotes);
-    PlannerService.sharedInstance.user!.goals.add(newGoal);
-    PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
-      DateTime goal1Date = goal1.start;
-      DateTime goal2Date = goal2.start;
-      return goal1Date.compareTo(goal2Date);
-    });
-    widget.updateGoals();
-    _backToGoalsPage();
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      print(decodedBody);
+      var id = decodedBody[0]["eventId"];
+      var newGoal = Event(
+        id: id,
+        description: goalTitle,
+        type: "goal",
+        start: selectedDate,
+        end: selectedDate,
+        //background: const Color(0xFFFF80b1),
+        background: currChosenCategory.color,
+        isAllDay: true,
+        notes: goalNotes,
+        category: currChosenCategory,
+      );
+      PlannerService.sharedInstance.user!.goals.add(newGoal);
+      PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
+        DateTime goal1Date = goal1.start;
+        DateTime goal2Date = goal2.start;
+        return goal1Date.compareTo(goal2Date);
+      });
+      widget.updateGoals();
+      _backToGoalsPage();
+    } else {
+      //500 error, show an alert
+
+    }
   }
 
   void setDoneBtnState() {

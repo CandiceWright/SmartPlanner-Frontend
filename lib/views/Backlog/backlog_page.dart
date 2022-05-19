@@ -119,7 +119,7 @@ class _BacklogPageState extends State<BacklogPage> {
                   int calendarItemRef = PlannerService.sharedInstance.user!
                       .backlogMap[key]![idx].calendarItemRef!;
                   //remove this even from the calendar
-                  PlannerService.sharedInstance.user!.allEvents
+                  PlannerService.sharedInstance.user!.scheduledEvents
                       .removeAt(calendarItemRef);
                   setState(() {});
                   Navigator.pop(context);

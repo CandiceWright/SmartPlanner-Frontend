@@ -12,13 +12,12 @@ class Event {
   LifeCategory category;
   String? location;
   bool isAllDay;
-  //int id;
+  int? id;
   String type;
   BacklogMapRef?
       backlogMapRef; //if a backlog item is scheduled on the calendar, this reference will link the backlog item to its calendar event
   Event(
-      {
-      //required this.id,
+      {this.id,
       required this.description,
       required this.start,
       required this.end,

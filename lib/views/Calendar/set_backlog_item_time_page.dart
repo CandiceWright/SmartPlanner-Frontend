@@ -117,7 +117,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
 
         CalendarPage.events
             .notifyListeners(CalendarDataSourceAction.add, events);
-        PlannerService.sharedInstance.user!.allEvents =
+        PlannerService.sharedInstance.user!.scheduledEvents =
             CalendarPage.events.appointments! as List<Event>;
 
         CalendarPage.selectedEvent = null;
@@ -185,7 +185,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
 
         CalendarPage.events
             .notifyListeners(CalendarDataSourceAction.add, events);
-        PlannerService.sharedInstance.user!.allEvents =
+        PlannerService.sharedInstance.user!.scheduledEvents =
             CalendarPage.events.appointments! as List<Event>;
 
         CalendarPage.selectedEvent = null;
@@ -384,7 +384,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
                     : DateTime(DateTime.now().year, DateTime.now().month,
                         DateTime.now().day),
                 dataSource: EventDataSource(
-                    PlannerService.sharedInstance.user!.allEvents),
+                    PlannerService.sharedInstance.user!.scheduledEvents),
               ),
             )
           ],

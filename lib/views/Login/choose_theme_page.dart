@@ -14,14 +14,16 @@ import '/views/navigation_wrapper.dart';
 import 'package:http/http.dart' as http;
 
 class ChooseThemePage extends StatefulWidget {
-  const ChooseThemePage({
-    Key? key,
-    required this.email,
-    required this.planitName,
-  }) : super(key: key);
+  const ChooseThemePage(
+      {Key? key,
+      required this.email,
+      required this.planitName,
+      required this.userId})
+      : super(key: key);
 
   final String email;
   final String planitName;
+  final int userId;
 
   @override
   State<ChooseThemePage> createState() => _ChooseThemePageState();
@@ -47,29 +49,51 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
 
     if (response.statusCode == 200) {
       DynamicTheme.of(context)!.setTheme(themeId);
-      var user = User(
-          planitName: widget.planitName,
-          email: widget.email,
-          profileImage: "assets/images/profile_pic_icon.png",
-          themeId: themeId,
-          //theme: PinkTheme(),
-          didStartTomorrowPlanning: false,
-          lifeCategories: [
-            LifeCategory("Other", Colors.grey),
-          ]);
-      PlannerService.sharedInstance.user = user;
-      PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
-          Colors.grey;
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) {
-          return const NavigationWrapper();
-        },
-        settings: const RouteSettings(
-          name: 'navigaionPage',
-        ),
-      ));
+      //create other category
+      var body = {
+        'name': "other",
+        'color': Colors.grey.value,
+      };
+      String bodyF = jsonEncode(body);
+      print(bodyF);
+
+      var url = Uri.parse('http://localhost:7343/categories');
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var decodedBody = json.decode(response.body);
+        print(decodedBody);
+        var id = decodedBody[0]["categoryId"];
+        var user = User(
+            planitName: widget.planitName,
+            email: widget.email,
+            profileImage: "assets/images/profile_pic_icon.png",
+            themeId: themeId,
+            //theme: PinkTheme(),
+            didStartTomorrowPlanning: false,
+            lifeCategories: [
+              LifeCategory(id, "Other", Colors.grey),
+            ]);
+        PlannerService.sharedInstance.user = user;
+        PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
+            Colors.grey;
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return const NavigationWrapper();
+          },
+          settings: const RouteSettings(
+            name: 'navigaionPage',
+          ),
+        ));
+      } else {
+        //500 error, show an alert (something wrong creating category)
+
+      }
     } else {
-      //404 error, show an alert
+      //404 error, show an alert (Something wrong choosing theme)
 
     }
   }

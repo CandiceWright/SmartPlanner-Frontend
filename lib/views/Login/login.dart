@@ -45,8 +45,35 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         var decodedBody = json.decode(response.body);
         print(decodedBody);
-        var planitName = decodedBody["planitName"];
-        var themeId = decodedBody["theme"];
+        var planitName = decodedBody[0]["planitName"];
+        var themeId = decodedBody[0]["theme"];
+        var didStartPlanningTomorrow =
+            decodedBody[0]["didStartPlanningTomorrow"];
+
+        //get all life categories
+        var url = Uri.parse('http://localhost:7343/categories');
+        var response2 = await http.get(url);
+        print('Response status: ${response2.statusCode}');
+        print('Response body: ${response2.body}');
+        var lifeCategories;
+
+        if (response2.statusCode == 200) {
+          var decodedBody = json.decode(response2.body);
+          print(decodedBody);
+          lifeCategories = decodedBody;
+        } else {
+          //show alert that user already exists with that email
+        }
+
+        //get all goals
+
+        //get all calendar events
+
+        //get all habits
+
+        //get all backlog items
+
+        //get all dictionary items
         DynamicTheme.of(context)!.setTheme(themeId);
         var user = User(
             planitName: planitName,
@@ -54,10 +81,8 @@ class _LoginPageState extends State<LoginPage> {
             profileImage: "assets/images/profile_pic_icon.png",
             themeId: themeId,
             //theme: PinkTheme(),
-            didStartTomorrowPlanning: false,
-            lifeCategories: [
-              LifeCategory("Other", Colors.grey),
-            ]);
+            didStartTomorrowPlanning: didStartPlanningTomorrow,
+            lifeCategories: lifeCategories);
         PlannerService.sharedInstance.user = user;
         PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
             Colors.grey;

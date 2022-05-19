@@ -23,8 +23,8 @@ class User {
   var todayTasks = [];
   var habits = <Habit>[];
   bool didStartTomorrowPlanning;
-  var allEvents = <Event>[];
-  var allEventsMap = <int, Event>{};
+  var scheduledEvents = <Event>[];
+  //var allEventsMap = <int, Event>{};
   var lifeCategories = <LifeCategory>[];
   Map<String, Color> LifeCategoriesColorMap = {
     // "Other": const Color(0xFFFF80b1)
@@ -84,32 +84,32 @@ class User {
     habits.add(habit3);
   }
 
-  void buildEventList() {
-    final DateTime today = DateTime.now();
-    final DateTime startTime =
-        DateTime(today.year, today.month, today.day, 9, 0, 0);
-    final DateTime endTime = startTime.add(const Duration(hours: 2));
-    allEvents.add(Event(
-        //id: 0,
-        description: 'Conference',
-        type: "Meeting",
-        start: startTime,
-        end: endTime,
-        category: LifeCategory("All", const Color(0xFFFF80b1)),
-        background: const Color(0xFFFF80b1),
-        isAllDay: false));
+  // void buildEventList() {
+  //   final DateTime today = DateTime.now();
+  //   final DateTime startTime =
+  //       DateTime(today.year, today.month, today.day, 9, 0, 0);
+  //   final DateTime endTime = startTime.add(const Duration(hours: 2));
+  //   allEvents.add(Event(
+  //       //id: 0,
+  //       description: 'Conference',
+  //       type: "Meeting",
+  //       start: startTime,
+  //       end: endTime,
+  //       category: LifeCategory("All", const Color(0xFFFF80b1)),
+  //       background: const Color(0xFFFF80b1),
+  //       isAllDay: false));
 
-    final DateTime startTime2 =
-        DateTime(today.year, today.month, today.day + 1, 13, 0, 0);
-    final DateTime endTime2 = startTime2.add(const Duration(hours: 2));
-    allEvents.add(Event(
-        //id: 1,
-        description: 'Conference',
-        type: "Calendar",
-        start: startTime2,
-        end: endTime2,
-        background: const Color(0xFFFF80b1),
-        category: LifeCategory("All", const Color(0xFFFF80b1)),
-        isAllDay: false));
-  }
+  //   final DateTime startTime2 =
+  //       DateTime(today.year, today.month, today.day + 1, 13, 0, 0);
+  //   final DateTime endTime2 = startTime2.add(const Duration(hours: 2));
+  //   allEvents.add(Event(
+  //       //id: 1,
+  //       description: 'Conference',
+  //       type: "Calendar",
+  //       start: startTime2,
+  //       end: endTime2,
+  //       background: const Color(0xFFFF80b1),
+  //       category: LifeCategory("All", const Color(0xFFFF80b1)),
+  //       isAllDay: false));
+  // }
 }

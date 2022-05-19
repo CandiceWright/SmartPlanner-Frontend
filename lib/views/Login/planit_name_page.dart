@@ -40,7 +40,12 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
 //       'password': widget.password,
 //       'planitName': planitName
 //     });
-    var body = {'email': email, 'password': password, 'planitName': planitName};
+    var body = {
+      'email': email,
+      'password': password,
+      'planitName': planitName,
+      'didStartPlanningTomorrow': false
+    };
     String bodyF = jsonEncode(body);
     print(bodyF);
 
@@ -51,17 +56,19 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
     print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
-      if (response.body == "signup successful") {
+      if (response.body == "planit name taken") {
+        //show alert that planit already exists with that name
+
+      } else {
         //can go to the next page to choose theme
+        var decodedBody = json.decode(response.body);
+        print(decodedBody);
+        var id = decodedBody["insertId"];
         Navigator.push(
             context,
             CupertinoPageRoute(
                 builder: (context) => ChooseThemePage(
-                      email: widget.email,
-                      planitName: planitName,
-                    )));
-      } else {
-        //show alert that planit already exists with that name
+                    email: widget.email, planitName: planitName, userId: id)));
       }
     } else {
       //404 error, show an alert

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -10,6 +12,7 @@ import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key, required this.updateEvents}) : super(key: key);
@@ -55,18 +58,42 @@ class _ProfilePageState extends State<ProfilePage> {
     setAccountUpdateBtnState();
   }
 
-  void createCategory() {
-    var category = LifeCategory(categoryNameTxtController.text, pickerColor);
-    PlannerService.sharedInstance.user!.lifeCategories.add(category);
-    PlannerService.sharedInstance.user!.backlogMap[category.name] = [];
-    PlannerService.sharedInstance.user!.LifeCategoriesColorMap[category.name] =
-        pickerColor;
-    setState(() {
-      categoryNameTxtController.text = "";
-      hasSelectedColor = false;
-    });
-    setCategoryDoneBtnState();
-    Navigator.pop(context);
+  void createCategory() async {
+    //first save to server
+    var body = {
+      'name': categoryNameTxtController.text,
+      'color': pickerColor.value,
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://localhost:7343/goals');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      print(decodedBody);
+      var id = decodedBody[0]["categoryId"];
+      var category =
+          LifeCategory(id, categoryNameTxtController.text, pickerColor);
+      int color = pickerColor.value;
+      PlannerService.sharedInstance.user!.lifeCategories.add(category);
+      PlannerService.sharedInstance.user!.backlogMap[category.name] = [];
+      PlannerService.sharedInstance.user!
+          .LifeCategoriesColorMap[category.name] = pickerColor;
+      setState(() {
+        categoryNameTxtController.text = "";
+        hasSelectedColor = false;
+      });
+      setCategoryDoneBtnState();
+      Navigator.pop(context);
+    } else {
+      //500 error, show an alert
+
+    }
   }
 
   void setAccountUpdateBtnState() {

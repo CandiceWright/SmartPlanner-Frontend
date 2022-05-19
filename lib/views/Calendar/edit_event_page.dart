@@ -242,7 +242,7 @@ class _EditEventPageState extends State<EditEventPage> {
       CalendarPage.events.appointments!.add(events[0]);
 
       CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
-      PlannerService.sharedInstance.user!.allEvents =
+      PlannerService.sharedInstance.user!.scheduledEvents =
           CalendarPage.events.appointments! as List<Event>;
       CalendarPage.selectedEvent = null;
 

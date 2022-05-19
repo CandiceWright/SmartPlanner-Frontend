@@ -44,7 +44,7 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     super.initState();
     CalendarPage.events =
-        EventDataSource(PlannerService.sharedInstance.user!.allEvents);
+        EventDataSource(PlannerService.sharedInstance.user!.scheduledEvents);
     //print(PlannerService.sharedInstance.user.backlog);
   }
 
@@ -132,7 +132,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       CalendarPage.events.notifyListeners(
                           CalendarDataSourceAction.remove,
                           <Event>[]..add(CalendarPage.selectedEvent!));
-                      PlannerService.sharedInstance.user!.allEvents =
+                      PlannerService.sharedInstance.user!.scheduledEvents =
                           CalendarPage.events.appointments! as List<Event>;
                       // PlannerService.sharedInstance.user.allEvents
                       //     .removeAt(idx);
@@ -211,7 +211,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       CalendarPage.events.notifyListeners(
                           CalendarDataSourceAction.remove,
                           <Event>[]..add(CalendarPage.selectedEvent!));
-                      PlannerService.sharedInstance.user!.allEvents =
+                      PlannerService.sharedInstance.user!.scheduledEvents =
                           CalendarPage.events.appointments! as List<Event>;
 
                       var backlogItemRef =

@@ -702,9 +702,9 @@ class _HomePageState extends State<HomePage> {
                     child: Container(
                       child: SfCalendar(
                         view: CalendarView.schedule,
-                        dataSource: EventDataSource(
-                            PlannerService.sharedInstance.user!.allEvents +
-                                PlannerService.sharedInstance.user!.goals),
+                        dataSource: EventDataSource(PlannerService
+                                .sharedInstance.user!.scheduledEvents +
+                            PlannerService.sharedInstance.user!.goals),
                         scheduleViewSettings: const ScheduleViewSettings(
                             hideEmptyScheduleWeek: true,
                             monthHeaderSettings: MonthHeaderSettings(

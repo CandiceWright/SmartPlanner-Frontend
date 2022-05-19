@@ -188,8 +188,8 @@ class _TomorrowSchedulePageState extends State<TomorrowSchedulePage> {
           onTap: calendarTapped,
           initialDisplayDate: DateTime(DateTime.now().year,
               DateTime.now().month, DateTime.now().day + 1),
-          dataSource:
-              EventDataSource(PlannerService.sharedInstance.user!.allEvents),
+          dataSource: EventDataSource(
+              PlannerService.sharedInstance.user!.scheduledEvents),
         ),
       ),
 

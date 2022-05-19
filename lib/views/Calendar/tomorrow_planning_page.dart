@@ -134,7 +134,7 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                     CalendarPage.events.notifyListeners(
                         CalendarDataSourceAction.remove,
                         <Event>[]..add(CalendarPage.selectedEvent!));
-                    PlannerService.sharedInstance.user!.allEvents =
+                    PlannerService.sharedInstance.user!.scheduledEvents =
                         CalendarPage.events.appointments! as List<Event>;
                     var backlogItemRef =
                         CalendarPage.selectedEvent!.backlogMapRef;
@@ -184,7 +184,7 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                     CalendarPage.events.notifyListeners(
                         CalendarDataSourceAction.remove,
                         <Event>[]..add(CalendarPage.selectedEvent!));
-                    PlannerService.sharedInstance.user!.allEvents =
+                    PlannerService.sharedInstance.user!.scheduledEvents =
                         CalendarPage.events.appointments! as List<Event>;
                     CalendarPage.selectedEvent = null;
                     setState(() {});
