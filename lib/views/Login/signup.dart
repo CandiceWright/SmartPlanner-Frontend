@@ -54,20 +54,6 @@ class _SignupPageState extends State<SignupPage> {
     } else {
       //show alert that user already exists with that email
     }
-
-    //create first category! "Other"
-    // var otherCategory = LifeCategory("Other", Colors.grey);
-    // PlannerService.sharedInstance.user.LifeCategoriesColorMap["Other"] =
-    //     otherCategory.color;
-    // PlannerService.sharedInstance.user.lifeCategories.add(otherCategory);
-    // Navigator.of(context).push(MaterialPageRoute(
-    //   builder: (context) {
-    //     return const NavigationWrapper();
-    //   },
-    //   settings: const RouteSettings(
-    //     name: 'navigaionPage',
-    //   ),
-    // ));
   }
 
   @override

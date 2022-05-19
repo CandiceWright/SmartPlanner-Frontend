@@ -1,10 +1,14 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:practice_planner/main.dart';
+import 'package:flutter/material.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/Login/signup.dart';
-import '/views/Goals/goals_page.dart';
+import '../../models/life_category.dart';
+import '../../models/user.dart';
 import '/views/navigation_wrapper.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -19,8 +23,58 @@ class _LoginPageState extends State<LoginPage> {
   var passwordTextController = TextEditingController();
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var questionIndex = 0;
-  void login() {
+  void login() async {
     //validate login and if successful, go to home of app
+    var email = emailTextController.text;
+    var password = passwordTextController.text;
+    var body = {'email': email, 'password': password};
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://localhost:7343/login');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      if (response.body == "no user exists") {
+        //show an error alert for no account
+      } else if (response.body == "wrong password") {
+        //show alert for wrong password
+      } else {
+        var decodedBody = json.decode(response.body);
+        print(decodedBody);
+        var planitName = decodedBody["planitName"];
+        var themeId = decodedBody["theme"];
+        DynamicTheme.of(context)!.setTheme(themeId);
+        var user = User(
+            planitName: planitName,
+            email: email,
+            profileImage: "assets/images/profile_pic_icon.png",
+            themeId: themeId,
+            //theme: PinkTheme(),
+            didStartTomorrowPlanning: false,
+            lifeCategories: [
+              LifeCategory("Other", Colors.grey),
+            ]);
+        PlannerService.sharedInstance.user = user;
+        PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
+            Colors.grey;
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return const NavigationWrapper();
+          },
+          settings: const RouteSettings(
+            name: 'navigaionPage',
+          ),
+        ));
+      }
+    } else {
+      //404 error, show an alert
+
+    }
+
     PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
         Theme.of(context).colorScheme.primary;
     Navigator.of(context).push(MaterialPageRoute(
@@ -86,6 +140,8 @@ class _LoginPageState extends State<LoginPage> {
                       padding: EdgeInsets.all(5),
                       child: TextFormField(
                         controller: emailTextController,
+                        enableSuggestions: false,
+                        autocorrect: false,
                         decoration: const InputDecoration(
                           hintText: "Email",
                           icon: Icon(
@@ -102,13 +158,15 @@ class _LoginPageState extends State<LoginPage> {
                           }
                           return null;
                         },
-                        style: TextStyle(color: Colors.white),
                       ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
                       child: TextFormField(
-                        controller: emailTextController,
+                        controller: passwordTextController,
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
                         decoration: const InputDecoration(
                             hintText: "Password",
                             icon: Icon(

@@ -216,7 +216,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
                     child: ElevatedButton(
                       onPressed: signup,
                       child: Text(
-                        "Let's Go",
+                        "Go to my Planit",
                         style: TextStyle(fontSize: 18),
                       ),
                       style: ButtonStyle(
