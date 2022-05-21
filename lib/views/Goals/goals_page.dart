@@ -9,6 +9,7 @@ import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:confetti/confetti.dart';
+import 'package:http/http.dart' as http;
 
 class GoalsPage extends StatefulWidget {
   const GoalsPage({Key? key}) : super(key: key);
@@ -46,7 +47,7 @@ class _GoalsPageState extends State<GoalsPage> {
             builder: (context) => NewGoalPage(updateGoals: _updateGoalsList)));
   }
 
-  void _openEditGoal(int idx) {
+  void _openEditGoal(int idx, int eventId) {
     Navigator.pop(context);
     Navigator.push(
         context,
@@ -54,20 +55,23 @@ class _GoalsPageState extends State<GoalsPage> {
             builder: (context) => EditGoalPage(
                   updateGoal: _updateGoalsList,
                   goalIdx: idx,
+                  eventId: eventId,
                 )));
   }
 
-  void showGoalCompleteAnimation(int idx) {
+  void showGoalCompleteAnimation(int idx, int eventId) {
     PlannerService.sharedInstance.user!.accomplishedGoals.add(
         PlannerService.sharedInstance.user!.goals[idx]); //move to accomplished
     PlannerService.sharedInstance.user!.goals.removeAt(idx);
+    //update event isAccomplished value in db
+
     _updateGoalsList();
     Navigator.pop(context);
     _controllerCenter.play();
     print("Yayy you did it");
   }
 
-  void deleteGoal(int idx) {
+  void deleteGoal(int idx, int eventId) {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -82,10 +86,24 @@ class _GoalsPageState extends State<GoalsPage> {
             actions: <Widget>[
               TextButton(
                 child: Text('yes, delete'),
-                onPressed: () {
-                  PlannerService.sharedInstance.user!.goals.removeAt(idx);
-                  setState(() {});
-                  Navigator.pop(context);
+                onPressed: () async {
+                  //first send server request
+                  var url = Uri.parse(
+                      'http://localhost:7343/goals/' + eventId.toString());
+                  var response = await http.delete(
+                    url,
+                  );
+                  print('Response status: ${response.statusCode}');
+                  print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
+                    PlannerService.sharedInstance.user!.goals.removeAt(idx);
+                    setState(() {});
+                    Navigator.pop(context);
+                  } else {
+                    //500 error, show an alert
+
+                  }
                 },
               ),
               TextButton(
@@ -98,7 +116,7 @@ class _GoalsPageState extends State<GoalsPage> {
         });
   }
 
-  void _showGoalContent(Event goal, int idx) {
+  void _showGoalContent(Event goal, int arrIdx, int eventId) {
     showDialog(
       context: context, // user must tap button!
 
@@ -146,7 +164,7 @@ class _GoalsPageState extends State<GoalsPage> {
                   // ),
                   ElevatedButton(
                       onPressed: () {
-                        showGoalCompleteAnimation(idx);
+                        showGoalCompleteAnimation(arrIdx, eventId);
                       },
                       child: const Text(
                         "I DID IT!",
@@ -159,12 +177,12 @@ class _GoalsPageState extends State<GoalsPage> {
           actions: <Widget>[
             TextButton(
                 onPressed: () {
-                  _openEditGoal(idx);
+                  _openEditGoal(arrIdx, eventId);
                 },
                 child: new Text('edit')),
             TextButton(
                 onPressed: () {
-                  deleteGoal(idx);
+                  deleteGoal(arrIdx, eventId);
                 },
                 child: new Text('delete')),
             TextButton(
@@ -191,64 +209,6 @@ class _GoalsPageState extends State<GoalsPage> {
         CupertinoPageRoute(
             builder: (context) =>
                 AccomplishedGoalsPage(updateGoals: _updateGoalsList)));
-  }
-
-  List<Widget> buildGoalsListView() {
-    print("building goals list view");
-    List<Widget> goalsListView = [];
-    /*This implementation uses cards*/
-    for (int i = 0; i < PlannerService.sharedInstance.user!.goals.length; i++) {
-      Widget goalContainerWidget = GestureDetector(
-        onTap: () =>
-            {_showGoalContent(PlannerService.sharedInstance.user!.goals[i], i)},
-        child: Card(
-          clipBehavior: Clip.antiAlias,
-          child: Row(
-            children: [
-              Image.asset(
-                "assets/images/goal_icon.png",
-                height: 40,
-                width: 40,
-              ),
-              Column(
-                children: [
-                  Container(
-                    child: Column(
-                      children: [
-                        Text(
-                          DateFormat.yMMMd().format(PlannerService
-                              .sharedInstance.user!.goals[i].start),
-                          // style: Theme.of(context).textTheme.subtitle2,
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                        ),
-                        Text(
-                          PlannerService
-                              .sharedInstance.user!.goals[i].description,
-                          style: const TextStyle(color: Colors.black),
-                        ),
-                      ],
-                    ),
-                    margin: EdgeInsets.all(15),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          elevation: 3,
-          margin: EdgeInsets.all(10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-          ),
-          //color: Theme.of(context).colorScheme.primary,
-          color: PlannerService.sharedInstance.user!.goals[i].category.color,
-        ),
-      );
-      goalsListView.add(goalContainerWidget);
-    }
-    return goalsListView;
   }
 
   @override
@@ -333,7 +293,9 @@ class _GoalsPageState extends State<GoalsPage> {
                       onTap: () => {
                         _showGoalContent(
                             PlannerService.sharedInstance.user!.goals[index],
-                            index)
+                            index,
+                            PlannerService
+                                .sharedInstance.user!.goals[index].id!)
                       },
                       child: Card(
                         clipBehavior: Clip.antiAlias,

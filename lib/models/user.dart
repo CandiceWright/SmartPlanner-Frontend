@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 class User {
   //var name;
   var planitName;
+  int id;
   var profileImage;
   var email;
   //CustomTheme theme;
@@ -31,7 +32,8 @@ class User {
   };
 
   User(
-      {required this.planitName,
+      {required this.id,
+      required this.planitName,
       //required this.username,
       required this.email,
       //required this.theme,

@@ -45,6 +45,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         var decodedBody = json.decode(response.body);
         print(decodedBody);
+        var userId = decodedBody[0]["userId"];
         var planitName = decodedBody[0]["planitName"];
         var themeId = decodedBody[0]["theme"];
         var didStartPlanningTomorrow =
@@ -76,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
         //get all dictionary items
         DynamicTheme.of(context)!.setTheme(themeId);
         var user = User(
+            id: userId,
             planitName: planitName,
             email: email,
             profileImage: "assets/images/profile_pic_icon.png",

@@ -61,10 +61,11 @@ class _NewGoalPageState extends State<NewGoalPage> {
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
     var body = {
+      'userId': PlannerService.sharedInstance.user!.id,
       'description': goalTitle,
       'type': "goal",
-      'start': selectedDate,
-      'end': selectedDate,
+      'start': selectedDate.toString(),
+      'end': selectedDate.toString(),
       'notes': goalNotes,
       'category': currChosenCategory.id,
       'isAllDay': true
@@ -81,7 +82,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
       print(decodedBody);
-      var id = decodedBody[0]["eventId"];
+      var id = decodedBody["insertId"];
       var newGoal = Event(
         id: id,
         description: goalTitle,

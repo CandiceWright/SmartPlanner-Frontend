@@ -1,12 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
+import 'package:http/http.dart' as http;
 
 class EditGoalPage extends StatefulWidget {
   const EditGoalPage(
-      {Key? key, required this.updateGoal, required this.goalIdx})
+      {Key? key,
+      required this.updateGoal,
+      required this.goalIdx,
+      required this.eventId})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -19,6 +25,7 @@ class EditGoalPage extends StatefulWidget {
   // always marked "final".
   final Function updateGoal;
   final int goalIdx;
+  final int eventId;
 
   @override
   State<EditGoalPage> createState() => _EditGoalPageState();
@@ -64,25 +71,50 @@ class _EditGoalPageState extends State<EditGoalPage> {
       });
   }
 
-  void editGoal() {
+  void editGoal() async {
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
-    //var category = categoryTxtController.text;
+//first update server
+    var body = {
+      'eventId': widget.eventId,
+      'description': goalTitle,
+      'type': "goal",
+      'start': selectedDate.toString(),
+      'end': selectedDate.toString(),
+      'notes': goalNotes,
+      'category': currChosenCategory.id,
+      'isAllDay': true
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
 
-    PlannerService.sharedInstance.user!.goals[widget.goalIdx].description =
-        goalTitle;
-    PlannerService.sharedInstance.user!.goals[widget.goalIdx].notes = goalNotes;
-    PlannerService.sharedInstance.user!.goals[widget.goalIdx].category =
-        currChosenCategory;
-    PlannerService.sharedInstance.user!.goals[widget.goalIdx].date =
-        selectedDate;
-    PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
-      DateTime goal1Date = goal1.start;
-      DateTime goal2Date = goal2.start;
-      return goal1Date.compareTo(goal2Date);
-    });
-    widget.updateGoal();
-    _backToGoalsPage();
+    var url = Uri.parse('http://localhost:7343/goals');
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].description =
+          goalTitle;
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].notes =
+          goalNotes;
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].category =
+          currChosenCategory;
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].date =
+          selectedDate;
+      PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
+        DateTime goal1Date = goal1.start;
+        DateTime goal2Date = goal2.start;
+        return goal1Date.compareTo(goal2Date);
+      });
+      widget.updateGoal();
+      _backToGoalsPage();
+    } else {
+      //500 error, show an alert
+
+    }
+    //var category = categoryTxtController.text;
   }
 
   void setDoneBtnState() {

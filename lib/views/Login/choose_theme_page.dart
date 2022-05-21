@@ -52,7 +52,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
       //create other category
       var body = {
         'name': "other",
-        'color': Colors.grey.value,
+        'color': Colors.grey.value.toString(),
       };
       String bodyF = jsonEncode(body);
       print(bodyF);
@@ -66,8 +66,9 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
       if (response.statusCode == 200) {
         var decodedBody = json.decode(response.body);
         print(decodedBody);
-        var id = decodedBody[0]["categoryId"];
+        var id = decodedBody["insertId"];
         var user = User(
+            id: widget.userId,
             planitName: widget.planitName,
             email: widget.email,
             profileImage: "assets/images/profile_pic_icon.png",
