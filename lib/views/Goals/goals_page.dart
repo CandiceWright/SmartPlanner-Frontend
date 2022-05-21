@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:practice_planner/models/event.dart';
@@ -59,16 +61,32 @@ class _GoalsPageState extends State<GoalsPage> {
                 )));
   }
 
-  void showGoalCompleteAnimation(int idx, int eventId) {
-    PlannerService.sharedInstance.user!.accomplishedGoals.add(
-        PlannerService.sharedInstance.user!.goals[idx]); //move to accomplished
-    PlannerService.sharedInstance.user!.goals.removeAt(idx);
-    //update event isAccomplished value in db
+  void showGoalCompleteAnimation(int idx, int eventId) async {
+    //first update on server
+    var body = {'goalId': eventId, 'isAccomplished': true};
+    String bodyF = jsonEncode(body);
+    print(bodyF);
 
-    _updateGoalsList();
-    Navigator.pop(context);
-    _controllerCenter.play();
-    print("Yayy you did it");
+    var url = Uri.parse('http://localhost:7343/goals/status');
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      PlannerService.sharedInstance.user!.accomplishedGoals.add(PlannerService
+          .sharedInstance.user!.goals[idx]); //move to accomplished
+      PlannerService.sharedInstance.user!.goals.removeAt(idx);
+      //update event isAccomplished value in db
+
+      _updateGoalsList();
+      Navigator.pop(context);
+      _controllerCenter.play();
+      print("Yayy you did it");
+    } else {
+      //500 error, show an alert
+
+    }
   }
 
   void deleteGoal(int idx, int eventId) {

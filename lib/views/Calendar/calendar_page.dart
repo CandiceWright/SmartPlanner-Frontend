@@ -17,6 +17,7 @@ import 'monthly_calendar_page.dart';
 import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
+import 'package:http/http.dart' as http;
 
 //part 'edit_event_page.dart';
 
@@ -109,7 +110,7 @@ class _CalendarPageState extends State<CalendarPage> {
     setState(() {});
   }
 
-  void deleteEvent() {
+  void deleteEvent() async {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -123,8 +124,19 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
             actions: <Widget>[
               TextButton(
-                  onPressed: () {
-                    if (CalendarPage.selectedEvent != null) {
+                child: Text('yes, delete'),
+                onPressed: () async {
+                  if (CalendarPage.selectedEvent != null) {
+                    //first send server request
+                    var url = Uri.parse('http://localhost:7343/calendar/' +
+                        CalendarPage.selectedEvent!.id.toString());
+                    var response = await http.delete(
+                      url,
+                    );
+                    print('Response status: ${response.statusCode}');
+                    print('Response body: ${response.body}');
+
+                    if (response.statusCode == 200) {
                       CalendarPage.events.appointments!.removeAt(CalendarPage
                           .events.appointments!
                           .indexOf(CalendarPage.selectedEvent));
@@ -140,9 +152,13 @@ class _CalendarPageState extends State<CalendarPage> {
                       CalendarPage.selectedEvent = null;
                       setState(() {});
                       Navigator.pop(context);
+                    } else {
+                      //500 error, show an alert
+
                     }
-                  },
-                  child: Text('yes, delete')),
+                  }
+                },
+              ),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
