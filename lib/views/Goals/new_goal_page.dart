@@ -68,7 +68,8 @@ class _NewGoalPageState extends State<NewGoalPage> {
       'end': selectedDate.toString(),
       'notes': goalNotes,
       'category': currChosenCategory.id,
-      'isAllDay': true
+      'isAllDay': true,
+      'isAccomplished': false
     };
     String bodyF = jsonEncode(body);
     print(bodyF);
@@ -84,17 +85,17 @@ class _NewGoalPageState extends State<NewGoalPage> {
       print(decodedBody);
       var id = decodedBody["insertId"];
       var newGoal = Event(
-        id: id,
-        description: goalTitle,
-        type: "goal",
-        start: selectedDate,
-        end: selectedDate,
-        //background: const Color(0xFFFF80b1),
-        background: currChosenCategory.color,
-        isAllDay: true,
-        notes: goalNotes,
-        category: currChosenCategory,
-      );
+          id: id,
+          description: goalTitle,
+          type: "goal",
+          start: selectedDate,
+          end: selectedDate,
+          //background: const Color(0xFFFF80b1),
+          background: currChosenCategory.color,
+          isAllDay: true,
+          notes: goalNotes,
+          category: currChosenCategory,
+          isAccomplished: false);
       PlannerService.sharedInstance.user!.goals.add(newGoal);
       PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
         DateTime goal1Date = goal1.start;

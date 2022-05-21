@@ -95,7 +95,6 @@ class _CalendarPageState extends State<CalendarPage> {
         CupertinoPageRoute(
             builder: (context) => EditEventPage(
                   updateEvents: _updateEvents,
-                  //id: id,
                   // dataSource: _events,
                   // selectedEvent: _selectedAppointment,
                 )));
@@ -242,6 +241,7 @@ class _CalendarPageState extends State<CalendarPage> {
   void calendarTapped(CalendarTapDetails details) {
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
+      print(details.appointments![0].toString());
       final Event appointmentDetails = details.appointments![0];
       var _subjectText = appointmentDetails.description;
       var _dateText = DateFormat('MMMM dd, yyyy')
@@ -253,6 +253,7 @@ class _CalendarPageState extends State<CalendarPage> {
           DateFormat('hh:mm a').format(appointmentDetails.end).toString();
       var _timeDetails = '$_startTimeText - $_endTimeText';
       CalendarPage.selectedEvent = appointmentDetails;
+      print(CalendarPage.selectedEvent!.id);
 
       if (appointmentDetails.backlogMapRef != null) {
         //is a backlog item
@@ -484,80 +485,5 @@ class _CalendarPageState extends State<CalendarPage> {
         )
       ],
     );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     // Here we take the value from the MyHomePage object that was created by
-    //     // the App.build method, and use it to set our appbar title.
-    //     title: Column(
-    //       children: [
-    //         const Text("Today"),
-    //         // Image.asset(
-    //         //   "assets/images/pink_planit_today.png",
-    //         // ),
-    //       ],
-    //     ),
-    //     centerTitle: true,
-    //     leading: IconButton(
-    //       icon: const Icon(Icons.note_alt),
-    //       tooltip: 'View this backlog item',
-    //       onPressed: () {
-    //         //setState(() {});
-    //         Navigator.push(
-    //             context,
-    //             CupertinoPageRoute(
-    //                 builder: (context) => const NotesPage(
-    //                       fromPage: "Today",
-    //                     )));
-    //       },
-    //     ),
-    //     automaticallyImplyLeading: false,
-    //     actions: [
-    //       IconButton(
-    //         icon: const Icon(Icons.calendar_today),
-    //         tooltip: 'View full calendar',
-    //         onPressed: () {
-    //           _goToMonthlyView();
-    //         },
-    //       ),
-    //       IconButton(
-    //         icon: const Icon(Icons.next_week),
-    //         tooltip: 'Tomorrow',
-    //         onPressed: () {
-    //           setState(() {
-    //             if (PlannerService
-    //                 .sharedInstance.user.didStartTomorrowPlanning) {
-    //               _openTomorrowSchedulePage();
-    //             } else {
-    //               _openNoTomorrowPlanPage();
-    //             }
-    //           });
-    //         },
-    //       ),
-    //       // TextButton(
-    //       //   child: const Text("Tomorrow"),
-    //       //   onPressed: () => {},
-    //       // ),
-    //     ],
-    //     iconTheme: IconThemeData(
-    //       color: Theme.of(context).primaryColor, //change your color here
-    //     ),
-    //   ),
-    //   body: Container(
-    //     child: SfCalendar(
-    //       view: CalendarView.day,
-    //       onTap: calendarTapped,
-    //       initialDisplayDate: DateTime.now(),
-    //       dataSource: CalendarPage.events,
-    //       //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-    //     ),
-    //   ),
-
-    //   floatingActionButton: FloatingActionButton(
-    //     //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
-    //     onPressed: _openNewCalendarItemDialog,
-    //     tooltip: 'Create new event.',
-    //     child: const Icon(Icons.add),
-    //   ), // This trailing comma makes auto-formatting nicer for build methods.
-    // );
   }
 }

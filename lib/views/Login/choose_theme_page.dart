@@ -53,6 +53,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
       var body = {
         'name': "other",
         'color': Colors.grey.value.toString(),
+        'userId': widget.userId
       };
       String bodyF = jsonEncode(body);
       print(bodyF);

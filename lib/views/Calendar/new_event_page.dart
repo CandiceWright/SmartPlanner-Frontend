@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +13,7 @@ import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 
 import 'calendar_page.dart';
 
@@ -165,7 +168,7 @@ class _NewGoalPageState extends State<NewEventPage> {
     });
   }
 
-  void createEvent() {
+  void createEvent() async {
     final List<Event> events = <Event>[];
     //I'm nott sure why I added he code below so I commented out for now
     // if (CalendarPage.selectedEvent != null) {
@@ -202,37 +205,64 @@ class _NewGoalPageState extends State<NewEventPage> {
             );
           });
     } else {
+      //first send request to create new event on server
       var eventTitle = descriptionTxtController.text;
       var eventNotes = notesTxtController.text;
-      //var category = categoryTxtController.text;
       var eventLocation = locationTxtController.text;
+      var body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'description': eventTitle,
+        'type': "goal",
+        'start': startDateTime.toString(),
+        'end': endDateTime.toString(),
+        'notes': eventNotes,
+        'category': currChosenCategory.id,
+        'location': eventLocation,
+        'isAllDay': true
+      };
+      String bodyF = jsonEncode(body);
+      print(bodyF);
 
-      //int id = PlannerService.sharedInstance.user.allEvents.length;
-      var newEvent = Event(
-        //id: id,
-        description: eventTitle,
-        type: "calendar",
-        start: startDateTime,
-        end: endDateTime,
-        //background: const Color(0xFFFF80b1),
-        background: currChosenCategory.color,
-        isAllDay: false,
-        notes: eventNotes,
-        category: currChosenCategory,
-        location: eventLocation,
-      );
+      var url = Uri.parse('http://localhost:7343/calendar');
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
-      events.add(newEvent);
+      if (response.statusCode == 200) {
+        var decodedBody = json.decode(response.body);
+        print(decodedBody);
+        var id = decodedBody["insertId"];
+        var newEvent = Event(
+          id: id,
+          description: eventTitle,
+          type: "calendar",
+          start: startDateTime,
+          end: endDateTime,
+          //background: const Color(0xFFFF80b1),
+          background: currChosenCategory.color,
+          isAllDay: false,
+          notes: eventNotes,
+          category: currChosenCategory,
+          location: eventLocation,
+        );
 
-      CalendarPage.events.appointments!.add(events[0]);
+        events.add(newEvent);
 
-      CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
-      PlannerService.sharedInstance.user!.scheduledEvents =
-          CalendarPage.events.appointments! as List<Event>;
+        CalendarPage.events.appointments!.add(events[0]);
 
-      CalendarPage.selectedEvent = null;
+        CalendarPage.events
+            .notifyListeners(CalendarDataSourceAction.add, events);
+        PlannerService.sharedInstance.user!.scheduledEvents =
+            CalendarPage.events.appointments! as List<Event>;
 
-      _backToEventsPage();
+        CalendarPage.selectedEvent = null;
+
+        _backToEventsPage();
+      } else {
+        //500 error, show an alert
+
+      }
     }
   }
 

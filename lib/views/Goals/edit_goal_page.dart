@@ -83,7 +83,9 @@ class _EditGoalPageState extends State<EditGoalPage> {
       'end': selectedDate.toString(),
       'notes': goalNotes,
       'category': currChosenCategory.id,
-      'isAllDay': true
+      'isAllDay': true,
+      'isAccomplished': PlannerService
+          .sharedInstance.user!.goals[widget.goalIdx].isAccomplished
     };
     String bodyF = jsonEncode(body);
     print(bodyF);

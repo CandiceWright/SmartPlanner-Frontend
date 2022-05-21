@@ -8,6 +8,11 @@ class EventDataSource extends CalendarDataSource {
   }
 
   @override
+  int getId(int index) {
+    return appointments![index].id;
+  }
+
+  @override
   DateTime getStartTime(int index) {
     return appointments![index].start;
   }

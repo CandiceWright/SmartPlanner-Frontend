@@ -1,5 +1,7 @@
 //part of event_calendar;
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/event_data_source.dart';
@@ -10,6 +12,8 @@ import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
+import 'package:http/http.dart' as http;
+
 //import 'package:calendar_page.dart';
 
 class EditEventPage extends StatefulWidget {
@@ -182,15 +186,13 @@ class _EditEventPageState extends State<EditEventPage> {
     }
   }
 
-  void editEvent() {
+  void editEvent() async {
     final List<Event> events = <Event>[];
-    if (CalendarPage.selectedEvent != null) {
-      CalendarPage.events.appointments!.removeAt(CalendarPage
-          .events.appointments!
-          .indexOf(CalendarPage.selectedEvent));
-      CalendarPage.events.notifyListeners(CalendarDataSourceAction.remove,
-          <Event>[]..add(CalendarPage.selectedEvent!));
-    }
+    var eventTitle = descriptionTxtController.text;
+    var eventNotes = notesTxtController.text;
+    //var category = categoryTxtController.text;
+    var eventLocation = locationTxController.text;
+
     var startDateTime = DateTime(
         selectedStartDate.year,
         selectedStartDate.month,
@@ -199,54 +201,85 @@ class _EditEventPageState extends State<EditEventPage> {
         selectedStartTime.minute);
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
-    if (startDateTime.compareTo(endDateTime) > 0) {
-      //startDate is after end date which can't happen
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Fix Dates"),
-              content: Text("Start date must be before end date."),
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Ok'))
-              ],
-            );
-          });
-    } else {
-      var eventTitle = descriptionTxtController.text;
-      var eventNotes = notesTxtController.text;
-      //var category = categoryTxtController.text;
-      var eventLocation = locationTxController.text;
+    if (CalendarPage.selectedEvent != null) {
+      if (startDateTime.compareTo(endDateTime) > 0) {
+        //startDate is after end date which can't happen
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Fix Dates"),
+                content: Text("Start date must be before end date."),
+                actions: <Widget>[
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Ok'))
+                ],
+              );
+            });
+      } else {
+        //make call to server
 
-      //int id = PlannerService.sharedInstance.user.allEvents.length;
-      var newEvent = Event(
-        //id: id,
-        description: eventTitle,
-        type: "calendar",
-        start: startDateTime,
-        end: endDateTime,
-        //background: const Color(0xFFFF80b1),
-        background: currChosenCategory.color,
-        isAllDay: false,
-        notes: eventNotes,
-        category: currChosenCategory,
-        location: eventLocation,
-      );
+        var body = {
+          'eventId': CalendarPage.selectedEvent!.id,
+          'description': eventTitle,
+          'type': "calendar",
+          'start': startDateTime.toString(),
+          'end': endDateTime.toString(),
+          'notes': eventNotes,
+          'category': currChosenCategory.id,
+          'location': eventLocation,
+          'isAllDay': true
+        };
+        String bodyF = jsonEncode(body);
+        print(bodyF);
 
-      events.add(newEvent);
+        var url = Uri.parse('http://localhost:7343/calendar');
+        var response = await http.patch(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
 
-      CalendarPage.events.appointments!.add(events[0]);
+        if (response.statusCode == 200) {
+          CalendarPage.events.appointments!.removeAt(CalendarPage
+              .events.appointments!
+              .indexOf(CalendarPage.selectedEvent));
+          CalendarPage.events.notifyListeners(CalendarDataSourceAction.remove,
+              <Event>[]..add(CalendarPage.selectedEvent!));
 
-      CalendarPage.events.notifyListeners(CalendarDataSourceAction.add, events);
-      PlannerService.sharedInstance.user!.scheduledEvents =
-          CalendarPage.events.appointments! as List<Event>;
-      CalendarPage.selectedEvent = null;
+          //int id = PlannerService.sharedInstance.user.allEvents.length;
+          var newEvent = Event(
+            id: CalendarPage.selectedEvent!.id,
+            description: eventTitle,
+            type: "calendar",
+            start: startDateTime,
+            end: endDateTime,
+            //background: const Color(0xFFFF80b1),
+            background: currChosenCategory.color,
+            isAllDay: false,
+            notes: eventNotes,
+            category: currChosenCategory,
+            location: eventLocation,
+          );
 
-      _backToEventsPage();
+          events.add(newEvent);
+
+          CalendarPage.events.appointments!.add(events[0]);
+
+          CalendarPage.events
+              .notifyListeners(CalendarDataSourceAction.add, events);
+          PlannerService.sharedInstance.user!.scheduledEvents =
+              CalendarPage.events.appointments! as List<Event>;
+          CalendarPage.selectedEvent = null;
+
+          _backToEventsPage();
+        } else {
+          //500 error, show an alert
+
+        }
+      }
     }
   }
 
