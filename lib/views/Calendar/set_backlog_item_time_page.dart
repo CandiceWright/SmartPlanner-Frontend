@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_item.dart';
@@ -12,6 +14,7 @@ import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
 import 'package:date_format/date_format.dart';
+import 'package:http/http.dart' as http;
 
 class SetBacklogItemTimePage extends StatefulWidget {
   const SetBacklogItemTimePage(
@@ -56,7 +59,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
     endTimeController.addListener(setDoneBtnState);
   }
 
-  void _saveNewCalendarItem() {
+  void _saveNewCalendarItem() async {
     final List<Event> events = <Event>[];
 
     DateTime startDateTime;
@@ -88,50 +91,104 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
               );
             });
       } else {
-        PlannerService
-            .sharedInstance
-            .user!
-            .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-            .scheduledDate = startDateTime;
+        //first create a new event by calling server
         var eventTitle = widget.backlogItem.description;
         var eventNotes = widget.backlogItem.notes;
         var category = widget.backlogItem.category;
         var eventLocation = widget.backlogItem.location;
-        var newEvent = Event(
-            //id: PlannerService.sharedInstance.user.allEvents.length,
-            description: eventTitle,
-            type: "backlog",
-            start: startDateTime,
-            end: endDateTime,
-            background: widget.backlogItem.category.color,
-            isAllDay: false,
-            notes: eventNotes,
-            category: category,
-            location: eventLocation,
-            backlogMapRef: widget.bmRef);
+        var body = {
+          'userId': PlannerService.sharedInstance.user!.id,
+          'description': eventTitle,
+          'type': "calendar",
+          'start': startDateTime.toString(),
+          'end': endDateTime.toString(),
+          'notes': eventNotes,
+          'category': category.id,
+          'location': eventLocation,
+          'isAllDay': false,
+          'backlogItemRef': widget.backlogItem.id
+        };
+        String bodyF = jsonEncode(body);
+        print(bodyF);
 
-        //PlannerService.sharedInstance.user.allEvents.add(newEvent);
-        events.add(newEvent);
+        var url = Uri.parse('http://localhost:7343/calendar');
+        var response = await http.post(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
 
-        CalendarPage.events.appointments!.add(events[0]);
+        if (response.statusCode == 200) {
+          var decodedBody = json.decode(response.body);
+          print(decodedBody);
+          var id = decodedBody["insertId"];
 
-        CalendarPage.events
-            .notifyListeners(CalendarDataSourceAction.add, events);
-        PlannerService.sharedInstance.user!.scheduledEvents =
-            CalendarPage.events.appointments! as List<Event>;
+          //update task with event id and scheduled date (call schedule task server route)
+          var body = {
+            'taskId': widget.backlogItem.id,
+            'calendarRefId': id,
+            'scheduledDate': startDateTime.toString(),
+          };
+          String bodyF = jsonEncode(body);
+          print(bodyF);
 
-        CalendarPage.selectedEvent = null;
-        widget.updateEvents();
-        Navigator.of(context).popUntil((route) {
-          return route.settings.name == 'TomorrowPage';
-        });
-        // PlannerService
-        //         .sharedInstance
-        //         .user
-        //         .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-        //         .scheduledDate =
-        //     DateTime(DateTime.now().year, DateTime.now().month,
-        //         DateTime.now().day + 1);
+          var url = Uri.parse('http://localhost:7343/backlog/schedule');
+          var response2 = await http.patch(url,
+              headers: {"Content-Type": "application/json"}, body: bodyF);
+          print('Response status: ${response2.statusCode}');
+          print('Response body: ${response2.body}');
+
+          if (response2.statusCode == 200) {
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .scheduledDate = startDateTime;
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .calendarItemRef = id;
+
+            var newEvent = Event(
+                id: id,
+                //id: PlannerService.sharedInstance.user.allEvents.length,
+                taskIdRef: widget.backlogItem.id,
+                description: eventTitle,
+                type: "backlog",
+                start: startDateTime,
+                end: endDateTime,
+                background: widget.backlogItem.category.color,
+                isAllDay: false,
+                notes: eventNotes,
+                category: category,
+                location: eventLocation,
+                backlogMapRef: widget.bmRef);
+
+            //PlannerService.sharedInstance.user.allEvents.add(newEvent);
+            events.add(newEvent);
+
+            CalendarPage.events.appointments!.add(events[0]);
+
+            CalendarPage.events
+                .notifyListeners(CalendarDataSourceAction.add, events);
+            PlannerService.sharedInstance.user!.scheduledEvents =
+                CalendarPage.events.appointments! as List<Event>;
+
+            CalendarPage.selectedEvent = null;
+            widget.updateEvents();
+            Navigator.of(context).popUntil((route) {
+              return route.settings.name == 'TomorrowPage';
+            });
+          } else {
+            //500 error, show an alert
+
+          }
+        } else {
+          //500 error, show an alert
+
+        }
+
+        //next get that new event id and update task with scheduled date and event id for calendar item
       }
     } else {
       startDateTime = DateTime(DateTime.now().year, DateTime.now().month,
@@ -156,43 +213,104 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
               );
             });
       } else {
-        PlannerService
-            .sharedInstance
-            .user!
-            .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-            .scheduledDate = startDateTime;
+        //first create a new event by calling server
         var eventTitle = widget.backlogItem.description;
         var eventNotes = widget.backlogItem.notes;
         var category = widget.backlogItem.category;
         var eventLocation = widget.backlogItem.location;
-        var newEvent = Event(
-            //id: PlannerService.sharedInstance.user.allEvents.length,
-            description: eventTitle,
-            type: "backlog",
-            start: startDateTime,
-            end: endDateTime,
-            background: widget.backlogItem.category.color,
-            isAllDay: false,
-            notes: eventNotes,
-            category: category,
-            location: eventLocation,
-            backlogMapRef: widget.bmRef);
+        var body = {
+          'userId': PlannerService.sharedInstance.user!.id,
+          'description': eventTitle,
+          'type': "calendar",
+          'start': startDateTime.toString(),
+          'end': endDateTime.toString(),
+          'notes': eventNotes,
+          'category': category.id,
+          'location': eventLocation,
+          'isAllDay': false,
+          'backlogItemRef': widget.backlogItem.id
+        };
+        String bodyF = jsonEncode(body);
+        print(bodyF);
 
-        //PlannerService.sharedInstance.user.allEvents.add(newEvent);
-        events.add(newEvent);
+        var url = Uri.parse('http://localhost:7343/calendar');
+        var response = await http.post(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
 
-        CalendarPage.events.appointments!.add(events[0]);
+        if (response.statusCode == 200) {
+          var decodedBody = json.decode(response.body);
+          print(decodedBody);
+          var id = decodedBody["insertId"];
 
-        CalendarPage.events
-            .notifyListeners(CalendarDataSourceAction.add, events);
-        PlannerService.sharedInstance.user!.scheduledEvents =
-            CalendarPage.events.appointments! as List<Event>;
+          //update task with event id and scheduled date (call schedule task server route)
+          var body = {
+            'taskId': widget.backlogItem.id,
+            'calendarRefId': id,
+            'scheduledDate': startDateTime.toString(),
+          };
+          String bodyF = jsonEncode(body);
+          print(bodyF);
 
-        CalendarPage.selectedEvent = null;
-        widget.updateEvents();
-        Navigator.of(context).popUntil((route) {
-          return route.settings.name == 'navigaionPage';
-        });
+          var url = Uri.parse('http://localhost:7343/backlog/schedule');
+          var response2 = await http.patch(url,
+              headers: {"Content-Type": "application/json"}, body: bodyF);
+          print('Response status: ${response2.statusCode}');
+          print('Response body: ${response2.body}');
+
+          if (response2.statusCode == 200) {
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .scheduledDate = startDateTime;
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .calendarItemRef = id;
+
+            var newEvent = Event(
+                id: id,
+                //id: PlannerService.sharedInstance.user.allEvents.length,
+                taskIdRef: widget.backlogItem.id,
+                description: eventTitle,
+                type: "backlog",
+                start: startDateTime,
+                end: endDateTime,
+                background: widget.backlogItem.category.color,
+                isAllDay: false,
+                notes: eventNotes,
+                category: category,
+                location: eventLocation,
+                backlogMapRef: widget.bmRef);
+
+            //PlannerService.sharedInstance.user.allEvents.add(newEvent);
+            events.add(newEvent);
+
+            CalendarPage.events.appointments!.add(events[0]);
+
+            CalendarPage.events
+                .notifyListeners(CalendarDataSourceAction.add, events);
+            PlannerService.sharedInstance.user!.scheduledEvents =
+                CalendarPage.events.appointments! as List<Event>;
+
+            CalendarPage.selectedEvent = null;
+            widget.updateEvents();
+            Navigator.of(context).popUntil((route) {
+              return route.settings.name == 'navigaionPage';
+            });
+          } else {
+            //500 error, show an alert
+
+          }
+        } else {
+          //500 error, show an alert
+
+        }
+
+        //next get that new event id and update task with scheduled date and event id for calendar item
       }
     }
   }

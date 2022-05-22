@@ -9,7 +9,6 @@ import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
-import 'package:practice_planner/views/Calendar/tomorrow_schedule_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -62,13 +61,6 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   void _openTomorrowSchedulePage() {
-    //this function needs to change to create new goal
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     settings: const RouteSettings(name: "/tomorrow"),
-    //     builder: (context) => const TomorrowPlanningPage(),
-    //   ),
-    // );
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const TomorrowPlanningPage();

@@ -13,12 +13,14 @@ class Event {
   String? location;
   bool isAllDay;
   int? id;
+  int? taskIdRef;
   String type;
   bool? isAccomplished;
   BacklogMapRef?
       backlogMapRef; //if a backlog item is scheduled on the calendar, this reference will link the backlog item to its calendar event
   Event(
       {this.id,
+      this.taskIdRef,
       this.isAccomplished,
       required this.description,
       required this.start,

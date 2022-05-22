@@ -128,70 +128,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
       backloglistview.add(expansionTile); //1 per category
     });
     return backloglistview;
-
-    // Widget todayExpansionTile = ExpansionTile(
-    //   title: const Text("Working on Today"),
-    //   //initiallyExpanded: true,
-    //   children: todayItems,
-    // );
-
-    // Widget tomorrowExpansionTile = ExpansionTile(
-    //   title: const Text("Working on Tomorrow"),
-    //   //initiallyExpanded: true,
-    //   children: tomorrowItems,
-    // );
-
-    // Widget unscheduledExpansionTile = ExpansionTile(
-    //   title: const Text("Backlog"),
-    //   initiallyExpanded: true,
-    //   children: backloglistview,
-    //   // trailing: Text(value.length.toString(),style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-    // );
-
-    // List<Widget> expansionTiles = [
-    //   todayExpansionTile,
-    //   tomorrowExpansionTile,
-    //   unscheduledExpansionTile
-    // ];
-
-    // return expansionTiles;
   }
-
-  // List<Widget> buildBacklogListView() {
-  //   print("building backlog view");
-  //   List<Widget> backloglistview = [];
-  //   PlannerService.sharedInstance.user.backlogMap.forEach((key, value) {
-  //     List<Widget> expansionTileChildren = [];
-  //     for (int i = 0; i < value.length; i++) {
-  //       Widget child = CheckboxListTile(
-  //         title: Text(value[i].description),
-  //         value:
-  //             PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
-  //         onChanged: (bool? checked) {
-  //           //print(value);
-  //           BacklogMapRef bmRef = BacklogMapRef(categoryName: key, arrayIdx: i);
-  //           setTime(value[i], bmRef);
-  //           // setState(() {
-  //           //   PlannerService.sharedInstance.user.backlog[key][i].isComplete =
-  //           //       value;
-  //           //   //_value = value!;
-  //           // });
-  //         },
-  //         controlAffinity: ListTileControlAffinity.leading,
-  //       );
-  //       expansionTileChildren.add(child);
-  //     }
-  //     Widget expansionTile = ExpansionTile(
-  //       title: Text(key),
-  //       children: expansionTileChildren,
-  //       trailing: Text(value.length.toString(),
-  //           style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-  //     );
-  //     backloglistview.add(expansionTile);
-  //   });
-
-  //   return backloglistview;
-  // }
 
   @override
   Widget build(BuildContext context) {

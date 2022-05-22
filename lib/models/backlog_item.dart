@@ -14,6 +14,7 @@ class BacklogItem {
 
   BacklogItem(
       {this.id,
+      this.calendarItemRef,
       required this.description,
       this.completeBy,
       this.isComplete,
