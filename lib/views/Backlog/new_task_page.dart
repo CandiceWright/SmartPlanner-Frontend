@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/life_category.dart';
 import '/models/backlog_item.dart';
 import '/services/planner_service.dart';
+import 'package:http/http.dart' as http;
 
 class NewTaskPage extends StatefulWidget {
   const NewTaskPage({Key? key, required this.updateBacklog}) : super(key: key);
@@ -55,36 +58,54 @@ class _NewTaskPageState extends State<NewTaskPage> {
       });
   }
 
-  void createBacklogItem() {
+  void createBacklogItem() async {
     var taskTitle = descriptionTxtController.text;
-    // var goalDate = dateTxtController.text;
-    var newBacklogItem = BacklogItem(
-        description: taskTitle,
-        completeBy: selectedDate,
-        isComplete: false,
-        category: currChosenCategory,
-        //categoryTxtController.text,
-        location: locationTxtController.text,
-        notes: notesTxtController.text);
+    //Make calls to server
+    var body = {
+      'userId': PlannerService.sharedInstance.user!.id,
+      'description': taskTitle,
+      'completeBy': selectedDate.toString(),
+      'category': currChosenCategory.id,
+      'isComplete': false,
+      'location': locationTxtController.text,
+      'notes': notesTxtController.text
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
 
-    PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
-        .add(newBacklogItem);
-    // if (newBacklogItem.category == "") {
-    //   if (PlannerService.sharedInstance.user.backlog.containsKey("Other")) {
-    //     PlannerService.sharedInstance.user.backlog["Other"].add(newBacklogItem);
-    //   } else {
-    //     PlannerService.sharedInstance.user.backlog["Other"] = [newBacklogItem];
-    //   }
-    // } else {
-    //   PlannerService.sharedInstance.user.backlog[newBacklogItem.category]
-    //       .add(newBacklogItem);
-    // }
-    if (DateFormat.yMMMd().format(selectedDate) ==
-        DateFormat.yMMMd().format(DateTime.now())) {
-      PlannerService.sharedInstance.user!.todayTasks.add(newBacklogItem);
+    var url = Uri.parse('http://localhost:7343/backlog');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      print(decodedBody);
+      var id = decodedBody["insertId"];
+      var newBacklogItem = BacklogItem(
+          id: id,
+          description: taskTitle,
+          completeBy: selectedDate,
+          isComplete: false,
+          category: currChosenCategory,
+          //categoryTxtController.text,
+          location: locationTxtController.text,
+          notes: notesTxtController.text);
+
+      PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
+          .add(newBacklogItem);
+
+      if (DateFormat.yMMMd().format(selectedDate) ==
+          DateFormat.yMMMd().format(DateTime.now())) {
+        PlannerService.sharedInstance.user!.todayTasks.add(newBacklogItem);
+      }
+      widget.updateBacklog();
+      _backToBacklogPage();
+    } else {
+      //500 error, show an alert
+
     }
-    widget.updateBacklog();
-    _backToBacklogPage();
   }
 
   void setDoneBtnState() {

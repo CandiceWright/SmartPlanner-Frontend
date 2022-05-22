@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/life_category.dart';
@@ -5,6 +7,7 @@ import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
+import 'package:http/http.dart' as http;
 
 class EditTaskPage extends StatefulWidget {
   const EditTaskPage(
@@ -73,37 +76,73 @@ class _EditTaskPageState extends State<EditTaskPage> {
     }
   }
 
-  void editBacklogItem() {
-    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
-        .description = descriptionTxtController.text;
-    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
-        .completeBy = selectedDate;
-    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
-        .location = locationTxtController.text;
-    PlannerService.sharedInstance.user!.backlogMap[widget.category]![widget.id]
-        .notes = notesTxtController.text;
+  void editBacklogItem() async {
+    var taskTitle = descriptionTxtController.text;
+    //Make calls to server
+    var body = {
+      'userId': PlannerService.sharedInstance.user!.id,
+      'taskId': PlannerService
+          .sharedInstance.user!.backlogMap[widget.category]![widget.id].id,
+      'description': taskTitle,
+      'completeBy': selectedDate.toString(),
+      'category': currChosenCategory.id,
+      'isComplete': false,
+      'location': locationTxtController.text,
+      'notes': notesTxtController.text
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
 
-    if (currChosenCategory !=
-        PlannerService.sharedInstance.user!
-            .backlogMap[widget.category]![widget.id].category) {
-      //category was changed
-      var backlogItem = PlannerService
-          .sharedInstance.user!.backlogMap[widget.category]![widget.id];
-      PlannerService.sharedInstance.user!.backlogMap[widget.category]!
-          .removeAt(widget.id); //delete from old category
-      backlogItem.category = currChosenCategory;
-      PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
-          .add(backlogItem);
-    } else {
+    var url = Uri.parse('http://localhost:7343/backlog');
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
       PlannerService
           .sharedInstance
           .user!
           .backlogMap[widget.category]![widget.id]
-          .category = currChosenCategory;
-    }
+          .description = descriptionTxtController.text;
+      PlannerService.sharedInstance.user!
+          .backlogMap[widget.category]![widget.id].completeBy = selectedDate;
+      PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[widget.category]![widget.id]
+          .location = locationTxtController.text;
+      PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[widget.category]![widget.id]
+          .notes = notesTxtController.text;
 
-    widget.updateBacklog();
-    _backToBacklogPage();
+      if (currChosenCategory !=
+          PlannerService.sharedInstance.user!
+              .backlogMap[widget.category]![widget.id].category) {
+        //category was changed
+        var backlogItem = PlannerService
+            .sharedInstance.user!.backlogMap[widget.category]![widget.id];
+        PlannerService.sharedInstance.user!.backlogMap[widget.category]!
+            .removeAt(widget.id); //delete from old category
+        backlogItem.category = currChosenCategory;
+        PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
+            .add(backlogItem);
+      } else {
+        PlannerService
+            .sharedInstance
+            .user!
+            .backlogMap[widget.category]![widget.id]
+            .category = currChosenCategory;
+      }
+
+      widget.updateBacklog();
+      _backToBacklogPage();
+    } else {
+      //500 error, show an alert
+
+    }
   }
 
   void _backToBacklogPage() {

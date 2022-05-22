@@ -1,6 +1,7 @@
 import 'package:practice_planner/models/life_category.dart';
 
 class BacklogItem {
+  int? id;
   String description = "";
   DateTime? completeBy;
   bool? isComplete = false;
@@ -12,7 +13,8 @@ class BacklogItem {
   int? calendarItemRef;
 
   BacklogItem(
-      {required this.description,
+      {this.id,
+      required this.description,
       this.completeBy,
       this.isComplete,
       required this.category,

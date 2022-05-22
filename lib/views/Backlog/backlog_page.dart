@@ -7,6 +7,7 @@ import 'package:practice_planner/views/Backlog/new_task_page.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 
 class BacklogPage extends StatefulWidget {
   const BacklogPage({Key? key}) : super(key: key);
@@ -79,13 +80,30 @@ class _BacklogPageState extends State<BacklogPage> {
             ),
             actions: <Widget>[
               TextButton(
-                  onPressed: () {
+                child: Text('yes, delete'),
+                onPressed: () async {
+                  //first call server
+                  var taskId = PlannerService
+                      .sharedInstance.user!.backlogMap[key]![idx].id;
+                  var url = Uri.parse(
+                      'http://localhost:7343/backlog/' + taskId.toString());
+                  var response = await http.delete(
+                    url,
+                  );
+                  print('Response status: ${response.statusCode}');
+                  print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
                     PlannerService.sharedInstance.user!.backlogMap[key]!
                         .removeAt(idx);
                     setState(() {});
                     Navigator.pop(context);
-                  },
-                  child: Text('yes, delete')),
+                  } else {
+                    //500 error, show an alert
+
+                  }
+                },
+              ),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
