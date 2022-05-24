@@ -1,3 +1,4 @@
+import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/models/life_category.dart';
 
 class BacklogItem {
@@ -10,7 +11,7 @@ class BacklogItem {
   LifeCategory category;
   String location;
   String notes;
-  int? calendarItemRef;
+  Event? calendarItemRef;
 
   BacklogItem(
       {this.id,

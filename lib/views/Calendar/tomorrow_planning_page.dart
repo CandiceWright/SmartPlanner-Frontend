@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
@@ -11,6 +13,7 @@ import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
 import 'notes_page.dart';
+import 'package:http/http.dart' as http;
 
 class TomorrowPlanningPage extends StatefulWidget {
   const TomorrowPlanningPage({Key? key}) : super(key: key);
@@ -126,28 +129,53 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
             actions: <Widget>[
               TextButton(
                 child: const Text('yes, unschedule'),
-                onPressed: () {
+                onPressed: () async {
+                  //make call to server to unschedule task.
                   if (CalendarPage.selectedEvent != null) {
-                    CalendarPage.events.appointments!.removeAt(CalendarPage
-                        .events.appointments!
-                        .indexOf(CalendarPage.selectedEvent));
-                    CalendarPage.events.notifyListeners(
-                        CalendarDataSourceAction.remove,
-                        <Event>[]..add(CalendarPage.selectedEvent!));
-                    PlannerService.sharedInstance.user!.scheduledEvents =
-                        CalendarPage.events.appointments! as List<Event>;
-                    var backlogItemRef =
-                        CalendarPage.selectedEvent!.backlogMapRef;
+                    var body = {
+                      'eventId': CalendarPage.selectedEvent!.id,
+                      'taskId': CalendarPage.selectedEvent!.taskIdRef
+                    };
+                    String bodyF = jsonEncode(body);
+                    print(bodyF);
 
-                    PlannerService
-                        .sharedInstance
-                        .user!
-                        .backlogMap[backlogItemRef!.categoryName]![
-                            backlogItemRef.arrayIdx]
-                        .scheduledDate = null;
-                    CalendarPage.selectedEvent = null;
-                    setState(() {});
-                    Navigator.pop(context);
+                    var url = Uri.parse(
+                        'http://localhost:7343/backlog/unscheduletask');
+                    var response = await http.post(url,
+                        headers: {"Content-Type": "application/json"},
+                        body: bodyF);
+                    print('Response status: ${response.statusCode}');
+                    print('Response body: ${response.body}');
+
+                    if (response.statusCode == 200) {
+                      //delete event & unschedule backlog item
+                      //if (CalendarPage.selectedEvent != null) {
+                      CalendarPage.events.appointments!.removeAt(CalendarPage
+                          .events.appointments!
+                          .indexOf(CalendarPage.selectedEvent));
+                      CalendarPage.events.notifyListeners(
+                          CalendarDataSourceAction.remove,
+                          <Event>[]..add(CalendarPage.selectedEvent!));
+                      PlannerService.sharedInstance.user!.scheduledEvents =
+                          CalendarPage.events.appointments! as List<Event>;
+
+                      var backlogItemRef =
+                          CalendarPage.selectedEvent!.backlogMapRef;
+
+                      PlannerService
+                          .sharedInstance
+                          .user!
+                          .backlogMap[backlogItemRef!.categoryName]![
+                              backlogItemRef.arrayIdx]
+                          .scheduledDate = null;
+                      CalendarPage.selectedEvent = null;
+                      setState(() {});
+                      Navigator.pop(context);
+                      //}
+                    } else {
+                      //500 error, show an alert
+
+                    }
                   }
                 },
               ),

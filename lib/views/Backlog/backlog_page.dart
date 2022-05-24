@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:practice_planner/models/backlog_item.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
+import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/views/Backlog/edit_task_page.dart';
 import 'package:practice_planner/views/Backlog/new_task_page.dart';
 import '/services/planner_service.dart';
@@ -131,16 +134,48 @@ class _BacklogPageState extends State<BacklogPage> {
             actions: <Widget>[
               TextButton(
                 child: const Text('yes, unschedule'),
-                onPressed: () {
-                  PlannerService.sharedInstance.user!.backlogMap[key]![idx]
-                      .scheduledDate = null;
-                  int calendarItemRef = PlannerService.sharedInstance.user!
-                      .backlogMap[key]![idx].calendarItemRef!;
-                  //remove this even from the calendar
-                  PlannerService.sharedInstance.user!.scheduledEvents
-                      .removeAt(calendarItemRef);
-                  setState(() {});
-                  Navigator.pop(context);
+                onPressed: () async {
+                  //first do server stuff
+                  var body = {
+                    'eventId': PlannerService.sharedInstance.user!
+                        .backlogMap[key]![idx].calendarItemRef!.id,
+                    'taskId': PlannerService
+                        .sharedInstance.user!.backlogMap[key]![idx].id
+                  };
+                  String bodyF = jsonEncode(body);
+                  print(bodyF);
+
+                  var url =
+                      Uri.parse('http://localhost:7343/backlog/unscheduletask');
+                  var response = await http.post(url,
+                      headers: {"Content-Type": "application/json"},
+                      body: bodyF);
+                  print('Response status: ${response.statusCode}');
+                  print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
+                    //delete event & unschedule backlog item
+                    //first remove event from scheduled events
+                    Event calendarItemRef = PlannerService.sharedInstance.user!
+                        .backlogMap[key]![idx].calendarItemRef!;
+                    PlannerService.sharedInstance.user!.scheduledEvents
+                        .removeAt(PlannerService
+                            .sharedInstance.user!.scheduledEvents
+                            .indexOf(calendarItemRef));
+
+                    //update the backlog item so that it no longer references a scheduled event
+                    PlannerService.sharedInstance.user!.backlogMap[key]![idx]
+                        .scheduledDate = null;
+                    PlannerService.sharedInstance.user!.backlogMap[key]![idx]
+                        .calendarItemRef = null;
+
+                    setState(() {});
+                    Navigator.pop(context);
+                    //}
+                  } else {
+                    //500 error, show an alert
+
+                  }
                 },
               ),
               TextButton(

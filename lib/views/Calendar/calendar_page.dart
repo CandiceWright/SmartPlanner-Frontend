@@ -1,6 +1,8 @@
 //library event_calendar;
 //part 'edit_event_page.dart';
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -193,7 +195,7 @@ class _CalendarPageState extends State<CalendarPage> {
         });
   }
 
-  void unscheduleEvent() {
+  void unscheduleEvent() async {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -209,30 +211,53 @@ class _CalendarPageState extends State<CalendarPage> {
                 "This will not delete the backlog item, it will just be removed from your calendar."),
             actions: <Widget>[
               TextButton(
-                  onPressed: () {
-                    //delete event & unschedule backlog item
+                  onPressed: () async {
+                    //make call to server to unschedule task.
                     if (CalendarPage.selectedEvent != null) {
-                      CalendarPage.events.appointments!.removeAt(CalendarPage
-                          .events.appointments!
-                          .indexOf(CalendarPage.selectedEvent));
-                      CalendarPage.events.notifyListeners(
-                          CalendarDataSourceAction.remove,
-                          <Event>[]..add(CalendarPage.selectedEvent!));
-                      PlannerService.sharedInstance.user!.scheduledEvents =
-                          CalendarPage.events.appointments! as List<Event>;
+                      var body = {
+                        'eventId': CalendarPage.selectedEvent!.id,
+                        'taskId': CalendarPage.selectedEvent!.taskIdRef
+                      };
+                      String bodyF = jsonEncode(body);
+                      print(bodyF);
 
-                      var backlogItemRef =
-                          CalendarPage.selectedEvent!.backlogMapRef;
+                      var url = Uri.parse(
+                          'http://localhost:7343/backlog/unscheduletask');
+                      var response = await http.post(url,
+                          headers: {"Content-Type": "application/json"},
+                          body: bodyF);
+                      print('Response status: ${response.statusCode}');
+                      print('Response body: ${response.body}');
 
-                      PlannerService
-                          .sharedInstance
-                          .user!
-                          .backlogMap[backlogItemRef!.categoryName]![
-                              backlogItemRef.arrayIdx]
-                          .scheduledDate = null;
-                      CalendarPage.selectedEvent = null;
-                      setState(() {});
-                      Navigator.pop(context);
+                      if (response.statusCode == 200) {
+                        //delete event & unschedule backlog item
+                        //if (CalendarPage.selectedEvent != null) {
+                        CalendarPage.events.appointments!.removeAt(CalendarPage
+                            .events.appointments!
+                            .indexOf(CalendarPage.selectedEvent));
+                        CalendarPage.events.notifyListeners(
+                            CalendarDataSourceAction.remove,
+                            <Event>[]..add(CalendarPage.selectedEvent!));
+                        PlannerService.sharedInstance.user!.scheduledEvents =
+                            CalendarPage.events.appointments! as List<Event>;
+
+                        var backlogItemRef =
+                            CalendarPage.selectedEvent!.backlogMapRef;
+
+                        PlannerService
+                            .sharedInstance
+                            .user!
+                            .backlogMap[backlogItemRef!.categoryName]![
+                                backlogItemRef.arrayIdx]
+                            .scheduledDate = null;
+                        CalendarPage.selectedEvent = null;
+                        setState(() {});
+                        Navigator.pop(context);
+                        //}
+                      } else {
+                        //500 error, show an alert
+
+                      }
                     }
                   },
                   child: const Text('yes, unschedule')),
