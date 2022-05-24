@@ -180,7 +180,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      "Where I define key concepts of my life",
+                      "Define your World",
                       style: TextStyle(color: Colors.white),
                       //textAlign: TextAlign.center,
                     ),

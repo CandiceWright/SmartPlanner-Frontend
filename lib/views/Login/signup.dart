@@ -81,7 +81,7 @@ class _SignupPageState extends State<SignupPage> {
             children: [
               Padding(
                 child: Image.asset(
-                  "assets/images/planit_logo.png",
+                  "assets/images/welcome_graphic_brownpink.png",
                 ),
                 padding: EdgeInsets.all(10),
               ),

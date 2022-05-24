@@ -66,7 +66,7 @@ class _WelcomePageState extends State<WelcomePage> {
             children: [
               Padding(
                 child: Image.asset(
-                  "assets/images/welcome_graphic_planit.png",
+                  "assets/images/welcome_graphic_brownpink.png",
                 ),
                 padding: EdgeInsets.all(10),
               ),
