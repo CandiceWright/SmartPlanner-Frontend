@@ -138,17 +138,6 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           print('Response body: ${response2.body}');
 
           if (response2.statusCode == 200) {
-            PlannerService
-                .sharedInstance
-                .user!
-                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-                .scheduledDate = startDateTime;
-            PlannerService
-                .sharedInstance
-                .user!
-                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-                .calendarItemRef = id;
-
             var newEvent = Event(
                 id: id,
                 //id: PlannerService.sharedInstance.user.allEvents.length,
@@ -173,6 +162,17 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
                 .notifyListeners(CalendarDataSourceAction.add, events);
             PlannerService.sharedInstance.user!.scheduledEvents =
                 CalendarPage.events.appointments! as List<Event>;
+
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .scheduledDate = startDateTime;
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .calendarItemRef = newEvent;
 
             CalendarPage.selectedEvent = null;
             widget.updateEvents();

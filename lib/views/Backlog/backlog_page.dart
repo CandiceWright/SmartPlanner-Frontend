@@ -392,9 +392,7 @@ class _BacklogPageState extends State<BacklogPage> {
           var test = DateTime(
               DateTime.now().year, DateTime.now().month, DateTime.now().day);
           print(test);
-          if (value[i].scheduledDate ==
-              DateTime(DateTime.now().year, DateTime.now().month,
-                  DateTime.now().day)) {
+          if (value[i].scheduledDate!.day == DateTime.now().day) {
             todayItems.add(child);
           } else {
             tomorrowItems.add(child);
