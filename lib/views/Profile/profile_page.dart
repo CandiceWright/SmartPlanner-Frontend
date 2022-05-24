@@ -63,11 +63,12 @@ class _ProfilePageState extends State<ProfilePage> {
     var body = {
       'name': categoryNameTxtController.text,
       'color': pickerColor.value,
+      'userId': PlannerService.sharedInstance.user!.id
     };
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/goals');
+    var url = Uri.parse('http://localhost:7343/categories');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -76,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
       print(decodedBody);
-      var id = decodedBody[0]["categoryId"];
+      var id = decodedBody["insertId"];
       var category =
           LifeCategory(id, categoryNameTxtController.text, pickerColor);
       int color = pickerColor.value;

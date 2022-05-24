@@ -349,7 +349,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: EdgeInsets.only(left: 10.0),
                   child: Text(
-                    "PLANIT CANDY",
+                    "PLANIT " + PlannerService.sharedInstance.user!.planitName,
                     style: GoogleFonts.roboto(
                       textStyle: const TextStyle(
                           color: Colors.white,
