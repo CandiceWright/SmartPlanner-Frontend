@@ -937,6 +937,12 @@ class _HomePageState extends State<HomePage> {
                           callEditHabit(i, "nameUpdate", null);
                         }),
               TextButton(
+                  child: const Text('delete'),
+                  onPressed: () {
+                    print("delete button pressed");
+                    deleteHabit(i);
+                  }),
+              TextButton(
                 child: const Text('cancel'),
                 onPressed: () {
                   newHabitTextController.text = "";
@@ -1076,5 +1082,53 @@ class _HomePageState extends State<HomePage> {
       //500 error, show an alert
 
     }
+  }
+
+  deleteHabit(i) {
+    print("in delete habit");
+    Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to delete?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('yes, delete'),
+                onPressed: () async {
+                  var habitId =
+                      PlannerService.sharedInstance.user!.habits[i].id;
+                  //first call server
+                  var url = Uri.parse(
+                      'http://localhost:7343/habits/' + habitId.toString());
+                  var response = await http.delete(
+                    url,
+                  );
+                  print('Response status: ${response.statusCode}');
+                  print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
+                    PlannerService.sharedInstance.user!.habits.removeAt(i);
+                    setState(() {});
+                    Navigator.pop(context);
+                  } else {
+                    //500 error, show an alert
+
+                  }
+                },
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('cancel'))
+            ],
+          );
+        });
   }
 }

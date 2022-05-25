@@ -42,7 +42,7 @@ class User {
       required this.didStartTomorrowPlanning,
       required this.lifeCategories}) {
     //buildBacklogMap();
-    buildHabitList();
+    //buildHabitList();
     //buildEventList();
   }
 
