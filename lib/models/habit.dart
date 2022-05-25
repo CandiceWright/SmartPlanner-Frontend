@@ -1,4 +1,5 @@
 class Habit {
+  int? id;
   String description = "";
   Map<String, bool> habitTrackerMap = {
     "Sunday": false,
@@ -10,5 +11,5 @@ class Habit {
     "Saturday": false,
   };
 
-  Habit(this.description);
+  Habit({this.id, required this.description});
 }

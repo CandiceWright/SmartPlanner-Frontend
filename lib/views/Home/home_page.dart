@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/models/event_data_source.dart';
@@ -10,6 +12,7 @@ import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -91,179 +94,6 @@ class _HomePageState extends State<HomePage> {
       todayTasksWidgets.add(taskWidget);
     }
     return todayTasksWidgets;
-  }
-
-  List<TableRow> buildHabitsView() {
-    List<TableRow> tableRows = [];
-    TableRow headerRow = TableRow(children: [
-      TableCell(
-        verticalAlignment: TableCellVerticalAlignment.fill,
-        child: Container(
-            // child: Text(
-            //   "Habits",
-            //   textAlign: TextAlign.center,
-            //   style: TextStyle(
-            //     //color: Theme.of(context).colorScheme.primary,
-            //     color: Colors.black,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            //margin: EdgeInsets.only(left: 10, right: 10),
-            ),
-      ),
-      TableCell(
-          child: Container(child: Text("S", textAlign: TextAlign.center))),
-      TableCell(child: Text("M", textAlign: TextAlign.center)),
-      TableCell(child: Text("T", textAlign: TextAlign.center)),
-      TableCell(child: Text("W", textAlign: TextAlign.center)),
-      TableCell(child: Text("TH", textAlign: TextAlign.center)),
-      TableCell(child: Text("F", textAlign: TextAlign.center)),
-      TableCell(child: Text("S", textAlign: TextAlign.center)),
-    ]);
-
-    tableRows.add(headerRow);
-    print("printing size of habits size");
-    print(PlannerService.sharedInstance.user!.habits.length);
-
-    for (int i = 0;
-        i < PlannerService.sharedInstance.user!.habits.length;
-        i++) {
-      //print("printing habit tracker map at Sunday");
-      //print(PlannerService.sharedInstance.user.habits[i].habitTrackerMap["Sunday"]);
-      TableRow tableRow = TableRow(children: [
-        TableCell(
-          verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Container(
-            child: TextButton(
-              child: Text(
-                PlannerService.sharedInstance.user!.habits[i].description,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.black),
-              ),
-              onPressed: () {
-                //showHabitDialog(i);
-              },
-            ),
-            margin: EdgeInsets.only(left: 10, right: 10),
-          ),
-        ),
-        TableCell(
-          child: Container(
-            child: Checkbox(
-              shape: CircleBorder(),
-              value: PlannerService
-                  .sharedInstance.user!.habits[i].habitTrackerMap["Sunday"]!,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {
-                  PlannerService.sharedInstance.user!.habits[i]
-                      .habitTrackerMap["Sunday"] = value!;
-                });
-              },
-            ),
-          ),
-        ),
-        TableCell(
-          child: Container(
-            child: Checkbox(
-              shape: CircleBorder(),
-              value: PlannerService
-                  .sharedInstance.user!.habits[i].habitTrackerMap["Mon"]!,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {
-                  PlannerService.sharedInstance.user!.habits[i]
-                      .habitTrackerMap["Mon"] = value!;
-                });
-              },
-            ),
-          ),
-        ),
-        TableCell(
-          child: Container(
-            child: Checkbox(
-              shape: CircleBorder(),
-              value: PlannerService
-                  .sharedInstance.user!.habits[i].habitTrackerMap["Tues"]!,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {
-                  PlannerService.sharedInstance.user!.habits[i]
-                      .habitTrackerMap["Tues"] = value!;
-                });
-              },
-            ),
-          ),
-        ),
-        TableCell(
-          child: Container(
-            child: Checkbox(
-              shape: CircleBorder(),
-              value: PlannerService
-                  .sharedInstance.user!.habits[i].habitTrackerMap["Wed"]!,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {
-                  PlannerService.sharedInstance.user!.habits[i]
-                      .habitTrackerMap["Wed"] = value!;
-                });
-              },
-            ),
-          ),
-        ),
-        TableCell(
-          child: Container(
-            child: Checkbox(
-              shape: CircleBorder(),
-              value: PlannerService
-                  .sharedInstance.user!.habits[i].habitTrackerMap["Thurs"]!,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {
-                  PlannerService.sharedInstance.user!.habits[i]
-                      .habitTrackerMap["Thurs"] = value!;
-                });
-              },
-            ),
-          ),
-        ),
-        TableCell(
-          child: Container(
-            child: Checkbox(
-              shape: CircleBorder(),
-              value: PlannerService
-                  .sharedInstance.user!.habits[i].habitTrackerMap["Friday"]!,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {
-                  PlannerService.sharedInstance.user!.habits[i]
-                      .habitTrackerMap["Friday"] = value!;
-                });
-              },
-            ),
-          ),
-        ),
-        TableCell(
-          child: Container(
-            child: Checkbox(
-              shape: CircleBorder(),
-              value: PlannerService
-                  .sharedInstance.user!.habits[i].habitTrackerMap["Saturday"]!,
-              onChanged: (bool? value) {
-                print(value);
-                setState(() {
-                  PlannerService.sharedInstance.user!.habits[i]
-                      .habitTrackerMap["Saturday"] = value!;
-                });
-              },
-            ),
-          ),
-        ),
-      ]);
-      tableRows.add(tableRow);
-    }
-
-    return tableRows;
   }
 
   @override
@@ -473,50 +303,53 @@ class _HomePageState extends State<HomePage> {
                                       //style: TextStyle(color: Colors.black),
                                     ),
                                     onPressed: () {
-                                      print("Buttton was pressed");
-                                      //habitClicked(i);
-                                      setEditHabitBtnState();
-                                      editHabitTxtController.text =
-                                          PlannerService.sharedInstance.user!
-                                              .habits[i].description;
-                                      showDialog(
-                                          context: context,
-                                          barrierColor: Colors.black26,
-                                          builder: (context) => AlertDialog(
-                                                title: Text("Edit"),
-                                                content: TextFormField(
-                                                  controller:
-                                                      editHabitTxtController,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    hintText: "Description",
-                                                  ),
-                                                  validator: (String? value) {
-                                                    if (value == null ||
-                                                        value.isEmpty) {
-                                                      return 'Please enter some text';
-                                                    }
-                                                    return null;
-                                                  },
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                      child: const Text('save'),
-                                                      onPressed:
-                                                          saveHabitBtnDisabled
-                                                              ? null
-                                                              : saveNewHabit),
-                                                  TextButton(
-                                                    child: const Text('cancel'),
-                                                    onPressed: () {
-                                                      newHabitTextController
-                                                          .text = "";
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  )
-                                                ],
-                                              ));
+                                      editHabitClicked(i);
+                                      // print("Buttton was pressed");
+                                      // //habitClicked(i);
+                                      // setEditHabitBtnState();
+                                      // editHabitTxtController.text =
+                                      //     PlannerService.sharedInstance.user!
+                                      //         .habits[i].description;
+                                      // showDialog(
+                                      //     context: context,
+                                      //     barrierColor: Colors.black26,
+                                      //     builder: (context) => AlertDialog(
+                                      //           title: Text("Edit"),
+                                      //           content: TextFormField(
+                                      //             controller:
+                                      //                 editHabitTxtController,
+                                      //             decoration:
+                                      //                 const InputDecoration(
+                                      //               hintText: "Description",
+                                      //             ),
+                                      //             validator: (String? value) {
+                                      //               if (value == null ||
+                                      //                   value.isEmpty) {
+                                      //                 return 'Please enter some text';
+                                      //               }
+                                      //               return null;
+                                      //             },
+                                      //           ),
+                                      //           actions: [
+                                      //             TextButton(
+                                      //                 child: const Text('save'),
+                                      //                 onPressed:
+                                      //                     editHabitClicked(i)
+                                      //                 // () {
+                                      //                 //   print("pressed");
+                                      //                 // }),
+                                      //                 ),
+                                      //             TextButton(
+                                      //               child: const Text('cancel'),
+                                      //               onPressed: () {
+                                      //                 newHabitTextController
+                                      //                     .text = "";
+                                      //                 Navigator.of(context)
+                                      //                     .pop();
+                                      //               },
+                                      //             )
+                                      //           ],
+                                      //         ));
                                     },
                                   ),
                                   margin: EdgeInsets.only(left: 10, right: 10),
@@ -530,13 +363,48 @@ class _HomePageState extends State<HomePage> {
                                         .habits[i].habitTrackerMap["Sunday"]!,
                                     onChanged: (bool? value) {
                                       print(value);
-                                      setState(() {
-                                        PlannerService
+                                      //first create habit map
+                                      Map<String, bool> habitMap = {
+                                        "Sunday": value!,
+                                        "Mon": PlannerService
                                             .sharedInstance
                                             .user!
                                             .habits[i]
-                                            .habitTrackerMap["Sunday"] = value!;
-                                      });
+                                            .habitTrackerMap["Mon"]!,
+                                        "Tues": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Tues"]!,
+                                        "Wed": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Wed"]!,
+                                        "Thurs": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Thurs"]!,
+                                        "Friday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Friday"]!,
+                                        "Saturday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Saturday"]!,
+                                      };
+                                      editHabit(i, "dayUpdate", habitMap);
+                                      // setState(() {
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .habits[i]
+                                      //       .habitTrackerMap["Sunday"] = value!;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -549,13 +417,48 @@ class _HomePageState extends State<HomePage> {
                                         .habits[i].habitTrackerMap["Mon"]!,
                                     onChanged: (bool? value) {
                                       print(value);
-                                      setState(() {
-                                        PlannerService
+                                      //first create habit map
+                                      Map<String, bool> habitMap = {
+                                        "Sunday": PlannerService
                                             .sharedInstance
                                             .user!
                                             .habits[i]
-                                            .habitTrackerMap["Mon"] = value!;
-                                      });
+                                            .habitTrackerMap["Sunday"]!,
+                                        "Mon": value!,
+                                        "Tues": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Tues"]!,
+                                        "Wed": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Wed"]!,
+                                        "Thurs": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Thurs"]!,
+                                        "Friday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Friday"]!,
+                                        "Saturday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Saturday"]!,
+                                      };
+                                      editHabit(i, "dayUpdate", habitMap);
+                                      // setState(() {
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .habits[i]
+                                      //       .habitTrackerMap["Mon"] = value!;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -568,13 +471,48 @@ class _HomePageState extends State<HomePage> {
                                         .habits[i].habitTrackerMap["Tues"]!,
                                     onChanged: (bool? value) {
                                       print(value);
-                                      setState(() {
-                                        PlannerService
+                                      //first create habit map
+                                      Map<String, bool> habitMap = {
+                                        "Sunday": PlannerService
                                             .sharedInstance
                                             .user!
                                             .habits[i]
-                                            .habitTrackerMap["Tues"] = value!;
-                                      });
+                                            .habitTrackerMap["Sunday"]!,
+                                        "Mon": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Mon"]!,
+                                        "Tues": value!,
+                                        "Wed": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Wed"]!,
+                                        "Thurs": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Thurs"]!,
+                                        "Friday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Friday"]!,
+                                        "Saturday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Saturday"]!,
+                                      };
+                                      editHabit(i, "dayUpdate", habitMap);
+                                      // setState(() {
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .habits[i]
+                                      //       .habitTrackerMap["Tues"] = value!;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -587,13 +525,47 @@ class _HomePageState extends State<HomePage> {
                                         .habits[i].habitTrackerMap["Wed"]!,
                                     onChanged: (bool? value) {
                                       print(value);
-                                      setState(() {
-                                        PlannerService
+                                      Map<String, bool> habitMap = {
+                                        "Sunday": PlannerService
                                             .sharedInstance
                                             .user!
                                             .habits[i]
-                                            .habitTrackerMap["Wed"] = value!;
-                                      });
+                                            .habitTrackerMap["Sunday"]!,
+                                        "Mon": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Mon"]!,
+                                        "Tues": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Tues"]!,
+                                        "Wed": value!,
+                                        "Thurs": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Thurs"]!,
+                                        "Friday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Friday"]!,
+                                        "Saturday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Saturday"]!,
+                                      };
+                                      editHabit(i, "dayUpdate", habitMap);
+                                      // setState(() {
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .habits[i]
+                                      //       .habitTrackerMap["Wed"] = value!;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -606,13 +578,47 @@ class _HomePageState extends State<HomePage> {
                                         .habits[i].habitTrackerMap["Thurs"]!,
                                     onChanged: (bool? value) {
                                       print(value);
-                                      setState(() {
-                                        PlannerService
+                                      Map<String, bool> habitMap = {
+                                        "Sunday": PlannerService
                                             .sharedInstance
                                             .user!
                                             .habits[i]
-                                            .habitTrackerMap["Thurs"] = value!;
-                                      });
+                                            .habitTrackerMap["Sunday"]!,
+                                        "Mon": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Mon"]!,
+                                        "Tues": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Tues"]!,
+                                        "Wed": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Wed"]!,
+                                        "Thurs": value!,
+                                        "Friday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Friday"]!,
+                                        "Saturday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Saturday"]!,
+                                      };
+                                      editHabit(i, "dayUpdate", habitMap);
+                                      // setState(() {
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .habits[i]
+                                      //       .habitTrackerMap["Thurs"] = value!;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -625,13 +631,47 @@ class _HomePageState extends State<HomePage> {
                                         .habits[i].habitTrackerMap["Friday"]!,
                                     onChanged: (bool? value) {
                                       print(value);
-                                      setState(() {
-                                        PlannerService
+                                      Map<String, bool> habitMap = {
+                                        "Sunday": PlannerService
                                             .sharedInstance
                                             .user!
                                             .habits[i]
-                                            .habitTrackerMap["Friday"] = value!;
-                                      });
+                                            .habitTrackerMap["Sunday"]!,
+                                        "Mon": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Mon"]!,
+                                        "Tues": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Tues"]!,
+                                        "Wed": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Wed"]!,
+                                        "Thurs": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Thurs"]!,
+                                        "Friday": value!,
+                                        "Saturday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Saturday"]!,
+                                      };
+                                      editHabit(i, "dayUpdate", habitMap);
+                                      // setState(() {
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .habits[i]
+                                      //       .habitTrackerMap["Friday"] = value!;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -644,14 +684,48 @@ class _HomePageState extends State<HomePage> {
                                         .habits[i].habitTrackerMap["Saturday"]!,
                                     onChanged: (bool? value) {
                                       print(value);
-                                      setState(() {
-                                        PlannerService
-                                                .sharedInstance
-                                                .user!
-                                                .habits[i]
-                                                .habitTrackerMap["Saturday"] =
-                                            value!;
-                                      });
+                                      Map<String, bool> habitMap = {
+                                        "Sunday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Sunday"]!,
+                                        "Mon": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Mon"]!,
+                                        "Tues": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Tues"]!,
+                                        "Wed": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Wed"]!,
+                                        "Thurs": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Thurs"]!,
+                                        "Friday": PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .habits[i]
+                                            .habitTrackerMap["Friday"]!,
+                                        "Saturday": value!,
+                                      };
+                                      editHabit(i, "dayUpdate", habitMap);
+                                      // setState(() {
+                                      //   PlannerService
+                                      //           .sharedInstance
+                                      //           .user!
+                                      //           .habits[i]
+                                      //           .habitTrackerMap["Saturday"] =
+                                      //       value!;
+                                      // });
                                     },
                                   ),
                                 ),
@@ -680,22 +754,6 @@ class _HomePageState extends State<HomePage> {
                             fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     ),
-                    // child: Row(
-                    //   children: [
-                    //     Image.asset(
-                    //       "assets/images/deadline_icon.png",
-                    //       height: 40,
-                    //       width: 40,
-                    //     ),
-                    //     Text(
-                    //       "Upcoming Deadlines & Events",
-                    //       style: GoogleFonts.roboto(
-                    //         textStyle: const TextStyle(
-                    //             fontWeight: FontWeight.bold, fontSize: 16),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
                   ),
                   //Column(children: [ListTile(leading: ,)],)
                   Container(
@@ -752,18 +810,7 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(20.0),
             ),
             content: addNewHabitDialogContent(setDialogState),
-            // content: TextFormField(
-            //   controller: newHabitTextController,
-            //   decoration: const InputDecoration(
-            //     hintText: "Description",
-            //   ),
-            //   validator: (String? value) {
-            //     if (value == null || value.isEmpty) {
-            //       return 'Please enter some text';
-            //     }
-            //     return null;
-            //   },
-            // ),
+
             actions: <Widget>[
               TextButton(
                   child: const Text('save'),
@@ -782,15 +829,6 @@ class _HomePageState extends State<HomePage> {
         });
       },
     );
-  }
-
-  void saveNewHabit() {
-    var newHabit = Habit(newHabitTextController.text);
-    setState(() {
-      PlannerService.sharedInstance.user!.habits.add(newHabit);
-      newHabitTextController.text = "";
-    });
-    Navigator.of(context).pop();
   }
 
   addNewHabitDialogContent(StateSetter setDialogState) {
@@ -822,21 +860,38 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void setEditHabitBtnState() {
-    if (editHabitTxtController.text != "") {
+  Future<void> saveNewHabit() async {
+    //first make a call to the server with habit name, userId
+    var body = {
+      'userId': PlannerService.sharedInstance.user!.id,
+      'description': newHabitTextController.text,
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://localhost:7343/habits');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      print(decodedBody);
+      var id = decodedBody["insertId"];
+      var newHabit = Habit(id: id, description: newHabitTextController.text);
       setState(() {
-        print("button enabled");
-        editHabitBtnDisabled = false;
+        PlannerService.sharedInstance.user!.habits.add(newHabit);
+        newHabitTextController.text = "";
       });
+      Navigator.of(context).pop();
     } else {
-      setState(() {
-        editHabitBtnDisabled = true;
-      });
+      //500 error, show an alert
+
     }
   }
 
   void setSaveHabitBtnState() {
-    print("I am ttyping");
     if (newHabitTextController.text != "") {
       setState(() {
         print("button enabled");
@@ -849,120 +904,55 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // showHabitDialog(int idx) async {
-  //   showDialog(
-  //       context: context, // user must tap button!
-  //       builder: (BuildContext context) {
-  //         return StatefulBuilder(builder: (context, setDialogState) {
-  //         return AlertDialog(
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(20.0),
-  //           ),
-  //           content: ,
-  //           actions: <Widget>[
-  //             TextButton(
-  //                 child: const Text('save'),
-  //                 onPressed: editHabitBtnDisabled ? null : editHabit(idx)),
-  //             TextButton(
-  //               child: const Text('cancel'),
-  //               onPressed: () {
-  //                 newHabitTextController.text = "";
-  //                 Navigator.of(context).pop();
-  //               },
-  //             )
-  //           ],
-  //           // ),
-  //           //),
-  //         );
-  //       });
-  //   },
-  //   );
-  // }
+  /***************edit habit***********/
 
-  habitClicked(int idx) {
-    print("in habit clicked func");
+  editHabitClicked(int i) {
+    print("Buttton was pressed");
+    //habitClicked(i);
+    //setEditHabitBtnState();
     editHabitTxtController.text =
-        PlannerService.sharedInstance.user!.habits[idx].description;
-    Future<void>.delayed(
-      const Duration(), // OR const Duration(milliseconds: 500),
-      () => showDialog(
-        context: context, // user must tap button!
-        builder: (BuildContext context) {
-          //return StatefulBuilder(builder: (context, setDialogState) {
+        PlannerService.sharedInstance.user!.habits[i].description;
+    showDialog(
+      context: context, // user must tap button!
+
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setDialogState) {
           return AlertDialog(
-            title: const Text("New Habit"),
+            //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
+            //child: Expanded(
+            //child: Container(
+            title: const Text("Edit Habit"),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20.0),
             ),
-            //content: showHabitDialogContent(setDialogState, idx),
-            content: TextFormField(
-              controller: editHabitTxtController,
-              decoration: const InputDecoration(
-                hintText: "Description",
-              ),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
+            content: editHabitDialogContent(setDialogState),
+
             actions: <Widget>[
               TextButton(
                   child: const Text('save'),
-                  onPressed: editHabitBtnDisabled ? null : editHabit(idx)),
+                  onPressed: editHabitBtnDisabled
+                      ? null
+                      : () {
+                          print("pressed");
+                          callEditHabit(i, "nameUpdate", null);
+                        }),
               TextButton(
                 child: const Text('cancel'),
                 onPressed: () {
+                  newHabitTextController.text = "";
                   Navigator.of(context).pop();
                 },
               )
             ],
+            // ),
+            //),
           );
-          //});
-        },
-      ),
+        });
+      },
     );
-    // showDialog(
-    //   context: context, // user must tap button!
-    //   builder: (BuildContext context) {
-    //     //return StatefulBuilder(builder: (context, setDialogState) {
-    //     return AlertDialog(
-    //       title: const Text("New Habit"),
-    //       shape: RoundedRectangleBorder(
-    //         borderRadius: BorderRadius.circular(20.0),
-    //       ),
-    //       //content: showHabitDialogContent(setDialogState, idx),
-    //       content: TextFormField(
-    //         controller: editHabitTxtController,
-    //         decoration: const InputDecoration(
-    //           hintText: "Description",
-    //         ),
-    //         validator: (String? value) {
-    //           if (value == null || value.isEmpty) {
-    //             return 'Please enter some text';
-    //           }
-    //           return null;
-    //         },
-    //       ),
-    //       actions: <Widget>[
-    //         TextButton(
-    //             child: const Text('save'),
-    //             onPressed: editHabitBtnDisabled ? null : editHabit(idx)),
-    //         TextButton(
-    //           child: const Text('cancel'),
-    //           onPressed: () {
-    //             Navigator.of(context).pop();
-    //           },
-    //         )
-    //       ],
-    //     );
-    //     //});
-    //   },
-    // );
   }
 
-  showHabitDialogContent(StateSetter setDialogState, int idx) {
+  editHabitDialogContent(StateSetter setDialogState) {
     return TextFormField(
       controller: editHabitTxtController,
       onChanged: (text) {
@@ -991,11 +981,100 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  editHabit(int idx) {
-    //setState(() {
-    PlannerService.sharedInstance.user!.habits[idx].description =
-        editHabitTxtController.text;
-    //});
-    Navigator.of(context).pop();
+  void setEditHabitBtnState() {
+    if (editHabitTxtController.text != "") {
+      setState(() {
+        print("button enabled");
+        editHabitBtnDisabled = false;
+      });
+    } else {
+      setState(() {
+        editHabitBtnDisabled = true;
+      });
+    }
+  }
+
+  callEditHabit(int idx, String updateType, Map<String, bool>? habitMap) {
+    editHabit(idx, updateType, habitMap);
+  }
+
+  Future<void> editHabit(
+      int idx, String updateType, Map<String, bool>? habitMap) async {
+    var body;
+    if (updateType == "nameUpdate") {
+      body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'habitId': PlannerService.sharedInstance.user!.habits[idx].id,
+        'description': editHabitTxtController.text,
+        'sun': PlannerService
+            .sharedInstance.user!.habits[idx].habitTrackerMap["Sunday"],
+        'mon': PlannerService
+            .sharedInstance.user!.habits[idx].habitTrackerMap["Mon"],
+        'tues': PlannerService
+            .sharedInstance.user!.habits[idx].habitTrackerMap["Tues"],
+        'wed': PlannerService
+            .sharedInstance.user!.habits[idx].habitTrackerMap["Wed"],
+        'thurs': PlannerService
+            .sharedInstance.user!.habits[idx].habitTrackerMap["Thurs"],
+        'fri': PlannerService
+            .sharedInstance.user!.habits[idx].habitTrackerMap["Friday"],
+        'sat': PlannerService
+            .sharedInstance.user!.habits[idx].habitTrackerMap["Saturday"]
+      };
+    } else {
+      //dayUpdate
+      body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'habitId': PlannerService.sharedInstance.user!.habits[idx].id,
+        'description': editHabitTxtController.text,
+        'sun': habitMap!["Sunday"],
+        'mon': habitMap["Mon"],
+        'tues': habitMap["Tues"],
+        'wed': habitMap["Wed"],
+        'thurs': habitMap["Thurs"],
+        'fri': habitMap["Friday"],
+        'sat': habitMap["Saturday"]
+      };
+    }
+    //first make call to server
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://localhost:7343/habits');
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      if (updateType == "nameUpdate") {
+        setState(() {
+          PlannerService.sharedInstance.user!.habits[idx].description =
+              editHabitTxtController.text;
+        });
+        Navigator.of(context).pop();
+      } else {
+        //day update
+        setState(() {
+          PlannerService.sharedInstance.user!.habits[idx]
+              .habitTrackerMap["Sunday"] = habitMap!["Sunday"]!;
+          PlannerService.sharedInstance.user!.habits[idx]
+              .habitTrackerMap["Mon"] = habitMap["Mon"]!;
+          PlannerService.sharedInstance.user!.habits[idx]
+              .habitTrackerMap["Tues"] = habitMap["Tues"]!;
+          PlannerService.sharedInstance.user!.habits[idx]
+              .habitTrackerMap["Wed"] = habitMap["Wed"]!;
+          PlannerService.sharedInstance.user!.habits[idx]
+              .habitTrackerMap["Thurs"] = habitMap["Thurs"]!;
+          PlannerService.sharedInstance.user!.habits[idx]
+              .habitTrackerMap["Friday"] = habitMap["Friday"]!;
+          PlannerService.sharedInstance.user!.habits[idx]
+              .habitTrackerMap["Saturday"] = habitMap["Saturday"]!;
+        });
+      }
+    } else {
+      //500 error, show an alert
+
+    }
   }
 }

@@ -41,7 +41,7 @@ class User {
       this.profileImage,
       required this.didStartTomorrowPlanning,
       required this.lifeCategories}) {
-    buildBacklogMap();
+    //buildBacklogMap();
     buildHabitList();
     //buildEventList();
   }
@@ -77,9 +77,9 @@ class User {
   }
 
   void buildHabitList() {
-    Habit habit1 = Habit("Pray daily");
-    Habit habit2 = Habit("Code daily");
-    Habit habit3 = Habit("Workout for 30min daily");
+    Habit habit1 = Habit(id: 0, description: "Pray daily");
+    Habit habit2 = Habit(id: 1, description: "Code daily");
+    Habit habit3 = Habit(id: 2, description: "Workout for 30min daily");
 
     habits.add(habit1);
     habits.add(habit2);
