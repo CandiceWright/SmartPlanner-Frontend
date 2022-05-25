@@ -344,35 +344,56 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void editCategory(int idx) {
-    var oldCategoryName =
-        PlannerService.sharedInstance.user!.lifeCategories[idx].name;
-    if (PlannerService.sharedInstance.user!.lifeCategories[idx].name !=
-        editCategoryTxtController.text) {
-      //need to change the category backlog map
-      var backlogArr =
-          PlannerService.sharedInstance.user!.backlogMap[oldCategoryName];
-      //create a new map entry for the new name and delete the old
-      PlannerService.sharedInstance.user!
-          .backlogMap[editCategoryTxtController.text] = backlogArr!;
-      PlannerService.sharedInstance.user!.backlogMap.remove(oldCategoryName);
-      PlannerService.sharedInstance.user!.lifeCategories[idx].name =
-          editCategoryTxtController.text;
-      PlannerService.sharedInstance.user!.lifeCategories[idx].color =
-          editPickerColor;
-      PlannerService.sharedInstance.user!.LifeCategoriesColorMap
-          .remove(oldCategoryName);
-      PlannerService.sharedInstance.user!
-              .LifeCategoriesColorMap[editCategoryTxtController.text] =
-          editPickerColor;
+  Future<void> editCategory(int idx) async {
+    //first make a call to the server to edit
+    var body = {
+      'name': editCategoryTxtController.text,
+      'color': editPickerColor.value,
+      'userId': PlannerService.sharedInstance.user!.id,
+      'categoryId': PlannerService.sharedInstance.user!.lifeCategories[idx].id
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://localhost:7343/categories');
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var oldCategoryName =
+          PlannerService.sharedInstance.user!.lifeCategories[idx].name;
+      if (PlannerService.sharedInstance.user!.lifeCategories[idx].name !=
+          editCategoryTxtController.text) {
+        //need to change the category backlog map
+        var backlogArr =
+            PlannerService.sharedInstance.user!.backlogMap[oldCategoryName];
+        //create a new map entry for the new name and delete the old
+        PlannerService.sharedInstance.user!
+            .backlogMap[editCategoryTxtController.text] = backlogArr!;
+        PlannerService.sharedInstance.user!.backlogMap.remove(oldCategoryName);
+        PlannerService.sharedInstance.user!.lifeCategories[idx].name =
+            editCategoryTxtController.text;
+        PlannerService.sharedInstance.user!.lifeCategories[idx].color =
+            editPickerColor;
+        PlannerService.sharedInstance.user!.LifeCategoriesColorMap
+            .remove(oldCategoryName);
+        PlannerService.sharedInstance.user!
+                .LifeCategoriesColorMap[editCategoryTxtController.text] =
+            editPickerColor;
+      } else {
+        PlannerService.sharedInstance.user!.lifeCategories[idx].color =
+            editPickerColor;
+        PlannerService.sharedInstance.user!
+            .LifeCategoriesColorMap[oldCategoryName] = editPickerColor;
+      }
+      setState(() {});
+      Navigator.pop(context);
     } else {
-      PlannerService.sharedInstance.user!.lifeCategories[idx].color =
-          editPickerColor;
-      PlannerService.sharedInstance.user!
-          .LifeCategoriesColorMap[oldCategoryName] = editPickerColor;
+      //500 error, show an alert
+
     }
-    setState(() {});
-    Navigator.pop(context);
   }
 
   void deleteCategory(int idx) {}
