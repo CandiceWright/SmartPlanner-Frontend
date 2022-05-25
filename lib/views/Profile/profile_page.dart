@@ -116,10 +116,54 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void saveAccountUpdates() {
-    PlannerService.sharedInstance.user!.planitName =
-        usernameTxtFieldController.text;
-    PlannerService.sharedInstance.user!.email = emailTxtConroller.text;
+  Future<void> saveAccountUpdates() async {
+    if (PlannerService.sharedInstance.user!.planitName !=
+        usernameTxtFieldController.text) {
+      //planit name changed
+      var body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'planitName': usernameTxtFieldController.text,
+      };
+      String bodyF = jsonEncode(body);
+      print(bodyF);
+
+      var url = Uri.parse('http://localhost:7343/user/planitname');
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        PlannerService.sharedInstance.user!.planitName =
+            usernameTxtFieldController.text;
+      } else {
+        //500 error, show an alert
+
+      }
+    }
+    if (PlannerService.sharedInstance.user!.email != emailTxtConroller.text) {
+      //email changed
+      var body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'email': emailTxtConroller.text,
+      };
+      String bodyF = jsonEncode(body);
+      print(bodyF);
+
+      var url = Uri.parse('http://localhost:7343/user/email');
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        PlannerService.sharedInstance.user!.email = emailTxtConroller.text;
+      } else {
+        //500 error, show an alert
+
+      }
+    }
+
     setAccountUpdateBtnState();
   }
 
@@ -524,15 +568,31 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                         // onChanged: (String? newValue) {
-                        onChanged: (int? newValue) {
-                          setState(() {
-                            PlannerService.sharedInstance.user!.themeId =
-                                newValue!;
+                        onChanged: (int? newValue) async {
+                          var url = Uri.parse('http://localhost:7343/theme/');
+                          var body = {
+                            'theme': newValue,
+                            'email': PlannerService.sharedInstance.user!.email
+                          };
+                          String bodyF = jsonEncode(body);
+                          var response = await http.patch(url,
+                              headers: {"Content-Type": "application/json"},
+                              body: bodyF);
+                          print('Response status: ${response.statusCode}');
+                          print('Response body: ${response.body}');
 
-                            //     PlannerService
-                            //         .sharedInstance.themeColorMap[newValue]!;
-                            DynamicTheme.of(context)!.setTheme(newValue);
-                          });
+                          if (response.statusCode == 200) {
+                            setState(() {
+                              PlannerService.sharedInstance.user!.themeId =
+                                  newValue!;
+
+                              //     PlannerService
+                              //         .sharedInstance.themeColorMap[newValue]!;
+                              DynamicTheme.of(context)!.setTheme(newValue);
+                            });
+                          } else {
+                            //error message
+                          }
                         },
                       ),
                       Card(
@@ -639,7 +699,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               child: TextFormField(
                                 controller: usernameTxtFieldController,
                                 decoration: InputDecoration(
-                                  hintText: "Username",
+                                  hintText: "Planit Name",
                                   icon: Icon(
                                     Icons.person,
                                     color:
