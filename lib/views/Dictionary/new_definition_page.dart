@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/definition.dart';
 import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
+import 'package:http/http.dart' as http;
 
 class NewDefinitionPage extends StatefulWidget {
   const NewDefinitionPage({Key? key, required this.updateDictionary})
@@ -25,11 +29,8 @@ class NewDefinitionPage extends StatefulWidget {
 
 class _NewDefinitionPageState extends State<NewDefinitionPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DateTime selectedDate = DateTime.now();
-  var dateTxtController = TextEditingController();
   var descriptionTxtController = TextEditingController();
-  var notesTxtController = TextEditingController();
-  var categoryTxtController = TextEditingController();
+  var defintionTxtController = TextEditingController();
   bool doneBtnDisabled = true;
   var currChosenCategory =
       PlannerService.sharedInstance.user!.lifeCategories[0];
@@ -37,57 +38,54 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
   @override
   void initState() {
     super.initState();
-    dateTxtController.addListener(setDoneBtnState);
+    defintionTxtController.addListener(setDoneBtnState);
     descriptionTxtController.addListener(setDoneBtnState);
   }
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate)
-      setState(() {
-        selectedDate = picked;
-        dateTxtController.text = DateFormat.yMMMd().format(selectedDate);
-        //print(DateFormat.yMMMd().format(selectedDate));
+  Future<void> createDefinition() async {
+    var name = descriptionTxtController.text;
+    var definition = defintionTxtController.text;
+    //first make a call to the server
+    var body = {
+      'userId': PlannerService.sharedInstance.user!.id,
+      'name': name,
+      'definition': definition,
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://localhost:7343/dictionary');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      print(decodedBody);
+      var id = decodedBody["insertId"];
+      var newDefinition = Definition(id, name, definition);
+      PlannerService.sharedInstance.user!.dictionaryArr.add(newDefinition);
+      PlannerService.sharedInstance.user!.dictionaryMap[newDefinition.name] =
+          newDefinition;
+      PlannerService.sharedInstance.user!.dictionaryArr.sort((def1, def2) {
+        String name1 = def1.name;
+        String name2 = def2.name;
+        return name1.compareTo(name2);
       });
-  }
+      widget.updateDictionary();
+      _backToDefinitionsPage();
+    } else {
+      //500 error, show an alert
 
-  void createGoal() {
-    var goalTitle = descriptionTxtController.text;
-    var goalNotes = notesTxtController.text;
-    //var category = categoryTxtController.text;
-
-    var newGoal = Event(
-      //id: id,
-      description: goalTitle,
-      type: "goal",
-      start: selectedDate,
-      end: selectedDate,
-      //background: const Color(0xFFFF80b1),
-      background: currChosenCategory.color,
-      isAllDay: false,
-      notes: goalNotes,
-      category: currChosenCategory,
-    );
-
-    //var newGoal = Goal(goalTitle, selectedDate, currChosenCategory, goalNotes);
-    PlannerService.sharedInstance.user!.goals.add(newGoal);
-    PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
-      DateTime goal1Date = goal1.start;
-      DateTime goal2Date = goal2.start;
-      return goal1Date.compareTo(goal2Date);
-    });
-    widget.updateDictionary();
-    _backToDefinitionsPage();
+    }
   }
 
   void setDoneBtnState() {
-    print(dateTxtController.text);
+    print(defintionTxtController.text);
     print(descriptionTxtController.text);
-    if (dateTxtController.text != "" && descriptionTxtController.text != "") {
+    if (defintionTxtController.text != "" &&
+        descriptionTxtController.text != "") {
       setState(() {
         print("button enabled");
         doneBtnDisabled = false;
@@ -125,7 +123,7 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
             title: const Text(
-              "New Goal",
+              "New Definition",
               style: TextStyle(color: Colors.white),
             ),
             backgroundColor: Colors.transparent,
@@ -134,7 +132,7 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
             //leading: BackButton(color: Colors.black),
             actions: [
               TextButton(
-                onPressed: doneBtnDisabled ? null : createGoal,
+                onPressed: doneBtnDisabled ? null : createDefinition,
                 child: const Text(
                   "Done",
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -168,7 +166,7 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
                           child: TextFormField(
                             controller: descriptionTxtController,
                             decoration: const InputDecoration(
-                              hintText: "What's your goal?",
+                              hintText: "What are you defining?",
                             ),
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
@@ -181,64 +179,9 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
                         ),
                         Container(
                           child: TextFormField(
-                            controller: dateTxtController,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              hintText: "By",
-                              icon: Icon(
-                                Icons.calendar_today,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            onTap: () => _selectDate(context),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
-                          ),
-                          padding: EdgeInsets.all(20),
-                        ),
-                        Container(
-                          child: DropdownButton(
-                            //value: PlannerService.sharedInstance.user.theme.themeId,
-                            value: currChosenCategory,
-                            items: List.generate(
-                                PlannerService.sharedInstance.user!
-                                    .lifeCategories.length, (int index) {
-                              return DropdownMenuItem(
-                                //value: "pink",
-                                value: PlannerService
-                                    .sharedInstance.user!.lifeCategories[index],
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      color: PlannerService.sharedInstance.user!
-                                          .lifeCategories[index].color,
-                                    ),
-                                    Text(PlannerService.sharedInstance.user!
-                                        .lifeCategories[index].name),
-                                  ],
-                                ),
-                              );
-                            }),
-
-                            // onChanged: (String? newValue) {
-                            onChanged: (LifeCategory? newValue) {
-                              setState(() {
-                                currChosenCategory = newValue!;
-                              });
-                            },
-                          ),
-                          padding: EdgeInsets.all(20),
-                        ),
-                        Container(
-                          child: TextFormField(
-                            controller: notesTxtController,
+                            controller: defintionTxtController,
                             decoration: const InputDecoration(
-                              hintText: "Notes",
+                              hintText: "How do you define this in your world?",
                               fillColor: Colors.white,
                             ),
                             validator: (String? value) {
@@ -275,150 +218,5 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
         )
       ],
     );
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     // Here we take the value from the MyHomePage object that was created by
-    //     // the App.build method, and use it to set our appbar title.
-    //     title: Text("New Goal"),
-    //     centerTitle: true,
-    //     leading: BackButton(color: Colors.black),
-    //     actions: [
-    //       TextButton(
-    //         onPressed: doneBtnDisabled ? null : createGoal,
-    //         child: Text("Done"),
-    //       ),
-    //       // IconButton(
-    //       //   icon: const Icon(Icons.check),
-    //       //   color: Colors.pink,
-    //       //   tooltip: 'Open shopping cart',
-    //       //   onPressed: () {
-    //       //     // handle the press
-    //       //   },
-    //       // ),
-    //     ],
-    //   ),
-    //   body: Card(
-    //     child: Container(
-    //       child: ListView(
-    //         children: [
-    //           // Image.asset(
-    //           //   "assets/images/goal_icon.png",
-    //           //   height: 80,
-    //           //   width: 80,
-    //           // ),
-    //           Form(
-    //             key: _formKey,
-    //             child: Column(
-    //               crossAxisAlignment: CrossAxisAlignment.start,
-    //               children: <Widget>[
-    //                 Container(
-    //                   child: TextFormField(
-    //                     controller: descriptionTxtController,
-    //                     decoration: const InputDecoration(
-    //                       hintText: "What's your goal?",
-    //                     ),
-    //                     validator: (String? value) {
-    //                       if (value == null || value.isEmpty) {
-    //                         return 'Please enter some text';
-    //                       }
-    //                       return null;
-    //                     },
-    //                   ),
-    //                   padding: EdgeInsets.all(20),
-    //                 ),
-    //                 Container(
-    //                   child: TextFormField(
-    //                     controller: dateTxtController,
-    //                     readOnly: true,
-    //                     decoration: InputDecoration(
-    //                       hintText: "By",
-    //                       icon: Icon(
-    //                         Icons.calendar_today,
-    //                         color: Theme.of(context).colorScheme.primary,
-    //                       ),
-    //                     ),
-    //                     onTap: () => _selectDate(context),
-    //                     validator: (String? value) {
-    //                       if (value == null || value.isEmpty) {
-    //                         return 'Please enter some text';
-    //                       }
-    //                       return null;
-    //                     },
-    //                   ),
-    //                   padding: EdgeInsets.all(20),
-    //                 ),
-    //                 Container(
-    //                   child: DropdownButton(
-    //                     //value: PlannerService.sharedInstance.user.theme.themeId,
-    //                     value: currChosenCategory,
-    //                     items: List.generate(
-    //                         PlannerService.sharedInstance.user.lifeCategories
-    //                             .length, (int index) {
-    //                       return DropdownMenuItem(
-    //                         //value: "pink",
-    //                         value: PlannerService
-    //                             .sharedInstance.user.lifeCategories[index],
-    //                         child: Row(
-    //                           children: [
-    //                             Icon(
-    //                               Icons.circle,
-    //                               color: PlannerService.sharedInstance.user
-    //                                   .lifeCategories[index].color,
-    //                             ),
-    //                             Text(PlannerService.sharedInstance.user
-    //                                 .lifeCategories[index].name),
-    //                           ],
-    //                         ),
-    //                       );
-    //                     }),
-
-    //                     // onChanged: (String? newValue) {
-    //                     onChanged: (LifeCategory? newValue) {
-    //                       setState(() {
-    //                         currChosenCategory = newValue!;
-    //                       });
-    //                     },
-    //                   ),
-    //                   padding: EdgeInsets.all(20),
-    //                 ),
-    //                 Container(
-    //                   child: TextFormField(
-    //                     controller: notesTxtController,
-    //                     decoration: const InputDecoration(
-    //                       hintText: "Notes",
-    //                       fillColor: Colors.white,
-    //                     ),
-    //                     validator: (String? value) {
-    //                       if (value == null || value.isEmpty) {
-    //                         return 'Please enter some text';
-    //                       }
-    //                       return null;
-    //                     },
-    //                     maxLines: null,
-    //                     minLines: 10,
-    //                   ),
-    //                   padding: EdgeInsets.all(20),
-    //                   margin: EdgeInsets.only(top: 10),
-    //                   decoration: BoxDecoration(
-    //                     color: Colors.white,
-    //                     borderRadius: BorderRadius.circular(8.0),
-    //                   ),
-    //                 ),
-    //               ],
-    //             ),
-    //           )
-    //         ],
-    //       ),
-    //       margin: EdgeInsets.all(15),
-    //     ),
-    //     //color: Colors.pink.shade50,
-    //     // margin: EdgeInsets.all(20),
-    //     margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
-    //     elevation: 5,
-    //     shape: RoundedRectangleBorder(
-    //       borderRadius: BorderRadius.circular(10.0),
-    //     ),
-    //   ),
-    // );
   }
 }

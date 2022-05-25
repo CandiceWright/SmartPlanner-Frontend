@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/definition.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'backlog_item.dart';
 import 'habit.dart';
@@ -15,7 +16,8 @@ class User {
   //CustomTheme theme;
   int themeId;
   var goals = <Event>[];
-  var planitDictionary = <String, String>{};
+  var dictionaryMap = <String, Definition>{};
+  var dictionaryArr = <Definition>[];
   var accomplishedGoals = [];
   var backlogItems = <BacklogItem>[];
   //var backlogMap = <String, List<BacklogItem>>{};

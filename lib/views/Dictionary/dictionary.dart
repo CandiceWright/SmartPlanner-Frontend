@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:practice_planner/models/definition.dart';
 import 'package:practice_planner/models/event.dart';
+import 'package:practice_planner/views/Dictionary/edit_definition_page.dart';
 import 'package:practice_planner/views/Dictionary/new_definition_page.dart';
 import 'package:practice_planner/views/Goals/accomplished_goals_page.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:confetti/confetti.dart';
+import 'package:http/http.dart' as http;
 
 class DictionaryPage extends StatefulWidget {
   const DictionaryPage({Key? key}) : super(key: key);
@@ -41,7 +44,18 @@ class _DictionaryPageState extends State<DictionaryPage> {
                 NewDefinitionPage(updateDictionary: _updateDictionary)));
   }
 
-  void deleteGoal(int idx) {
+  void _openEditDefinitionPage(int idx, Definition definition) {
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => EditDefinitionPage(
+                updateDictionary: _updateDictionary,
+                idx: idx,
+                definition: definition)));
+  }
+
+  void deleteDefinition(int idx) {
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -56,10 +70,26 @@ class _DictionaryPageState extends State<DictionaryPage> {
             actions: <Widget>[
               TextButton(
                 child: Text('yes, delete'),
-                onPressed: () {
-                  PlannerService.sharedInstance.user!.goals.removeAt(idx);
-                  setState(() {});
-                  Navigator.pop(context);
+                onPressed: () async {
+                  var defId =
+                      PlannerService.sharedInstance.user!.dictionaryArr[idx].id;
+                  var url = Uri.parse(
+                      'http://localhost:7343/dictionary/' + defId.toString());
+                  var response = await http.delete(
+                    url,
+                  );
+                  print('Response status: ${response.statusCode}');
+                  print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
+                    PlannerService.sharedInstance.user!.dictionaryArr
+                        .removeAt(idx);
+                    setState(() {});
+                    Navigator.pop(context);
+                  } else {
+                    //500 error, show an alert
+
+                  }
                 },
               ),
               TextButton(
@@ -72,7 +102,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
         });
   }
 
-  void _showGoalContent(Event goal, int idx) {
+  void _showDefinitionContent(Definition def, int idx) {
     showDialog(
       context: context, // user must tap button!
 
@@ -92,14 +122,17 @@ class _DictionaryPageState extends State<DictionaryPage> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    DateFormat.yMMMd().format(goal.start),
-                    // style: Theme.of(context).textTheme.subtitle2,
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                  Padding(
+                    child: Text(
+                      def.name,
+                      style:
+                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                    padding: EdgeInsets.only(bottom: 10, top: 4),
                   ),
                   Padding(
                     child: Text(
-                      goal.description,
+                      def.definition,
                       style: TextStyle(fontSize: 15),
                     ),
                     padding: EdgeInsets.only(bottom: 10, top: 4),
@@ -118,10 +151,12 @@ class _DictionaryPageState extends State<DictionaryPage> {
             ),
           ),
           actions: <Widget>[
-            TextButton(onPressed: () {}, child: new Text('edit')),
+            TextButton(
+                onPressed: () => _openEditDefinitionPage(idx, def),
+                child: new Text('edit')),
             TextButton(
                 onPressed: () {
-                  deleteGoal(idx);
+                  deleteDefinition(idx);
                 },
                 child: new Text('delete')),
             TextButton(
@@ -196,12 +231,13 @@ class _DictionaryPageState extends State<DictionaryPage> {
                 child: ListView(
                   //children: goalsListView,
                   children: List.generate(
-                      PlannerService.sharedInstance.user!.planitDictionary
-                          .length, (int index) {
+                      PlannerService.sharedInstance.user!.dictionaryArr.length,
+                      (int index) {
                     return GestureDetector(
                       onTap: () => {
-                        _showGoalContent(
-                            PlannerService.sharedInstance.user!.goals[index],
+                        _showDefinitionContent(
+                            PlannerService
+                                .sharedInstance.user!.dictionaryArr[index],
                             index)
                       },
                       child: Card(
@@ -214,27 +250,27 @@ class _DictionaryPageState extends State<DictionaryPage> {
                             Container(
                               child: Column(
                                 children: [
-                                  Text(
-                                    DateFormat.yMMMd().format(PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .goals[index]
-                                        .start),
-                                    // style: Theme.of(context).textTheme.subtitle2,
-                                    style: const TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          PlannerService.sharedInstance.user!
+                                              .dictionaryArr[index].name,
+                                          style: const TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    ),
+                                    margin: EdgeInsets.all(15),
                                   ),
-                                  Text(
-                                    PlannerService.sharedInstance.user!
-                                        .goals[index].description,
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center,
-                                  ),
+                                  // Image.asset(
+                                  //   "assets/images/goal_icon.png",
+                                  //   height: 40,
+                                  //   width: 40,
+                                  // ),
                                 ],
                               ),
                               margin: EdgeInsets.all(15),
@@ -252,9 +288,9 @@ class _DictionaryPageState extends State<DictionaryPage> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50.0),
                         ),
-                        //color: Theme.of(context).colorScheme.primary,
-                        color: PlannerService
-                            .sharedInstance.user!.goals[index].category.color,
+                        color: Theme.of(context).colorScheme.primary,
+                        // color: PlannerService
+                        //     .sharedInstance.user!.goals[index].category.color,
                       ),
                     );
                   }),
@@ -263,6 +299,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
               ),
             ],
           ),
+
           floatingActionButton: FloatingActionButton(
             onPressed: _openNewDefinitionPage,
             tooltip: 'Increment',
