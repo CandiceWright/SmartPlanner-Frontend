@@ -1,12 +1,16 @@
 import 'dart:convert';
-
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:practice_planner/models/goal.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/Login/signup.dart';
+import '../../models/backlog_item.dart';
+import '../../models/definition.dart';
+import '../../models/habit.dart';
 import '../../models/life_category.dart';
 import '../../models/user.dart';
+import '../../models/event.dart';
 import '/views/navigation_wrapper.dart';
 import 'package:http/http.dart' as http;
 
@@ -45,75 +49,213 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         var decodedBody = json.decode(response.body);
         print(decodedBody);
-        var userId = decodedBody[0]["userId"];
-        var planitName = decodedBody[0]["planitName"];
-        var themeId = decodedBody[0]["theme"];
-        var didStartPlanningTomorrow =
-            decodedBody[0]["didStartPlanningTomorrow"];
+        var userId = decodedBody["userId"];
+        var planitName = decodedBody["planitName"];
+        var themeId = decodedBody["theme"];
+        var didStartPlanningTomorrowInt =
+            decodedBody["didStartPlanningTomorrow"];
+        bool didStartPlanning;
+        if (didStartPlanningTomorrowInt == 0) {
+          didStartPlanning = false;
+        } else {
+          didStartPlanning = true;
+        }
+
+        var lifeCategories = <LifeCategory>[];
+        Map<int, LifeCategory>? lifeCategoriesMap = {};
+        Map<String, Color>? lifeCategoriesColorMap =
+            {}; //eventually get rid of this and just use the life categories map
+        var goals = <Event>[];
+        var accomplishedGoals = [];
+        var scheduledEvents = <Event>[];
+        var habits = <Habit>[];
+        var dictionaryArr = <Definition>[];
+        var dictionaryMap = <String, Definition>{};
+        var backlogItems = <BacklogItem>[];
+        Map<String, List<BacklogItem>> backlogMap = {"Other": []};
 
         //get all life categories
-        var url = Uri.parse('http://localhost:7343/categories');
+        print("getting all life categories");
+        var url =
+            Uri.parse('http://localhost:7343/categories/' + userId.toString());
         var response2 = await http.get(url);
         print('Response status: ${response2.statusCode}');
         print('Response body: ${response2.body}');
-        var lifeCategories;
 
         if (response2.statusCode == 200) {
           var decodedBody = json.decode(response2.body);
           print(decodedBody);
-          lifeCategories = decodedBody;
+          //lifeCategories = decodedBody;
+          for (int i = 0; i < decodedBody.length; i++) {
+            LifeCategory lc = LifeCategory(
+                decodedBody[i]["categoryId"],
+                decodedBody[i]["name"],
+                Color(int.parse(decodedBody[i]["color"])));
+            lifeCategories.add(lc);
+            lifeCategoriesMap[decodedBody[i]["categoryId"]] = lc;
+            lifeCategoriesColorMap[decodedBody[i]["name"]] =
+                Color(int.parse(decodedBody[i]["color"]));
+          }
+
+          //get all goals
+          print("getting all goals");
+          var url =
+              Uri.parse('http://localhost:7343/goals/' + userId.toString());
+          var response3 = await http
+              .get(url, headers: {"Content-Type": "application/json"});
+          print('Response status: ${response3.statusCode}');
+          print('Response body: ${response3.body}');
+          if (response3.statusCode == 200) {
+            var decodedBody = json.decode(response3.body);
+            print(decodedBody);
+            for (int i = 0; i < decodedBody.length; i++) {
+              var isAccomplished = decodedBody[i]["isAccomplished"];
+              var goal = Event(
+                id: decodedBody[i]["goalId"],
+                description: decodedBody[i]["description"],
+                start: DateTime.parse(decodedBody[i]["start"]),
+                end: DateTime.parse(decodedBody[i]["end"]),
+                background:
+                    lifeCategoriesMap[decodedBody[i]["category"]]!.color,
+                category: lifeCategoriesMap[decodedBody[i]["category"]]!,
+                type: "goal",
+                notes: decodedBody[i]["notes"],
+              );
+              if (isAccomplished == 1) {
+                accomplishedGoals.add(goal);
+              } else {
+                goals.add(goal);
+              }
+            }
+
+            //get all calendar events
+            print("getting all calendar events");
+            var url = Uri.parse(
+                'http://localhost:7343/calendar/' + userId.toString());
+            var response4 = await http.get(url);
+            print('Response status: ${response4.statusCode}');
+            print('Response body: ${response4.body}');
+
+            if (response4.statusCode == 200) {
+              var decodedBody = json.decode(response4.body);
+              print(decodedBody);
+              for (int i = 0; i < decodedBody.length; i++) {
+                var event = Event(
+                    id: decodedBody[i]["eventId"],
+                    description: decodedBody[i]["description"],
+                    start: decodedBody[i]["start"],
+                    end: decodedBody[i]["end"],
+                    background:
+                        lifeCategoriesMap[decodedBody[i]["category"]]!.color,
+                    category: lifeCategoriesMap[decodedBody[i]["category"]]!,
+                    type: "calendar",
+                    notes: decodedBody[i]["notes"],
+                    location: decodedBody[i]["location"],
+                    backlogMapRef: decodedBody[i]["backlogItemRef"]);
+                scheduledEvents.add(event);
+              }
+
+              //get all habits
+              var url = Uri.parse(
+                  'http://localhost:7343/habits/' + userId.toString());
+              var response5 = await http.get(url);
+              print('Response status: ${response5.statusCode}');
+              print('Response body: ${response5.body}');
+
+              if (response5.statusCode == 200) {
+                var decodedBody = json.decode(response5.body);
+                print(decodedBody);
+                for (int i = 0; i < decodedBody.length; i++) {
+                  bool sun = decodedBody[i]["sun"] == 1 ? true : false;
+                  bool mon = decodedBody[i]["mon"] == 1 ? true : false;
+                  bool tues = decodedBody[i]["tues"] == 1 ? true : false;
+                  bool wed = decodedBody[i]["wed"] == 1 ? true : false;
+                  bool thurs = decodedBody[i]["thurs"] == 1 ? true : false;
+                  bool fri = decodedBody[i]["fri"] == 1 ? true : false;
+                  bool sat = decodedBody[i]["sat"] == 1 ? true : false;
+                  Map<String, bool> habitTrackerMap = {
+                    "Sunday": sun,
+                    "Mon": mon,
+                    "Tues": tues,
+                    "Wed": wed,
+                    "Thurs": thurs,
+                    "Friday": fri,
+                    "Saturday": sat,
+                  };
+                  var habit = Habit(
+                      id: decodedBody[i]["habitId"],
+                      description: decodedBody[i]["description"]);
+                  habit.habitTrackerMap = habitTrackerMap;
+                  habits.add(habit);
+
+                  //you will need to get all backlog items next and all dictionary items
+
+                  DynamicTheme.of(context)!.setTheme(themeId);
+                  var user = User(
+                      id: userId,
+                      planitName: planitName,
+                      email: email,
+                      profileImage: "assets/images/profile_pic_icon.png",
+                      themeId: themeId,
+                      //theme: PinkTheme(),
+                      didStartTomorrowPlanning: didStartPlanning,
+                      lifeCategories: lifeCategories);
+                  PlannerService.sharedInstance.user = user;
+                  PlannerService.sharedInstance.user!.lifeCategories =
+                      lifeCategories;
+                  PlannerService.sharedInstance.user!.lifeCategoriesMap =
+                      lifeCategoriesMap;
+                  PlannerService.sharedInstance.user!.LifeCategoriesColorMap =
+                      lifeCategoriesColorMap;
+                  PlannerService.sharedInstance.user!.accomplishedGoals =
+                      accomplishedGoals;
+                  PlannerService.sharedInstance.user!.goals = goals;
+                  PlannerService.sharedInstance.user!.scheduledEvents =
+                      scheduledEvents;
+                  PlannerService.sharedInstance.user!.habits = habits;
+
+                  // PlannerService.sharedInstance.user!
+                  //     .LifeCategoriesColorMap["Other"] = Colors.grey;
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) {
+                      return const NavigationWrapper();
+                    },
+                    settings: const RouteSettings(
+                      name: 'navigaionPage',
+                    ),
+                  ));
+                }
+              } else {
+                //show an error
+              }
+            } else {
+              //show an alert with error
+            }
+          }
         } else {
           //show alert that user already exists with that email
         }
 
-        //get all goals
-
-        //get all calendar events
-
-        //get all habits
-
         //get all backlog items
 
         //get all dictionary items
-        DynamicTheme.of(context)!.setTheme(themeId);
-        var user = User(
-            id: userId,
-            planitName: planitName,
-            email: email,
-            profileImage: "assets/images/profile_pic_icon.png",
-            themeId: themeId,
-            //theme: PinkTheme(),
-            didStartTomorrowPlanning: didStartPlanningTomorrow,
-            lifeCategories: lifeCategories);
-        PlannerService.sharedInstance.user = user;
-        PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
-            Colors.grey;
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return const NavigationWrapper();
-          },
-          settings: const RouteSettings(
-            name: 'navigaionPage',
-          ),
-        ));
+
       }
     } else {
       //404 error, show an alert
 
     }
 
-    PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
-        Theme.of(context).colorScheme.primary;
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) {
-        return const NavigationWrapper();
-      },
-      settings: const RouteSettings(
-        name: 'navigaionPage',
-      ),
-    ));
-    // Navigator.push(
-    //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
+    // PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
+    //     Theme.of(context).colorScheme.primary;
+    // Navigator.of(context).push(MaterialPageRoute(
+    //   builder: (context) {
+    //     return const NavigationWrapper();
+    //   },
+    //   settings: const RouteSettings(
+    //     name: 'navigaionPage',
+    //   ),
+    // ));
   }
 
   void signup() {

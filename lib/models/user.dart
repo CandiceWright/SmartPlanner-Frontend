@@ -8,27 +8,23 @@ import 'event.dart';
 import 'package:flutter/material.dart';
 
 class User {
-  //var name;
   var planitName;
   int id;
   var profileImage;
   var email;
-  //CustomTheme theme;
   int themeId;
   var goals = <Event>[];
+  var scheduledEvents = <Event>[];
+  var habits = <Habit>[];
   var dictionaryMap = <String, Definition>{};
   var dictionaryArr = <Definition>[];
   var accomplishedGoals = [];
   var backlogItems = <BacklogItem>[];
-  //var backlogMap = <String, List<BacklogItem>>{};
-  //var otherCategory = LifeCategory("Other", const Color(0xFFFF80b1));
   Map<String, List<BacklogItem>> backlogMap = {"Other": []};
   var todayTasks = [];
-  var habits = <Habit>[];
   bool didStartTomorrowPlanning;
-  var scheduledEvents = <Event>[];
-  //var allEventsMap = <int, Event>{};
   var lifeCategories = <LifeCategory>[];
+  Map<int, LifeCategory>? lifeCategoriesMap;
   Map<String, Color> LifeCategoriesColorMap = {
     // "Other": const Color(0xFFFF80b1)
   };
