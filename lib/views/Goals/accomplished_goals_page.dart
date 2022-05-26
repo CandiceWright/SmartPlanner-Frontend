@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:practice_planner/models/event.dart';
 import '/models/goal.dart';
 import 'new_goal_page.dart';
 import 'edit_goal_page.dart';
@@ -48,7 +49,7 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
     Navigator.pop(context);
   }
 
-  void _showGoalContent(Goal goal, int idx) {
+  void _showGoalContent(Event goal, int idx) {
     showDialog(
       context: context, // user must tap button!
 
@@ -68,7 +69,7 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    DateFormat.yMMMd().format(goal.date),
+                    DateFormat.yMMMd().format(goal.start),
                     // style: Theme.of(context).textTheme.subtitle2,
                     style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
                   ),
@@ -149,43 +150,44 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
               },
               child: Card(
                 clipBehavior: Clip.antiAlias,
-                child: Row(
-                  children: [
-                    Image.asset(
-                      "assets/images/goal_icon.png",
-                      height: 40,
-                      width: 40,
-                    ),
+                child:
+                    // Row(
+                    //   children: [
+                    //     Image.asset(
+                    //       "assets/images/goal_icon.png",
+                    //       height: 40,
+                    //       width: 40,
+                    //     ),
                     Column(
-                      children: [
-                        Container(
-                          child: Column(
-                            children: [
-                              Text(
-                                DateFormat.yMMMd().format(PlannerService
-                                    .sharedInstance
-                                    .user!
-                                    .accomplishedGoals[index]
-                                    .date),
-                                // style: Theme.of(context).textTheme.subtitle2,
-                                style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ),
-                              Text(
-                                PlannerService.sharedInstance.user!
-                                    .accomplishedGoals[index].description,
-                                style: const TextStyle(color: Colors.black),
-                              ),
-                            ],
+                  children: [
+                    Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            DateFormat.yMMMd().format(PlannerService
+                                .sharedInstance
+                                .user!
+                                .accomplishedGoals[index]
+                                .start),
+                            // style: Theme.of(context).textTheme.subtitle2,
+                            style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
-                          margin: EdgeInsets.all(15),
-                        ),
-                      ],
+                          Text(
+                            PlannerService.sharedInstance.user!
+                                .accomplishedGoals[index].description,
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                        ],
+                      ),
+                      margin: EdgeInsets.all(15),
                     ),
                   ],
                 ),
+                //],
+                //),
                 elevation: 3,
                 margin: EdgeInsets.all(10),
                 shape: RoundedRectangleBorder(

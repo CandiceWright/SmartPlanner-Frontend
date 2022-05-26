@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
         Map<String, Color>? lifeCategoriesColorMap =
             {}; //eventually get rid of this and just use the life categories map
         var goals = <Event>[];
-        var accomplishedGoals = [];
+        var accomplishedGoals = <Event>[];
         var scheduledEvents = <Event>[];
         Map<int, Event> scheduledEventsMap = {};
         var habits = <Habit>[];
