@@ -54,6 +54,7 @@ class _BacklogPageState extends State<BacklogPage> {
   }
 
   openEditBacklogItemPage(int idx, String category) {
+    print(PlannerService.sharedInstance.user!.backlogMap[category]![idx]);
     Navigator.pop(context);
     Navigator.push(
         context,

@@ -97,13 +97,14 @@ class _EditGoalPageState extends State<EditGoalPage> {
     print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
+      print("I am in edit");
       PlannerService.sharedInstance.user!.goals[widget.goalIdx].description =
           goalTitle;
       PlannerService.sharedInstance.user!.goals[widget.goalIdx].notes =
           goalNotes;
       PlannerService.sharedInstance.user!.goals[widget.goalIdx].category =
           currChosenCategory;
-      PlannerService.sharedInstance.user!.goals[widget.goalIdx].date =
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].start =
           selectedDate;
       PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
         DateTime goal1Date = goal1.start;

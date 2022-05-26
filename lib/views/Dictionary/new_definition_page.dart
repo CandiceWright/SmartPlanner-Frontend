@@ -49,7 +49,7 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
     var body = {
       'userId': PlannerService.sharedInstance.user!.id,
       'name': name,
-      'definition': definition,
+      'def': definition,
     };
     String bodyF = jsonEncode(body);
     print(bodyF);

@@ -20,7 +20,7 @@ class User {
   var dictionaryArr = <Definition>[];
   var accomplishedGoals = [];
   var backlogItems = <BacklogItem>[];
-  Map<String, List<BacklogItem>> backlogMap = {"Other": []};
+  Map<String, List<BacklogItem>> backlogMap = {};
   var todayTasks = [];
   bool didStartTomorrowPlanning;
   var lifeCategories = <LifeCategory>[];

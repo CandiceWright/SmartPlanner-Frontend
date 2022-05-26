@@ -93,8 +93,15 @@ class _NewTaskPageState extends State<NewTaskPage> {
           location: locationTxtController.text,
           notes: notesTxtController.text);
 
-      PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
-          .add(newBacklogItem);
+      if (PlannerService.sharedInstance.user!.backlogMap
+          .containsKey(currChosenCategory.name)) {
+        PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
+            .add(newBacklogItem);
+      } else {
+        var arr = [newBacklogItem];
+        PlannerService.sharedInstance.user!.backlogMap
+            .addAll({newBacklogItem.category.name: arr});
+      }
 
       if (DateFormat.yMMMd().format(selectedDate) ==
           DateFormat.yMMMd().format(DateTime.now())) {

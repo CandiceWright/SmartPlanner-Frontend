@@ -4,8 +4,8 @@ import 'package:practice_planner/models/life_category.dart';
 
 class Event {
   String description;
-  DateTime? date;
-  DateTime start;
+  DateTime? date; //not being used
+  DateTime start; //goals use this for its date
   DateTime end;
   Color background;
   String notes;

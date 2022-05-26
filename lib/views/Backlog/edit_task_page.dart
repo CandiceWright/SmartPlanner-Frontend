@@ -127,8 +127,28 @@ class _EditTaskPageState extends State<EditTaskPage> {
         PlannerService.sharedInstance.user!.backlogMap[widget.category]!
             .removeAt(widget.id); //delete from old category
         backlogItem.category = currChosenCategory;
-        PlannerService.sharedInstance.user!.backlogMap[currChosenCategory.name]!
-            .add(backlogItem);
+
+        if (PlannerService.sharedInstance.user!.backlogMap
+            .containsKey(currChosenCategory.name)) {
+          PlannerService
+              .sharedInstance.user!.backlogMap[currChosenCategory.name]!
+              .add(backlogItem);
+        } else {
+          var arr = [backlogItem];
+          PlannerService.sharedInstance.user!.backlogMap
+              .addAll({currChosenCategory.name: arr});
+        }
+
+        if (PlannerService.sharedInstance.user!.backlogMap
+            .containsKey(currChosenCategory.name)) {
+          PlannerService
+              .sharedInstance.user!.backlogMap[currChosenCategory.name]!
+              .add(backlogItem);
+        } else {
+          var arr = [backlogItem];
+          PlannerService.sharedInstance.user!.backlogMap
+              .addAll({backlogItem.category.name: arr});
+        }
       } else {
         PlannerService
             .sharedInstance

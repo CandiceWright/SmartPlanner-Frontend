@@ -77,10 +77,10 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
             //theme: PinkTheme(),
             didStartTomorrowPlanning: false,
             lifeCategories: [
-              LifeCategory(id, "Other", Colors.grey),
+              LifeCategory(id, "other", Colors.grey),
             ]);
         PlannerService.sharedInstance.user = user;
-        PlannerService.sharedInstance.user!.LifeCategoriesColorMap["Other"] =
+        PlannerService.sharedInstance.user!.LifeCategoriesColorMap["other"] =
             Colors.grey;
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {

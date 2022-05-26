@@ -68,11 +68,12 @@ class _LoginPageState extends State<LoginPage> {
         var goals = <Event>[];
         var accomplishedGoals = [];
         var scheduledEvents = <Event>[];
+        Map<int, Event> scheduledEventsMap = {};
         var habits = <Habit>[];
         var dictionaryArr = <Definition>[];
         var dictionaryMap = <String, Definition>{};
         var backlogItems = <BacklogItem>[];
-        Map<String, List<BacklogItem>> backlogMap = {"Other": []};
+        Map<String, List<BacklogItem>> backlogMap = {};
 
         //get all life categories
         print("getting all life categories");
@@ -122,8 +123,10 @@ class _LoginPageState extends State<LoginPage> {
                 notes: decodedBody[i]["notes"],
               );
               if (isAccomplished == 1) {
+                goal.isAccomplished = true;
                 accomplishedGoals.add(goal);
               } else {
+                goal.isAccomplished = false;
                 goals.add(goal);
               }
             }
@@ -143,8 +146,8 @@ class _LoginPageState extends State<LoginPage> {
                 var event = Event(
                     id: decodedBody[i]["eventId"],
                     description: decodedBody[i]["description"],
-                    start: decodedBody[i]["start"],
-                    end: decodedBody[i]["end"],
+                    start: DateTime.parse(decodedBody[i]["start"]),
+                    end: DateTime.parse(decodedBody[i]["end"]),
                     background:
                         lifeCategoriesMap[decodedBody[i]["category"]]!.color,
                     category: lifeCategoriesMap[decodedBody[i]["category"]]!,
@@ -153,9 +156,11 @@ class _LoginPageState extends State<LoginPage> {
                     location: decodedBody[i]["location"],
                     backlogMapRef: decodedBody[i]["backlogItemRef"]);
                 scheduledEvents.add(event);
+                scheduledEventsMap[event.id!] = event;
               }
 
               //get all habits
+              print("getting all habits");
               var url = Uri.parse(
                   'http://localhost:7343/habits/' + userId.toString());
               var response5 = await http.get(url);
@@ -187,43 +192,116 @@ class _LoginPageState extends State<LoginPage> {
                       description: decodedBody[i]["description"]);
                   habit.habitTrackerMap = habitTrackerMap;
                   habits.add(habit);
+                }
 
-                  //you will need to get all backlog items next and all dictionary items
+                //you will need to get all backlog items next and all dictionary items
+                //get all backlog items
+                print("getting all backlog");
+                var url = Uri.parse(
+                    'http://localhost:7343/backlog/' + userId.toString());
+                var response6 = await http.get(url);
+                print('Response status: ${response6.statusCode}');
+                print('Response body: ${response6.body}');
 
-                  DynamicTheme.of(context)!.setTheme(themeId);
-                  var user = User(
-                      id: userId,
-                      planitName: planitName,
-                      email: email,
-                      profileImage: "assets/images/profile_pic_icon.png",
-                      themeId: themeId,
-                      //theme: PinkTheme(),
-                      didStartTomorrowPlanning: didStartPlanning,
-                      lifeCategories: lifeCategories);
-                  PlannerService.sharedInstance.user = user;
-                  PlannerService.sharedInstance.user!.lifeCategories =
-                      lifeCategories;
-                  PlannerService.sharedInstance.user!.lifeCategoriesMap =
-                      lifeCategoriesMap;
-                  PlannerService.sharedInstance.user!.LifeCategoriesColorMap =
-                      lifeCategoriesColorMap;
-                  PlannerService.sharedInstance.user!.accomplishedGoals =
-                      accomplishedGoals;
-                  PlannerService.sharedInstance.user!.goals = goals;
-                  PlannerService.sharedInstance.user!.scheduledEvents =
-                      scheduledEvents;
-                  PlannerService.sharedInstance.user!.habits = habits;
+                if (response6.statusCode == 200) {
+                  print("got all backlog");
+                  var decodedBody = json.decode(response6.body);
+                  print(decodedBody);
+                  for (int i = 0; i < decodedBody.length; i++) {
+                    var isComplete;
+                    if (decodedBody[i]["isComplete"] == 1) {
+                      isComplete = true;
+                    } else {
+                      isComplete = false;
+                    }
+                    var backlogItem = BacklogItem(
+                        id: decodedBody[i]["taskId"],
+                        description: decodedBody[i]["description"],
+                        completeBy: decodedBody[i]["completeBy"] == null
+                            ? null
+                            : DateTime.parse(decodedBody[i]["completeBy"]),
+                        scheduledDate: decodedBody[i]["scheduledDate"] == null
+                            ? null
+                            : DateTime.parse(decodedBody[i]["scheduledDate"]),
+                        calendarItemRef:
+                            scheduledEventsMap[decodedBody[i]["calendarItem"]],
+                        notes: decodedBody[i]["notes"],
+                        location: decodedBody[i]["location"],
+                        isComplete: isComplete,
+                        category:
+                            lifeCategoriesMap[decodedBody[i]["category"]]!);
+                    backlogItems.add(backlogItem);
+                    //backlogMap[backlogItem.category.name]!.add(backlogItem);
 
-                  // PlannerService.sharedInstance.user!
-                  //     .LifeCategoriesColorMap["Other"] = Colors.grey;
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) {
-                      return const NavigationWrapper();
-                    },
-                    settings: const RouteSettings(
-                      name: 'navigaionPage',
-                    ),
-                  ));
+                    if (backlogMap.containsKey(backlogItem.category.name)) {
+                      backlogMap[backlogItem.category.name]!.add(backlogItem);
+                    } else {
+                      var arr = [backlogItem];
+                      backlogMap.addAll({backlogItem.category.name: arr});
+                    }
+                  }
+
+                  //get all dictionary items
+                  var url = Uri.parse(
+                      'http://localhost:7343/dictionary/' + userId.toString());
+                  var response7 = await http.get(url);
+                  print('Response status: ${response7.statusCode}');
+                  print('Response body: ${response7.body}');
+
+                  if (response7.statusCode == 200) {
+                    var decodedBody = json.decode(response7.body);
+                    print(decodedBody);
+                    for (int i = 0; i < decodedBody.length; i++) {
+                      var definition = Definition(decodedBody[i]["defId"],
+                          decodedBody[i]["name"], decodedBody[i]["def"]);
+                      dictionaryArr.add(definition);
+                      dictionaryMap.addAll({definition.name: definition});
+                    }
+
+                    DynamicTheme.of(context)!.setTheme(themeId);
+                    var user = User(
+                        id: userId,
+                        planitName: planitName,
+                        email: email,
+                        profileImage: "assets/images/profile_pic_icon.png",
+                        themeId: themeId,
+                        //theme: PinkTheme(),
+                        didStartTomorrowPlanning: didStartPlanning,
+                        lifeCategories: lifeCategories);
+                    PlannerService.sharedInstance.user = user;
+                    PlannerService.sharedInstance.user!.lifeCategories =
+                        lifeCategories;
+                    PlannerService.sharedInstance.user!.lifeCategoriesMap =
+                        lifeCategoriesMap;
+                    PlannerService.sharedInstance.user!.LifeCategoriesColorMap =
+                        lifeCategoriesColorMap;
+                    PlannerService.sharedInstance.user!.accomplishedGoals =
+                        accomplishedGoals;
+                    PlannerService.sharedInstance.user!.goals = goals;
+                    PlannerService.sharedInstance.user!.scheduledEvents =
+                        scheduledEvents;
+                    PlannerService.sharedInstance.user!.habits = habits;
+                    PlannerService.sharedInstance.user!.backlogItems =
+                        backlogItems;
+                    PlannerService.sharedInstance.user!.backlogMap = backlogMap;
+                    PlannerService.sharedInstance.user!.dictionaryArr =
+                        dictionaryArr;
+                    PlannerService.sharedInstance.user!.dictionaryMap =
+                        dictionaryMap;
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return const NavigationWrapper();
+                      },
+                      settings: const RouteSettings(
+                        name: 'navigaionPage',
+                      ),
+                    ));
+                  } else {
+                    //show and alert error
+                  }
+                } else {
+                  //show an alert with error
                 }
               } else {
                 //show an error
@@ -235,11 +313,6 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           //show alert that user already exists with that email
         }
-
-        //get all backlog items
-
-        //get all dictionary items
-
       }
     } else {
       //404 error, show an alert
