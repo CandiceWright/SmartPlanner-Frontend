@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/categories');
+    var url = Uri.parse('http://10.71.8.85:7343/categories');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -127,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://localhost:7343/user/planitname');
+      var url = Uri.parse('http://10.71.8.85:7343/user/planitname');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       print('Response status: ${response.statusCode}');
@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://localhost:7343/user/email');
+      var url = Uri.parse('http://10.71.8.85:7343/user/email');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       print('Response status: ${response.statusCode}');
@@ -399,7 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/categories');
+    var url = Uri.parse('http://10.71.8.85:7343/categories');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -569,7 +569,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                         // onChanged: (String? newValue) {
                         onChanged: (int? newValue) async {
-                          var url = Uri.parse('http://localhost:7343/theme/');
+                          var url = Uri.parse('http://10.71.8.85:7343/theme/');
                           var body = {
                             'theme': newValue,
                             'email': PlannerService.sharedInstance.user!.email

@@ -869,7 +869,7 @@ class _HomePageState extends State<HomePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/habits');
+    var url = Uri.parse('http://10.71.8.85:7343/habits');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -1046,7 +1046,7 @@ class _HomePageState extends State<HomePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/habits');
+    var url = Uri.parse('http://10.71.8.85:7343/habits');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -1105,7 +1105,7 @@ class _HomePageState extends State<HomePage> {
                       PlannerService.sharedInstance.user!.habits[i].id;
                   //first call server
                   var url = Uri.parse(
-                      'http://localhost:7343/habits/' + habitId.toString());
+                      'http://10.71.8.85:7343/habits/' + habitId.toString());
                   var response = await http.delete(
                     url,
                   );

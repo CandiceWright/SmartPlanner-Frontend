@@ -18,7 +18,7 @@ class User {
   var habits = <Habit>[];
   var dictionaryMap = <String, Definition>{};
   var dictionaryArr = <Definition>[];
-  var accomplishedGoals = [];
+  var accomplishedGoals = <Event>[];
   var backlogItems = <BacklogItem>[];
   Map<String, List<BacklogItem>> backlogMap = {};
   var todayTasks = [];

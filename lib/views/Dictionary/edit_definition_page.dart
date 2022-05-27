@@ -65,7 +65,7 @@ class _EditDefinitionPageState extends State<EditDefinitionPage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/dictionary');
+    var url = Uri.parse('http://10.71.8.85:7343/dictionary');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');

@@ -90,7 +90,7 @@ class _BacklogPageState extends State<BacklogPage> {
                   var taskId = PlannerService
                       .sharedInstance.user!.backlogMap[key]![idx].id;
                   var url = Uri.parse(
-                      'http://localhost:7343/backlog/' + taskId.toString());
+                      'http://10.71.8.85:7343/backlog/' + taskId.toString());
                   var response = await http.delete(
                     url,
                   );
@@ -146,8 +146,8 @@ class _BacklogPageState extends State<BacklogPage> {
                   String bodyF = jsonEncode(body);
                   print(bodyF);
 
-                  var url =
-                      Uri.parse('http://localhost:7343/backlog/unscheduletask');
+                  var url = Uri.parse(
+                      'http://10.71.8.85:7343/backlog/unscheduletask');
                   var response = await http.post(url,
                       headers: {"Content-Type": "application/json"},
                       body: bodyF);

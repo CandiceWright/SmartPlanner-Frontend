@@ -122,7 +122,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 onPressed: () async {
                   if (CalendarPage.selectedEvent != null) {
                     //first send server request
-                    var url = Uri.parse('http://localhost:7343/calendar/' +
+                    var url = Uri.parse('http://10.71.8.85:7343/calendar/' +
                         CalendarPage.selectedEvent!.id.toString());
                     var response = await http.delete(
                       url,
@@ -222,7 +222,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       print(bodyF);
 
                       var url = Uri.parse(
-                          'http://localhost:7343/backlog/unscheduletask');
+                          'http://10.71.8.85:7343/backlog/unscheduletask');
                       var response = await http.post(url,
                           headers: {"Content-Type": "application/json"},
                           body: bodyF);

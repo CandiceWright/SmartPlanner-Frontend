@@ -35,7 +35,7 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
 //     var client = http.Client();
 // //try {
 //     var response = await client
-//         .post(Uri.https('http://localhost:7343', 'signup'), body: {
+//         .post(Uri.https('http://10.71.8.85:7343', 'signup'), body: {
 //       'email': widget.email,
 //       'password': widget.password,
 //       'planitName': planitName
@@ -49,7 +49,7 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/signup');
+    var url = Uri.parse('http://10.71.8.85:7343/signup');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');

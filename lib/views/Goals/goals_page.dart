@@ -67,7 +67,7 @@ class _GoalsPageState extends State<GoalsPage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://localhost:7343/goals/status');
+    var url = Uri.parse('http://10.71.8.85:7343/goals/status');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -107,7 +107,7 @@ class _GoalsPageState extends State<GoalsPage> {
                 onPressed: () async {
                   //first send server request
                   var url = Uri.parse(
-                      'http://localhost:7343/goals/' + eventId.toString());
+                      'http://10.71.8.85:7343/goals/' + eventId.toString());
                   var response = await http.delete(
                     url,
                   );
