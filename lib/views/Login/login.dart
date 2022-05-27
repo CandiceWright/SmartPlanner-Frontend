@@ -366,7 +366,7 @@ class _LoginPageState extends State<LoginPage> {
             backgroundColor: Colors.transparent,
             elevation: 0.0,
           ),
-          body: Column(
+          body: ListView(
             children: [
               Padding(
                 child: Image.asset(
