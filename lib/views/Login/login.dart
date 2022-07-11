@@ -98,6 +98,8 @@ class _LoginPageState extends State<LoginPage> {
             lifeCategoriesMap[decodedBody[i]["categoryId"]] = lc;
             lifeCategoriesColorMap[decodedBody[i]["name"]] =
                 Color(int.parse(decodedBody[i]["color"]));
+            List<BacklogItem> arr = [];
+            backlogMap.addAll({lc.name: arr});
           }
 
           //get all goals

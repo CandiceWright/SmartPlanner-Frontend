@@ -263,25 +263,51 @@ class _ProfilePageState extends State<ProfilePage> {
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Container(
-                child: const Text(
-                  "New Category",
-                  textAlign: TextAlign.center,
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
+                child: AlertDialog(
+                  title: Container(
+                    child: const Text(
+                      "New Category",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  content: dialogContent(setDialogState),
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed:
+                            categoryDoneBtnDisabled ? null : createCategory,
+                        child: const Text('Create')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cancel')),
+                  ],
                 ),
               ),
-              content: dialogContent(setDialogState),
-              actions: <Widget>[
-                TextButton(
-                    onPressed: categoryDoneBtnDisabled ? null : createCategory,
-                    child: const Text('Create')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel')),
-              ],
             );
+            // return AlertDialog(
+            //   title: Container(
+            //     child: const Text(
+            //       "New Category",
+            //       textAlign: TextAlign.center,
+            //     ),
+            //   ),
+            //   content: dialogContent(setDialogState),
+            //   actions: <Widget>[
+            //     TextButton(
+            //         onPressed: categoryDoneBtnDisabled ? null : createCategory,
+            //         child: const Text('Create')),
+            //     TextButton(
+            //         onPressed: () {
+            //           Navigator.pop(context);
+            //         },
+            //         child: const Text('Cancel')),
+            //   ],
+            // );
           });
         });
   }
@@ -291,34 +317,103 @@ class _ProfilePageState extends State<ProfilePage> {
         context: context,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, setDialogState) {
-            return AlertDialog(
-              title: Container(
-                child: Text(
-                  PlannerService.sharedInstance.user!.lifeCategories[idx].name,
-                  textAlign: TextAlign.center,
+            return Scaffold(
+              resizeToAvoidBottomInset: false,
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
+                child: AlertDialog(
+                  title: Container(
+                    child: Text(
+                      PlannerService
+                          .sharedInstance.user!.lifeCategories[idx].name,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  content: editDialogContent(setDialogState, idx),
+                  // content: SingleChildScrollView(
+                  //   child: editDialogContent(setDialogState, idx),
+                  // ),
+                  actions: <Widget>[
+                    TextButton(
+                        onPressed: saveEditCategoryBtnDisabled
+                            ? null
+                            : () {
+                                editCategory(idx);
+                              },
+                        child: const Text('Save')),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text('Cancel')),
+                  ],
                 ),
               ),
-              content: editDialogContent(setDialogState, idx),
-              actions: <Widget>[
-                TextButton(
-                    onPressed: saveEditCategoryBtnDisabled
-                        ? null
-                        : () {
-                            editCategory(idx);
-                          },
-                    child: const Text('Save')),
-                // TextButton(
-                //     onPressed: () {
-                //       deleteCategory(idx);
-                //     },
-                //     child: const Text('Delete')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Cancel')),
-              ],
             );
+
+            // return Scaffold(
+            //     resizeToAvoidBottomInset: false,
+            //     backgroundColor: Colors.transparent,
+            //     body: Dialog(
+            //       child: SingleChildScrollView(
+            //         child: Column(children: [
+            //           Container(
+            //             child: Text(
+            //               PlannerService
+            //                   .sharedInstance.user!.lifeCategories[idx].name,
+            //               textAlign: TextAlign.center,
+            //             ),
+            //           ),
+            //           editDialogContent(setDialogState, idx),
+            //           TextButton(
+            //               onPressed: saveEditCategoryBtnDisabled
+            //                   ? null
+            //                   : () {
+            //                       editCategory(idx);
+            //                     },
+            //               child: const Text('Save')),
+            //           // TextButton(
+            //           //     onPressed: () {
+            //           //       deleteCategory(idx);
+            //           //     },
+            //           //     child: const Text('Delete')),
+            //           TextButton(
+            //               onPressed: () {
+            //                 Navigator.pop(context);
+            //               },
+            //               child: const Text('Cancel'))
+            //         ]),
+            //       ),
+            //     ));
+
+            // return AlertDialog(
+            //   title: Container(
+            //     child: Text(
+            //       PlannerService.sharedInstance.user!.lifeCategories[idx].name,
+            //       textAlign: TextAlign.center,
+            //     ),
+            //   ),
+            //   content: editDialogContent(setDialogState, idx),
+            //   actions: <Widget>[
+            //     TextButton(
+            //         onPressed: saveEditCategoryBtnDisabled
+            //             ? null
+            //             : () {
+            //                 editCategory(idx);
+            //               },
+            //         child: const Text('Save')),
+            //     // TextButton(
+            //     //     onPressed: () {
+            //     //       deleteCategory(idx);
+            //     //     },
+            //     //     child: const Text('Delete')),
+            //     TextButton(
+            //         onPressed: () {
+            //           Navigator.pop(context);
+            //         },
+            //         child: const Text('Cancel')),
+            //   ],
+            // );
           });
         });
   }
