@@ -56,7 +56,22 @@ class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
       }
     } else {
       //404 error, show an alert
-
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 

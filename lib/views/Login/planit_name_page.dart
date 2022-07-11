@@ -58,7 +58,21 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
     if (response.statusCode == 200) {
       if (response.body == "planit name taken") {
         //show alert that planit already exists with that name
-
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('This Planit name is taken. Try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       } else {
         //can go to the next page to choose theme
         var decodedBody = json.decode(response.body);
@@ -72,7 +86,22 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
       }
     } else {
       //404 error, show an alert
-
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 

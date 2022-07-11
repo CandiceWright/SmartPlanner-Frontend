@@ -44,9 +44,40 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       if (response.body == "no user exists") {
         //show alert that planit already exists with that name
         print("No user exists");
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Oops! Incorrect email. Try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       } else if (response.body == "could not send email") {
         //show alert that the emaail could not be sent
         print("email failed");
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       } else {
         //Go to code page
         Navigator.push(
@@ -57,7 +88,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       }
     } else {
       //404 error, show an alert
-
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 

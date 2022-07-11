@@ -148,7 +148,22 @@ class _CalendarPageState extends State<CalendarPage> {
                       Navigator.pop(context);
                     } else {
                       //500 error, show an alert
-
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
                     }
                   }
                 },
@@ -256,7 +271,22 @@ class _CalendarPageState extends State<CalendarPage> {
                         //}
                       } else {
                         //500 error, show an alert
-
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                    'Oops! Looks like something went wrong. Please try again.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                ],
+                              );
+                            });
                       }
                     }
                   },

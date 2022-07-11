@@ -104,7 +104,22 @@ class _BacklogPageState extends State<BacklogPage> {
                     Navigator.pop(context);
                   } else {
                     //500 error, show an alert
-
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Oops! Looks like something went wrong. Please try again.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
                   }
                 },
               ),
@@ -175,7 +190,22 @@ class _BacklogPageState extends State<BacklogPage> {
                     //}
                   } else {
                     //500 error, show an alert
-
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Oops! Looks like something went wrong. Please try again.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
                   }
                 },
               ),

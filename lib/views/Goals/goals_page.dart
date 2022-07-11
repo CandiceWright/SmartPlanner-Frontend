@@ -85,7 +85,22 @@ class _GoalsPageState extends State<GoalsPage> {
       print("Yayy you did it");
     } else {
       //500 error, show an alert
-
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 
@@ -120,7 +135,22 @@ class _GoalsPageState extends State<GoalsPage> {
                     Navigator.pop(context);
                   } else {
                     //500 error, show an alert
-
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Oops! Looks like something went wrong. Please try again.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
                   }
                 },
               ),

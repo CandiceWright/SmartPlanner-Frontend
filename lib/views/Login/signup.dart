@@ -53,6 +53,22 @@ class _SignupPageState extends State<SignupPage> {
                   )));
     } else {
       //show alert that user already exists with that email
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like there is already an account with this email. Please sign in.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
     }
   }
 
