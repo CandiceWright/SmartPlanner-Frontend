@@ -47,6 +47,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Color editPickerColor = Color(0xff443a49);
   Color currentColor = Color(0xff443a49);
   final ImagePicker _picker = ImagePicker();
+  int selectedThemeId = PlannerService.sharedInstance.user!.themeId;
 
   @override
   void initState() {
@@ -323,53 +324,18 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   editDialogContent(StateSetter setDialogState, int idx) {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: TextFormField(
-              controller: editCategoryTxtController,
-              //initialValue:
-              //PlannerService.sharedInstance.user.lifeCategories[idx].name,
-              onChanged: (text) {
-                setDialogState(() {
-                  if (editCategoryTxtController.text != "" &&
-                      hasSelectedColor) {
-                    setState(() {
-                      print("button enabled");
-                      saveEditCategoryBtnDisabled = false;
-                    });
-                  } else {
-                    setState(() {
-                      saveEditCategoryBtnDisabled = true;
-                    });
-                  }
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "Name",
-                icon: Icon(
-                  Icons.description,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-            ),
-          ),
-          ColorPicker(
-            pickerColor: editPickerColor,
-            onColorChanged: (color) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 8),
+          child: TextFormField(
+            controller: editCategoryTxtController,
+            //initialValue:
+            //PlannerService.sharedInstance.user.lifeCategories[idx].name,
+            onChanged: (text) {
               setDialogState(() {
-                editPickerColor = color;
-                hasSelectedColor = true;
                 if (editCategoryTxtController.text != "" && hasSelectedColor) {
                   setState(() {
                     print("button enabled");
@@ -382,10 +348,105 @@ class _ProfilePageState extends State<ProfilePage> {
                 }
               });
             },
+            decoration: InputDecoration(
+              hintText: "Name",
+              icon: Icon(
+                Icons.description,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter some text';
+              }
+              return null;
+            },
           ),
-        ],
-      ),
+        ),
+        ColorPicker(
+          pickerColor: editPickerColor,
+          onColorChanged: (color) {
+            setDialogState(() {
+              editPickerColor = color;
+              hasSelectedColor = true;
+              if (editCategoryTxtController.text != "" && hasSelectedColor) {
+                setState(() {
+                  print("button enabled");
+                  saveEditCategoryBtnDisabled = false;
+                });
+              } else {
+                setState(() {
+                  saveEditCategoryBtnDisabled = true;
+                });
+              }
+            });
+          },
+        ),
+      ],
     );
+    // return Container(
+    //   child: Column(
+    //     mainAxisSize: MainAxisSize.min,
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: [
+    //       Padding(
+    //         padding: EdgeInsets.only(bottom: 8),
+    //         child: TextFormField(
+    //           controller: editCategoryTxtController,
+    //           //initialValue:
+    //           //PlannerService.sharedInstance.user.lifeCategories[idx].name,
+    //           onChanged: (text) {
+    //             setDialogState(() {
+    //               if (editCategoryTxtController.text != "" &&
+    //                   hasSelectedColor) {
+    //                 setState(() {
+    //                   print("button enabled");
+    //                   saveEditCategoryBtnDisabled = false;
+    //                 });
+    //               } else {
+    //                 setState(() {
+    //                   saveEditCategoryBtnDisabled = true;
+    //                 });
+    //               }
+    //             });
+    //           },
+    //           decoration: InputDecoration(
+    //             hintText: "Name",
+    //             icon: Icon(
+    //               Icons.description,
+    //               color: Theme.of(context).colorScheme.primary,
+    //             ),
+    //           ),
+    //           validator: (String? value) {
+    //             if (value == null || value.isEmpty) {
+    //               return 'Please enter some text';
+    //             }
+    //             return null;
+    //           },
+    //         ),
+    //       ),
+    //       ColorPicker(
+    //         pickerColor: editPickerColor,
+    //         onColorChanged: (color) {
+    //           setDialogState(() {
+    //             editPickerColor = color;
+    //             hasSelectedColor = true;
+    //             if (editCategoryTxtController.text != "" && hasSelectedColor) {
+    //               setState(() {
+    //                 print("button enabled");
+    //                 saveEditCategoryBtnDisabled = false;
+    //               });
+    //             } else {
+    //               setState(() {
+    //                 saveEditCategoryBtnDisabled = true;
+    //               });
+    //             }
+    //           });
+    //         },
+    //       ),
+    //     ],
+    //   ),
+    // );
   }
 
   Future<void> editCategory(int idx) async {
@@ -709,6 +770,31 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void changeThemeColor() async {
+    var url = Uri.parse('http://192.168.1.4:7343/theme/');
+    var body = {
+      'theme': selectedThemeId,
+      'email': PlannerService.sharedInstance.user!.email
+    };
+    String bodyF = jsonEncode(body);
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      setState(() {
+        PlannerService.sharedInstance.user!.themeId = selectedThemeId;
+
+        //     PlannerService
+        //         .sharedInstance.themeColorMap[newValue]!;
+        DynamicTheme.of(context)!.setTheme(selectedThemeId);
+      });
+    } else {
+      //error message
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -760,103 +846,85 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   Column(
                     children: [
-                      DropdownButton(
-                        //value: PlannerService.sharedInstance.user.theme.themeId,
-                        value: PlannerService.sharedInstance.user!.themeId,
-                        items: [
-                          DropdownMenuItem(
-                            //value: "pink",
-                            value: AppThemes.pink,
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Icons.circle,
-                                  color: Colors.pink,
-                                ),
-                                Text("Pink")
-                              ],
-                            ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.circle),
+                            iconSize:
+                                PlannerService.sharedInstance.user!.themeId == 0
+                                    ? 40
+                                    : 24,
+                            color: AppThemes().pinkPrimarySwatch,
+                            onPressed: () {
+                              setState(() {
+                                //PlannerService.sharedInstance.user!.themeId = 0;
+                                selectedThemeId = 0;
+                                changeThemeColor();
+                              });
+                            },
                           ),
-                          DropdownMenuItem(
-                            //value: "blue",
-                            value: AppThemes.blue,
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Icons.circle,
-                                  color: Colors.blue,
-                                ),
-                                Text("Blue")
-                              ],
-                            ),
+                          IconButton(
+                            icon: Icon(Icons.circle),
+                            iconSize:
+                                PlannerService.sharedInstance.user!.themeId == 1
+                                    ? 40
+                                    : 24,
+                            color: AppThemes().bluePrimarySwatch,
+                            onPressed: () {
+                              setState(() {
+                                //PlannerService.sharedInstance.user!.themeId = 1;
+                                selectedThemeId = 1;
+                                changeThemeColor();
+                              });
+                            },
                           ),
-                          DropdownMenuItem(
-                            //value: "neutral",
-                            value: AppThemes.green,
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Icons.circle,
-                                  color: Colors.green,
-                                ),
-                                Text("Green")
-                              ],
-                            ),
+                          IconButton(
+                            icon: Icon(Icons.circle),
+                            iconSize:
+                                PlannerService.sharedInstance.user!.themeId == 2
+                                    ? 40
+                                    : 24,
+                            color: AppThemes().greenPrimarySwatch,
+                            onPressed: () {
+                              setState(() {
+                                //PlannerService.sharedInstance.user!.themeId = 2;
+                                selectedThemeId = 2;
+                                changeThemeColor();
+                              });
+                            },
                           ),
-                          DropdownMenuItem(
-                            //value: "neutral",
-                            value: AppThemes.orange,
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Icons.circle,
-                                  color: Colors.orange,
-                                ),
-                                Text("Orange")
-                              ],
-                            ),
+                          IconButton(
+                            icon: Icon(Icons.circle),
+                            iconSize:
+                                PlannerService.sharedInstance.user!.themeId == 3
+                                    ? 40
+                                    : 24,
+                            color: AppThemes().orangePrimarySwatch,
+                            onPressed: () {
+                              setState(() {
+                                //PlannerService.sharedInstance.user!.themeId = 3;
+                                selectedThemeId = 3;
+                                changeThemeColor();
+                              });
+                            },
                           ),
-                          DropdownMenuItem(
-                            //value: "neutral",
-                            value: AppThemes.grey,
-                            child: Row(
-                              children: const [
-                                Icon(
-                                  Icons.circle,
-                                  color: Colors.grey,
-                                ),
-                                Text("Grey")
-                              ],
-                            ),
+                          IconButton(
+                            icon: Icon(Icons.circle),
+                            iconSize:
+                                PlannerService.sharedInstance.user!.themeId == 4
+                                    ? 40
+                                    : 24,
+                            color: AppThemes().greyPrimarySwatch,
+                            onPressed: () {
+                              setState(() {
+                                //PlannerService.sharedInstance.user!.themeId = 4;
+                                selectedThemeId = 4;
+                                changeThemeColor();
+                              });
+                            },
                           ),
                         ],
-                        // onChanged: (String? newValue) {
-                        onChanged: (int? newValue) async {
-                          var url = Uri.parse('http://192.168.1.4:7343/theme/');
-                          var body = {
-                            'theme': newValue,
-                            'email': PlannerService.sharedInstance.user!.email
-                          };
-                          String bodyF = jsonEncode(body);
-                          var response = await http.patch(url,
-                              headers: {"Content-Type": "application/json"},
-                              body: bodyF);
-                          print('Response status: ${response.statusCode}');
-                          print('Response body: ${response.body}');
-
-                          if (response.statusCode == 200) {
-                            setState(() {
-                              PlannerService.sharedInstance.user!.themeId =
-                                  newValue!;
-
-                              //     PlannerService
-                              //         .sharedInstance.themeColorMap[newValue]!;
-                              DynamicTheme.of(context)!.setTheme(newValue);
-                            });
-                          } else {
-                            //error message
-                          }
-                        },
                       ),
                       Card(
                         child: Column(
@@ -895,7 +963,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                       },
                                       child: Card(
                                         color: Colors.white,
-                                        elevation: 3,
+                                        elevation: 2,
+                                        shape:
+                                            const ContinuousRectangleBorder(),
                                         shadowColor: PlannerService
                                             .sharedInstance
                                             .user!
@@ -942,6 +1012,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         color: Colors.white,
+                        elevation: 0,
                         //elevation: 5,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
@@ -1010,7 +1081,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         color: Colors.white,
-                        //elevation: 5,
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),

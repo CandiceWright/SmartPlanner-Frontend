@@ -33,6 +33,8 @@ class ChooseThemePage extends StatefulWidget {
 class _ChooseThemePageState extends State<ChooseThemePage> {
   //var planitNameTextController = TextEditingController();
   int themeId = 0;
+  MaterialColor goBtnColor = AppThemes().pinkPrimarySwatch;
+
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   var questionIndex = 0;
 
@@ -120,116 +122,193 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
             automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
             elevation: 0.0,
+            leading: Image.asset(
+              "assets/images/planit_logo.png",
+            ),
           ),
           body: ListView(
             children: [
+              // Padding(
+              //   child: Image.asset(
+              //     "assets/images/planit_logo.png",
+              //   ),
+              //   padding: EdgeInsets.all(10),
+              // ),
               Padding(
-                child: Image.asset(
-                  "assets/images/planit_logo.png",
-                ),
                 padding: EdgeInsets.all(10),
-              ),
-              Container(
-                margin: EdgeInsets.all(15),
-                child: Column(
-                  children: [
-                    const Text(
-                      "Choose a color theme for your planit",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    DropdownButton(
-                      //value: PlannerService.sharedInstance.user.theme.themeId,
-                      value: themeId,
-                      style: TextStyle(color: Colors.white),
-                      items: [
-                        DropdownMenuItem(
-                          //value: "pink",
-                          value: AppThemes.pink,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                color: AppThemes().pinkPrimarySwatch,
-                              ),
-                              Text(
-                                "Pink",
-                                style: TextStyle(
-                                    color: AppThemes().pinkPrimarySwatch),
-                              )
-                            ],
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          //value: "blue",
-                          value: AppThemes.blue,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                color: AppThemes().bluePrimarySwatch,
-                              ),
-                              Text("Blue",
-                                  style: TextStyle(
-                                      color: AppThemes().bluePrimarySwatch))
-                            ],
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          //value: "neutral",
-                          value: AppThemes.green,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                color: AppThemes().greenPrimarySwatch,
-                              ),
-                              Text("Green",
-                                  style: TextStyle(
-                                      color: AppThemes().greenPrimarySwatch))
-                            ],
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          //value: "neutral",
-                          value: AppThemes.orange,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                color: AppThemes().orangePrimarySwatch,
-                              ),
-                              Text("Orange",
-                                  style: TextStyle(
-                                      color: AppThemes().orangePrimarySwatch))
-                            ],
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          //value: "neutral",
-                          value: AppThemes.grey,
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.circle,
-                                color: AppThemes().greyPrimarySwatch,
-                              ),
-                              Text("Grey",
-                                  style: TextStyle(
-                                      color: AppThemes().greyPrimarySwatch))
-                            ],
-                          ),
-                        ),
-                      ],
-                      // onChanged: (String? newValue) {
-                      onChanged: (int? newValue) {
-                        setState(() {
-                          themeId = newValue!;
-                        });
-                      },
-                    ),
-                  ],
+                child: const Text(
+                  "Choose a color theme for your planit",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  textAlign: TextAlign.center,
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    iconSize: themeId == 0 ? 60 : 40,
+                    color: AppThemes().pinkPrimarySwatch,
+                    onPressed: () {
+                      setState(() {
+                        themeId = 0;
+                        goBtnColor = AppThemes().pinkPrimarySwatch;
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    iconSize: themeId == 1 ? 60 : 40,
+                    color: AppThemes().bluePrimarySwatch,
+                    onPressed: () {
+                      setState(() {
+                        themeId = 1;
+                        goBtnColor = AppThemes().bluePrimarySwatch;
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    iconSize: themeId == 2 ? 60 : 40,
+                    color: AppThemes().greenPrimarySwatch,
+                    onPressed: () {
+                      setState(() {
+                        themeId = 2;
+                        goBtnColor = AppThemes().greenPrimarySwatch;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    iconSize: themeId == 3 ? 60 : 40,
+                    color: AppThemes().orangePrimarySwatch,
+                    onPressed: () {
+                      setState(() {
+                        themeId = 3;
+                        goBtnColor = AppThemes().orangePrimarySwatch;
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    iconSize: themeId == 4 ? 60 : 40,
+                    color: AppThemes().greyPrimarySwatch,
+                    onPressed: () {
+                      setState(() {
+                        themeId = 4;
+                        goBtnColor = AppThemes().greyPrimarySwatch;
+                      });
+                    },
+                  ),
+                ],
+              )
+              // Container(
+              //   margin: EdgeInsets.all(15),
+              //   child: Column(
+              //     children: [
+              //       const Text(
+              //         "Choose a color theme for your planit",
+              //         style: TextStyle(color: Colors.white),
+              //       ),
+
+              //       // DropdownButton(
+              //       //   //value: PlannerService.sharedInstance.user.theme.themeId,
+              //       //   value: themeId,
+              //       //   style: TextStyle(color: Colors.white),
+              //       //   items: [
+              //       //     DropdownMenuItem(
+              //       //       //value: "pink",
+              //       //       value: AppThemes.pink,
+              //       //       child: Row(
+              //       //         children: [
+              //       //           Icon(
+              //       //             Icons.circle,
+              //       //             color: AppThemes().pinkPrimarySwatch,
+              //       //           ),
+              //       //           Text(
+              //       //             "Pink",
+              //       //             style: TextStyle(
+              //       //                 color: AppThemes().pinkPrimarySwatch),
+              //       //           )
+              //       //         ],
+              //       //       ),
+              //       //     ),
+              //       //     DropdownMenuItem(
+              //       //       //value: "blue",
+              //       //       value: AppThemes.blue,
+              //       //       child: Row(
+              //       //         children: [
+              //       //           Icon(
+              //       //             Icons.circle,
+              //       //             color: AppThemes().bluePrimarySwatch,
+              //       //           ),
+              //       //           Text("Blue",
+              //       //               style: TextStyle(
+              //       //                   color: AppThemes().bluePrimarySwatch))
+              //       //         ],
+              //       //       ),
+              //       //     ),
+              //       //     DropdownMenuItem(
+              //       //       //value: "neutral",
+              //       //       value: AppThemes.green,
+              //       //       child: Row(
+              //       //         children: [
+              //       //           Icon(
+              //       //             Icons.circle,
+              //       //             color: AppThemes().greenPrimarySwatch,
+              //       //           ),
+              //       //           Text("Green",
+              //       //               style: TextStyle(
+              //       //                   color: AppThemes().greenPrimarySwatch))
+              //       //         ],
+              //       //       ),
+              //       //     ),
+              //       //     DropdownMenuItem(
+              //       //       //value: "neutral",
+              //       //       value: AppThemes.orange,
+              //       //       child: Row(
+              //       //         children: [
+              //       //           Icon(
+              //       //             Icons.circle,
+              //       //             color: AppThemes().orangePrimarySwatch,
+              //       //           ),
+              //       //           Text("Orange",
+              //       //               style: TextStyle(
+              //       //                   color: AppThemes().orangePrimarySwatch))
+              //       //         ],
+              //       //       ),
+              //       //     ),
+              //       //     DropdownMenuItem(
+              //       //       //value: "neutral",
+              //       //       value: AppThemes.grey,
+              //       //       child: Row(
+              //       //         children: [
+              //       //           Icon(
+              //       //             Icons.circle,
+              //       //             color: AppThemes().greyPrimarySwatch,
+              //       //           ),
+              //       //           Text("Grey",
+              //       //               style: TextStyle(
+              //       //                   color: AppThemes().greyPrimarySwatch))
+              //       //         ],
+              //       //       ),
+              //       //     ),
+              //       //   ],
+              //       //   // onChanged: (String? newValue) {
+              //       //   onChanged: (int? newValue) {
+              //       //     setState(() {
+              //       //       themeId = newValue!;
+              //       //     });
+              //       //   },
+              //       // ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
           persistentFooterButtons: [
@@ -246,9 +325,10 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
                         style: TextStyle(fontSize: 18),
                       ),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xffef41a8)),
-                      ),
+                          // backgroundColor: MaterialStateProperty.all<Color>(
+                          //     const Color(0xffef41a8)),
+                          backgroundColor:
+                              MaterialStateProperty.all<Color>(goBtnColor)),
                     ),
                   ),
                 ],
