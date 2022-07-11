@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_planner/models/goal.dart';
 import 'package:practice_planner/services/planner_service.dart';
+import 'package:practice_planner/views/Login/forgot_password_page.dart';
+import 'package:practice_planner/views/Login/password_resetpin_page.dart';
 import 'package:practice_planner/views/Login/signup.dart';
 import '../../models/backlog_item.dart';
 import '../../models/definition.dart';
@@ -35,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://10.71.8.85:7343/login');
+    var url = Uri.parse('http://192.168.1.4:7343/login');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -77,8 +79,8 @@ class _LoginPageState extends State<LoginPage> {
 
         //get all life categories
         print("getting all life categories");
-        var url =
-            Uri.parse('http://10.71.8.85:7343/categories/' + userId.toString());
+        var url = Uri.parse(
+            'http://192.168.1.4:7343/categories/' + userId.toString());
         var response2 = await http.get(url);
         print('Response status: ${response2.statusCode}');
         print('Response body: ${response2.body}');
@@ -101,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
           //get all goals
           print("getting all goals");
           var url =
-              Uri.parse('http://10.71.8.85:7343/goals/' + userId.toString());
+              Uri.parse('http://192.168.1.4:7343/goals/' + userId.toString());
           var response3 = await http
               .get(url, headers: {"Content-Type": "application/json"});
           print('Response status: ${response3.statusCode}');
@@ -134,7 +136,7 @@ class _LoginPageState extends State<LoginPage> {
             //get all calendar events
             print("getting all calendar events");
             var url = Uri.parse(
-                'http://10.71.8.85:7343/calendar/' + userId.toString());
+                'http://192.168.1.4:7343/calendar/' + userId.toString());
             var response4 = await http.get(url);
             print('Response status: ${response4.statusCode}');
             print('Response body: ${response4.body}');
@@ -162,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
               //get all habits
               print("getting all habits");
               var url = Uri.parse(
-                  'http://10.71.8.85:7343/habits/' + userId.toString());
+                  'http://192.168.1.4:7343/habits/' + userId.toString());
               var response5 = await http.get(url);
               print('Response status: ${response5.statusCode}');
               print('Response body: ${response5.body}');
@@ -198,7 +200,7 @@ class _LoginPageState extends State<LoginPage> {
                 //get all backlog items
                 print("getting all backlog");
                 var url = Uri.parse(
-                    'http://10.71.8.85:7343/backlog/' + userId.toString());
+                    'http://192.168.1.4:7343/backlog/' + userId.toString());
                 var response6 = await http.get(url);
                 print('Response status: ${response6.statusCode}');
                 print('Response body: ${response6.body}');
@@ -242,8 +244,8 @@ class _LoginPageState extends State<LoginPage> {
                   }
 
                   //get all dictionary items
-                  var url = Uri.parse(
-                      'http://10.71.8.85:7343/dictionary/' + userId.toString());
+                  var url = Uri.parse('http://192.168.1.4:7343/dictionary/' +
+                      userId.toString());
                   var response7 = await http.get(url);
                   print('Response status: ${response7.statusCode}');
                   print('Response body: ${response7.body}');
@@ -331,6 +333,14 @@ class _LoginPageState extends State<LoginPage> {
     // ));
   }
 
+  void forgotPassword() {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) {
+        return const ForgotPasswordPage();
+      },
+    ));
+  }
+
   void signup() {
     print("I am in signup function");
     Navigator.of(context).push(MaterialPageRoute(
@@ -352,7 +362,7 @@ class _LoginPageState extends State<LoginPage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/images/login_screens_background.png",
+          "assets/images/black_stars_background.jpeg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
@@ -453,6 +463,23 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
+                        "Forgot Password?",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      TextButton(
+                          onPressed: forgotPassword,
+                          child: Text(
+                            "Get Help!",
+                            style: TextStyle(
+                              color: Color(0xff7ddcfa),
+                            ),
+                          ))
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
                         "Don't have an account yet?",
                         style: TextStyle(color: Colors.white),
                       ),
@@ -465,7 +492,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ))
                     ],
-                  )
+                  ),
                 ],
               ),
             )

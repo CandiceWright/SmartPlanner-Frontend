@@ -38,7 +38,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
 
   void signup() async {
     //call sign up server route and then go to home of app
-    var url = Uri.parse('http://10.71.8.85:7343/theme/');
+    var url = Uri.parse('http://192.168.1.4:7343/theme/');
     //var response = await http.post(url);
     var body = {'theme': themeId, 'email': widget.email};
     String bodyF = jsonEncode(body);
@@ -58,7 +58,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://10.71.8.85:7343/categories');
+      var url = Uri.parse('http://192.168.1.4:7343/categories');
       var response = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       print('Response status: ${response.statusCode}');

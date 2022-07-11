@@ -37,7 +37,7 @@ class _SignupPageState extends State<SignupPage> {
     var email = emailTextController.text;
     var password = passwordTextController.text;
     //call sign up server route and then go to home of app
-    var url = Uri.parse('http://10.71.8.85:7343/email/' + email);
+    var url = Uri.parse('http://192.168.1.4:7343/email/' + email);
     var response = await http.get(url);
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
@@ -63,7 +63,7 @@ class _SignupPageState extends State<SignupPage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/images/login_screens_background.png",
+          "assets/images/black_stars_background.jpeg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,

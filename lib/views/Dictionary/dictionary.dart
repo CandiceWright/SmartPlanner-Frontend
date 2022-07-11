@@ -74,7 +74,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                   var defId =
                       PlannerService.sharedInstance.user!.dictionaryArr[idx].id;
                   var url = Uri.parse(
-                      'http://10.71.8.85:7343/dictionary/' + defId.toString());
+                      'http://192.168.1.4:7343/dictionary/' + defId.toString());
                   var response = await http.delete(
                     url,
                   );

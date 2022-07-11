@@ -3,14 +3,10 @@ import 'dart:convert';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:practice_planner/Themes/app_themes.dart';
 import 'package:practice_planner/models/life_category.dart';
-import '/models/goal.dart';
+import '../Login/login.dart';
 import '/services/planner_service.dart';
-import 'package:date_format/date_format.dart';
-import '/models/event.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 
@@ -42,6 +38,10 @@ class _ProfilePageState extends State<ProfilePage> {
   bool categoryDoneBtnDisabled = true;
   bool accountDetailsDoneBtnDisabled = true;
   bool hasSelectedColor = false;
+  var currentPasswordTextController = TextEditingController();
+  bool enterCurrentPasswordBtnDisabled = true;
+  var newPasswordTextController = TextEditingController();
+  bool enterNewPasswordBtnDisabled = true;
   // create some values
   Color pickerColor = Color(0xff443a49);
   Color editPickerColor = Color(0xff443a49);
@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://10.71.8.85:7343/categories');
+    var url = Uri.parse('http://192.168.1.4:7343/categories');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -127,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://10.71.8.85:7343/user/planitname');
+      var url = Uri.parse('http://192.168.1.4:7343/user/planitname');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       print('Response status: ${response.statusCode}');
@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://10.71.8.85:7343/user/email');
+      var url = Uri.parse('http://192.168.1.4:7343/user/email');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       print('Response status: ${response.statusCode}');
@@ -399,7 +399,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://10.71.8.85:7343/categories');
+    var url = Uri.parse('http://192.168.1.4:7343/categories');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -443,7 +443,270 @@ class _ProfilePageState extends State<ProfilePage> {
   void deleteCategory(int idx) {}
 
   Future pickImage() async {
-    await _picker.pickImage(source: ImageSource.gallery);
+    //await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      PlannerService.sharedInstance.user!.profileImage = image!.path;
+    });
+  }
+
+  void changePasswordClicked() {
+    showDialog(
+      context: context, // user must tap button!
+
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return AlertDialog(
+            //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
+            //child: Expanded(
+            //child: Container(
+            title: const Text("Change Password"),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            content: changePasswordDialogContent(setDialogState),
+
+            actions: <Widget>[
+              TextButton(
+                  child: const Text('next'),
+                  onPressed: enterCurrentPasswordBtnDisabled
+                      ? null
+                      : validateCurrentPassword),
+              TextButton(
+                child: const Text('cancel'),
+                onPressed: () {
+                  currentPasswordTextController.text = "";
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+            // ),
+            //),
+          );
+        });
+      },
+    );
+  }
+
+  changePasswordDialogContent(StateSetter setDialogState) {
+    return TextFormField(
+      controller: currentPasswordTextController,
+      obscureText: true,
+      enableSuggestions: false,
+      autocorrect: false,
+      onChanged: (text) {
+        setDialogState(() {
+          if (text != "") {
+            setState(() {
+              print("button enabled");
+              enterCurrentPasswordBtnDisabled = false;
+            });
+          } else {
+            setState(() {
+              enterCurrentPasswordBtnDisabled = true;
+            });
+          }
+        });
+      },
+      decoration: const InputDecoration(
+        hintText: "Enter current password",
+      ),
+      validator: (String? value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
+    );
+  }
+
+  Future<void> validateCurrentPassword() async {
+    //I need to encrypt this before sending to server
+    var body = {
+      'email': PlannerService.sharedInstance.user!.email,
+      'password': currentPasswordTextController.text
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://192.168.1.4:7343/login');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      if (response.body == "wrong password") {
+        //show error
+        Navigator.of(context).pop();
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text('Wrong Password!'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else {
+        //all good. show dialong for new password
+        Navigator.of(context).pop();
+        changePassword();
+      }
+    } else {
+      //500 error, show an alert
+
+    }
+  }
+
+  void changePassword() {
+    showDialog(
+      context: context, // user must tap button!
+
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return AlertDialog(
+            //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
+            //child: Expanded(
+            //child: Container(
+            title: const Text("Choose a New Password"),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            content: newPasswordDialogContent(setDialogState),
+
+            actions: <Widget>[
+              TextButton(
+                  child: const Text('save & log out'),
+                  onPressed:
+                      enterNewPasswordBtnDisabled ? null : saveNewPassword),
+              TextButton(
+                child: const Text('cancel'),
+                onPressed: () {
+                  newPasswordTextController.text = "";
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+            // ),
+            //),
+          );
+        });
+      },
+    );
+  }
+
+  newPasswordDialogContent(StateSetter setDialogState) {
+    return Column(
+      children: [
+        Text(
+            "You will be logged out after changing your password so that you can sign back in with your new password."),
+        TextFormField(
+          controller: newPasswordTextController,
+          obscureText: true,
+          enableSuggestions: false,
+          autocorrect: false,
+          onChanged: (text) {
+            setDialogState(() {
+              if (text != "") {
+                setState(() {
+                  print("button enabled");
+                  enterNewPasswordBtnDisabled = false;
+                });
+              } else {
+                setState(() {
+                  enterNewPasswordBtnDisabled = true;
+                });
+              }
+            });
+          },
+          decoration: const InputDecoration(
+            hintText: "Enter new password",
+          ),
+          validator: (String? value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            }
+            return null;
+          },
+        )
+      ],
+    );
+  }
+
+  Future<void> saveNewPassword() async {
+    //first make a call to the server with habit name, userId
+    var body = {
+      'email': PlannerService.sharedInstance.user!.email,
+      'newPass': newPasswordTextController.text
+    };
+    String bodyF = jsonEncode(body);
+    print(bodyF);
+
+    var url = Uri.parse('http://192.168.1.4:7343/user/password');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      if (response.body == "password updated successfully") {
+        //show error
+        Navigator.of(context).pop();
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return const LoginPage();
+          },
+          // settings: const RouteSettings(
+          //   name: 'navigaionPage',
+          // ),
+        ));
+
+        // showDialog(
+        //     context: context,
+        //     builder: (context) {
+        //       return AlertDialog(
+        //         title: Text('Password successfully changed!'),
+        //         actions: <Widget>[
+        //           TextButton(
+        //             child: Text('OK'),
+        //             onPressed: () {
+        //               Navigator.of(context).pop();
+        //             },
+        //           )
+        //         ],
+        //       );
+        //     });
+      } else {
+        //all good. show dialong for new password
+        Navigator.of(context).pop();
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
+    } else {
+      //500 error, show an alert
+
+    }
   }
 
   @override
@@ -569,7 +832,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                         // onChanged: (String? newValue) {
                         onChanged: (int? newValue) async {
-                          var url = Uri.parse('http://10.71.8.85:7343/theme/');
+                          var url = Uri.parse('http://192.168.1.4:7343/theme/');
                           var body = {
                             'theme': newValue,
                             'email': PlannerService.sharedInstance.user!.email
@@ -742,7 +1005,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     : saveAccountUpdates,
                                 child: Text("Save")),
                             TextButton(
-                                onPressed: () => {showAddCategoryDialog()},
+                                onPressed: () => {changePasswordClicked()},
                                 child: Text("Change Password")),
                           ],
                         ),
@@ -752,7 +1015,18 @@ class _ProfilePageState extends State<ProfilePage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      ElevatedButton(onPressed: () {}, child: Text("Log Out")),
+                      ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) {
+                                return const LoginPage();
+                              },
+                              // settings: const RouteSettings(
+                              //   name: 'navigaionPage',
+                              // ),
+                            ));
+                          },
+                          child: Text("Log out")),
                     ],
                   )
                 ],
