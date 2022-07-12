@@ -1,3 +1,4 @@
+import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/navigation_wrapper.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
@@ -87,8 +88,10 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
                     style: TextStyle(fontSize: 18),
                   ),
                   style: ButtonStyle(
+                    // backgroundColor: MaterialStateProperty.all<Color>(
+                    //     const Color(0xffef41a8)),
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xffef41a8)),
+                        Theme.of(context).primaryColor),
                   ),
                 ),
                 //),
