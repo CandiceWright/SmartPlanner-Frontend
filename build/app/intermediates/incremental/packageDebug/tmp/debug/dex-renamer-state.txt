@@ -1,4 +1,0 @@
-#Fri Jan 28 05:44:21 PST 2022
-base.0=/Users/candicewright/developer/flutter_apps/planner/practice_planner/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex

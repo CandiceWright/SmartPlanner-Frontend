@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_planner/models/goal.dart';
 import 'package:practice_planner/services/planner_service.dart';
+import 'package:practice_planner/views/Login/enter_planit_video_page.dart';
 import 'package:practice_planner/views/Login/forgot_password_page.dart';
 import 'package:practice_planner/views/Login/password_resetpin_page.dart';
 import 'package:practice_planner/views/Login/signup.dart';
@@ -325,12 +326,21 @@ class _LoginPageState extends State<LoginPage> {
 
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return const NavigationWrapper();
+                        return const EnterPlannerVideoPage();
                       },
-                      settings: const RouteSettings(
-                        name: 'navigaionPage',
-                      ),
+                      // settings: const RouteSettings(
+                      //   name: 'navigaionPage',
+                      // ),
                     ));
+
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //   builder: (context) {
+                    //     return const NavigationWrapper();
+                    //   },
+                    //   settings: const RouteSettings(
+                    //     name: 'navigaionPage',
+                    //   ),
+                    // ));
                   } else {
                     //show and alert error
                     showDialog(
