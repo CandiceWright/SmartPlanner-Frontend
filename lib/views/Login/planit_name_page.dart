@@ -112,7 +112,7 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/images/login_screens_background.png",
+          "assets/images/black_stars_background.jpeg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,

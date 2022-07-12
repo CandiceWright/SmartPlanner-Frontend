@@ -13,6 +13,8 @@ import '/views/Goals/goals_page.dart';
 import '/views/navigation_wrapper.dart';
 import 'package:http/http.dart' as http;
 
+import 'enter_planit_video_page.dart';
+
 class ChooseThemePage extends StatefulWidget {
   const ChooseThemePage(
       {Key? key,
@@ -84,14 +86,24 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
         PlannerService.sharedInstance.user = user;
         PlannerService.sharedInstance.user!.LifeCategoriesColorMap["other"] =
             Colors.grey;
+
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
-            return const NavigationWrapper();
+            return const EnterPlannerVideoPage();
           },
-          settings: const RouteSettings(
-            name: 'navigaionPage',
-          ),
+          // settings: const RouteSettings(
+          //   name: 'navigaionPage',
+          // ),
         ));
+
+        // Navigator.of(context).push(MaterialPageRoute(
+        //   builder: (context) {
+        //     return const NavigationWrapper();
+        //   },
+        //   settings: const RouteSettings(
+        //     name: 'navigaionPage',
+        //   ),
+        // ));
       } else {
         //500 error, show an alert (something wrong creating category)
         showDialog(
@@ -139,7 +151,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/images/login_screens_background.png",
+          "assets/images/black_stars_background.jpeg",
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
@@ -237,108 +249,6 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
                   ),
                 ],
               )
-              // Container(
-              //   margin: EdgeInsets.all(15),
-              //   child: Column(
-              //     children: [
-              //       const Text(
-              //         "Choose a color theme for your planit",
-              //         style: TextStyle(color: Colors.white),
-              //       ),
-
-              //       // DropdownButton(
-              //       //   //value: PlannerService.sharedInstance.user.theme.themeId,
-              //       //   value: themeId,
-              //       //   style: TextStyle(color: Colors.white),
-              //       //   items: [
-              //       //     DropdownMenuItem(
-              //       //       //value: "pink",
-              //       //       value: AppThemes.pink,
-              //       //       child: Row(
-              //       //         children: [
-              //       //           Icon(
-              //       //             Icons.circle,
-              //       //             color: AppThemes().pinkPrimarySwatch,
-              //       //           ),
-              //       //           Text(
-              //       //             "Pink",
-              //       //             style: TextStyle(
-              //       //                 color: AppThemes().pinkPrimarySwatch),
-              //       //           )
-              //       //         ],
-              //       //       ),
-              //       //     ),
-              //       //     DropdownMenuItem(
-              //       //       //value: "blue",
-              //       //       value: AppThemes.blue,
-              //       //       child: Row(
-              //       //         children: [
-              //       //           Icon(
-              //       //             Icons.circle,
-              //       //             color: AppThemes().bluePrimarySwatch,
-              //       //           ),
-              //       //           Text("Blue",
-              //       //               style: TextStyle(
-              //       //                   color: AppThemes().bluePrimarySwatch))
-              //       //         ],
-              //       //       ),
-              //       //     ),
-              //       //     DropdownMenuItem(
-              //       //       //value: "neutral",
-              //       //       value: AppThemes.green,
-              //       //       child: Row(
-              //       //         children: [
-              //       //           Icon(
-              //       //             Icons.circle,
-              //       //             color: AppThemes().greenPrimarySwatch,
-              //       //           ),
-              //       //           Text("Green",
-              //       //               style: TextStyle(
-              //       //                   color: AppThemes().greenPrimarySwatch))
-              //       //         ],
-              //       //       ),
-              //       //     ),
-              //       //     DropdownMenuItem(
-              //       //       //value: "neutral",
-              //       //       value: AppThemes.orange,
-              //       //       child: Row(
-              //       //         children: [
-              //       //           Icon(
-              //       //             Icons.circle,
-              //       //             color: AppThemes().orangePrimarySwatch,
-              //       //           ),
-              //       //           Text("Orange",
-              //       //               style: TextStyle(
-              //       //                   color: AppThemes().orangePrimarySwatch))
-              //       //         ],
-              //       //       ),
-              //       //     ),
-              //       //     DropdownMenuItem(
-              //       //       //value: "neutral",
-              //       //       value: AppThemes.grey,
-              //       //       child: Row(
-              //       //         children: [
-              //       //           Icon(
-              //       //             Icons.circle,
-              //       //             color: AppThemes().greyPrimarySwatch,
-              //       //           ),
-              //       //           Text("Grey",
-              //       //               style: TextStyle(
-              //       //                   color: AppThemes().greyPrimarySwatch))
-              //       //         ],
-              //       //       ),
-              //       //     ),
-              //       //   ],
-              //       //   // onChanged: (String? newValue) {
-              //       //   onChanged: (int? newValue) {
-              //       //     setState(() {
-              //       //       themeId = newValue!;
-              //       //     });
-              //       //   },
-              //       // ),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
           persistentFooterButtons: [
@@ -351,7 +261,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
                     child: ElevatedButton(
                       onPressed: signup,
                       child: Text(
-                        "Go to my Planit",
+                        "Ok",
                         style: TextStyle(fontSize: 18),
                       ),
                       style: ButtonStyle(

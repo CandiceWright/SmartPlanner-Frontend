@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class EnterPlannerVideoPage extends StatefulWidget {
   const EnterPlannerVideoPage({Key? key}) : super(key: key);
+
   @override
   State<EnterPlannerVideoPage> createState() => _EnterPlannerVideoPageState();
 }
@@ -70,7 +71,7 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
                 ElevatedButton(
                   onPressed: goToPlanner,
                   child: Text(
-                    "Go!",
+                    "Go to my Planit!",
                     style: TextStyle(fontSize: 18),
                   ),
                   style: ButtonStyle(

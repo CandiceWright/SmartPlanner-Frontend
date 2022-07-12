@@ -70,37 +70,6 @@ class _WelcomePageState extends State<WelcomePage> {
                 ),
                 padding: EdgeInsets.all(10),
               ),
-              // FractionallySizedBox(
-              //   widthFactor: 0.5,
-              //   child: ElevatedButton(
-              //     onPressed: () {},
-              //     child: Text(
-              //       "Login",
-              //       style: TextStyle(fontSize: 18),
-              //     ),
-              //     style: ButtonStyle(
-              //       backgroundColor: MaterialStateProperty.all<Color>(
-              //           const Color(0xffef41a8)),
-              //     ),
-              //   ),
-              // ),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Text(
-              //       "Don't have an account yet?",
-              //       style: TextStyle(color: Colors.white),
-              //     ),
-              //     TextButton(
-              //         onPressed: () {},
-              //         child: Text(
-              //           "Sign Up",
-              //           style: TextStyle(
-              //             color: Color(0xff7ddcfa),
-              //           ),
-              //         ))
-              //   ],
-              // )
             ],
           ),
           persistentFooterButtons: [
