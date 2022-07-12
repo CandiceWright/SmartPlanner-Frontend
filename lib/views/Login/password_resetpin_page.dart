@@ -121,7 +121,7 @@ class _PasswordResetPinPageState extends State<PasswordResetPinPage> {
                         decoration: const InputDecoration(
                           hintText: "Pin",
                           icon: Icon(
-                            Icons.email,
+                            Icons.password,
                             color: Colors.white,
                           ),
                           border: OutlineInputBorder(),

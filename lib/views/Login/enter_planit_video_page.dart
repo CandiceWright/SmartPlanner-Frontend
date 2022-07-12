@@ -22,10 +22,22 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
         setState(() {});
         _controller.play();
         _controller.setLooping(false);
+        _controller.addListener(checkVideoEnded);
       });
   }
 
+  void checkVideoEnded() {
+    print("in check video ended");
+    if (_controller.value.position == _controller.value.duration) {
+      print("its true");
+      print(_controller.value.position);
+      print(_controller.value.duration);
+      goToPlanner();
+    }
+  }
+
   goToPlanner() {
+    _controller.removeListener(checkVideoEnded);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const NavigationWrapper();
@@ -71,7 +83,7 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
                 ElevatedButton(
                   onPressed: goToPlanner,
                   child: Text(
-                    "Go to my Planit!",
+                    "Skip & Go to my Planit",
                     style: TextStyle(fontSize: 18),
                   ),
                   style: ButtonStyle(
