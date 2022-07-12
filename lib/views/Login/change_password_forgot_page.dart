@@ -108,6 +108,16 @@ class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
                 margin: EdgeInsets.all(15),
                 child: Column(
                   children: [
+                    const Padding(
+                        child: Text(
+                          "Set your new password below. You will be directed to login page to sign in with your new password.",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        padding: EdgeInsets.all(10)),
                     Padding(
                       padding: EdgeInsets.all(5),
                       child: TextFormField(
@@ -118,7 +128,7 @@ class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
                         decoration: const InputDecoration(
                           hintText: "New Password",
                           icon: Icon(
-                            Icons.email,
+                            Icons.password,
                             color: Colors.white,
                           ),
                           border: OutlineInputBorder(),

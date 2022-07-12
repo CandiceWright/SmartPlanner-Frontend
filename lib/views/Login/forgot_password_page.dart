@@ -140,6 +140,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 margin: EdgeInsets.all(15),
                 child: Column(
                   children: [
+                    const Padding(
+                        child: Text(
+                          "Enter your email below to receive a pin to reset your password.",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        padding: EdgeInsets.all(10)),
                     Padding(
                       padding: EdgeInsets.all(5),
                       child: TextFormField(

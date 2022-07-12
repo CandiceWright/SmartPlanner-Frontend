@@ -112,6 +112,16 @@ class _PasswordResetPinPageState extends State<PasswordResetPinPage> {
                 margin: EdgeInsets.all(15),
                 child: Column(
                   children: [
+                    const Padding(
+                        child: Text(
+                          "Enter the pin from your email below. The pin will expire in 20 minutes.",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        padding: EdgeInsets.all(10)),
                     Padding(
                       padding: EdgeInsets.all(5),
                       child: TextFormField(
