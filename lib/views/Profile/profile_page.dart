@@ -927,10 +927,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     onTap: () {
                       pickImage();
                     },
-                    child: Image.asset(
-                      PlannerService.sharedInstance.user!.profileImage,
-                      height: 80,
-                      width: 80,
+                    child: Center(
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage(
+                            PlannerService.sharedInstance.user!.profileImage),
+                        radius: 40,
+                      ),
                     ),
                   ),
                   Column(
@@ -1035,8 +1037,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   radius: PlannerService.sharedInstance.user!
                                               .spaceImage ==
                                           'assets/images/black_stars_background.jpeg'
-                                      ? 20.0
-                                      : 12.0,
+                                      ? 17.0
+                                      : 10.0,
                                   // child: ClipRRect(
                                   //   child: Image.asset(
                                   //       'assets/images/black_stars_background.jpeg'),
@@ -1061,8 +1063,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 radius: PlannerService
                                             .sharedInstance.user!.spaceImage ==
                                         'assets/images/login_screens_background.png'
-                                    ? 20.0
-                                    : 12.0,
+                                    ? 17.0
+                                    : 10.0,
                                 child: ClipRRect(
                                   child: Image.asset(
                                       'assets/images/login_screens_background.png'),

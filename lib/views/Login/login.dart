@@ -88,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
         var spaceTheme = decodedBody["spaceTheme"];
         var didStartPlanningTomorrowInt =
             decodedBody["didStartPlanningTomorrow"];
+        var profileImage = decodedBody["profileImage"];
         bool didStartPlanning;
         if (didStartPlanningTomorrowInt == 0) {
           didStartPlanning = false;
@@ -299,7 +300,8 @@ class _LoginPageState extends State<LoginPage> {
                         id: userId,
                         planitName: planitName,
                         email: email,
-                        profileImage: "assets/images/profile_pic_icon.png",
+                        //profileImage: "assets/images/profile_pic_icon.png",
+                        profileImage: profileImage,
                         themeId: themeId,
                         spaceImage: spaceTheme,
                         //theme: PinkTheme(),

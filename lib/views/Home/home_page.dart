@@ -105,18 +105,31 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          IconButton(
-            icon: Image.asset(
-              PlannerService.sharedInstance.user!.profileImage,
-              // height: 40,
-              // width: 40,
-            ),
-            tooltip: 'Menu',
-            onPressed: () {
-              // handle the press
-              openProfileView();
-            },
-          ),
+          GestureDetector(
+              onTap: () {
+                openProfileView();
+              },
+              child: Padding(
+                padding: EdgeInsets.only(right: 5),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage(
+                      PlannerService.sharedInstance.user!.profileImage),
+                  //backgroundColor: Colors.white,
+                  //radius: 40,
+                ),
+              )),
+          // IconButton(
+          //   icon: Image.asset(
+          //     PlannerService.sharedInstance.user!.profileImage,
+          //     // height: 40,
+          //     // width: 40,
+          //   ),
+          //   tooltip: 'Menu',
+          //   onPressed: () {
+          //     // handle the press
+          //     openProfileView();
+          //   },
+          // ),
         ],
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here

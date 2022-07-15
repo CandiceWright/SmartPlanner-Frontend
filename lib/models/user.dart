@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 class User {
   var planitName;
   int id;
-  var profileImage;
+  String profileImage;
   var email;
   int themeId;
   String spaceImage;
@@ -38,7 +38,7 @@ class User {
       //required this.theme,
       required this.themeId,
       required this.spaceImage,
-      this.profileImage,
+      required this.profileImage,
       required this.didStartTomorrowPlanning,
       required this.lifeCategories}) {
     //buildBacklogMap();

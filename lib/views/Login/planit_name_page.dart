@@ -44,7 +44,8 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
       'email': email,
       'password': password,
       'planitName': planitName,
-      'didStartPlanningTomorrow': false
+      'didStartPlanningTomorrow': false,
+      'profileImage': "assets/images/profile_pic_icon.png"
     };
     String bodyF = jsonEncode(body);
     print(bodyF);
