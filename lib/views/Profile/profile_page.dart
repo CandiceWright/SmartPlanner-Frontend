@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:practice_planner/Themes/app_themes.dart';
 import 'package:practice_planner/models/life_category.dart';
+import 'package:practice_planner/views/Home/home_page.dart';
 import '../Login/login.dart';
+import '../navigation_wrapper.dart';
 import '/services/planner_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -48,6 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Color currentColor = Color(0xff443a49);
   final ImagePicker _picker = ImagePicker();
   int selectedThemeId = PlannerService.sharedInstance.user!.themeId;
+  String selectedSpaceTheme = PlannerService.sharedInstance.user!.spaceImage;
 
   @override
   void initState() {
@@ -334,25 +337,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             );
-            // return AlertDialog(
-            //   title: Container(
-            //     child: const Text(
-            //       "New Category",
-            //       textAlign: TextAlign.center,
-            //     ),
-            //   ),
-            //   content: dialogContent(setDialogState),
-            //   actions: <Widget>[
-            //     TextButton(
-            //         onPressed: categoryDoneBtnDisabled ? null : createCategory,
-            //         child: const Text('Create')),
-            //     TextButton(
-            //         onPressed: () {
-            //           Navigator.pop(context);
-            //         },
-            //         child: const Text('Cancel')),
-            //   ],
-            // );
           });
         });
   }
@@ -395,70 +379,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             );
-
-            // return Scaffold(
-            //     resizeToAvoidBottomInset: false,
-            //     backgroundColor: Colors.transparent,
-            //     body: Dialog(
-            //       child: SingleChildScrollView(
-            //         child: Column(children: [
-            //           Container(
-            //             child: Text(
-            //               PlannerService
-            //                   .sharedInstance.user!.lifeCategories[idx].name,
-            //               textAlign: TextAlign.center,
-            //             ),
-            //           ),
-            //           editDialogContent(setDialogState, idx),
-            //           TextButton(
-            //               onPressed: saveEditCategoryBtnDisabled
-            //                   ? null
-            //                   : () {
-            //                       editCategory(idx);
-            //                     },
-            //               child: const Text('Save')),
-            //           // TextButton(
-            //           //     onPressed: () {
-            //           //       deleteCategory(idx);
-            //           //     },
-            //           //     child: const Text('Delete')),
-            //           TextButton(
-            //               onPressed: () {
-            //                 Navigator.pop(context);
-            //               },
-            //               child: const Text('Cancel'))
-            //         ]),
-            //       ),
-            //     ));
-
-            // return AlertDialog(
-            //   title: Container(
-            //     child: Text(
-            //       PlannerService.sharedInstance.user!.lifeCategories[idx].name,
-            //       textAlign: TextAlign.center,
-            //     ),
-            //   ),
-            //   content: editDialogContent(setDialogState, idx),
-            //   actions: <Widget>[
-            //     TextButton(
-            //         onPressed: saveEditCategoryBtnDisabled
-            //             ? null
-            //             : () {
-            //                 editCategory(idx);
-            //               },
-            //         child: const Text('Save')),
-            //     // TextButton(
-            //     //     onPressed: () {
-            //     //       deleteCategory(idx);
-            //     //     },
-            //     //     child: const Text('Delete')),
-            //     TextButton(
-            //         onPressed: () {
-            //           Navigator.pop(context);
-            //         },
-            //         child: const Text('Cancel')),
-            //   ],
-            // );
           });
         });
   }
@@ -524,69 +444,6 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ],
     );
-    // return Container(
-    //   child: Column(
-    //     mainAxisSize: MainAxisSize.min,
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: [
-    //       Padding(
-    //         padding: EdgeInsets.only(bottom: 8),
-    //         child: TextFormField(
-    //           controller: editCategoryTxtController,
-    //           //initialValue:
-    //           //PlannerService.sharedInstance.user.lifeCategories[idx].name,
-    //           onChanged: (text) {
-    //             setDialogState(() {
-    //               if (editCategoryTxtController.text != "" &&
-    //                   hasSelectedColor) {
-    //                 setState(() {
-    //                   print("button enabled");
-    //                   saveEditCategoryBtnDisabled = false;
-    //                 });
-    //               } else {
-    //                 setState(() {
-    //                   saveEditCategoryBtnDisabled = true;
-    //                 });
-    //               }
-    //             });
-    //           },
-    //           decoration: InputDecoration(
-    //             hintText: "Name",
-    //             icon: Icon(
-    //               Icons.description,
-    //               color: Theme.of(context).colorScheme.primary,
-    //             ),
-    //           ),
-    //           validator: (String? value) {
-    //             if (value == null || value.isEmpty) {
-    //               return 'Please enter some text';
-    //             }
-    //             return null;
-    //           },
-    //         ),
-    //       ),
-    //       ColorPicker(
-    //         pickerColor: editPickerColor,
-    //         onColorChanged: (color) {
-    //           setDialogState(() {
-    //             editPickerColor = color;
-    //             hasSelectedColor = true;
-    //             if (editCategoryTxtController.text != "" && hasSelectedColor) {
-    //               setState(() {
-    //                 print("button enabled");
-    //                 saveEditCategoryBtnDisabled = false;
-    //               });
-    //             } else {
-    //               setState(() {
-    //                 saveEditCategoryBtnDisabled = true;
-    //               });
-    //             }
-    //           });
-    //         },
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 
   Future<void> editCategory(int idx) async {
@@ -898,22 +755,6 @@ class _ProfilePageState extends State<ProfilePage> {
           //   name: 'navigaionPage',
           // ),
         ));
-
-        // showDialog(
-        //     context: context,
-        //     builder: (context) {
-        //       return AlertDialog(
-        //         title: Text('Password successfully changed!'),
-        //         actions: <Widget>[
-        //           TextButton(
-        //             child: Text('OK'),
-        //             onPressed: () {
-        //               Navigator.of(context).pop();
-        //             },
-        //           )
-        //         ],
-        //       );
-        //     });
       } else {
         //all good. show dialong for new password
         Navigator.of(context).pop();
@@ -996,6 +837,43 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void changeSpaceTheme() async {
+    var url = Uri.parse('http://192.168.1.4:7343/spaceTheme/');
+    var body = {
+      'image': selectedSpaceTheme,
+      'email': PlannerService.sharedInstance.user!.email
+    };
+    String bodyF = jsonEncode(body);
+    var response = await http.patch(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      setState(() {
+        PlannerService.sharedInstance.user!.spaceImage = selectedSpaceTheme;
+      });
+    } else {
+      //error message
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -1007,7 +885,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/images/login_screens_background.png",
+          PlannerService.sharedInstance.user!.spaceImage,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
@@ -1030,6 +908,16 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             centerTitle: true,
             //leading: BackButton(color: Colors.black),
+            leading: BackButton(onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) {
+                  return const NavigationWrapper();
+                },
+                settings: const RouteSettings(
+                  name: 'navigaionPage',
+                ),
+              ));
+            }),
           ),
           body: Card(
             child: Container(
@@ -1124,6 +1012,64 @@ class _ProfilePageState extends State<ProfilePage> {
                                 changeThemeColor();
                               });
                             },
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedSpaceTheme =
+                                      'assets/images/black_stars_background.jpeg';
+                                  changeSpaceTheme();
+                                });
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.all(10),
+                                child: CircleAvatar(
+                                  backgroundImage: const AssetImage(
+                                      'assets/images/black_stars_background.jpeg'),
+                                  //backgroundColor: Colors.white,
+                                  radius: PlannerService.sharedInstance.user!
+                                              .spaceImage ==
+                                          'assets/images/black_stars_background.jpeg'
+                                      ? 20.0
+                                      : 12.0,
+                                  // child: ClipRRect(
+                                  //   child: Image.asset(
+                                  //       'assets/images/black_stars_background.jpeg'),
+                                  //   borderRadius: BorderRadius.circular(50.0),
+                                  // ),
+                                ),
+                              )),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedSpaceTheme =
+                                    'assets/images/login_screens_background.png';
+                                changeSpaceTheme();
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: CircleAvatar(
+                                backgroundImage: const AssetImage(
+                                    'assets/images/login_screens_background.png'),
+                                //backgroundColor: Colors.white,
+                                radius: PlannerService
+                                            .sharedInstance.user!.spaceImage ==
+                                        'assets/images/login_screens_background.png'
+                                    ? 20.0
+                                    : 12.0,
+                                child: ClipRRect(
+                                  child: Image.asset(
+                                      'assets/images/login_screens_background.png'),
+                                  borderRadius: BorderRadius.circular(50.0),
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),

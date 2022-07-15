@@ -129,7 +129,7 @@ class _EditDefinitionPageState extends State<EditDefinitionPage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/images/login_screens_background.png",
+          PlannerService.sharedInstance.user!.spaceImage,
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,

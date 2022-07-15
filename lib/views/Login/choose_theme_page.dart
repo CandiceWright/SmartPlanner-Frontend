@@ -35,6 +35,7 @@ class ChooseThemePage extends StatefulWidget {
 class _ChooseThemePageState extends State<ChooseThemePage> {
   //var planitNameTextController = TextEditingController();
   int themeId = 0;
+  int spaceThemeId = 0;
   MaterialColor goBtnColor = AppThemes().pinkPrimarySwatch;
 
   //<MyApp> tells flutter that this state belongs to MyApp Widget
@@ -63,47 +64,68 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
       print(bodyF);
 
       var url = Uri.parse('http://192.168.1.4:7343/categories');
-      var response = await http.post(url,
+      var response2 = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        var decodedBody = json.decode(response.body);
+      if (response2.statusCode == 200) {
+        var decodedBody = json.decode(response2.body);
         print(decodedBody);
         var id = decodedBody["insertId"];
-        var user = User(
-            id: widget.userId,
-            planitName: widget.planitName,
-            email: widget.email,
-            profileImage: "assets/images/profile_pic_icon.png",
-            themeId: themeId,
-            //theme: PinkTheme(),
-            didStartTomorrowPlanning: false,
-            lifeCategories: [
-              LifeCategory(id, "other", Colors.grey),
-            ]);
-        PlannerService.sharedInstance.user = user;
-        PlannerService.sharedInstance.user!.LifeCategoriesColorMap["other"] =
-            Colors.grey;
 
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return const EnterPlannerVideoPage();
-          },
-          // settings: const RouteSettings(
-          //   name: 'navigaionPage',
-          // ),
-        ));
+//save spacetheme choice
+        var url = Uri.parse('http://192.168.1.4:7343/spacetheme/');
+        //var response = await http.post(url);
+        String image;
+        if (spaceThemeId == 0) {
+          image = 'assets/images/black_stars_background.jpeg';
+        } else {
+          image = 'assets/images/login_screens_background.png';
+        }
+        var body = {'image': image, 'email': widget.email};
+        String bodyF = jsonEncode(body);
+        var response3 = await http.patch(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
 
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) {
-        //     return const NavigationWrapper();
-        //   },
-        //   settings: const RouteSettings(
-        //     name: 'navigaionPage',
-        //   ),
-        // ));
+        if (response3.statusCode == 200) {
+          var user = User(
+              id: widget.userId,
+              planitName: widget.planitName,
+              email: widget.email,
+              profileImage: "assets/images/profile_pic_icon.png",
+              themeId: themeId,
+              spaceImage: image,
+              //theme: PinkTheme(),
+              didStartTomorrowPlanning: false,
+              lifeCategories: [
+                LifeCategory(id, "other", Colors.grey),
+              ]);
+          PlannerService.sharedInstance.user = user;
+          PlannerService.sharedInstance.user!.LifeCategoriesColorMap["other"] =
+              Colors.grey;
+
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return const EnterPlannerVideoPage();
+            },
+          ));
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
       } else {
         //500 error, show an alert (something wrong creating category)
         showDialog(
@@ -151,7 +173,9 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
     return Stack(
       children: [
         Image.asset(
-          "assets/images/black_stars_background.jpeg",
+          spaceThemeId == 0
+              ? 'assets/images/black_stars_background.jpeg'
+              : 'assets/images/login_screens_background.png',
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
@@ -164,91 +188,147 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
             automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
             elevation: 0.0,
-            leading: Image.asset(
-              "assets/images/planit_logo.png",
-            ),
+            // leading: Image.asset(
+            //   "assets/images/planit_logo.png",
+            // ),
           ),
           body: ListView(
             children: [
-              // Padding(
-              //   child: Image.asset(
-              //     "assets/images/planit_logo.png",
-              //   ),
-              //   padding: EdgeInsets.all(10),
-              // ),
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: const Text(
-                  "Choose a color theme for your planit",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
-                  textAlign: TextAlign.center,
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: const Text(
+                        "Choose a color theme for your planit",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.circle),
+                          iconSize: themeId == 0 ? 60 : 40,
+                          color: AppThemes().pinkPrimarySwatch,
+                          onPressed: () {
+                            setState(() {
+                              themeId = 0;
+                              goBtnColor = AppThemes().pinkPrimarySwatch;
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.circle),
+                          iconSize: themeId == 1 ? 60 : 40,
+                          color: AppThemes().bluePrimarySwatch,
+                          onPressed: () {
+                            setState(() {
+                              themeId = 1;
+                              goBtnColor = AppThemes().bluePrimarySwatch;
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.circle),
+                          iconSize: themeId == 2 ? 60 : 40,
+                          color: AppThemes().greenPrimarySwatch,
+                          onPressed: () {
+                            setState(() {
+                              themeId = 2;
+                              goBtnColor = AppThemes().greenPrimarySwatch;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.circle),
+                          iconSize: themeId == 3 ? 60 : 40,
+                          color: AppThemes().orangePrimarySwatch,
+                          onPressed: () {
+                            setState(() {
+                              themeId = 3;
+                              goBtnColor = AppThemes().orangePrimarySwatch;
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.circle),
+                          iconSize: themeId == 4 ? 60 : 40,
+                          color: AppThemes().greyPrimarySwatch,
+                          onPressed: () {
+                            setState(() {
+                              themeId = 4;
+                              goBtnColor = AppThemes().greyPrimarySwatch;
+                            });
+                          },
+                        ),
+                      ],
+                    )
+                  ],
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.circle),
-                    iconSize: themeId == 0 ? 60 : 40,
-                    color: AppThemes().pinkPrimarySwatch,
-                    onPressed: () {
-                      setState(() {
-                        themeId = 0;
-                        goBtnColor = AppThemes().pinkPrimarySwatch;
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.circle),
-                    iconSize: themeId == 1 ? 60 : 40,
-                    color: AppThemes().bluePrimarySwatch,
-                    onPressed: () {
-                      setState(() {
-                        themeId = 1;
-                        goBtnColor = AppThemes().bluePrimarySwatch;
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.circle),
-                    iconSize: themeId == 2 ? 60 : 40,
-                    color: AppThemes().greenPrimarySwatch,
-                    onPressed: () {
-                      setState(() {
-                        themeId = 2;
-                        goBtnColor = AppThemes().greenPrimarySwatch;
-                      });
-                    },
-                  ),
-                ],
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: const Text(
+                        "Choose your space theme",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                spaceThemeId = 0;
+                              });
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: spaceThemeId == 0 ? 30.0 : 20.0,
+                                child: ClipRRect(
+                                  child: Image.asset(
+                                      'assets/images/black_stars_background.jpeg'),
+                                  borderRadius: BorderRadius.circular(50.0),
+                                ),
+                              ),
+                            )),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              spaceThemeId = 1;
+                            });
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.white,
+                              radius: spaceThemeId == 1 ? 30.0 : 20.0,
+                              child: ClipRRect(
+                                child: Image.asset(
+                                    'assets/images/login_screens_background.png'),
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.circle),
-                    iconSize: themeId == 3 ? 60 : 40,
-                    color: AppThemes().orangePrimarySwatch,
-                    onPressed: () {
-                      setState(() {
-                        themeId = 3;
-                        goBtnColor = AppThemes().orangePrimarySwatch;
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.circle),
-                    iconSize: themeId == 4 ? 60 : 40,
-                    color: AppThemes().greyPrimarySwatch,
-                    onPressed: () {
-                      setState(() {
-                        themeId = 4;
-                        goBtnColor = AppThemes().greyPrimarySwatch;
-                      });
-                    },
-                  ),
-                ],
-              )
             ],
           ),
           persistentFooterButtons: [

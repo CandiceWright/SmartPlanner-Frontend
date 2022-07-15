@@ -167,7 +167,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
           decoration: BoxDecoration(
               image: DecorationImage(
                   image: AssetImage(
-                    "assets/images/login_screens_background.png",
+                    PlannerService.sharedInstance.user!.spaceImage,
                   ),
                   fit: BoxFit.fill)),
         ),

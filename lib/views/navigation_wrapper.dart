@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:practice_planner/views/Inwards/inwards_page.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
 import '/views/Calendar/calendar_page.dart';
@@ -23,7 +24,8 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
     BacklogPage(),
     CalendarPage(),
     GoalsPage(),
-    DictionaryPage(),
+    //DictionaryPage(),
+    InwardsPage()
   ];
 
   void _onItemTapped(int index) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../../services/planner_service.dart';
+
 class NotesPage extends StatefulWidget {
   const NotesPage({Key? key, required this.fromPage}) : super(key: key);
 
@@ -51,7 +53,7 @@ class _NotesPageState extends State<NotesPage> {
           decoration: BoxDecoration(
               image: DecorationImage(
                   image: AssetImage(
-                    "assets/images/login_screens_background.png",
+                    PlannerService.sharedInstance.user!.spaceImage,
                   ),
                   fit: BoxFit.fill)),
         ),

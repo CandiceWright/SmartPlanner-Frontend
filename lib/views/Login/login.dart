@@ -85,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
         var userId = decodedBody["userId"];
         var planitName = decodedBody["planitName"];
         var themeId = decodedBody["theme"];
+        var spaceTheme = decodedBody["spaceTheme"];
         var didStartPlanningTomorrowInt =
             decodedBody["didStartPlanningTomorrow"];
         bool didStartPlanning;
@@ -300,6 +301,7 @@ class _LoginPageState extends State<LoginPage> {
                         email: email,
                         profileImage: "assets/images/profile_pic_icon.png",
                         themeId: themeId,
+                        spaceImage: spaceTheme,
                         //theme: PinkTheme(),
                         didStartTomorrowPlanning: didStartPlanning,
                         lifeCategories: lifeCategories);
@@ -328,19 +330,7 @@ class _LoginPageState extends State<LoginPage> {
                       builder: (context) {
                         return const EnterPlannerVideoPage();
                       },
-                      // settings: const RouteSettings(
-                      //   name: 'navigaionPage',
-                      // ),
                     ));
-
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (context) {
-                    //     return const NavigationWrapper();
-                    //   },
-                    //   settings: const RouteSettings(
-                    //     name: 'navigaionPage',
-                    //   ),
-                    // ));
                   } else {
                     //show and alert error
                     showDialog(

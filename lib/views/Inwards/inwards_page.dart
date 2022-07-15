@@ -11,8 +11,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:confetti/confetti.dart';
 import 'package:http/http.dart' as http;
 
-class DictionaryPage extends StatefulWidget {
-  const DictionaryPage({Key? key}) : super(key: key);
+class InwardsPage extends StatefulWidget {
+  const InwardsPage({Key? key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -24,10 +24,10 @@ class DictionaryPage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<DictionaryPage> createState() => _DictionaryPageState();
+  State<InwardsPage> createState() => _InwardsPageState();
 }
 
-class _DictionaryPageState extends State<DictionaryPage> {
+class _InwardsPageState extends State<InwardsPage> {
   late ConfettiController _controllerCenter;
   //ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
@@ -215,7 +215,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            title: Text("Dictionary",
+            title: Text("Inwards in Words",
                 //   style: GoogleFonts.roboto(
                 //     textStyle: const TextStyle(
                 //       color: Colors.white,
@@ -230,7 +230,7 @@ class _DictionaryPageState extends State<DictionaryPage> {
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      "Define your World",
+                      "Where I get my thoughts out",
                       style: TextStyle(color: Colors.white),
                       //textAlign: TextAlign.center,
                     ),
@@ -242,76 +242,82 @@ class _DictionaryPageState extends State<DictionaryPage> {
           ),
           body: Stack(
             children: [
-              Container(
-                child: ListView(
-                  //children: goalsListView,
-                  children: List.generate(
-                      PlannerService.sharedInstance.user!.dictionaryArr.length,
-                      (int index) {
-                    return GestureDetector(
-                      onTap: () => {
-                        _showDefinitionContent(
-                            PlannerService
-                                .sharedInstance.user!.dictionaryArr[index],
-                            index)
-                      },
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        child:
-                            //Row(
-                            //children: [
-                            Column(
-                          children: [
-                            Container(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          PlannerService.sharedInstance.user!
-                                              .dictionaryArr[index].name,
-                                          style: const TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ],
-                                    ),
-                                    margin: EdgeInsets.all(15),
+              //Container(
+              //child: ListView(
+              ListView(
+                //children: goalsListView,
+                children: List.generate(
+                    PlannerService.sharedInstance.user!.dictionaryArr.length,
+                    (int index) {
+                  return Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Container(
+                        color: Colors.pink,
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        child: GestureDetector(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 5,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  //clipBehavior: Clip.antiAlias,
+                                  child: Text(
+                                    PlannerService.sharedInstance.user!
+                                        .dictionaryArr[index].name,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
                                   ),
-                                  // Image.asset(
-                                  //   "assets/images/goal_icon.png",
-                                  //   height: 40,
-                                  //   width: 40,
-                                  // ),
-                                ],
+                                  //elevation: 3,
+                                  margin: EdgeInsets.all(10),
+                                  //shape: const CircleBorder(),
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
-                              margin: EdgeInsets.all(15),
-                            ),
-                            // Image.asset(
-                            //   "assets/images/goal_icon.png",
-                            //   height: 40,
-                            //   width: 40,
-                            // ),
-                          ],
-                        ),
 
-                        elevation: 3,
-                        margin: EdgeInsets.all(10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
+                              // Expanded(
+                              //   flex: 10,
+                              //   child: Container(
+                              //     //height: MediaQuery.of(context).size.height,
+                              //     //width: MediaQuery.of(context).size.width,
+                              //     decoration: const BoxDecoration(
+                              //         color: Colors.orange,
+                              //         shape: BoxShape.circle),
+
+                              //   ),
+                              // ),
+                              Text(
+                                PlannerService.sharedInstance.user!
+                                    .dictionaryArr[index].name,
+                                style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          ),
+                          onTap: () => {
+                            _showDefinitionContent(
+                                PlannerService
+                                    .sharedInstance.user!.dictionaryArr[index],
+                                index)
+                          },
+                        )
+                        //Column(
+                        //children: [
+
                         ),
-                        color: Theme.of(context).colorScheme.primary,
-                        // color: PlannerService
-                        //     .sharedInstance.user!.goals[index].category.color,
-                      ),
-                    );
-                  }),
-                ),
-                margin: EdgeInsets.all(15),
+                  );
+                }),
               ),
+              // margin: EdgeInsets.all(15),
+              //),
             ],
           ),
 

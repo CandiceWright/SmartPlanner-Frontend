@@ -13,6 +13,7 @@ class User {
   var profileImage;
   var email;
   int themeId;
+  String spaceImage;
   var goals = <Event>[];
   var scheduledEvents = <Event>[];
   var habits = <Habit>[];
@@ -36,6 +37,7 @@ class User {
       required this.email,
       //required this.theme,
       required this.themeId,
+      required this.spaceImage,
       this.profileImage,
       required this.didStartTomorrowPlanning,
       required this.lifeCategories}) {

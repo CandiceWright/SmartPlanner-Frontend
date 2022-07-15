@@ -122,28 +122,14 @@ class _HomePageState extends State<HomePage> {
           color: Theme.of(context).primaryColor, //change your color here
         ),
         automaticallyImplyLeading: false,
-        //title: const Text('Home Page'),
-        // flexibleSpace: Container(
-        //   decoration: BoxDecoration(
-        //       image: DecorationImage(
-        //           image: AssetImage(
-        //             "assets/images/login_screens_background.png",
-        //           ),
-        //           fit: BoxFit.fill)),
-        // ),
-        // title: Text(
-        //   "My PLANIT",
-        //   style: TextStyle(color: Colors.white),
-        // ),
-        // centerTitle: true,
-
         title: Card(
           semanticContainer: true,
           clipBehavior: Clip.antiAliasWithSaveLayer,
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage("assets/images/login_screens_background.png"),
+                image:
+                    AssetImage(PlannerService.sharedInstance.user!.spaceImage),
                 fit: BoxFit.cover,
               ),
             ),

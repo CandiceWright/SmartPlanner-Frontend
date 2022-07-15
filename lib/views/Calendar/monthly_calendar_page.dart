@@ -77,7 +77,7 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
           decoration: BoxDecoration(
               image: DecorationImage(
                   image: AssetImage(
-                    "assets/images/login_screens_background.png",
+                    PlannerService.sharedInstance.user!.spaceImage,
                   ),
                   fit: BoxFit.fill)),
         ),
