@@ -365,54 +365,7 @@ class _BacklogPageState extends State<BacklogPage> {
           onTap: () {
             openViewDialog(value[i], i, key);
           },
-          // secondary: TextButton(
-          //   child: const Text("view"),
-          //   onPressed: () {
-          //     openViewDialog(value[i], i, key);
-          //   },
-          // ),
-          // secondary: IconButton(
-          //   icon: const Icon(Icons.visibility_outlined),
-          //   tooltip: 'View this backlog item',
-          //   onPressed: () {
-          //     setState(() {});
-          //   },
-          // ),
         );
-        // Widget child = CheckboxListTile(
-        //   title: Text(
-        //     value[i].description,
-        //     // style: const TextStyle(
-        //     //     color: Colors.black, fontWeight: FontWeight.bold),
-        //   ),
-        //   subtitle: Text("Complete on/by " +
-        //       DateFormat.yMMMd().format(value[i].completeBy!)),
-        //   value:
-        //       PlannerService.sharedInstance.user.backlogMap[key]![i].isComplete,
-        //   shape: const CircleBorder(),
-        //   onChanged: (bool? value) {
-        //     print(value);
-        //     setState(() {
-        //       PlannerService
-        //           .sharedInstance.user.backlogMap[key]![i].isComplete = value;
-        //       //_value = value!;
-        //     });
-        //   },
-        //   secondary: TextButton(
-        //     child: const Text("view"),
-        //     onPressed: () {
-        //       openViewDialog(value[i], i, key);
-        //     },
-        //   ),
-        //   // secondary: IconButton(
-        //   //   icon: const Icon(Icons.visibility_outlined),
-        //   //   tooltip: 'View this backlog item',
-        //   //   onPressed: () {
-        //   //     setState(() {});
-        //   //   },
-        //   // ),
-        //   controlAffinity: ListTileControlAffinity.leading,
-        // );
         if (value[i].scheduledDate == null) {
           unscheduledExpansionTileChildren.add(child);
         }

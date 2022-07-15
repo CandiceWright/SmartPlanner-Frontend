@@ -397,49 +397,6 @@ class _GoalsPageState extends State<GoalsPage> {
                         color: PlannerService
                             .sharedInstance.user!.goals[index].category.color,
                       ),
-
-                      // child: Padding(
-                      //   padding: EdgeInsets.all(10),
-                      //   child: Container(
-                      //     //constraints: BoxConstraints
-                      //     //.expand(), //alignment: Alignment.bottomCenter,
-                      //     width: 200,
-                      //     height: 200,
-                      //     decoration: BoxDecoration(
-                      //         // The child of a round Card should be in round shape
-
-                      //         shape: BoxShape.circle,
-                      //         color: Colors.blue[100]),
-                      //     child: Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       children: [
-                      //         Text(
-                      //           DateFormat.yMMMd().format(PlannerService
-                      //               .sharedInstance.user.goals[index].date),
-                      //           // style: Theme.of(context).textTheme.subtitle2,
-                      //           style: const TextStyle(
-                      //               fontSize: 20,
-                      //               fontWeight: FontWeight.bold,
-                      //               color: Colors.black),
-                      //         ),
-                      //         Text(
-                      //           PlannerService.sharedInstance.user.goals[index]
-                      //               .description,
-                      //           style: const TextStyle(color: Colors.black),
-                      //         ),
-                      //         Padding(
-                      //           padding: EdgeInsets.all(7),
-                      //           child: Image.asset(
-                      //             "assets/images/goal_icon.png",
-                      //             height: 40,
-                      //             width: 40,
-                      //           ),
-                      //         )
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      //),
                     );
                   }),
                 ),
