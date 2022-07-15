@@ -283,18 +283,26 @@ class _GoalsPageState extends State<GoalsPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            title: Text("Goals",
-                //   style: GoogleFonts.roboto(
-                //     textStyle: const TextStyle(
-                //       color: Colors.white,
-                //     ),
-                //   ),
-                // ),
-                style: TextStyle(color: Colors.white)),
+            title: const Text(
+              "Goals",
+              style: TextStyle(color: Colors.white),
+            ),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
-
+            bottom: const PreferredSize(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      "I will do X by Y",
+                      style: TextStyle(color: Colors.white),
+                      //textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                preferredSize: Size.fromHeight(10.0)),
             actions: [
               IconButton(
                 onPressed: () {
