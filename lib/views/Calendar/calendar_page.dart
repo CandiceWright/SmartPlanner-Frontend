@@ -496,12 +496,13 @@ class _CalendarPageState extends State<CalendarPage> {
                 tooltip: 'Tomorrow',
                 onPressed: () {
                   setState(() {
-                    if (PlannerService
-                        .sharedInstance.user!.didStartTomorrowPlanning) {
-                      _openTomorrowSchedulePage();
-                    } else {
-                      _openNoTomorrowPlanPage();
-                    }
+                    _openTomorrowSchedulePage();
+                    // if (PlannerService
+                    //     .sharedInstance.user!.didStartTomorrowPlanning) {
+                    //   _openTomorrowSchedulePage();
+                    // } else {
+                    //   _openNoTomorrowPlanPage();
+                    // }
                   });
                 },
               ),
