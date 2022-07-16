@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:practice_planner/models/definition.dart';
@@ -5,11 +7,14 @@ import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/views/Dictionary/edit_definition_page.dart';
 import 'package:practice_planner/views/Dictionary/new_definition_page.dart';
 import 'package:practice_planner/views/Goals/accomplished_goals_page.dart';
+import 'package:video_player/video_player.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:confetti/confetti.dart';
 import 'package:http/http.dart' as http;
+
+import 'new_inward_item_page.dart';
 
 class InwardsPage extends StatefulWidget {
   const InwardsPage({Key? key}) : super(key: key);
@@ -28,7 +33,8 @@ class InwardsPage extends StatefulWidget {
 }
 
 class _InwardsPageState extends State<InwardsPage> {
-  late ConfettiController _controllerCenter;
+  late VideoPlayerController _videoPlayerController;
+
   //ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
   @override
@@ -36,12 +42,19 @@ class _InwardsPageState extends State<InwardsPage> {
     super.initState();
   }
 
-  void _openNewDefinitionPage() {
+  Future _initVideoPlayer(File videoFile) async {
+    _videoPlayerController = VideoPlayerController.file(videoFile);
+    await _videoPlayerController.initialize();
+    await _videoPlayerController.setLooping(false);
+    await _videoPlayerController.play();
+  }
+
+  void _openNewInwardItemPage() {
     Navigator.push(
         context,
         CupertinoPageRoute(
             builder: (context) =>
-                NewDefinitionPage(updateDictionary: _updateDictionary)));
+                NewInwardItemPage(updateContent: _updateContent)));
   }
 
   void _openEditDefinitionPage(int idx, Definition definition) {
@@ -50,7 +63,7 @@ class _InwardsPageState extends State<InwardsPage> {
         context,
         CupertinoPageRoute(
             builder: (context) => EditDefinitionPage(
-                updateDictionary: _updateDictionary,
+                updateDictionary: _updateContent,
                 idx: idx,
                 definition: definition)));
   }
@@ -187,7 +200,7 @@ class _InwardsPageState extends State<InwardsPage> {
     );
   }
 
-  void _updateDictionary() {
+  void _updateContent() {
     setState(() {});
   }
 
@@ -247,73 +260,63 @@ class _InwardsPageState extends State<InwardsPage> {
               ListView(
                 //children: goalsListView,
                 children: List.generate(
-                    PlannerService.sharedInstance.user!.dictionaryArr.length,
+                    PlannerService.sharedInstance.user!.inwardContent.length,
                     (int index) {
                   return Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Container(
-                        color: Colors.pink,
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        child: GestureDetector(
+                      padding: EdgeInsets.all(10),
+                      child: GestureDetector(
+                        child: SingleChildScrollView(
+                          //body: Container(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                flex: 5,
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  //clipBehavior: Clip.antiAlias,
-                                  child: Text(
-                                    PlannerService.sharedInstance.user!
-                                        .dictionaryArr[index].name,
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  //elevation: 3,
-                                  margin: EdgeInsets.all(10),
-                                  //shape: const CircleBorder(),
-                                  color: Theme.of(context).colorScheme.primary,
+                            children: <Widget>[
+                              Container(
+                                padding: const EdgeInsets.only(top: 20.0),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(20),
+                                child: FutureBuilder(
+                                  future: _initVideoPlayer(File(PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .inwardContent[index]
+                                      .media)),
+                                  builder: (context, state) {
+                                    if (state.connectionState ==
+                                        ConnectionState.waiting) {
+                                      return const Center(
+                                          child: CircularProgressIndicator());
+                                    } else {
+                                      return VideoPlayer(
+                                          _videoPlayerController);
+                                    }
+                                  },
                                 ),
                               ),
-
-                              // Expanded(
-                              //   flex: 10,
-                              //   child: Container(
-                              //     //height: MediaQuery.of(context).size.height,
-                              //     //width: MediaQuery.of(context).size.width,
-                              //     decoration: const BoxDecoration(
-                              //         color: Colors.orange,
-                              //         shape: BoxShape.circle),
-
-                              //   ),
+                              Text(PlannerService.sharedInstance.user!
+                                  .inwardContent[index].caption),
+                              // ElevatedButton(
+                              //   onPressed: () {},
+                              //   child: Text("Save"),
                               // ),
-                              Text(
-                                PlannerService.sharedInstance.user!
-                                    .dictionaryArr[index].name,
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
+                              // TextButton(
+                              //   onPressed: () {},
+                              //   child: Text("Cancel"),
+                              // ),
                             ],
                           ),
-                          onTap: () => {
-                            _showDefinitionContent(
-                                PlannerService
-                                    .sharedInstance.user!.dictionaryArr[index],
-                                index)
-                          },
-                        )
-                        //Column(
-                        //children: [
-
                         ),
-                  );
+                        onTap: () => {
+                          _showDefinitionContent(
+                              PlannerService
+                                  .sharedInstance.user!.dictionaryArr[index],
+                              index)
+                        },
+                      )
+                      //Column(
+                      //children: [
+
+                      //),
+                      );
                 }),
               ),
               // margin: EdgeInsets.all(15),
@@ -322,7 +325,7 @@ class _InwardsPageState extends State<InwardsPage> {
           ),
 
           floatingActionButton: FloatingActionButton(
-            onPressed: _openNewDefinitionPage,
+            onPressed: _openNewInwardItemPage,
             tooltip: 'Increment',
             child: const Icon(
               Icons.add,

@@ -1,11 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/definition.dart';
 import 'package:practice_planner/models/life_category.dart';
+import 'package:practice_planner/models/story.dart';
+//import 'package:video_thumbnail/video_thumbnail.dart';
 import 'backlog_item.dart';
 import 'habit.dart';
 import 'event.dart';
 import 'package:flutter/material.dart';
+
+import 'inward_item.dart';
 
 class User {
   var planitName;
@@ -21,6 +27,15 @@ class User {
   var dictionaryArr = <Definition>[];
   var accomplishedGoals = <Event>[];
   var backlogItems = <BacklogItem>[];
+  var inwardContent = <InwardItem>[];
+  //var stories = <Story>[];
+  var stories = <Story>[
+    Story(File("assets/images/another_planit_animation_video.mp4"),
+        "assets/images/profile_pic_icon.png", DateTime.now()),
+    Story(File("assets/images/another_planit_animation_video.mp4"),
+        "assets/images/profile_pic_icon.png", DateTime.now())
+  ];
+
   Map<String, List<BacklogItem>> backlogMap = {};
   var todayTasks = [];
   bool didStartTomorrowPlanning;
@@ -41,77 +56,32 @@ class User {
       required this.profileImage,
       required this.didStartTomorrowPlanning,
       required this.lifeCategories}) {
-    //buildBacklogMap();
-    //buildHabitList();
-    //buildEventList();
+    //buildStories();
   }
 
-  void buildBacklogMap() {
-    print("I am building backlog");
-    for (int i = 0; i < backlogItems.length; i++) {
-      if (backlogMap.containsKey(backlogItems[i].category)) {
-        backlogMap[backlogItems[i].category]!.add(backlogItems[i]);
-      } else {
-        backlogMap[backlogItems[i].category.name] = [backlogItems[i]];
-      }
-    }
-    //print(backlog);
-    buildTodayTaskList();
-    //return backlog;
-  }
+  // Future<String?> createStoryThumbnail(String videoPath) async {
+  //   print("I am creating a thumbnail");
+  //   final fileName = await VideoThumbnail.thumbnailFile(
+  //     video: videoPath,
+  //     //thumbnailPath: (await getTemporaryDirectory()).path,
+  //     imageFormat: ImageFormat.WEBP,
+  //     maxHeight:
+  //         64, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
+  //     quality: 75,
+  //   );
+  //   print(fileName);
+  //   return fileName;
+  // }
 
-  void buildTodayTaskList() {
-    print("I am building task list for today");
-    print("printing current date");
-    print(DateFormat.yMMMd().format(DateTime.now()));
-    backlogMap.forEach((key, value) {
-      for (int i = 0; i < value.length; i++) {
-        print(value[i].completeBy);
-        if (DateFormat.yMMMd().format(value[i].completeBy!) ==
-            DateFormat.yMMMd().format(DateTime.now())) {
-          todayTasks.add(value[i]);
-        }
-      }
-    });
-    print(todayTasks.length);
-  }
-
-  void buildHabitList() {
-    Habit habit1 = Habit(id: 0, description: "Pray daily");
-    Habit habit2 = Habit(id: 1, description: "Code daily");
-    Habit habit3 = Habit(id: 2, description: "Workout for 30min daily");
-
-    habits.add(habit1);
-    habits.add(habit2);
-    habits.add(habit3);
-  }
-
-  // void buildEventList() {
-  //   final DateTime today = DateTime.now();
-  //   final DateTime startTime =
-  //       DateTime(today.year, today.month, today.day, 9, 0, 0);
-  //   final DateTime endTime = startTime.add(const Duration(hours: 2));
-  //   allEvents.add(Event(
-  //       //id: 0,
-  //       description: 'Conference',
-  //       type: "Meeting",
-  //       start: startTime,
-  //       end: endTime,
-  //       category: LifeCategory("All", const Color(0xFFFF80b1)),
-  //       background: const Color(0xFFFF80b1),
-  //       isAllDay: false));
-
-  //   final DateTime startTime2 =
-  //       DateTime(today.year, today.month, today.day + 1, 13, 0, 0);
-  //   final DateTime endTime2 = startTime2.add(const Duration(hours: 2));
-  //   allEvents.add(Event(
-  //       //id: 1,
-  //       description: 'Conference',
-  //       type: "Calendar",
-  //       start: startTime2,
-  //       end: endTime2,
-  //       background: const Color(0xFFFF80b1),
-  //       category: LifeCategory("All", const Color(0xFFFF80b1)),
-  //       isAllDay: false));
+  // buildStories() async {
+  //   for (int i = 0; i < 3; i++) {
+  //     String? storyThumbnail = await createStoryThumbnail(
+  //         "assets/images/another_planit_animation_video.mp4");
+  //     var story = Story(
+  //         File("assets/images/another_planit_animation_video.mp4"),
+  //         storyThumbnail!,
+  //         DateTime.now());
+  //     stories.add(story);
+  //   }
   // }
 }

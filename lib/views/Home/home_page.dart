@@ -1,13 +1,16 @@
 // ignore_for_file: avoid_unnecessary_containers
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/habit.dart';
+import 'package:practice_planner/services/vide_capturer.dart';
 import 'package:practice_planner/views/Calendar/calendar_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:video_player/video_player.dart';
 import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
@@ -30,6 +33,7 @@ class _HomePageState extends State<HomePage> {
   var editHabitTxtController = TextEditingController();
   bool editHabitBtnDisabled = false;
   bool saveHabitBtnDisabled = true;
+  late VideoPlayerController _videoPlayerController;
 
   var daysMap = {
     1: "Mon",
@@ -47,6 +51,14 @@ class _HomePageState extends State<HomePage> {
     //print(PlannerService.sharedInstance.user.backlog);
     newHabitTextController.addListener(setSaveHabitBtnState);
     editHabitTxtController.addListener(setEditHabitBtnState);
+  }
+
+  Future _initVideoPlayer(File videoFile) async {
+    print("Im in init player and this is file " + videoFile.path);
+    _videoPlayerController = VideoPlayerController.file(videoFile);
+    await _videoPlayerController.initialize();
+    await _videoPlayerController.setLooping(false);
+    await _videoPlayerController.play();
   }
 
   void openProfileView() {
@@ -94,6 +106,91 @@ class _HomePageState extends State<HomePage> {
       todayTasksWidgets.add(taskWidget);
     }
     return todayTasksWidgets;
+  }
+
+  List<Widget> buildStories() {
+    List<Widget> stories = [];
+    Widget addStoryWidget = GestureDetector(
+      child: const Padding(
+        child: CircleAvatar(
+          child: Icon(Icons.add_circle),
+          radius: 30,
+        ),
+        padding: EdgeInsets.all(5),
+      ),
+      onTap: () {
+        //print("ready to recordx");
+        Navigator.push(context,
+            CupertinoPageRoute(builder: (context) => const VideoCapturer()));
+      },
+    );
+    stories.add(addStoryWidget);
+
+    List<Widget> currentStories = List.generate(
+        PlannerService.sharedInstance.user!.stories.length, (int index) {
+      return GestureDetector(
+          child: Padding(
+            child: CircleAvatar(
+              backgroundImage: AssetImage(
+                  PlannerService.sharedInstance.user!.stories[index].thumbnail),
+              radius: 30,
+            ),
+            padding: EdgeInsets.all(5),
+          ),
+          onTap: () {
+            _videoPlayerController = VideoPlayerController.asset(
+                PlannerService.sharedInstance.user!.stories[index].video.path)
+              ..initialize().then((_) {
+                // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                setState(() {});
+
+                // _controller.addListener(checkVideoEnded);
+                showDialog(
+                    context: context, // user must tap button!
+
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(
+                          builder: (context, setDialogState) {
+                        return SimpleDialog(
+                          children: [
+                            Center(
+                              child: Container(
+                                margin: const EdgeInsets.all(20),
+                                child: AspectRatio(
+                                  aspectRatio:
+                                      _videoPlayerController.value.aspectRatio,
+                                  child: Stack(
+                                    alignment: Alignment.bottomCenter,
+                                    children: <Widget>[
+                                      VideoPlayer(_videoPlayerController),
+                                      VideoProgressIndicator(
+                                          _videoPlayerController,
+                                          allowScrubbing: true),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      });
+                    });
+                _videoPlayerController.play();
+                _videoPlayerController.setLooping(true);
+              });
+          });
+      // return Card(
+      //   color: Colors.blue[index * 100],
+      //   child: Container(
+      //     width: 50.0,
+      //     height: 50.0,
+      //     child: Text("$index"),
+      //   ),
+      // );
+    });
+
+    stories.addAll(currentStories);
+    return stories;
   }
 
   @override
@@ -196,31 +293,142 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Container(
-        //child: Expanded(
         child: ListView(
           children: [
-            // Image.asset(
-            //   "assets/images/pink_planit.png",
-            //   height: 100,
-            //   width: 100,
-            // ),
-            // Container(
-            //   child: TextFormField(
-            //     controller: planitMessageTxtController,
-            //     decoration: const InputDecoration(
-            //       hintText: "My Planit Message",
-            //       fillColor: Colors.white,
-            //     ),
-            //     validator: (String? value) {
-            //       if (value == null || value.isEmpty) {
-            //         return 'Please enter some text';
-            //       }
-            //       return null;
-            //     },
-            //     maxLines: null,
-            //     minLines: 4,
+            Container(
+              height: 80.0,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: buildStories(),
+                // List.generate(
+                //     PlannerService.sharedInstance.user!.stories.length,
+                //     (int index) {
+                //   return GestureDetector(
+                //       child: Padding(
+                //         child: CircleAvatar(
+                //           backgroundImage: AssetImage(
+                //               PlannerService.sharedInstance.user!.profileImage),
+                //           radius: 30,
+                //         ),
+                //         padding: EdgeInsets.all(5),
+                //       ),
+                //       onTap: () {
+                //         _videoPlayerController = VideoPlayerController.asset(
+                //             PlannerService
+                //                 .sharedInstance.user!.stories[index].path)
+                //           ..initialize().then((_) {
+                //             // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                //             setState(() {});
+
+                //             // _controller.addListener(checkVideoEnded);
+                //             showDialog(
+                //                 context: context, // user must tap button!
+
+                //                 builder: (BuildContext context) {
+                //                   return StatefulBuilder(
+                //                       builder: (context, setDialogState) {
+                //                     return SimpleDialog(
+                //                       children: [
+                //                         Center(
+                //                           child: Container(
+                //                             margin: const EdgeInsets.all(20),
+                //                             child: AspectRatio(
+                //                               aspectRatio:
+                //                                   _videoPlayerController
+                //                                       .value.aspectRatio,
+                //                               child: Stack(
+                //                                 alignment:
+                //                                     Alignment.bottomCenter,
+                //                                 children: <Widget>[
+                //                                   VideoPlayer(
+                //                                       _videoPlayerController),
+                //                                   VideoProgressIndicator(
+                //                                       _videoPlayerController,
+                //                                       allowScrubbing: true),
+                //                                 ],
+                //                               ),
+                //                             ),
+                //                           ),
+                //                         ),
+                //                       ],
+                //                     );
+                //                   });
+                //                 });
+                //             _videoPlayerController.play();
+                //             _videoPlayerController.setLooping(true);
+                //           });
+
+                //       });
+
+                // }),
+              ),
+            ),
+            //],
+            //),
+            //),
+            //Container(
+            //child:
+            // Row(children: [
+            //   IconButton(
+            //     onPressed: () {},
+            //     icon: Icon(Icons.add_circle),
             //   ),
+            //   //Container(
+            //   //height: 80.0,
+            //   //child:
+            //   ListView(
+            //     scrollDirection: Axis.horizontal,
+            //     children: List.generate(
+            //         PlannerService.sharedInstance.user!.stories.length,
+            //         (int index) {
+            // return GestureDetector(
+            //   onTap: () {
+            //     showDialog(
+            //       context: context, // user must tap button!
+
+            //       builder: (BuildContext context) {
+            //         return StatefulBuilder(
+            //             builder: (context, setDialogState) {
+            //           return SimpleDialog(
+            //             children: [
+            //               Center(
+            //                 child: Container(
+            //                   margin: const EdgeInsets.all(20),
+            //                   child: FutureBuilder(
+            //                     future: _initVideoPlayer(PlannerService
+            //                         .sharedInstance.user!.stories[index]),
+            //                     builder: (context, state) {
+            //                       if (state.connectionState ==
+            //                           ConnectionState.waiting) {
+            //                         return const Center(
+            //                             child: CircularProgressIndicator());
+            //                       } else {
+            //                         return VideoPlayer(
+            //                             _videoPlayerController);
+            //                       }
+            //                     },
+            //                   ),
+            //                 ),
+            //               ),
+            //             ],
+            //           );
+            //               });
+            //             },
+            //           );
+            //         },
+            // child: CircleAvatar(
+            //   backgroundImage: AssetImage(
+            //       PlannerService.sharedInstance.user!.profileImage),
+            //   radius: 40,
             // ),
+            //       );
+            //     }),
+            //   ),
+            //   //color: Colors.white,
+            //   //),
+            // ]),
+            //),
+
             Container(
               child: Column(
                 children: [
@@ -244,18 +452,7 @@ class _HomePageState extends State<HomePage> {
                               TableCell(
                                 verticalAlignment:
                                     TableCellVerticalAlignment.fill,
-                                child: Container(
-                                    // child: Text(
-                                    //   "Habits",
-                                    //   textAlign: TextAlign.center,
-                                    //   style: TextStyle(
-                                    //     //color: Theme.of(context).colorScheme.primary,
-                                    //     color: Colors.black,
-                                    //     fontWeight: FontWeight.bold,
-                                    //   ),
-                                    // ),
-                                    //margin: EdgeInsets.only(left: 10, right: 10),
-                                    ),
+                                child: Container(),
                               ),
                               TableCell(
                                   child: Container(
@@ -303,52 +500,6 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     onPressed: () {
                                       editHabitClicked(i);
-                                      // print("Buttton was pressed");
-                                      // //habitClicked(i);
-                                      // setEditHabitBtnState();
-                                      // editHabitTxtController.text =
-                                      //     PlannerService.sharedInstance.user!
-                                      //         .habits[i].description;
-                                      // showDialog(
-                                      //     context: context,
-                                      //     barrierColor: Colors.black26,
-                                      //     builder: (context) => AlertDialog(
-                                      //           title: Text("Edit"),
-                                      //           content: TextFormField(
-                                      //             controller:
-                                      //                 editHabitTxtController,
-                                      //             decoration:
-                                      //                 const InputDecoration(
-                                      //               hintText: "Description",
-                                      //             ),
-                                      //             validator: (String? value) {
-                                      //               if (value == null ||
-                                      //                   value.isEmpty) {
-                                      //                 return 'Please enter some text';
-                                      //               }
-                                      //               return null;
-                                      //             },
-                                      //           ),
-                                      //           actions: [
-                                      //             TextButton(
-                                      //                 child: const Text('save'),
-                                      //                 onPressed:
-                                      //                     editHabitClicked(i)
-                                      //                 // () {
-                                      //                 //   print("pressed");
-                                      //                 // }),
-                                      //                 ),
-                                      //             TextButton(
-                                      //               child: const Text('cancel'),
-                                      //               onPressed: () {
-                                      //                 newHabitTextController
-                                      //                     .text = "";
-                                      //                 Navigator.of(context)
-                                      //                     .pop();
-                                      //               },
-                                      //             )
-                                      //           ],
-                                      //         ));
                                     },
                                   ),
                                   margin: EdgeInsets.only(left: 10, right: 10),
@@ -783,14 +934,8 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        //),
         margin: EdgeInsets.all(15),
       ),
-      // body: Column(
-      //   children: const [
-      //     Text("Today..."),
-      //   ],
-      // ),
     );
   }
 
