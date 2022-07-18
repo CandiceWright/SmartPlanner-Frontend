@@ -1191,7 +1191,8 @@ class _HomePageState extends State<HomePage> {
       body = {
         'userId': PlannerService.sharedInstance.user!.id,
         'habitId': PlannerService.sharedInstance.user!.habits[idx].id,
-        'description': editHabitTxtController.text,
+        'description':
+            PlannerService.sharedInstance.user!.habits[idx].description,
         'sun': habitMap!["Sunday"],
         'mon': habitMap["Mon"],
         'tues': habitMap["Tues"],
