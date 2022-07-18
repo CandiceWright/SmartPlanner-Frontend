@@ -54,7 +54,8 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/dictionary');
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/dictionary');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');

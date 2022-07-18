@@ -43,7 +43,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
 
   void signup() async {
     //call sign up server route and then go to home of app
-    var url = Uri.parse('http://192.168.1.4:7343/theme/');
+    var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/theme/');
     //var response = await http.post(url);
     var body = {'theme': themeId, 'email': widget.email};
     String bodyF = jsonEncode(body);
@@ -63,7 +63,8 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://192.168.1.4:7343/categories');
+      var url =
+          Uri.parse(PlannerService.sharedInstance.serverUrl + '/categories');
       var response2 = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
 
@@ -73,7 +74,8 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
         var id = decodedBody["insertId"];
 
 //save spacetheme choice
-        var url = Uri.parse('http://192.168.1.4:7343/spacetheme/');
+        var url =
+            Uri.parse(PlannerService.sharedInstance.serverUrl + '/spacetheme/');
         //var response = await http.post(url);
         String image;
         if (spaceThemeId == 0) {

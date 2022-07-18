@@ -111,7 +111,8 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         String bodyF = jsonEncode(body);
         print(bodyF);
 
-        var url = Uri.parse('http://192.168.1.4:7343/calendar');
+        var url =
+            Uri.parse(PlannerService.sharedInstance.serverUrl + '/calendar');
         var response = await http.post(url,
             headers: {"Content-Type": "application/json"}, body: bodyF);
         print('Response status: ${response.statusCode}');
@@ -131,7 +132,8 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           String bodyF = jsonEncode(body);
           print(bodyF);
 
-          var url = Uri.parse('http://192.168.1.4:7343/backlog/schedule');
+          var url = Uri.parse(
+              PlannerService.sharedInstance.serverUrl + '/backlog/schedule');
           var response2 = await http.patch(url,
               headers: {"Content-Type": "application/json"}, body: bodyF);
           print('Response status: ${response2.statusCode}');
@@ -263,7 +265,8 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         String bodyF = jsonEncode(body);
         print(bodyF);
 
-        var url = Uri.parse('http://192.168.1.4:7343/calendar');
+        var url =
+            Uri.parse(PlannerService.sharedInstance.serverUrl + '/calendar');
         var response = await http.post(url,
             headers: {"Content-Type": "application/json"}, body: bodyF);
         print('Response status: ${response.statusCode}');
@@ -283,7 +286,8 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           String bodyF = jsonEncode(body);
           print(bodyF);
 
-          var url = Uri.parse('http://192.168.1.4:7343/backlog/schedule');
+          var url = Uri.parse(
+              PlannerService.sharedInstance.serverUrl + '/backlog/schedule');
           var response2 = await http.patch(url,
               headers: {"Content-Type": "application/json"}, body: bodyF);
           print('Response status: ${response2.statusCode}');

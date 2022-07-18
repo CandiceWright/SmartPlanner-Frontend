@@ -9,19 +9,12 @@ import '/models/goal.dart';
 
 class PlannerService {
   static PlannerService sharedInstance = PlannerService();
+  //this is for prod
+  String serverUrl = "https://serve-anotherplanit.com:7343";
+  //for dev (this is your ip. It changes sometimes so keep this up-to-date)
+  //String serverUrl = "http://192.168.1.4:7343";
+
   User? user;
-  // var user = User(
-  //     planitName: "Candy",
-  //     email: "candicew@gmail.com",
-  //     //username: "Candicew",
-  //     password: "hi",
-  //     profileImage: "assets/images/profile_pic_icon.png",
-  //     themeId: AppThemes.pink,
-  //     //theme: PinkTheme(),
-  //     didStartTomorrowPlanning: false,
-  //     lifeCategories: [
-  //       // LifeCategory("Other", const Color(0xFFFF80b1)),
-  //     ]);
 
   Map<String, CustomTheme> themeColorMap = {
     "pink": PinkTheme(),

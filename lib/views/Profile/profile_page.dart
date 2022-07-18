@@ -72,7 +72,8 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/categories');
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/categories');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -146,7 +147,8 @@ class _ProfilePageState extends State<ProfilePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://192.168.1.4:7343/user/planitname');
+      var url = Uri.parse(
+          PlannerService.sharedInstance.serverUrl + '/user/planitname');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       print('Response status: ${response.statusCode}');
@@ -184,7 +186,8 @@ class _ProfilePageState extends State<ProfilePage> {
       String bodyF = jsonEncode(body);
       print(bodyF);
 
-      var url = Uri.parse('http://192.168.1.4:7343/user/email');
+      var url =
+          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/email');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       print('Response status: ${response.statusCode}');
@@ -457,7 +460,8 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/categories');
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/categories');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -602,7 +606,7 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/login');
+    var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/login');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -737,7 +741,8 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/user/password');
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/password');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -797,7 +802,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void changeThemeColor() async {
-    var url = Uri.parse('http://192.168.1.4:7343/theme/');
+    var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/theme/');
     var body = {
       'theme': selectedThemeId,
       'email': PlannerService.sharedInstance.user!.email
@@ -838,7 +843,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void changeSpaceTheme() async {
-    var url = Uri.parse('http://192.168.1.4:7343/spaceTheme/');
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/spaceTheme/');
     var body = {
       'image': selectedSpaceTheme,
       'email': PlannerService.sharedInstance.user!.email

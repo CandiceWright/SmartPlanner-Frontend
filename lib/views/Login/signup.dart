@@ -37,7 +37,8 @@ class _SignupPageState extends State<SignupPage> {
     var email = emailTextController.text;
     var password = passwordTextController.text;
     //call sign up server route and then go to home of app
-    var url = Uri.parse('http://192.168.1.4:7343/email/' + email);
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/email/' + email);
     var response = await http.get(url);
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');

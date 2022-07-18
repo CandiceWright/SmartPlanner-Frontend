@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/login');
+    var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/login');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
@@ -112,8 +112,9 @@ class _LoginPageState extends State<LoginPage> {
 
         //get all life categories
         print("getting all life categories");
-        var url = Uri.parse(
-            'http://192.168.1.4:7343/categories/' + userId.toString());
+        var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+            '/categories/' +
+            userId.toString());
         var response2 = await http.get(url);
         print('Response status: ${response2.statusCode}');
         print('Response body: ${response2.body}');
@@ -137,8 +138,9 @@ class _LoginPageState extends State<LoginPage> {
 
           //get all goals
           print("getting all goals");
-          var url =
-              Uri.parse('http://192.168.1.4:7343/goals/' + userId.toString());
+          var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+              '/goals/' +
+              userId.toString());
           var response3 = await http
               .get(url, headers: {"Content-Type": "application/json"});
           print('Response status: ${response3.statusCode}');
@@ -170,8 +172,9 @@ class _LoginPageState extends State<LoginPage> {
 
             //get all calendar events
             print("getting all calendar events");
-            var url = Uri.parse(
-                'http://192.168.1.4:7343/calendar/' + userId.toString());
+            var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                '/calendar/' +
+                userId.toString());
             var response4 = await http.get(url);
             print('Response status: ${response4.statusCode}');
             print('Response body: ${response4.body}');
@@ -198,8 +201,9 @@ class _LoginPageState extends State<LoginPage> {
 
               //get all habits
               print("getting all habits");
-              var url = Uri.parse(
-                  'http://192.168.1.4:7343/habits/' + userId.toString());
+              var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                  '/habits/' +
+                  userId.toString());
               var response5 = await http.get(url);
               print('Response status: ${response5.statusCode}');
               print('Response body: ${response5.body}');
@@ -234,8 +238,9 @@ class _LoginPageState extends State<LoginPage> {
                 //you will need to get all backlog items next and all dictionary items
                 //get all backlog items
                 print("getting all backlog");
-                var url = Uri.parse(
-                    'http://192.168.1.4:7343/backlog/' + userId.toString());
+                var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                    '/backlog/' +
+                    userId.toString());
                 var response6 = await http.get(url);
                 print('Response status: ${response6.statusCode}');
                 print('Response body: ${response6.body}');
@@ -279,7 +284,8 @@ class _LoginPageState extends State<LoginPage> {
                   }
 
                   //get all dictionary items
-                  var url = Uri.parse('http://192.168.1.4:7343/dictionary/' +
+                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                      '/dictionary/' +
                       userId.toString());
                   var response7 = await http.get(url);
                   print('Response status: ${response7.statusCode}');

@@ -35,7 +35,8 @@ class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/user/password');
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/password');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');

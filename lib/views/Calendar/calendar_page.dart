@@ -122,8 +122,10 @@ class _CalendarPageState extends State<CalendarPage> {
                 onPressed: () async {
                   if (CalendarPage.selectedEvent != null) {
                     //first send server request
-                    var url = Uri.parse('http://192.168.1.4:7343/calendar/' +
-                        CalendarPage.selectedEvent!.id.toString());
+                    var url = Uri.parse(
+                        PlannerService.sharedInstance.serverUrl +
+                            '/calendar/' +
+                            CalendarPage.selectedEvent!.id.toString());
                     var response = await http.delete(
                       url,
                     );
@@ -237,7 +239,8 @@ class _CalendarPageState extends State<CalendarPage> {
                       print(bodyF);
 
                       var url = Uri.parse(
-                          'http://192.168.1.4:7343/backlog/unscheduletask');
+                          PlannerService.sharedInstance.serverUrl +
+                              '/backlog/unscheduletask');
                       var response = await http.post(url,
                           headers: {"Content-Type": "application/json"},
                           body: bodyF);

@@ -86,8 +86,9 @@ class _InwardsPageState extends State<InwardsPage> {
                 onPressed: () async {
                   var defId =
                       PlannerService.sharedInstance.user!.dictionaryArr[idx].id;
-                  var url = Uri.parse(
-                      'http://192.168.1.4:7343/dictionary/' + defId.toString());
+                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                      '/dictionary/' +
+                      defId.toString());
                   var response = await http.delete(
                     url,
                   );

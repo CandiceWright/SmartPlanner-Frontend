@@ -74,7 +74,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
     String bodyF = jsonEncode(body);
     print(bodyF);
 
-    var url = Uri.parse('http://192.168.1.4:7343/goals');
+    var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');

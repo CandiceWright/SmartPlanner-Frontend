@@ -140,7 +140,8 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
                     print(bodyF);
 
                     var url = Uri.parse(
-                        'http://192.168.1.4:7343/backlog/unscheduletask');
+                        PlannerService.sharedInstance.serverUrl +
+                            '/backlog/unscheduletask');
                     var response = await http.post(url,
                         headers: {"Content-Type": "application/json"},
                         body: bodyF);
