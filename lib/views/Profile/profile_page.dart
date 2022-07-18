@@ -522,8 +522,73 @@ class _ProfilePageState extends State<ProfilePage> {
   Future pickImage() async {
     //await _picker.pickImage(source: ImageSource.gallery);
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      PlannerService.sharedInstance.user!.profileImage = image!.path;
+    var path = image!.path;
+    var name = image.name;
+
+    //first upload image to firebase and get image url. then save url to db
+    PlannerService.firebaseStorage
+        .uploadProfilePic(path, name)
+        .then((result) async {
+      print("completed");
+      print("result after calling uploadProfilePic");
+      print(result);
+      if (result == "error") {
+        //error message
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else {
+        //success and result holds url
+        var url = Uri.parse(
+            PlannerService.sharedInstance.serverUrl + '/user/profileimage');
+        var body = {
+          'image': result,
+          'id': PlannerService.sharedInstance.user!.id
+        };
+        String bodyF = jsonEncode(body);
+        var response = await http.patch(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+        if (response.statusCode == 200) {
+          print(PlannerService.sharedInstance.user!.profileImage = result!);
+          setState(() {
+            // PlannerService.sharedInstance.user!.profileImage = path;
+            PlannerService.sharedInstance.user!.profileImage = result!;
+          });
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
+      }
     });
   }
 
@@ -934,11 +999,22 @@ class _ProfilePageState extends State<ProfilePage> {
                       pickImage();
                     },
                     child: Center(
-                      child: CircleAvatar(
-                        backgroundImage: AssetImage(
-                            PlannerService.sharedInstance.user!.profileImage),
-                        radius: 40,
-                      ),
+                      child: PlannerService.sharedInstance.user!.profileImage ==
+                              "assets/images/profile_pic_icon.png"
+                          ? CircleAvatar(
+                              // // backgroundImage: AssetImage(
+                              //     PlannerService.sharedInstance.user!.profileImage),
+                              backgroundImage: AssetImage(PlannerService
+                                  .sharedInstance.user!.profileImage),
+                              radius: 40,
+                            )
+                          : CircleAvatar(
+                              // // backgroundImage: AssetImage(
+                              //     PlannerService.sharedInstance.user!.profileImage),
+                              backgroundImage: NetworkImage(PlannerService
+                                  .sharedInstance.user!.profileImage),
+                              radius: 40,
+                            ),
                     ),
                   ),
                   Column(

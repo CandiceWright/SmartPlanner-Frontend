@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/services/planner_service.dart';
@@ -7,7 +8,9 @@ import 'views/Login/welcome_page.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import '/Themes/app_themes.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
