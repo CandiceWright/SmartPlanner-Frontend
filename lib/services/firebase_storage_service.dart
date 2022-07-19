@@ -27,6 +27,22 @@ class FirebaseStorage {
     //return null;
   }
 
+  Future<String?> uploadPicture(String filePath, String storagePath) async {
+    File file = File(filePath);
+    print("this is tthe pictures storage patth");
+    print(storagePath);
+    try {
+      TaskSnapshot snapshot = await storage.ref(storagePath).putFile(file);
+
+      String url = await snapshot.ref.getDownloadURL();
+      return url;
+    } on firebase_core.FirebaseException catch (e) {
+      print(e);
+      return "error";
+    }
+    //return null;
+  }
+
   Future<String?> uploadStory(String path, String filename) async {
     print(filename);
     File file = File(path);

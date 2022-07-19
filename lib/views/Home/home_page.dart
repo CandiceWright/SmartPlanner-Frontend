@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage> {
       return GestureDetector(
           child: Padding(
             child: CircleAvatar(
-              backgroundImage: AssetImage(
+              backgroundImage: NetworkImage(
                   PlannerService.sharedInstance.user!.stories[index].thumbnail),
               radius: 30,
             ),

@@ -567,6 +567,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.1"
+  video_compress:
+    dependency: "direct main"
+    description:
+      name: video_compress
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.1"
   video_player:
     dependency: "direct main"
     description:
@@ -617,5 +624,5 @@ packages:
     source: hosted
     version: "0.2.0+1"
 sdks:
-  dart: ">=2.16.0 <3.0.0"
+  dart: ">=2.16.2 <3.0.0"
   flutter: ">=2.10.0"

@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:practice_planner/models/inward_item.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../services/planner_service.dart';
 import '../models/story.dart';
 import '../views/navigation_wrapper.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as p;
 
 class VideoPreviewPage extends StatefulWidget {
   final String filePath;
@@ -54,10 +56,12 @@ class _VideoPreviewPageState extends State<VideoPreviewPage> {
   }
 
   saveStory() async {
-    //upload video to firebase and get download url
+    //upload video+thumbnail to firebase and get download url
     print("I am in save story");
     String? result = await PlannerService.firebaseStorage
         .uploadStory(widget.filePath, widget.filename);
+    final thumbnail = await VideoCompress.getFileThumbnail(widget.filePath);
+
     //store story in db then add story object to the list of stories
     print("result is ready");
     print(result);
@@ -83,45 +87,12 @@ class _VideoPreviewPageState extends State<VideoPreviewPage> {
       //success and result holds url
       print("success getting video url");
       print(result);
-      var url =
-          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/stories');
-      var body = {
-        'userId': PlannerService.sharedInstance.user!.id,
-        'date': DateTime.now().toString(),
-        'url': result,
-        'thumbnail': PlannerService.sharedInstance.user!.profileImage
-      };
-      String bodyF = jsonEncode(body);
-      var response = await http.post(url,
-          headers: {"Content-Type": "application/json"}, body: bodyF);
 
-      print("server came back with a response after saving story");
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //now save the thumbnail
+      String? result2 = await PlannerService.firebaseStorage.uploadPicture(
+          thumbnail.path, "thumbnails/" + p.basename(thumbnail.path));
 
-      if (response.statusCode == 200) {
-        var decodedBody = json.decode(response.body);
-        print(decodedBody);
-        var id = decodedBody["insertId"];
-        Story newStory = Story(id, result!,
-            PlannerService.sharedInstance.user!.profileImage, DateTime.now());
-        setState(() {
-          // PlannerService.sharedInstance.user!.profileImage = path;
-          PlannerService.sharedInstance.user!.stories.add(newStory);
-        });
-        // Navigator.of(context).popUntil((route) {
-        //   return route.settings.name == 'navigaionPage';
-        // });
-        _videoPlayerController.pause();
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return const NavigationWrapper();
-          },
-          settings: const RouteSettings(
-            name: 'navigaionPage',
-          ),
-        ));
-      } else {
+      if (result2 == "error") {
         showDialog(
             context: context,
             builder: (context) {
@@ -138,6 +109,65 @@ class _VideoPreviewPageState extends State<VideoPreviewPage> {
                 ],
               );
             });
+      } else {
+        //successfully saved thumbnail and result2 has thumbnail url
+        //save tto db now
+        var url = Uri.parse(
+            PlannerService.sharedInstance.serverUrl + '/user/stories');
+        var body = {
+          'userId': PlannerService.sharedInstance.user!.id,
+          'date': DateTime.now().toString(),
+          'url': result,
+          //'thumbnail': PlannerService.sharedInstance.user!.profileImage
+          'thumbnail': result2
+        };
+        String bodyF = jsonEncode(body);
+        var response = await http.post(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+
+        print("server came back with a response after saving story");
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+        if (response.statusCode == 200) {
+          var decodedBody = json.decode(response.body);
+          print(decodedBody);
+          var id = decodedBody["insertId"];
+          Story newStory = Story(id, result!, result2!, DateTime.now());
+          setState(() {
+            // PlannerService.sharedInstance.user!.profileImage = path;
+            PlannerService.sharedInstance.user!.stories.add(newStory);
+          });
+          // Navigator.of(context).popUntil((route) {
+          //   return route.settings.name == 'navigaionPage';
+          // });
+          _videoPlayerController.pause();
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return const NavigationWrapper();
+            },
+            settings: const RouteSettings(
+              name: 'navigaionPage',
+            ),
+          ));
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
       }
     }
 
