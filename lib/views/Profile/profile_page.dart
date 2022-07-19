@@ -526,14 +526,49 @@ class _ProfilePageState extends State<ProfilePage> {
     var name = image.name;
 
     //first upload image to firebase and get image url. then save url to db
-    PlannerService.firebaseStorage
-        .uploadProfilePic(path, name)
-        .then((result) async {
-      print("completed");
-      print("result after calling uploadProfilePic");
-      print(result);
-      if (result == "error") {
-        //error message
+    String? result =
+        await PlannerService.firebaseStorage.uploadProfilePic(path, name);
+    if (result == "error") {
+      //error message
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else {
+      //success and result holds url
+      var url = Uri.parse(
+          PlannerService.sharedInstance.serverUrl + '/user/profileimage');
+      var body = {
+        'image': result,
+        'id': PlannerService.sharedInstance.user!.id
+      };
+      String bodyF = jsonEncode(body);
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+
+      print("server came back with a response after saving image");
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        print(PlannerService.sharedInstance.user!.profileImage = result!);
+        setState(() {
+          // PlannerService.sharedInstance.user!.profileImage = path;
+          PlannerService.sharedInstance.user!.profileImage = result;
+        });
+      } else {
         showDialog(
             context: context,
             builder: (context) {
@@ -550,46 +585,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               );
             });
-      } else {
-        //success and result holds url
-        var url = Uri.parse(
-            PlannerService.sharedInstance.serverUrl + '/user/profileimage');
-        var body = {
-          'image': result,
-          'id': PlannerService.sharedInstance.user!.id
-        };
-        String bodyF = jsonEncode(body);
-        var response = await http.patch(url,
-            headers: {"Content-Type": "application/json"}, body: bodyF);
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
-
-        if (response.statusCode == 200) {
-          print(PlannerService.sharedInstance.user!.profileImage = result!);
-          setState(() {
-            // PlannerService.sharedInstance.user!.profileImage = path;
-            PlannerService.sharedInstance.user!.profileImage = result!;
-          });
-        } else {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                      'Oops! Looks like something went wrong. Please try again.'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        }
       }
-    });
+    }
   }
 
   void changePasswordClicked() {

@@ -208,12 +208,22 @@ class _HomePageState extends State<HomePage> {
               },
               child: Padding(
                 padding: EdgeInsets.only(right: 5),
-                child: CircleAvatar(
-                  backgroundImage: AssetImage(
-                      PlannerService.sharedInstance.user!.profileImage),
-                  //backgroundColor: Colors.white,
-                  //radius: 40,
-                ),
+                child: PlannerService.sharedInstance.user!.profileImage ==
+                        "assets/images/profile_pic_icon.png"
+                    ? CircleAvatar(
+                        // // backgroundImage: AssetImage(
+                        //     PlannerService.sharedInstance.user!.profileImage),
+                        backgroundImage: AssetImage(
+                            PlannerService.sharedInstance.user!.profileImage),
+                        radius: 40,
+                      )
+                    : CircleAvatar(
+                        // // backgroundImage: AssetImage(
+                        //     PlannerService.sharedInstance.user!.profileImage),
+                        backgroundImage: NetworkImage(
+                            PlannerService.sharedInstance.user!.profileImage),
+                        radius: 40,
+                      ),
               )),
           // IconButton(
           //   icon: Image.asset(
@@ -300,135 +310,8 @@ class _HomePageState extends State<HomePage> {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: buildStories(),
-                // List.generate(
-                //     PlannerService.sharedInstance.user!.stories.length,
-                //     (int index) {
-                //   return GestureDetector(
-                //       child: Padding(
-                //         child: CircleAvatar(
-                //           backgroundImage: AssetImage(
-                //               PlannerService.sharedInstance.user!.profileImage),
-                //           radius: 30,
-                //         ),
-                //         padding: EdgeInsets.all(5),
-                //       ),
-                //       onTap: () {
-                //         _videoPlayerController = VideoPlayerController.asset(
-                //             PlannerService
-                //                 .sharedInstance.user!.stories[index].path)
-                //           ..initialize().then((_) {
-                //             // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-                //             setState(() {});
-
-                //             // _controller.addListener(checkVideoEnded);
-                //             showDialog(
-                //                 context: context, // user must tap button!
-
-                //                 builder: (BuildContext context) {
-                //                   return StatefulBuilder(
-                //                       builder: (context, setDialogState) {
-                //                     return SimpleDialog(
-                //                       children: [
-                //                         Center(
-                //                           child: Container(
-                //                             margin: const EdgeInsets.all(20),
-                //                             child: AspectRatio(
-                //                               aspectRatio:
-                //                                   _videoPlayerController
-                //                                       .value.aspectRatio,
-                //                               child: Stack(
-                //                                 alignment:
-                //                                     Alignment.bottomCenter,
-                //                                 children: <Widget>[
-                //                                   VideoPlayer(
-                //                                       _videoPlayerController),
-                //                                   VideoProgressIndicator(
-                //                                       _videoPlayerController,
-                //                                       allowScrubbing: true),
-                //                                 ],
-                //                               ),
-                //                             ),
-                //                           ),
-                //                         ),
-                //                       ],
-                //                     );
-                //                   });
-                //                 });
-                //             _videoPlayerController.play();
-                //             _videoPlayerController.setLooping(true);
-                //           });
-
-                //       });
-
-                // }),
               ),
             ),
-            //],
-            //),
-            //),
-            //Container(
-            //child:
-            // Row(children: [
-            //   IconButton(
-            //     onPressed: () {},
-            //     icon: Icon(Icons.add_circle),
-            //   ),
-            //   //Container(
-            //   //height: 80.0,
-            //   //child:
-            //   ListView(
-            //     scrollDirection: Axis.horizontal,
-            //     children: List.generate(
-            //         PlannerService.sharedInstance.user!.stories.length,
-            //         (int index) {
-            // return GestureDetector(
-            //   onTap: () {
-            //     showDialog(
-            //       context: context, // user must tap button!
-
-            //       builder: (BuildContext context) {
-            //         return StatefulBuilder(
-            //             builder: (context, setDialogState) {
-            //           return SimpleDialog(
-            //             children: [
-            //               Center(
-            //                 child: Container(
-            //                   margin: const EdgeInsets.all(20),
-            //                   child: FutureBuilder(
-            //                     future: _initVideoPlayer(PlannerService
-            //                         .sharedInstance.user!.stories[index]),
-            //                     builder: (context, state) {
-            //                       if (state.connectionState ==
-            //                           ConnectionState.waiting) {
-            //                         return const Center(
-            //                             child: CircularProgressIndicator());
-            //                       } else {
-            //                         return VideoPlayer(
-            //                             _videoPlayerController);
-            //                       }
-            //                     },
-            //                   ),
-            //                 ),
-            //               ),
-            //             ],
-            //           );
-            //               });
-            //             },
-            //           );
-            //         },
-            // child: CircleAvatar(
-            //   backgroundImage: AssetImage(
-            //       PlannerService.sharedInstance.user!.profileImage),
-            //   radius: 40,
-            // ),
-            //       );
-            //     }),
-            //   ),
-            //   //color: Colors.white,
-            //   //),
-            // ]),
-            //),
-
             Container(
               child: Column(
                 children: [

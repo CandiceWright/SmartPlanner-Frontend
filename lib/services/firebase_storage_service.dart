@@ -13,24 +13,29 @@ class FirebaseStorage {
   Future<String?> uploadProfilePic(String path, String fileName) async {
     File file = File(path);
     try {
-      await storage
+      TaskSnapshot snapshot = await storage
           .ref("profile_pictures/" +
               PlannerService.sharedInstance.user!.id.toString())
-          .putFile(file)
-          .then((value) {
-        value.ref.getDownloadURL().then((url) {
-          print(url);
-          return url;
-          //save url to db
-          //if url saves successfully to db,
-          PlannerService.sharedInstance.user!.profileImage = path;
-        });
-      });
+          .putFile(file);
+
+      String url = await snapshot.ref.getDownloadURL();
+      return url;
+      //     .then((value) {
+      //   print("I am about to get download url");
+      //   value.ref.getDownloadURL().then((url) {
+      //     print("I am in .then for download url");
+      //     print(url);
+      //     return url;
+      //     //save url to db
+      //     //if url saves successfully to db,
+      //     PlannerService.sharedInstance.user!.profileImage = path;
+      //   });
+      // });
     } on firebase_core.FirebaseException catch (e) {
       print(e);
       return "error";
     }
-    return null;
+    //return null;
   }
 
   Future<void> downloadFile(String path, String fileName) async {

@@ -47,6 +47,8 @@ class _VideoPreviewPageState extends State<VideoPreviewPage> {
   }
 
   saveStory() {
+    //upload video to firebase and get download url
+    //store story in db then add story object to the list of stories
     setState(() {
       PlannerService.sharedInstance.user!.stories.add(Story(
           File(widget.filePath),
