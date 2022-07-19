@@ -30,10 +30,10 @@ class User {
   var inwardContent = <InwardItem>[];
   //var stories = <Story>[];
   var stories = <Story>[
-    Story(File("assets/images/another_planit_animation_video.mp4"),
-        "assets/images/profile_pic_icon.png", DateTime.now()),
-    Story(File("assets/images/another_planit_animation_video.mp4"),
-        "assets/images/profile_pic_icon.png", DateTime.now())
+    // Story(File("assets/images/another_planit_animation_video.mp4"),
+    //     "assets/images/profile_pic_icon.png", DateTime.now()),
+    // Story(File("assets/images/another_planit_animation_video.mp4"),
+    //     "assets/images/profile_pic_icon.png", DateTime.now())
   ];
 
   Map<String, List<BacklogItem>> backlogMap = {};

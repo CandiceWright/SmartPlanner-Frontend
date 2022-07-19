@@ -5,7 +5,8 @@ import 'package:practice_planner/services/video_preview.dart';
 import '../../services/planner_service.dart';
 
 class VideoCapturer extends StatefulWidget {
-  const VideoCapturer({Key? key}) : super(key: key);
+  final String videoType;
+  const VideoCapturer({Key? key, required this.videoType}) : super(key: key);
 
   @override
   _VideoCapturerState createState() => _VideoCapturerState();
@@ -50,7 +51,11 @@ class _VideoCapturerState extends State<VideoCapturer> {
       setState(() => _isRecording = false);
       final route = MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (_) => VideoPreviewPage(filePath: file.path),
+        builder: (_) => VideoPreviewPage(
+          filePath: file.path,
+          filename: file.name,
+          videoType: widget.videoType,
+        ),
       );
       Navigator.push(context, route);
     } else {

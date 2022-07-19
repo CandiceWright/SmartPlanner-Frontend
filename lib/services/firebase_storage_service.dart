@@ -20,17 +20,6 @@ class FirebaseStorage {
 
       String url = await snapshot.ref.getDownloadURL();
       return url;
-      //     .then((value) {
-      //   print("I am about to get download url");
-      //   value.ref.getDownloadURL().then((url) {
-      //     print("I am in .then for download url");
-      //     print(url);
-      //     return url;
-      //     //save url to db
-      //     //if url saves successfully to db,
-      //     PlannerService.sharedInstance.user!.profileImage = path;
-      //   });
-      // });
     } on firebase_core.FirebaseException catch (e) {
       print(e);
       return "error";
@@ -38,23 +27,44 @@ class FirebaseStorage {
     //return null;
   }
 
-  Future<void> downloadFile(String path, String fileName) async {
+  Future<String?> uploadStory(String path, String filename) async {
+    print(filename);
     File file = File(path);
     try {
-      await storage
-          .ref("profile_pictures/" +
-              PlannerService.sharedInstance.user!.id.toString())
-          .putFile(file)
-          .then((value) {
-        value.ref.getDownloadURL().then((url) {
-          print(url);
-          //save url to db
-          //if url saves successfully to db,
-          PlannerService.sharedInstance.user!.profileImage = path;
-        });
-      });
+      TaskSnapshot snapshot =
+          await storage.ref("stories/" + (filename)).putFile(file);
+
+      String url = await snapshot.ref.getDownloadURL();
+      print("file successful " + url);
+      return url;
     } on firebase_core.FirebaseException catch (e) {
+      print("error occurred while trying to upload file");
       print(e);
+      return "error";
     }
+    //return null;
+  }
+
+  Future<String?> deleteFile(String video) async {
+    //File file = File(path);
+    //print("thiis is the path to delete");
+    // String path = "stories/" +
+    //     PlannerService.sharedInstance.user!.id.toString() +
+    //     "/" +
+    //     (id).toString();
+    // print(path);
+    try {
+      await storage.refFromURL(video).delete();
+      print("success deletiing video");
+
+      //String url = await snapshot.ref.getDownloadURL();
+      //print("file successful " + url);
+      return "success";
+    } on firebase_core.FirebaseException catch (e) {
+      print("error occurred while trying to delete file");
+      print(e);
+      return "error";
+    }
+    //return null;
   }
 }

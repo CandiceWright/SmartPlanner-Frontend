@@ -12,6 +12,7 @@ import '../../models/backlog_item.dart';
 import '../../models/definition.dart';
 import '../../models/habit.dart';
 import '../../models/life_category.dart';
+import '../../models/story.dart';
 import '../../models/user.dart';
 import '../../models/event.dart';
 import '/views/navigation_wrapper.dart';
@@ -109,6 +110,7 @@ class _LoginPageState extends State<LoginPage> {
         var dictionaryMap = <String, Definition>{};
         var backlogItems = <BacklogItem>[];
         Map<String, List<BacklogItem>> backlogMap = {};
+        var stories = <Story>[];
 
         //get all life categories
         print("getting all life categories");
@@ -301,44 +303,93 @@ class _LoginPageState extends State<LoginPage> {
                       dictionaryMap.addAll({definition.name: definition});
                     }
 
-                    DynamicTheme.of(context)!.setTheme(themeId);
-                    var user = User(
-                        id: userId,
-                        planitName: planitName,
-                        email: email,
-                        //profileImage: "assets/images/profile_pic_icon.png",
-                        profileImage: profileImage,
-                        themeId: themeId,
-                        spaceImage: spaceTheme,
-                        //theme: PinkTheme(),
-                        didStartTomorrowPlanning: didStartPlanning,
-                        lifeCategories: lifeCategories);
-                    PlannerService.sharedInstance.user = user;
-                    PlannerService.sharedInstance.user!.lifeCategories =
-                        lifeCategories;
-                    PlannerService.sharedInstance.user!.lifeCategoriesMap =
-                        lifeCategoriesMap;
-                    PlannerService.sharedInstance.user!.LifeCategoriesColorMap =
-                        lifeCategoriesColorMap;
-                    PlannerService.sharedInstance.user!.accomplishedGoals =
-                        accomplishedGoals;
-                    PlannerService.sharedInstance.user!.goals = goals;
-                    PlannerService.sharedInstance.user!.scheduledEvents =
-                        scheduledEvents;
-                    PlannerService.sharedInstance.user!.habits = habits;
-                    PlannerService.sharedInstance.user!.backlogItems =
-                        backlogItems;
-                    PlannerService.sharedInstance.user!.backlogMap = backlogMap;
-                    PlannerService.sharedInstance.user!.dictionaryArr =
-                        dictionaryArr;
-                    PlannerService.sharedInstance.user!.dictionaryMap =
-                        dictionaryMap;
+                    //get all stories
+                    var url = Uri.parse(
+                        PlannerService.sharedInstance.serverUrl +
+                            '/user/' +
+                            userId.toString() +
+                            '/stories');
 
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) {
-                        return const EnterPlannerVideoPage();
-                      },
-                    ));
+                    String bodyF = jsonEncode(body);
+                    var response8 = await http.get(url);
+
+                    print(
+                        "server came back with a response after saving story");
+                    print('Response status: ${response8.statusCode}');
+                    print('Response body: ${response8.body}');
+
+                    if (response8.statusCode == 200) {
+                      var decodedBody = json.decode(response8.body);
+                      print(decodedBody);
+                      for (int i = 0; i < decodedBody.length; i++) {
+                        var story = Story(
+                            decodedBody[i]["storyId"],
+                            decodedBody[i]["videoUrl"],
+                            decodedBody[i]["thumbnail"],
+                            DateTime.parse(decodedBody[i]["date"]));
+                        stories.add(story);
+                        //PlannerService.sharedInstance.user!.stories.add(story);
+                      }
+
+                      DynamicTheme.of(context)!.setTheme(themeId);
+                      var user = User(
+                          id: userId,
+                          planitName: planitName,
+                          email: email,
+                          //profileImage: "assets/images/profile_pic_icon.png",
+                          profileImage: profileImage,
+                          themeId: themeId,
+                          spaceImage: spaceTheme,
+                          //theme: PinkTheme(),
+                          didStartTomorrowPlanning: didStartPlanning,
+                          lifeCategories: lifeCategories);
+                      PlannerService.sharedInstance.user = user;
+                      PlannerService.sharedInstance.user!.lifeCategories =
+                          lifeCategories;
+                      PlannerService.sharedInstance.user!.lifeCategoriesMap =
+                          lifeCategoriesMap;
+                      PlannerService.sharedInstance.user!
+                          .LifeCategoriesColorMap = lifeCategoriesColorMap;
+                      PlannerService.sharedInstance.user!.accomplishedGoals =
+                          accomplishedGoals;
+                      PlannerService.sharedInstance.user!.goals = goals;
+                      PlannerService.sharedInstance.user!.scheduledEvents =
+                          scheduledEvents;
+                      PlannerService.sharedInstance.user!.habits = habits;
+                      PlannerService.sharedInstance.user!.backlogItems =
+                          backlogItems;
+                      PlannerService.sharedInstance.user!.backlogMap =
+                          backlogMap;
+                      PlannerService.sharedInstance.user!.dictionaryArr =
+                          dictionaryArr;
+                      PlannerService.sharedInstance.user!.dictionaryMap =
+                          dictionaryMap;
+
+                      PlannerService.sharedInstance.user!.stories = stories;
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) {
+                          return const EnterPlannerVideoPage();
+                        },
+                      ));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    }
                   } else {
                     //show and alert error
                     showDialog(

@@ -9,6 +9,7 @@ import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/habit.dart';
 import 'package:practice_planner/services/vide_capturer.dart';
 import 'package:practice_planner/views/Calendar/calendar_page.dart';
+import 'package:practice_planner/views/navigation_wrapper.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:video_player/video_player.dart';
 import '/views/Goals/goals_page.dart';
@@ -74,6 +75,106 @@ class _HomePageState extends State<HomePage> {
     setState(() {});
   }
 
+  void deleteStory(int idx) {
+    print("this is the current size of stories");
+    print(PlannerService.sharedInstance.user!.stories.length);
+    print("this is tthe index of curr story");
+    print(idx);
+    //Navigator.pop(context);
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to delete?",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('yes, delete'),
+                onPressed: () async {
+                  //first send server request
+                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                      '/user/stories/' +
+                      PlannerService.sharedInstance.user!.stories[idx].id
+                          .toString());
+                  var response = await http.delete(
+                    url,
+                  );
+                  print('Response status: ${response.statusCode}');
+                  print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
+                    //delete file from firebase
+                    String? result = await PlannerService.firebaseStorage
+                        .deleteFile(PlannerService
+                            .sharedInstance.user!.stories[idx].video);
+                    print("firebase delete done");
+                    print(result);
+                    if (result! == "success") {
+                      PlannerService.sharedInstance.user!.stories.removeAt(idx);
+                      setState(() {});
+                      //Navigator.pop(context);
+                      _videoPlayerController.pause();
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) {
+                          return const NavigationWrapper();
+                        },
+                        settings: const RouteSettings(
+                          name: 'navigaionPage',
+                        ),
+                      ));
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    }
+                  } else {
+                    //500 error, show an alert
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Oops! Looks like something went wrong. Please try again.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
+                  }
+                },
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('cancel'))
+            ],
+          );
+        });
+  }
+
   List<Widget> buildTodayTaskListView() {
     print("building today tasks widget");
     List<Widget> todayTasksWidgets = [];
@@ -120,8 +221,12 @@ class _HomePageState extends State<HomePage> {
       ),
       onTap: () {
         //print("ready to recordx");
-        Navigator.push(context,
-            CupertinoPageRoute(builder: (context) => const VideoCapturer()));
+        Navigator.push(
+            context,
+            CupertinoPageRoute(
+                builder: (context) => const VideoCapturer(
+                      videoType: "story",
+                    )));
       },
     );
     stories.add(addStoryWidget);
@@ -138,14 +243,15 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.all(5),
           ),
           onTap: () {
-            _videoPlayerController = VideoPlayerController.asset(
-                PlannerService.sharedInstance.user!.stories[index].video.path)
+            _videoPlayerController = VideoPlayerController.network(
+                PlannerService.sharedInstance.user!.stories[index].video)
               ..initialize().then((_) {
                 // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
                 setState(() {});
 
                 // _controller.addListener(checkVideoEnded);
                 showDialog(
+                    barrierDismissible: false,
                     context: context, // user must tap button!
 
                     builder: (BuildContext context) {
@@ -153,6 +259,21 @@ class _HomePageState extends State<HomePage> {
                           builder: (context, setDialogState) {
                         return SimpleDialog(
                           children: [
+                            Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () async {
+                                      await _videoPlayerController.pause();
+                                      Navigator.pop(context);
+                                    },
+                                    icon: Icon(Icons.close)),
+                                IconButton(
+                                    onPressed: () {
+                                      deleteStory(index);
+                                    },
+                                    icon: Icon(Icons.delete)),
+                              ],
+                            ),
                             Center(
                               child: Container(
                                 margin: const EdgeInsets.all(20),
