@@ -1,0 +1,10 @@
+BCSymbolMap Version: 2.0
+Apple clang version 13.0.0 (clang-1300.0.29.30)
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk
+iPhoneOS15.2.sdk
+/Users/candicewright/Library/Developer/Xcode/DerivedData/Runner-gqpclcnngimiyndbwbaimvgewcgs/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/FirebaseAuthInterop.build/DerivedSources/FirebaseAuthInterop_vers.c
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods/FirebaseAuthInterop/FirebaseAuth/Interop/dummy.m
+__OBJC_METACLASS_RO_$_PodsDummy_FirebaseAuthInterop
+__OBJC_CLASS_RO_$_PodsDummy_FirebaseAuthInterop
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods/Target Support Files/FirebaseAuthInterop/FirebaseAuthInterop-dummy.m

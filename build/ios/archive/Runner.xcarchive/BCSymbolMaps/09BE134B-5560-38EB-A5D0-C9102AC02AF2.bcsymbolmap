@@ -1,0 +1,572 @@
+BCSymbolMap Version: 2.0
+Apple clang version 13.0.0 (clang-1300.0.29.30)
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk
+iPhoneOS15.2.sdk
+/Users/candicewright/Library/Developer/Xcode/DerivedData/Runner-gqpclcnngimiyndbwbaimvgewcgs/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/video_player_avfoundation.build/DerivedSources/video_player_avfoundation_vers.c
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods
+_OBJC_SELECTOR_REFERENCES_
+_OBJC_SELECTOR_REFERENCES_.2
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/ios/Classes/AVAssetTrackUtils.m
+FLTGetStandardizedTransformForTrack
+flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/ios/Classes/AVAssetTrackUtils.m
+/Users/candicewright/developer
+-[FLTFrameUpdater initWithRegistry:]
+-[FLTFrameUpdater onDisplayLink:]
+-[FLTFrameUpdater textureId]
+-[FLTFrameUpdater setTextureId:]
+-[FLTFrameUpdater registry]
+-[FLTFrameUpdater .cxx_destruct]
+-[FLTVideoPlayer initWithAsset:frameUpdater:]
+-[FLTVideoPlayer addObservers:]
+-[FLTVideoPlayer itemDidPlayToEndTime:]
+-[FLTVideoPlayer getVideoCompositionWithTransform:withAsset:withVideoTrack:]
+-[FLTVideoPlayer createVideoOutputAndDisplayLink:]
+-[FLTVideoPlayer initWithURL:frameUpdater:httpHeaders:]
+-[FLTVideoPlayer initWithPlayerItem:frameUpdater:]
+___50-[FLTVideoPlayer initWithPlayerItem:frameUpdater:]_block_invoke
+___50-[FLTVideoPlayer initWithPlayerItem:frameUpdater:]_block_invoke_2
+___copy_helper_block_e8_32s40s48s56s
+___destroy_helper_block_e8_32s40s48s56s
+___copy_helper_block_e8_32s40s48s
+___destroy_helper_block_e8_32s40s48s
+-[FLTVideoPlayer observeValueForKeyPath:ofObject:change:context:]
+-[FLTVideoPlayer updatePlayingState]
+-[FLTVideoPlayer setupEventSinkIfReadyToPlay]
+___45-[FLTVideoPlayer setupEventSinkIfReadyToPlay]_block_invoke
+___copy_helper_block_e8_32s40s
+___destroy_helper_block_e8_32s40s
+-[FLTVideoPlayer play]
+-[FLTVideoPlayer pause]
+-[FLTVideoPlayer position]
+-[FLTVideoPlayer duration]
+-[FLTVideoPlayer seekTo:]
+-[FLTVideoPlayer setIsLooping:]
+-[FLTVideoPlayer setVolume:]
+-[FLTVideoPlayer setPlaybackSpeed:]
+-[FLTVideoPlayer copyPixelBuffer]
+-[FLTVideoPlayer onTextureUnregistered:]
+___40-[FLTVideoPlayer onTextureUnregistered:]_block_invoke
+___copy_helper_block_e8_32s
+___destroy_helper_block_e8_32s
+-[FLTVideoPlayer onCancelWithArguments:]
+-[FLTVideoPlayer onListenWithArguments:eventSink:]
+-[FLTVideoPlayer disposeSansEventChannel]
+-[FLTVideoPlayer dispose]
+-[FLTVideoPlayer player]
+-[FLTVideoPlayer videoOutput]
+-[FLTVideoPlayer displayLink]
+-[FLTVideoPlayer eventChannel]
+-[FLTVideoPlayer setEventChannel:]
+-[FLTVideoPlayer eventSink]
+-[FLTVideoPlayer setEventSink:]
+-[FLTVideoPlayer preferredTransform]
+-[FLTVideoPlayer setPreferredTransform:]
+-[FLTVideoPlayer disposed]
+-[FLTVideoPlayer isPlaying]
+-[FLTVideoPlayer isLooping]
+-[FLTVideoPlayer isInitialized]
+-[FLTVideoPlayer .cxx_destruct]
++[FLTVideoPlayerPlugin registerWithRegistrar:]
+-[FLTVideoPlayerPlugin initWithRegistrar:]
+-[FLTVideoPlayerPlugin detachFromEngineForRegistrar:]
+-[FLTVideoPlayerPlugin onPlayerSetup:frameUpdater:]
+-[FLTVideoPlayerPlugin initialize:]
+___35-[FLTVideoPlayerPlugin initialize:]_block_invoke
+-[FLTVideoPlayerPlugin create:error:]
+-[FLTVideoPlayerPlugin dispose:error:]
+___38-[FLTVideoPlayerPlugin dispose:error:]_block_invoke
+-[FLTVideoPlayerPlugin setLooping:error:]
+-[FLTVideoPlayerPlugin setVolume:error:]
+-[FLTVideoPlayerPlugin setPlaybackSpeed:error:]
+-[FLTVideoPlayerPlugin play:error:]
+-[FLTVideoPlayerPlugin position:error:]
+-[FLTVideoPlayerPlugin seekTo:error:]
+-[FLTVideoPlayerPlugin pause:error:]
+-[FLTVideoPlayerPlugin setMixWithOthers:error:]
+-[FLTVideoPlayerPlugin registry]
+-[FLTVideoPlayerPlugin messenger]
+-[FLTVideoPlayerPlugin playersByTextureId]
+-[FLTVideoPlayerPlugin registrar]
+-[FLTVideoPlayerPlugin .cxx_destruct]
+__OBJC_METACLASS_RO_$_FLTFrameUpdater
+__OBJC_$_INSTANCE_METHODS_FLTFrameUpdater
+_OBJC_IVAR_$_FLTFrameUpdater._textureId
+_OBJC_IVAR_$_FLTFrameUpdater._registry
+__OBJC_$_INSTANCE_VARIABLES_FLTFrameUpdater
+__OBJC_$_PROP_LIST_FLTFrameUpdater
+__OBJC_CLASS_RO_$_FLTFrameUpdater
+_OBJC_CLASSLIST_REFERENCES_$_
+_OBJC_SELECTOR_REFERENCES_.21
+_OBJC_SELECTOR_REFERENCES_.23
+_OBJC_CLASSLIST_REFERENCES_$_.24
+_OBJC_SELECTOR_REFERENCES_.26
+_OBJC_SELECTOR_REFERENCES_.28
+_timeRangeContext
+_OBJC_SELECTOR_REFERENCES_.30
+_statusContext
+_presentationSizeContext
+_durationContext
+_playbackLikelyToKeepUpContext
+_playbackBufferEmptyContext
+_playbackBufferFullContext
+_OBJC_CLASSLIST_REFERENCES_$_.43
+_OBJC_SELECTOR_REFERENCES_.45
+_OBJC_SELECTOR_REFERENCES_.47
+_OBJC_SELECTOR_REFERENCES_.49
+_OBJC_SELECTOR_REFERENCES_.51
+_OBJC_SELECTOR_REFERENCES_.53
+_OBJC_CLASSLIST_REFERENCES_$_.58
+_OBJC_SELECTOR_REFERENCES_.60
+_OBJC_CLASSLIST_REFERENCES_$_.61
+_OBJC_SELECTOR_REFERENCES_.63
+_OBJC_SELECTOR_REFERENCES_.65
+_OBJC_SELECTOR_REFERENCES_.67
+_OBJC_CLASSLIST_REFERENCES_$_.68
+_OBJC_SELECTOR_REFERENCES_.70
+_OBJC_SELECTOR_REFERENCES_.72
+_OBJC_CLASSLIST_REFERENCES_$_.73
+_OBJC_SELECTOR_REFERENCES_.75
+_OBJC_CLASSLIST_REFERENCES_$_.76
+_OBJC_SELECTOR_REFERENCES_.78
+_OBJC_SELECTOR_REFERENCES_.80
+_OBJC_SELECTOR_REFERENCES_.82
+_OBJC_SELECTOR_REFERENCES_.84
+_OBJC_SELECTOR_REFERENCES_.86
+_OBJC_SELECTOR_REFERENCES_.88
+_OBJC_CLASSLIST_REFERENCES_$_.89
+_OBJC_SELECTOR_REFERENCES_.91
+_OBJC_CLASSLIST_REFERENCES_$_.92
+_OBJC_SELECTOR_REFERENCES_.94
+_OBJC_CLASSLIST_REFERENCES_$_.95
+_OBJC_SELECTOR_REFERENCES_.96
+_OBJC_SELECTOR_REFERENCES_.98
+_OBJC_CLASSLIST_REFERENCES_$_.99
+_OBJC_SELECTOR_REFERENCES_.101
+_OBJC_SELECTOR_REFERENCES_.103
+_OBJC_SELECTOR_REFERENCES_.105
+_OBJC_SELECTOR_REFERENCES_.107
+_OBJC_CLASSLIST_REFERENCES_$_.110
+_OBJC_SELECTOR_REFERENCES_.112
+_OBJC_CLASSLIST_REFERENCES_$_.113
+_OBJC_SELECTOR_REFERENCES_.115
+_OBJC_SELECTOR_REFERENCES_.117
+_OBJC_SELECTOR_REFERENCES_.119
+_OBJC_SELECTOR_REFERENCES_.121
+_OBJC_SELECTOR_REFERENCES_.125
+_OBJC_SELECTOR_REFERENCES_.127
+_OBJC_SELECTOR_REFERENCES_.129
+_OBJC_SELECTOR_REFERENCES_.133
+_OBJC_SELECTOR_REFERENCES_.135
+___block_descriptor_64_e8_32s40s48s56s_e5_v8?0l
+_OBJC_SELECTOR_REFERENCES_.138
+___block_descriptor_56_e8_32s40s48s_e5_v8?0l
+_OBJC_CLASSLIST_REFERENCES_$_.139
+_OBJC_SELECTOR_REFERENCES_.141
+_OBJC_SELECTOR_REFERENCES_.143
+_OBJC_SELECTOR_REFERENCES_.145
+_OBJC_SELECTOR_REFERENCES_.147
+_OBJC_CLASSLIST_REFERENCES_$_.148
+_OBJC_SELECTOR_REFERENCES_.150
+_OBJC_SELECTOR_REFERENCES_.152
+_OBJC_SELECTOR_REFERENCES_.154
+_OBJC_SELECTOR_REFERENCES_.156
+_OBJC_SELECTOR_REFERENCES_.158
+_OBJC_SELECTOR_REFERENCES_.164
+_OBJC_CLASSLIST_REFERENCES_$_.165
+_OBJC_SELECTOR_REFERENCES_.171
+_OBJC_SELECTOR_REFERENCES_.173
+_OBJC_SELECTOR_REFERENCES_.175
+_OBJC_SELECTOR_REFERENCES_.177
+_OBJC_SELECTOR_REFERENCES_.179
+_OBJC_SELECTOR_REFERENCES_.181
+_OBJC_SELECTOR_REFERENCES_.183
+_OBJC_SELECTOR_REFERENCES_.185
+_OBJC_SELECTOR_REFERENCES_.187
+_OBJC_SELECTOR_REFERENCES_.193
+_OBJC_SELECTOR_REFERENCES_.195
+_OBJC_SELECTOR_REFERENCES_.197
+_OBJC_SELECTOR_REFERENCES_.199
+_OBJC_CLASSLIST_REFERENCES_$_.200
+_OBJC_SELECTOR_REFERENCES_.202
+_OBJC_SELECTOR_REFERENCES_.204
+___block_descriptor_56_e8_32s40s_e5_v8?0l
+_OBJC_SELECTOR_REFERENCES_.206
+_OBJC_SELECTOR_REFERENCES_.212
+_OBJC_SELECTOR_REFERENCES_.216
+_OBJC_SELECTOR_REFERENCES_.218
+_OBJC_SELECTOR_REFERENCES_.220
+_OBJC_SELECTOR_REFERENCES_.222
+_OBJC_SELECTOR_REFERENCES_.226
+_OBJC_SELECTOR_REFERENCES_.230
+_OBJC_SELECTOR_REFERENCES_.232
+_OBJC_SELECTOR_REFERENCES_.234
+_OBJC_SELECTOR_REFERENCES_.236
+_OBJC_SELECTOR_REFERENCES_.238
+___block_descriptor_40_e8_32s_e5_v8?0l
+_OBJC_SELECTOR_REFERENCES_.240
+_OBJC_SELECTOR_REFERENCES_.242
+_OBJC_SELECTOR_REFERENCES_.244
+_OBJC_SELECTOR_REFERENCES_.246
+_OBJC_SELECTOR_REFERENCES_.248
+_OBJC_SELECTOR_REFERENCES_.250
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_NSObject
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_NSObject
+__OBJC_$_PROP_LIST_NSObject
+__OBJC_$_PROTOCOL_METHOD_TYPES_NSObject
+__OBJC_PROTOCOL_$_NSObject
+__OBJC_LABEL_PROTOCOL_$_NSObject
+__OBJC_$_PROTOCOL_REFS_FlutterTexture
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_FlutterTexture
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_FlutterTexture
+__OBJC_$_PROTOCOL_METHOD_TYPES_FlutterTexture
+__OBJC_PROTOCOL_$_FlutterTexture
+__OBJC_LABEL_PROTOCOL_$_FlutterTexture
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_FlutterStreamHandler
+__OBJC_$_PROTOCOL_METHOD_TYPES_FlutterStreamHandler
+__OBJC_PROTOCOL_$_FlutterStreamHandler
+__OBJC_LABEL_PROTOCOL_$_FlutterStreamHandler
+__OBJC_CLASS_PROTOCOLS_$_FLTVideoPlayer
+__OBJC_METACLASS_RO_$_FLTVideoPlayer
+__OBJC_$_INSTANCE_METHODS_FLTVideoPlayer
+_OBJC_IVAR_$_FLTVideoPlayer._disposed
+_OBJC_IVAR_$_FLTVideoPlayer._isPlaying
+_OBJC_IVAR_$_FLTVideoPlayer._isLooping
+_OBJC_IVAR_$_FLTVideoPlayer._isInitialized
+_OBJC_IVAR_$_FLTVideoPlayer._player
+_OBJC_IVAR_$_FLTVideoPlayer._videoOutput
+_OBJC_IVAR_$_FLTVideoPlayer._displayLink
+_OBJC_IVAR_$_FLTVideoPlayer._eventChannel
+_OBJC_IVAR_$_FLTVideoPlayer._eventSink
+_OBJC_IVAR_$_FLTVideoPlayer._preferredTransform
+__OBJC_$_INSTANCE_VARIABLES_FLTVideoPlayer
+__OBJC_$_PROP_LIST_FLTVideoPlayer
+__OBJC_CLASS_RO_$_FLTVideoPlayer
+_OBJC_CLASSLIST_REFERENCES_$_.371
+_OBJC_SELECTOR_REFERENCES_.373
+_OBJC_SELECTOR_REFERENCES_.375
+_OBJC_SELECTOR_REFERENCES_.377
+_OBJC_SELECTOR_REFERENCES_.380
+_OBJC_CLASSLIST_REFERENCES_$_.381
+_OBJC_SELECTOR_REFERENCES_.383
+_OBJC_SELECTOR_REFERENCES_.385
+_OBJC_SELECTOR_REFERENCES_.387
+_OBJC_SELECTOR_REFERENCES_.389
+_OBJC_SELECTOR_REFERENCES_.391
+_OBJC_SELECTOR_REFERENCES_.392
+_OBJC_SELECTOR_REFERENCES_.394
+_OBJC_SELECTOR_REFERENCES_.395
+_OBJC_CLASSLIST_REFERENCES_$_.396
+_OBJC_CLASSLIST_REFERENCES_$_.397
+_OBJC_SELECTOR_REFERENCES_.401
+_OBJC_SELECTOR_REFERENCES_.403
+_OBJC_SELECTOR_REFERENCES_.404
+_OBJC_SELECTOR_REFERENCES_.406
+_OBJC_CLASSLIST_REFERENCES_$_.407
+_OBJC_SELECTOR_REFERENCES_.409
+_OBJC_CLASSLIST_REFERENCES_$_.410
+_OBJC_SELECTOR_REFERENCES_.412
+_OBJC_SELECTOR_REFERENCES_.414
+_OBJC_SELECTOR_REFERENCES_.416
+_OBJC_SELECTOR_REFERENCES_.418
+___block_descriptor_40_e8_32s_e41_v32?0"NSNumber"8"FLTVideoPlayer"16^B24l
+_OBJC_SELECTOR_REFERENCES_.421
+_OBJC_CLASSLIST_REFERENCES_$_.422
+_OBJC_SELECTOR_REFERENCES_.423
+_OBJC_SELECTOR_REFERENCES_.425
+_OBJC_SELECTOR_REFERENCES_.427
+_OBJC_SELECTOR_REFERENCES_.429
+_OBJC_CLASSLIST_REFERENCES_$_.430
+_OBJC_SELECTOR_REFERENCES_.431
+_OBJC_SELECTOR_REFERENCES_.433
+_OBJC_SELECTOR_REFERENCES_.435
+_OBJC_SELECTOR_REFERENCES_.437
+_OBJC_SELECTOR_REFERENCES_.439
+_OBJC_SELECTOR_REFERENCES_.444
+_OBJC_SELECTOR_REFERENCES_.446
+_OBJC_SELECTOR_REFERENCES_.448
+_OBJC_SELECTOR_REFERENCES_.450
+_OBJC_SELECTOR_REFERENCES_.451
+_OBJC_SELECTOR_REFERENCES_.452
+_OBJC_SELECTOR_REFERENCES_.454
+_OBJC_SELECTOR_REFERENCES_.455
+_OBJC_SELECTOR_REFERENCES_.457
+_OBJC_SELECTOR_REFERENCES_.459
+_OBJC_SELECTOR_REFERENCES_.461
+_OBJC_SELECTOR_REFERENCES_.462
+_OBJC_CLASSLIST_REFERENCES_$_.463
+_OBJC_SELECTOR_REFERENCES_.464
+_OBJC_SELECTOR_REFERENCES_.466
+_OBJC_SELECTOR_REFERENCES_.467
+_OBJC_SELECTOR_REFERENCES_.469
+_OBJC_SELECTOR_REFERENCES_.471
+__OBJC_$_CLASS_METHODS_FLTVideoPlayerPlugin
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_FLTAVFoundationVideoPlayerApi
+__OBJC_$_PROTOCOL_METHOD_TYPES_FLTAVFoundationVideoPlayerApi
+__OBJC_PROTOCOL_$_FLTAVFoundationVideoPlayerApi
+__OBJC_LABEL_PROTOCOL_$_FLTAVFoundationVideoPlayerApi
+__OBJC_$_PROTOCOL_REFS_UNUserNotificationCenterDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_UNUserNotificationCenterDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_UNUserNotificationCenterDelegate
+__OBJC_PROTOCOL_$_UNUserNotificationCenterDelegate
+__OBJC_LABEL_PROTOCOL_$_UNUserNotificationCenterDelegate
+__OBJC_$_PROTOCOL_REFS_FlutterApplicationLifeCycleDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_FlutterApplicationLifeCycleDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_FlutterApplicationLifeCycleDelegate
+__OBJC_PROTOCOL_$_FlutterApplicationLifeCycleDelegate
+__OBJC_LABEL_PROTOCOL_$_FlutterApplicationLifeCycleDelegate
+__OBJC_$_PROTOCOL_REFS_FlutterPlugin
+__OBJC_$_PROTOCOL_CLASS_METHODS_FlutterPlugin
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_FlutterPlugin
+__OBJC_$_PROTOCOL_CLASS_METHODS_OPT_FlutterPlugin
+__OBJC_$_PROTOCOL_METHOD_TYPES_FlutterPlugin
+__OBJC_PROTOCOL_$_FlutterPlugin
+__OBJC_LABEL_PROTOCOL_$_FlutterPlugin
+__OBJC_CLASS_PROTOCOLS_$_FLTVideoPlayerPlugin
+__OBJC_METACLASS_RO_$_FLTVideoPlayerPlugin
+__OBJC_$_INSTANCE_METHODS_FLTVideoPlayerPlugin
+_OBJC_IVAR_$_FLTVideoPlayerPlugin._registry
+_OBJC_IVAR_$_FLTVideoPlayerPlugin._messenger
+_OBJC_IVAR_$_FLTVideoPlayerPlugin._playersByTextureId
+_OBJC_IVAR_$_FLTVideoPlayerPlugin._registrar
+__OBJC_$_INSTANCE_VARIABLES_FLTVideoPlayerPlugin
+__OBJC_$_PROP_LIST_FLTVideoPlayerPlugin
+__OBJC_CLASS_RO_$_FLTVideoPlayerPlugin
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/ios/Classes/FLTVideoPlayerPlugin.m
+flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/ios/Classes/FLTVideoPlayerPlugin.m
+__38-[FLTVideoPlayerPlugin dispose:error:]_block_invoke
+__35-[FLTVideoPlayerPlugin initialize:]_block_invoke
+__destroy_helper_block_e8_32s
+__copy_helper_block_e8_32s
+__40-[FLTVideoPlayer onTextureUnregistered:]_block_invoke
+FLTCMTimeToMillis
+__destroy_helper_block_e8_32s40s
+__copy_helper_block_e8_32s40s
+__45-[FLTVideoPlayer setupEventSinkIfReadyToPlay]_block_invoke
+__destroy_helper_block_e8_32s40s48s
+__copy_helper_block_e8_32s40s48s
+__destroy_helper_block_e8_32s40s48s56s
+__copy_helper_block_e8_32s40s48s56s
+__50-[FLTVideoPlayer initWithPlayerItem:frameUpdater:]_block_invoke_2
+__50-[FLTVideoPlayer initWithPlayerItem:frameUpdater:]_block_invoke
+__tg_round
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/usr/include/tgmath.h
+radiansToDegrees
+GLKMathRadiansToDegrees
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/System/Library/Frameworks/GLKit.framework/Headers/GLKMathUtils.h
+__tg_atan2
++[FLTTextureMessage makeWithTextureId:]
++[FLTTextureMessage fromMap:]
+_GetNullableObject
+-[FLTTextureMessage toMap]
+-[FLTTextureMessage textureId]
+-[FLTTextureMessage setTextureId:]
+-[FLTTextureMessage .cxx_destruct]
++[FLTLoopingMessage makeWithTextureId:isLooping:]
++[FLTLoopingMessage fromMap:]
+-[FLTLoopingMessage toMap]
+-[FLTLoopingMessage textureId]
+-[FLTLoopingMessage setTextureId:]
+-[FLTLoopingMessage isLooping]
+-[FLTLoopingMessage setIsLooping:]
+-[FLTLoopingMessage .cxx_destruct]
++[FLTVolumeMessage makeWithTextureId:volume:]
++[FLTVolumeMessage fromMap:]
+-[FLTVolumeMessage toMap]
+-[FLTVolumeMessage textureId]
+-[FLTVolumeMessage setTextureId:]
+-[FLTVolumeMessage volume]
+-[FLTVolumeMessage setVolume:]
+-[FLTVolumeMessage .cxx_destruct]
++[FLTPlaybackSpeedMessage makeWithTextureId:speed:]
++[FLTPlaybackSpeedMessage fromMap:]
+-[FLTPlaybackSpeedMessage toMap]
+-[FLTPlaybackSpeedMessage textureId]
+-[FLTPlaybackSpeedMessage setTextureId:]
+-[FLTPlaybackSpeedMessage speed]
+-[FLTPlaybackSpeedMessage setSpeed:]
+-[FLTPlaybackSpeedMessage .cxx_destruct]
++[FLTPositionMessage makeWithTextureId:position:]
++[FLTPositionMessage fromMap:]
+-[FLTPositionMessage toMap]
+-[FLTPositionMessage textureId]
+-[FLTPositionMessage setTextureId:]
+-[FLTPositionMessage position]
+-[FLTPositionMessage setPosition:]
+-[FLTPositionMessage .cxx_destruct]
++[FLTCreateMessage makeWithAsset:uri:packageName:formatHint:httpHeaders:]
++[FLTCreateMessage fromMap:]
+-[FLTCreateMessage toMap]
+-[FLTCreateMessage asset]
+-[FLTCreateMessage setAsset:]
+-[FLTCreateMessage uri]
+-[FLTCreateMessage setUri:]
+-[FLTCreateMessage packageName]
+-[FLTCreateMessage setPackageName:]
+-[FLTCreateMessage formatHint]
+-[FLTCreateMessage setFormatHint:]
+-[FLTCreateMessage httpHeaders]
+-[FLTCreateMessage setHttpHeaders:]
+-[FLTCreateMessage .cxx_destruct]
++[FLTMixWithOthersMessage makeWithMixWithOthers:]
++[FLTMixWithOthersMessage fromMap:]
+-[FLTMixWithOthersMessage toMap]
+-[FLTMixWithOthersMessage mixWithOthers]
+-[FLTMixWithOthersMessage setMixWithOthers:]
+-[FLTMixWithOthersMessage .cxx_destruct]
+-[FLTAVFoundationVideoPlayerApiCodecReader readValueOfType:]
+-[FLTAVFoundationVideoPlayerApiCodecWriter writeValue:]
+-[FLTAVFoundationVideoPlayerApiCodecReaderWriter writerWithData:]
+-[FLTAVFoundationVideoPlayerApiCodecReaderWriter readerWithData:]
+___FLTAVFoundationVideoPlayerApiGetCodec_block_invoke
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke
+_wrapResult
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke.182
+_GetNullableObjectAtIndex
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_2
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_3
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_4
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_5
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_6
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_7
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_8
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_9
+___FLTAVFoundationVideoPlayerApiSetup_block_invoke_10
+_OBJC_CLASSLIST_REFERENCES_$_.3
+_OBJC_SELECTOR_REFERENCES_.5
+_OBJC_CLASSLIST_REFERENCES_$_.6
+_OBJC_SELECTOR_REFERENCES_.8
+_OBJC_SELECTOR_REFERENCES_.10
+__OBJC_$_CLASS_METHODS_FLTTextureMessage
+__OBJC_METACLASS_RO_$_FLTTextureMessage
+__OBJC_$_INSTANCE_METHODS_FLTTextureMessage
+_OBJC_IVAR_$_FLTTextureMessage._textureId
+__OBJC_$_INSTANCE_VARIABLES_FLTTextureMessage
+__OBJC_$_PROP_LIST_FLTTextureMessage
+__OBJC_CLASS_RO_$_FLTTextureMessage
+_OBJC_CLASSLIST_REFERENCES_$_.22
+_OBJC_SELECTOR_REFERENCES_.24
+__OBJC_$_CLASS_METHODS_FLTLoopingMessage
+__OBJC_METACLASS_RO_$_FLTLoopingMessage
+__OBJC_$_INSTANCE_METHODS_FLTLoopingMessage
+_OBJC_IVAR_$_FLTLoopingMessage._textureId
+_OBJC_IVAR_$_FLTLoopingMessage._isLooping
+__OBJC_$_INSTANCE_VARIABLES_FLTLoopingMessage
+__OBJC_$_PROP_LIST_FLTLoopingMessage
+__OBJC_CLASS_RO_$_FLTLoopingMessage
+_OBJC_CLASSLIST_REFERENCES_$_.36
+_OBJC_SELECTOR_REFERENCES_.38
+_OBJC_SELECTOR_REFERENCES_.42
+__OBJC_$_CLASS_METHODS_FLTVolumeMessage
+__OBJC_METACLASS_RO_$_FLTVolumeMessage
+__OBJC_$_INSTANCE_METHODS_FLTVolumeMessage
+_OBJC_IVAR_$_FLTVolumeMessage._textureId
+_OBJC_IVAR_$_FLTVolumeMessage._volume
+__OBJC_$_INSTANCE_VARIABLES_FLTVolumeMessage
+__OBJC_$_PROP_LIST_FLTVolumeMessage
+__OBJC_CLASS_RO_$_FLTVolumeMessage
+_OBJC_CLASSLIST_REFERENCES_$_.49
+_OBJC_SELECTOR_REFERENCES_.55
+__OBJC_$_CLASS_METHODS_FLTPlaybackSpeedMessage
+__OBJC_METACLASS_RO_$_FLTPlaybackSpeedMessage
+__OBJC_$_INSTANCE_METHODS_FLTPlaybackSpeedMessage
+_OBJC_IVAR_$_FLTPlaybackSpeedMessage._textureId
+_OBJC_IVAR_$_FLTPlaybackSpeedMessage._speed
+__OBJC_$_INSTANCE_VARIABLES_FLTPlaybackSpeedMessage
+__OBJC_$_PROP_LIST_FLTPlaybackSpeedMessage
+__OBJC_CLASS_RO_$_FLTPlaybackSpeedMessage
+_OBJC_CLASSLIST_REFERENCES_$_.62
+_OBJC_SELECTOR_REFERENCES_.64
+_OBJC_SELECTOR_REFERENCES_.68
+__OBJC_$_CLASS_METHODS_FLTPositionMessage
+__OBJC_METACLASS_RO_$_FLTPositionMessage
+__OBJC_$_INSTANCE_METHODS_FLTPositionMessage
+_OBJC_IVAR_$_FLTPositionMessage._textureId
+_OBJC_IVAR_$_FLTPositionMessage._position
+__OBJC_$_INSTANCE_VARIABLES_FLTPositionMessage
+__OBJC_$_PROP_LIST_FLTPositionMessage
+__OBJC_CLASS_RO_$_FLTPositionMessage
+_OBJC_CLASSLIST_REFERENCES_$_.75
+_OBJC_SELECTOR_REFERENCES_.77
+_OBJC_SELECTOR_REFERENCES_.79
+_OBJC_SELECTOR_REFERENCES_.81
+_OBJC_SELECTOR_REFERENCES_.83
+_OBJC_SELECTOR_REFERENCES_.85
+_OBJC_SELECTOR_REFERENCES_.97
+_OBJC_SELECTOR_REFERENCES_.99
+__OBJC_$_CLASS_METHODS_FLTCreateMessage
+__OBJC_METACLASS_RO_$_FLTCreateMessage
+__OBJC_$_INSTANCE_METHODS_FLTCreateMessage
+_OBJC_IVAR_$_FLTCreateMessage._asset
+_OBJC_IVAR_$_FLTCreateMessage._uri
+_OBJC_IVAR_$_FLTCreateMessage._packageName
+_OBJC_IVAR_$_FLTCreateMessage._formatHint
+_OBJC_IVAR_$_FLTCreateMessage._httpHeaders
+__OBJC_$_INSTANCE_VARIABLES_FLTCreateMessage
+__OBJC_$_PROP_LIST_FLTCreateMessage
+__OBJC_CLASS_RO_$_FLTCreateMessage
+_OBJC_CLASSLIST_REFERENCES_$_.127
+__OBJC_$_CLASS_METHODS_FLTMixWithOthersMessage
+__OBJC_METACLASS_RO_$_FLTMixWithOthersMessage
+__OBJC_$_INSTANCE_METHODS_FLTMixWithOthersMessage
+_OBJC_IVAR_$_FLTMixWithOthersMessage._mixWithOthers
+__OBJC_$_INSTANCE_VARIABLES_FLTMixWithOthersMessage
+__OBJC_$_PROP_LIST_FLTMixWithOthersMessage
+__OBJC_CLASS_RO_$_FLTMixWithOthersMessage
+_OBJC_SELECTOR_REFERENCES_.142
+_OBJC_SELECTOR_REFERENCES_.144
+__OBJC_METACLASS_RO_$_FLTAVFoundationVideoPlayerApiCodecReader
+__OBJC_$_INSTANCE_METHODS_FLTAVFoundationVideoPlayerApiCodecReader
+__OBJC_CLASS_RO_$_FLTAVFoundationVideoPlayerApiCodecReader
+_OBJC_SELECTOR_REFERENCES_.148
+_OBJC_SELECTOR_REFERENCES_.153
+_OBJC_SELECTOR_REFERENCES_.155
+__OBJC_METACLASS_RO_$_FLTAVFoundationVideoPlayerApiCodecWriter
+__OBJC_$_INSTANCE_METHODS_FLTAVFoundationVideoPlayerApiCodecWriter
+__OBJC_CLASS_RO_$_FLTAVFoundationVideoPlayerApiCodecWriter
+_OBJC_CLASSLIST_REFERENCES_$_.158
+_OBJC_SELECTOR_REFERENCES_.160
+_OBJC_CLASSLIST_REFERENCES_$_.161
+__OBJC_METACLASS_RO_$_FLTAVFoundationVideoPlayerApiCodecReaderWriter
+__OBJC_$_INSTANCE_METHODS_FLTAVFoundationVideoPlayerApiCodecReaderWriter
+__OBJC_CLASS_RO_$_FLTAVFoundationVideoPlayerApiCodecReaderWriter
+_FLTAVFoundationVideoPlayerApiGetCodec.sPred
+_FLTAVFoundationVideoPlayerApiGetCodec.sSharedObject
+___block_descriptor_32_e5_v8?0l
+___block_literal_global
+_OBJC_CLASSLIST_REFERENCES_$_.166
+_OBJC_CLASSLIST_REFERENCES_$_.167
+_OBJC_SELECTOR_REFERENCES_.169
+_OBJC_CLASSLIST_REFERENCES_$_.170
+_OBJC_SELECTOR_REFERENCES_.174
+_OBJC_SELECTOR_REFERENCES_.176
+___block_descriptor_40_e8_32s_e18_v24?08?<v?>16l
+_OBJC_SELECTOR_REFERENCES_.184
+_OBJC_SELECTOR_REFERENCES_.188
+_OBJC_SELECTOR_REFERENCES_.192
+_OBJC_SELECTOR_REFERENCES_.196
+_OBJC_SELECTOR_REFERENCES_.200
+_OBJC_SELECTOR_REFERENCES_.208
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/ios/Classes/messages.g.m
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_10
+flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/ios/Classes/messages.g.m
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_9
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_8
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_7
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_6
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_5
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_4
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_3
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke_2
+GetNullableObjectAtIndex
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke.182
+wrapResult
+__FLTAVFoundationVideoPlayerApiSetup_block_invoke
+FLTAVFoundationVideoPlayerApiSetup
+__FLTAVFoundationVideoPlayerApiGetCodec_block_invoke
+FLTAVFoundationVideoPlayerApiGetCodec
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk/usr/include/dispatch/once.h
+flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.5/ios/Classes/messages.g.h
+GetNullableObject
+__OBJC_METACLASS_RO_$_PodsDummy_video_player_avfoundation
+__OBJC_CLASS_RO_$_PodsDummy_video_player_avfoundation
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods/Target Support Files/video_player_avfoundation/video_player_avfoundation-dummy.m

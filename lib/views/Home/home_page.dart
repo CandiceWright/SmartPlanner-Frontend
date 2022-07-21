@@ -5,18 +5,23 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/habit.dart';
-import 'package:practice_planner/services/vide_capturer.dart';
+import 'package:practice_planner/models/story.dart';
+import 'package:practice_planner/services/video_capturer.dart';
 import 'package:practice_planner/views/Calendar/calendar_page.dart';
 import 'package:practice_planner/views/navigation_wrapper.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as p;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -35,6 +40,8 @@ class _HomePageState extends State<HomePage> {
   bool editHabitBtnDisabled = false;
   bool saveHabitBtnDisabled = true;
   late VideoPlayerController _videoPlayerController;
+  String videourl = "";
+  final ImagePicker _picker = ImagePicker();
 
   var daysMap = {
     1: "Mon",
@@ -52,14 +59,143 @@ class _HomePageState extends State<HomePage> {
     //print(PlannerService.sharedInstance.user.backlog);
     newHabitTextController.addListener(setSaveHabitBtnState);
     editHabitTxtController.addListener(setEditHabitBtnState);
+
+    // _videoPlayerController = VideoPlayerController.network(videourl)
+    //   ..initialize().then((_) {
+    //     // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+    //     setState(() {});
+    //     _videoPlayerController.play();
+    //     _videoPlayerController.setLooping(true);
+    //     //_videoPlayerController.addListener(checkVideoEnded);
+    //   });
+  }
+
+  createStory() async {
+    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
+    if (video != null) {
+      String path = video.path;
+      String name = video.name;
+      print("I am in save story");
+      final thumbnail = await VideoCompress.getFileThumbnail(path);
+      String? result =
+          await PlannerService.firebaseStorage.uploadStory(path, name);
+
+      //store story in db then add story object to the list of stories
+      print("result is ready");
+      print(result);
+      if (result == "error") {
+        //error message
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else {
+        //success and result holds url
+        print("success getting video url");
+        print(result);
+
+        //now save the thumbnail
+        String? result2 = await PlannerService.firebaseStorage.uploadPicture(
+            thumbnail.path, "thumbnails/" + p.basename(thumbnail.path));
+
+        if (result2 == "error") {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        } else {
+          //successfully saved thumbnail and result2 has thumbnail url
+          //save tto db now
+          var url = Uri.parse(
+              PlannerService.sharedInstance.serverUrl + '/user/stories');
+          var body = {
+            'userId': PlannerService.sharedInstance.user!.id,
+            'date': DateTime.now().toString(),
+            'url': result,
+            //'thumbnail': PlannerService.sharedInstance.user!.profileImage
+            'thumbnail': result2
+          };
+          String bodyF = jsonEncode(body);
+          var response = await http.post(url,
+              headers: {"Content-Type": "application/json"}, body: bodyF);
+
+          print("server came back with a response after saving story");
+          print('Response status: ${response.statusCode}');
+          print('Response body: ${response.body}');
+
+          if (response.statusCode == 200) {
+            var decodedBody = json.decode(response.body);
+            print(decodedBody);
+            var id = decodedBody["insertId"];
+            Story newStory = Story(id, result!, result2!, DateTime.now());
+            setState(() {
+              // PlannerService.sharedInstance.user!.profileImage = path;
+              PlannerService.sharedInstance.user!.stories.add(newStory);
+            });
+
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) {
+                return const NavigationWrapper();
+              },
+              settings: const RouteSettings(
+                name: 'navigaionPage',
+              ),
+            ));
+          } else {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(
+                        'Oops! Looks like something went wrong. Please try again.'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  );
+                });
+          }
+        }
+      }
+    }
   }
 
   Future _initVideoPlayer(File videoFile) async {
-    print("Im in init player and this is file " + videoFile.path);
-    _videoPlayerController = VideoPlayerController.file(videoFile);
-    await _videoPlayerController.initialize();
-    await _videoPlayerController.setLooping(false);
-    await _videoPlayerController.play();
+    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
+    //saveStory(video!.path, video.name);
+    // print("Im in init player and this is file " + videoFile.path);
+    // _videoPlayerController = VideoPlayerController.file(videoFile);
+    // await _videoPlayerController.initialize();
+    // await _videoPlayerController.setLooping(false);
+    // await _videoPlayerController.play();
   }
 
   void openProfileView() {
@@ -93,7 +229,7 @@ class _HomePageState extends State<HomePage> {
             ),
             actions: <Widget>[
               TextButton(
-                child: Text('yes, delete'),
+                child: const Text('yes, delete'),
                 onPressed: () async {
                   //first send server request
                   var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
@@ -131,11 +267,11 @@ class _HomePageState extends State<HomePage> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(
+                              title: const Text(
                                   'Oops! Looks like something went wrong. Please try again.'),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('OK'),
+                                  child: const Text('OK'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
@@ -150,11 +286,11 @@ class _HomePageState extends State<HomePage> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text(
+                            title: const Text(
                                 'Oops! Looks like something went wrong. Please try again.'),
                             actions: <Widget>[
                               TextButton(
-                                child: Text('OK'),
+                                child: const Text('OK'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -169,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('cancel'))
+                  child: const Text('cancel'))
             ],
           );
         });
@@ -220,13 +356,14 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(5),
       ),
       onTap: () {
+        createStory();
         //print("ready to recordx");
-        Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (context) => const VideoCapturer(
-                      videoType: "story",
-                    )));
+        // Navigator.push(
+        //     context,
+        //     CupertinoPageRoute(
+        //         builder: (context) => const VideoCapturer(
+        //               videoType: "story",
+        //             )));
       },
     );
     stories.add(addStoryWidget);
@@ -240,7 +377,7 @@ class _HomePageState extends State<HomePage> {
                   PlannerService.sharedInstance.user!.stories[index].thumbnail),
               radius: 30,
             ),
-            padding: EdgeInsets.all(5),
+            padding: const EdgeInsets.all(5),
           ),
           onTap: () {
             _videoPlayerController = VideoPlayerController.network(
@@ -248,6 +385,8 @@ class _HomePageState extends State<HomePage> {
               ..initialize().then((_) {
                 // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
                 setState(() {});
+                _videoPlayerController.play();
+                _videoPlayerController.setLooping(true);
 
                 // _controller.addListener(checkVideoEnded);
                 showDialog(
@@ -258,46 +397,93 @@ class _HomePageState extends State<HomePage> {
                       return StatefulBuilder(
                           builder: (context, setDialogState) {
                         return SimpleDialog(
+                          contentPadding: const EdgeInsets.all(0),
                           children: [
-                            Row(
+                            Stack(
                               children: [
-                                IconButton(
-                                    onPressed: () async {
-                                      await _videoPlayerController.pause();
-                                      Navigator.pop(context);
-                                    },
-                                    icon: Icon(Icons.close)),
-                                IconButton(
-                                    onPressed: () {
-                                      deleteStory(index);
-                                    },
-                                    icon: Icon(Icons.delete)),
-                              ],
-                            ),
-                            Center(
-                              child: Container(
-                                margin: const EdgeInsets.all(20),
-                                child: AspectRatio(
-                                  aspectRatio:
-                                      _videoPlayerController.value.aspectRatio,
-                                  child: Stack(
-                                    alignment: Alignment.bottomCenter,
-                                    children: <Widget>[
-                                      VideoPlayer(_videoPlayerController),
-                                      VideoProgressIndicator(
-                                          _videoPlayerController,
-                                          allowScrubbing: true),
+                                Container(
+                                  decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  //margin: const EdgeInsets.all(20),
+                                  child: AspectRatio(
+                                    aspectRatio: _videoPlayerController
+                                        .value.aspectRatio,
+                                    child: Stack(
+                                      alignment: Alignment.bottomCenter,
+                                      children: <Widget>[
+                                        VideoPlayer(_videoPlayerController),
+                                        VideoProgressIndicator(
+                                            _videoPlayerController,
+                                            allowScrubbing: true),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: IconButton(
+                                            onPressed: () async {
+                                              await _videoPlayerController
+                                                  .pause();
+                                              Navigator.pop(context);
+                                            },
+                                            icon: const Icon(Icons.close)),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.all(5),
+                                        child: IconButton(
+                                            onPressed: () {
+                                              deleteStory(index);
+                                            },
+                                            icon: const Icon(Icons.delete)),
+                                      ),
                                     ],
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
+                            // Row(
+                            //   children: [
+                            //     IconButton(
+                            //         onPressed: () async {
+                            //           await _videoPlayerController.pause();
+                            //           Navigator.pop(context);
+                            //         },
+                            //         icon: const Icon(Icons.close)),
+                            //     IconButton(
+                            //         onPressed: () {
+                            //           deleteStory(index);
+                            //         },
+                            //         icon: const Icon(Icons.delete)),
+                            //   ],
+                            // ),
+                            // Center(
+                            //   child: Container(
+                            //     margin: const EdgeInsets.all(20),
+                            //     child: AspectRatio(
+                            //       aspectRatio:
+                            //           _videoPlayerController.value.aspectRatio,
+                            //       child: Stack(
+                            //         alignment: Alignment.bottomCenter,
+                            //         children: <Widget>[
+                            //           VideoPlayer(_videoPlayerController),
+                            //           VideoProgressIndicator(
+                            //               _videoPlayerController,
+                            //               allowScrubbing: true),
+                            //         ],
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         );
                       });
                     });
-                _videoPlayerController.play();
-                _videoPlayerController.setLooping(true);
               });
           });
       // return Card(
@@ -328,7 +514,7 @@ class _HomePageState extends State<HomePage> {
                 openProfileView();
               },
               child: Padding(
-                padding: EdgeInsets.only(right: 5),
+                padding: const EdgeInsets.only(right: 5),
                 child: PlannerService.sharedInstance.user!.profileImage ==
                         "assets/images/profile_pic_icon.png"
                     ? CircleAvatar(
@@ -396,7 +582,7 @@ class _HomePageState extends State<HomePage> {
                   //margin: EdgeInsets.all(20),
                   // margin: EdgeInsets.only(top: 10),
                   // margin: EdgeInsets.only(bottom: 10),
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                 ),
                 // Container(
                 //   child: Column(
@@ -404,7 +590,7 @@ class _HomePageState extends State<HomePage> {
                 //   ),
                 // ),
                 Padding(
-                  padding: EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 10.0),
                   child: Text(
                     "PLANIT " + PlannerService.sharedInstance.user!.planitName,
                     style: GoogleFonts.roboto(
@@ -420,7 +606,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          margin: EdgeInsets.all(15),
+          margin: const EdgeInsets.all(15),
         ),
       ),
       body: Container(
@@ -462,22 +648,22 @@ class _HomePageState extends State<HomePage> {
                                   child: Container(
                                       child: const Text("S",
                                           textAlign: TextAlign.center))),
-                              TableCell(
-                                  child: const Text("M",
-                                      textAlign: TextAlign.center)),
-                              TableCell(
+                              const TableCell(
                                   child:
-                                      Text("T", textAlign: TextAlign.center)),
-                              TableCell(
+                                      Text("M", textAlign: TextAlign.center)),
+                              const TableCell(
+                                  child: const Text("T",
+                                      textAlign: TextAlign.center)),
+                              const TableCell(
                                   child:
                                       Text("W", textAlign: TextAlign.center)),
-                              TableCell(
-                                  child:
-                                      Text("TH", textAlign: TextAlign.center)),
-                              TableCell(
+                              const TableCell(
+                                  child: const Text("TH",
+                                      textAlign: TextAlign.center)),
+                              const TableCell(
                                   child:
                                       Text("F", textAlign: TextAlign.center)),
-                              TableCell(
+                              const TableCell(
                                   child:
                                       Text("S", textAlign: TextAlign.center)),
                             ])
@@ -506,13 +692,14 @@ class _HomePageState extends State<HomePage> {
                                       editHabitClicked(i);
                                     },
                                   ),
-                                  margin: EdgeInsets.only(left: 10, right: 10),
+                                  margin: const EdgeInsets.only(
+                                      left: 10, right: 10),
                                 ),
                               ),
                               TableCell(
                                 child: Container(
                                   child: Checkbox(
-                                    shape: CircleBorder(),
+                                    shape: const CircleBorder(),
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Sunday"]!,
                                     onChanged: (bool? value) {
@@ -566,7 +753,7 @@ class _HomePageState extends State<HomePage> {
                               TableCell(
                                 child: Container(
                                   child: Checkbox(
-                                    shape: CircleBorder(),
+                                    shape: const CircleBorder(),
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Mon"]!,
                                     onChanged: (bool? value) {
@@ -620,7 +807,7 @@ class _HomePageState extends State<HomePage> {
                               TableCell(
                                 child: Container(
                                   child: Checkbox(
-                                    shape: CircleBorder(),
+                                    shape: const CircleBorder(),
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Tues"]!,
                                     onChanged: (bool? value) {
@@ -674,7 +861,7 @@ class _HomePageState extends State<HomePage> {
                               TableCell(
                                 child: Container(
                                   child: Checkbox(
-                                    shape: CircleBorder(),
+                                    shape: const CircleBorder(),
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Wed"]!,
                                     onChanged: (bool? value) {
@@ -727,7 +914,7 @@ class _HomePageState extends State<HomePage> {
                               TableCell(
                                 child: Container(
                                   child: Checkbox(
-                                    shape: CircleBorder(),
+                                    shape: const CircleBorder(),
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Thurs"]!,
                                     onChanged: (bool? value) {
@@ -780,7 +967,7 @@ class _HomePageState extends State<HomePage> {
                               TableCell(
                                 child: Container(
                                   child: Checkbox(
-                                    shape: CircleBorder(),
+                                    shape: const CircleBorder(),
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Friday"]!,
                                     onChanged: (bool? value) {
@@ -833,7 +1020,7 @@ class _HomePageState extends State<HomePage> {
                               TableCell(
                                 child: Container(
                                   child: Checkbox(
-                                    shape: CircleBorder(),
+                                    shape: const CircleBorder(),
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Saturday"]!,
                                     onChanged: (bool? value) {
@@ -887,14 +1074,14 @@ class _HomePageState extends State<HomePage> {
                             ]);
                           }),
                     ),
-                    margin: EdgeInsets.only(top: 20),
+                    margin: const EdgeInsets.only(top: 20),
                   ),
                   TextButton(
                       onPressed: addNewHabitClicked,
-                      child: Text("Add New Habit"))
+                      child: const Text("Add New Habit"))
                 ],
               ),
-              margin: EdgeInsets.all(15),
+              margin: const EdgeInsets.all(15),
             ),
             Container(
               child: Column(
@@ -930,15 +1117,15 @@ class _HomePageState extends State<HomePage> {
                         // ),
                       ),
                     ),
-                    margin: EdgeInsets.only(top: 20),
+                    margin: const EdgeInsets.only(top: 20),
                   ),
                 ],
               ),
-              margin: EdgeInsets.all(15),
+              margin: const EdgeInsets.all(15),
             ),
           ],
         ),
-        margin: EdgeInsets.all(15),
+        margin: const EdgeInsets.all(15),
       ),
     );
   }
@@ -1039,11 +1226,11 @@ class _HomePageState extends State<HomePage> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text(
+              title: const Text(
                   'Oops! Looks like something went wrong. Please try again.'),
               actions: <Widget>[
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -1248,11 +1435,11 @@ class _HomePageState extends State<HomePage> {
           context: context,
           builder: (context) {
             return AlertDialog(
-              title: Text(
+              title: const Text(
                   'Oops! Looks like something went wrong. Please try again.'),
               actions: <Widget>[
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -1278,7 +1465,7 @@ class _HomePageState extends State<HomePage> {
             ),
             actions: <Widget>[
               TextButton(
-                child: Text('yes, delete'),
+                child: const Text('yes, delete'),
                 onPressed: () async {
                   var habitId =
                       PlannerService.sharedInstance.user!.habits[i].id;
@@ -1302,11 +1489,11 @@ class _HomePageState extends State<HomePage> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
-                            title: Text(
+                            title: const Text(
                                 'Oops! Looks like something went wrong. Please try again.'),
                             actions: <Widget>[
                               TextButton(
-                                child: Text('OK'),
+                                child: const Text('OK'),
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
@@ -1321,7 +1508,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('cancel'))
+                  child: const Text('cancel'))
             ],
           );
         });

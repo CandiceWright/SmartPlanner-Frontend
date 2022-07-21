@@ -58,9 +58,9 @@ class _VideoPreviewPageState extends State<VideoPreviewPage> {
   saveStory() async {
     //upload video+thumbnail to firebase and get download url
     print("I am in save story");
+    final thumbnail = await VideoCompress.getFileThumbnail(widget.filePath);
     String? result = await PlannerService.firebaseStorage
         .uploadStory(widget.filePath, widget.filename);
-    final thumbnail = await VideoCompress.getFileThumbnail(widget.filePath);
 
     //store story in db then add story object to the list of stories
     print("result is ready");

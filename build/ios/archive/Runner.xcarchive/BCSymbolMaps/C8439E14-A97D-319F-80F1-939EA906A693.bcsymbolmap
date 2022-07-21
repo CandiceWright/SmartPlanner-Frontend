@@ -1,0 +1,410 @@
+BCSymbolMap Version: 2.0
+Apple clang version 13.0.0 (clang-1300.0.29.30)
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk
+iPhoneOS15.2.sdk
+/Users/candicewright/Library/Developer/Xcode/DerivedData/Runner-gqpclcnngimiyndbwbaimvgewcgs/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/image_picker.build/DerivedSources/image_picker_vers.c
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods
+-[GIFInfo initWithImages:interval:]
+-[GIFInfo images]
+-[GIFInfo setImages:]
+-[GIFInfo interval]
+-[GIFInfo setInterval:]
+-[GIFInfo .cxx_destruct]
++[FLTImagePickerImageUtil scaledImage:maxWidth:maxHeight:isMetadataAvailable:]
++[FLTImagePickerImageUtil scaledGIFImage:maxWidth:maxHeight:]
+_OBJC_SELECTOR_REFERENCES_
+_OBJC_SELECTOR_REFERENCES_.2
+_OBJC_SELECTOR_REFERENCES_.4
+__OBJC_METACLASS_RO_$_GIFInfo
+__OBJC_$_INSTANCE_METHODS_GIFInfo
+_OBJC_IVAR_$_GIFInfo._images
+_OBJC_IVAR_$_GIFInfo._interval
+__OBJC_$_INSTANCE_VARIABLES_GIFInfo
+__OBJC_$_PROP_LIST_GIFInfo
+__OBJC_CLASS_RO_$_GIFInfo
+_OBJC_SELECTOR_REFERENCES_.23
+_OBJC_SELECTOR_REFERENCES_.25
+_OBJC_CLASSLIST_REFERENCES_$_
+_OBJC_SELECTOR_REFERENCES_.27
+_OBJC_SELECTOR_REFERENCES_.29
+_OBJC_SELECTOR_REFERENCES_.31
+_OBJC_SELECTOR_REFERENCES_.33
+_OBJC_CLASSLIST_REFERENCES_$_.34
+_OBJC_SELECTOR_REFERENCES_.36
+_OBJC_CLASSLIST_REFERENCES_$_.37
+_OBJC_SELECTOR_REFERENCES_.39
+_OBJC_SELECTOR_REFERENCES_.41
+_OBJC_CLASSLIST_REFERENCES_$_.42
+_OBJC_SELECTOR_REFERENCES_.44
+_OBJC_SELECTOR_REFERENCES_.46
+_OBJC_SELECTOR_REFERENCES_.48
+_OBJC_SELECTOR_REFERENCES_.50
+_OBJC_CLASSLIST_REFERENCES_$_.51
+_OBJC_SELECTOR_REFERENCES_.52
+__OBJC_$_CLASS_METHODS_FLTImagePickerImageUtil
+__OBJC_METACLASS_RO_$_FLTImagePickerImageUtil
+__OBJC_CLASS_RO_$_FLTImagePickerImageUtil
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerImageUtil.m
+llvm.loop.mustprogress
+flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerImageUtil.m
+/Users/candicewright/developer
+flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerImageUtil.h
++[FLTImagePickerMetaDataUtil getImageMIMETypeFromImageData:]
++[FLTImagePickerMetaDataUtil imageTypeSuffixFromType:]
++[FLTImagePickerMetaDataUtil getMetaDataFromImageData:]
++[FLTImagePickerMetaDataUtil imageFromImage:withMetaData:]
++[FLTImagePickerMetaDataUtil convertImage:usingType:quality:]
+_OBJC_SELECTOR_REFERENCES_.6
+_OBJC_CLASSLIST_REFERENCES_$_.9
+_OBJC_SELECTOR_REFERENCES_.11
+_OBJC_SELECTOR_REFERENCES_.13
+__OBJC_$_CLASS_METHODS_FLTImagePickerMetaDataUtil
+__OBJC_METACLASS_RO_$_FLTImagePickerMetaDataUtil
+__OBJC_CLASS_RO_$_FLTImagePickerMetaDataUtil
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerMetaDataUtil.m
+flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerMetaDataUtil.m
++[FLTImagePickerPhotoAssetUtil getAssetFromImagePickerInfo:]
++[FLTImagePickerPhotoAssetUtil getAssetFromPHPickerResult:]
++[FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:image:maxWidth:maxHeight:imageQuality:]
++[FLTImagePickerPhotoAssetUtil saveImageWithPickerInfo:image:imageQuality:]
++[FLTImagePickerPhotoAssetUtil saveImageWithMetaData:gifInfo:suffix:]
++[FLTImagePickerPhotoAssetUtil saveImageWithMetaData:image:suffix:type:imageQuality:]
++[FLTImagePickerPhotoAssetUtil saveImageWithMetaData:gifInfo:path:]
++[FLTImagePickerPhotoAssetUtil temporaryFilePath:]
++[FLTImagePickerPhotoAssetUtil createFile:suffix:]
+___clang_at_available_requires_core_foundation_framework
+_OBJC_CLASSLIST_REFERENCES_$_.1
+_OBJC_SELECTOR_REFERENCES_.3
+_OBJC_SELECTOR_REFERENCES_.5
+_OBJC_SELECTOR_REFERENCES_.7
+_OBJC_SELECTOR_REFERENCES_.9
+_OBJC_CLASSLIST_REFERENCES_$_.12
+_OBJC_SELECTOR_REFERENCES_.14
+_OBJC_SELECTOR_REFERENCES_.16
+_OBJC_SELECTOR_REFERENCES_.18
+_OBJC_CLASSLIST_REFERENCES_$_.19
+_OBJC_SELECTOR_REFERENCES_.21
+_OBJC_SELECTOR_REFERENCES_.35
+_OBJC_SELECTOR_REFERENCES_.37
+_OBJC_CLASSLIST_REFERENCES_$_.38
+_OBJC_SELECTOR_REFERENCES_.40
+_OBJC_SELECTOR_REFERENCES_.42
+_OBJC_CLASSLIST_REFERENCES_$_.45
+_OBJC_SELECTOR_REFERENCES_.47
+_OBJC_SELECTOR_REFERENCES_.49
+_OBJC_CLASSLIST_REFERENCES_$_.50
+_OBJC_CLASSLIST_REFERENCES_$_.53
+_OBJC_SELECTOR_REFERENCES_.55
+_OBJC_SELECTOR_REFERENCES_.57
+_OBJC_SELECTOR_REFERENCES_.59
+_OBJC_SELECTOR_REFERENCES_.61
+_OBJC_SELECTOR_REFERENCES_.63
+_OBJC_SELECTOR_REFERENCES_.65
+_OBJC_SELECTOR_REFERENCES_.67
+_OBJC_CLASSLIST_REFERENCES_$_.68
+_OBJC_SELECTOR_REFERENCES_.70
+_OBJC_SELECTOR_REFERENCES_.72
+_OBJC_CLASSLIST_REFERENCES_$_.73
+_OBJC_SELECTOR_REFERENCES_.75
+_OBJC_SELECTOR_REFERENCES_.77
+_OBJC_CLASSLIST_REFERENCES_$_.78
+_OBJC_SELECTOR_REFERENCES_.80
+_OBJC_SELECTOR_REFERENCES_.82
+__OBJC_$_CLASS_METHODS_FLTImagePickerPhotoAssetUtil
+__OBJC_METACLASS_RO_$_FLTImagePickerPhotoAssetUtil
+__OBJC_CLASS_RO_$_FLTImagePickerPhotoAssetUtil
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerPhotoAssetUtil.m
+flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerPhotoAssetUtil.m
++[FLTImagePickerPlugin registerWithRegistrar:]
+-[FLTImagePickerPlugin createImagePickerController]
+-[FLTImagePickerPlugin setImagePickerControllerOverrides:]
+-[FLTImagePickerPlugin viewControllerWithWindow:]
+-[FLTImagePickerPlugin getCameraDeviceFromArguments:]
+-[FLTImagePickerPlugin pickImageWithPHPicker:]
+-[FLTImagePickerPlugin launchUIImagePickerWithSource:]
+-[FLTImagePickerPlugin handleMethodCall:result:]
+-[FLTImagePickerPlugin showCameraWithImagePicker:]
+___50-[FLTImagePickerPlugin showCameraWithImagePicker:]_block_invoke
+-[FLTImagePickerPlugin checkCameraAuthorizationWithImagePicker:]
+___64-[FLTImagePickerPlugin checkCameraAuthorizationWithImagePicker:]_block_invoke
+___64-[FLTImagePickerPlugin checkCameraAuthorizationWithImagePicker:]_block_invoke_2
+___copy_helper_block_e8_32s40s
+___destroy_helper_block_e8_32s40s
+-[FLTImagePickerPlugin checkPhotoAuthorizationWithImagePicker:]
+___63-[FLTImagePickerPlugin checkPhotoAuthorizationWithImagePicker:]_block_invoke
+___63-[FLTImagePickerPlugin checkPhotoAuthorizationWithImagePicker:]_block_invoke_2
+-[FLTImagePickerPlugin checkPhotoAuthorizationForAccessLevel]
+___61-[FLTImagePickerPlugin checkPhotoAuthorizationForAccessLevel]_block_invoke
+___61-[FLTImagePickerPlugin checkPhotoAuthorizationForAccessLevel]_block_invoke_2
+___copy_helper_block_e8_32s
+___destroy_helper_block_e8_32s
+-[FLTImagePickerPlugin errorNoCameraAccess:]
+-[FLTImagePickerPlugin errorNoPhotoAccess:]
+-[FLTImagePickerPlugin showPhotoLibraryWithPHPicker:]
+-[FLTImagePickerPlugin showPhotoLibraryWithImagePicker:]
+-[FLTImagePickerPlugin getDesiredImageQuality:]
+-[FLTImagePickerPlugin presentationControllerDidDismiss:]
+-[FLTImagePickerPlugin picker:didFinishPicking:]
+___48-[FLTImagePickerPlugin picker:didFinishPicking:]_block_invoke
+___48-[FLTImagePickerPlugin picker:didFinishPicking:]_block_invoke_2
+___48-[FLTImagePickerPlugin picker:didFinishPicking:]_block_invoke.237
+-[FLTImagePickerPlugin createNSMutableArrayWithSize:]
+-[FLTImagePickerPlugin imagePickerController:didFinishPickingMediaWithInfo:]
+___76-[FLTImagePickerPlugin imagePickerController:didFinishPickingMediaWithInfo:]_block_invoke
+___copy_helper_block_e8_32s40s48s56s64s
+___destroy_helper_block_e8_32s40s48s56s64s
+-[FLTImagePickerPlugin imagePickerControllerDidCancel:]
+-[FLTImagePickerPlugin saveImageWithOriginalImageData:image:maxWidth:maxHeight:imageQuality:]
+-[FLTImagePickerPlugin saveImageWithPickerInfo:image:imageQuality:]
+-[FLTImagePickerPlugin handleSavedPathList:]
+-[FLTImagePickerPlugin maxImagesAllowed]
+-[FLTImagePickerPlugin setMaxImagesAllowed:]
+-[FLTImagePickerPlugin arguments]
+-[FLTImagePickerPlugin setArguments:]
+-[FLTImagePickerPlugin pickerViewController]
+-[FLTImagePickerPlugin setPickerViewController:]
+-[FLTImagePickerPlugin imagePickerControllerOverrides]
+-[FLTImagePickerPlugin result]
+-[FLTImagePickerPlugin setResult:]
+-[FLTImagePickerPlugin .cxx_destruct]
+_OBJC_CLASSLIST_REFERENCES_$_.3
+_OBJC_CLASSLIST_REFERENCES_$_.8
+_OBJC_SELECTOR_REFERENCES_.10
+_OBJC_SELECTOR_REFERENCES_.12
+_OBJC_SELECTOR_REFERENCES_.20
+_OBJC_CLASSLIST_REFERENCES_$_.21
+_OBJC_CLASSLIST_REFERENCES_$_.26
+_OBJC_SELECTOR_REFERENCES_.28
+_OBJC_SELECTOR_REFERENCES_.30
+_OBJC_SELECTOR_REFERENCES_.32
+_OBJC_SELECTOR_REFERENCES_.34
+_OBJC_SELECTOR_REFERENCES_.38
+_OBJC_CLASSLIST_REFERENCES_$_.43
+_OBJC_CLASSLIST_REFERENCES_$_.44
+_OBJC_SELECTOR_REFERENCES_.53
+_OBJC_CLASSLIST_REFERENCES_$_.56
+_OBJC_SELECTOR_REFERENCES_.58
+_OBJC_SELECTOR_REFERENCES_.60
+_OBJC_SELECTOR_REFERENCES_.62
+_OBJC_SELECTOR_REFERENCES_.64
+_OBJC_SELECTOR_REFERENCES_.66
+_OBJC_SELECTOR_REFERENCES_.68
+_OBJC_CLASSLIST_REFERENCES_$_.71
+_OBJC_SELECTOR_REFERENCES_.73
+_OBJC_SELECTOR_REFERENCES_.79
+_OBJC_SELECTOR_REFERENCES_.81
+_OBJC_CLASSLIST_REFERENCES_$_.82
+_OBJC_SELECTOR_REFERENCES_.88
+_OBJC_SELECTOR_REFERENCES_.94
+_OBJC_SELECTOR_REFERENCES_.96
+_OBJC_SELECTOR_REFERENCES_.100
+_OBJC_SELECTOR_REFERENCES_.102
+_OBJC_SELECTOR_REFERENCES_.106
+_OBJC_SELECTOR_REFERENCES_.108
+_OBJC_SELECTOR_REFERENCES_.114
+_OBJC_CLASSLIST_REFERENCES_$_.117
+_OBJC_SELECTOR_REFERENCES_.119
+_OBJC_SELECTOR_REFERENCES_.121
+_OBJC_SELECTOR_REFERENCES_.123
+_OBJC_SELECTOR_REFERENCES_.125
+_OBJC_SELECTOR_REFERENCES_.129
+_OBJC_SELECTOR_REFERENCES_.131
+_OBJC_SELECTOR_REFERENCES_.133
+_OBJC_SELECTOR_REFERENCES_.135
+_OBJC_SELECTOR_REFERENCES_.137
+_OBJC_SELECTOR_REFERENCES_.139
+_OBJC_SELECTOR_REFERENCES_.141
+_OBJC_SELECTOR_REFERENCES_.143
+_OBJC_CLASSLIST_REFERENCES_$_.144
+_OBJC_CLASSLIST_REFERENCES_$_.145
+_OBJC_SELECTOR_REFERENCES_.147
+_OBJC_SELECTOR_REFERENCES_.153
+_OBJC_SELECTOR_REFERENCES_.157
+_OBJC_CLASSLIST_REFERENCES_$_.158
+___block_descriptor_32_e23_v16?0"UIAlertAction"8l
+___block_literal_global
+_OBJC_SELECTOR_REFERENCES_.163
+_OBJC_SELECTOR_REFERENCES_.165
+_OBJC_CLASSLIST_REFERENCES_$_.166
+_OBJC_SELECTOR_REFERENCES_.168
+_OBJC_SELECTOR_REFERENCES_.170
+_OBJC_SELECTOR_REFERENCES_.172
+___block_descriptor_49_e8_32s40s_e5_v8?0l
+___block_descriptor_48_e8_32s40s_e8_v12?0B8l
+_OBJC_SELECTOR_REFERENCES_.176
+_OBJC_SELECTOR_REFERENCES_.178
+_OBJC_SELECTOR_REFERENCES_.180
+_OBJC_SELECTOR_REFERENCES_.182
+___block_descriptor_56_e8_32s40s_e5_v8?0l
+___block_descriptor_48_e8_32s40s_e8_v16?0q8l
+_OBJC_SELECTOR_REFERENCES_.185
+_OBJC_SELECTOR_REFERENCES_.187
+___block_descriptor_48_e8_32s_e5_v8?0l
+___block_descriptor_40_e8_32s_e8_v16?0q8l
+_OBJC_SELECTOR_REFERENCES_.189
+_OBJC_SELECTOR_REFERENCES_.207
+_OBJC_SELECTOR_REFERENCES_.209
+_OBJC_SELECTOR_REFERENCES_.211
+_OBJC_SELECTOR_REFERENCES_.213
+_OBJC_SELECTOR_REFERENCES_.221
+_OBJC_CLASSLIST_REFERENCES_$_.222
+_OBJC_SELECTOR_REFERENCES_.224
+_OBJC_SELECTOR_REFERENCES_.226
+_OBJC_CLASSLIST_REFERENCES_$_.227
+_OBJC_SELECTOR_REFERENCES_.229
+___block_descriptor_44_e8_32s_e18_v16?0"NSString"8l
+_OBJC_SELECTOR_REFERENCES_.232
+_OBJC_SELECTOR_REFERENCES_.234
+_OBJC_SELECTOR_REFERENCES_.236
+_OBJC_SELECTOR_REFERENCES_.239
+___block_descriptor_48_e8_32s40s_e5_v8?0l
+_OBJC_CLASSLIST_REFERENCES_$_.240
+_OBJC_SELECTOR_REFERENCES_.242
+_OBJC_SELECTOR_REFERENCES_.244
+_OBJC_SELECTOR_REFERENCES_.246
+_OBJC_CLASSLIST_REFERENCES_$_.247
+_OBJC_SELECTOR_REFERENCES_.249
+_OBJC_SELECTOR_REFERENCES_.251
+_OBJC_CLASSLIST_REFERENCES_$_.252
+_OBJC_SELECTOR_REFERENCES_.254
+_OBJC_SELECTOR_REFERENCES_.256
+_OBJC_SELECTOR_REFERENCES_.258
+_OBJC_SELECTOR_REFERENCES_.260
+_OBJC_CLASSLIST_REFERENCES_$_.265
+_OBJC_SELECTOR_REFERENCES_.267
+_OBJC_CLASSLIST_REFERENCES_$_.268
+_OBJC_SELECTOR_REFERENCES_.270
+_OBJC_SELECTOR_REFERENCES_.272
+_OBJC_CLASSLIST_REFERENCES_$_.273
+_OBJC_SELECTOR_REFERENCES_.275
+___block_descriptor_72_e8_32s40s48s56s64s_e49_v40?0"NSData"8"NSString"16q24"NSDictionary"32l
+_OBJC_SELECTOR_REFERENCES_.278
+_OBJC_SELECTOR_REFERENCES_.280
+_OBJC_SELECTOR_REFERENCES_.282
+__OBJC_$_CLASS_METHODS_FLTImagePickerPlugin
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_NSObject
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_NSObject
+__OBJC_$_PROP_LIST_NSObject
+__OBJC_$_PROTOCOL_METHOD_TYPES_NSObject
+__OBJC_PROTOCOL_$_NSObject
+__OBJC_LABEL_PROTOCOL_$_NSObject
+__OBJC_$_PROTOCOL_REFS_UINavigationControllerDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_UINavigationControllerDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_UINavigationControllerDelegate
+__OBJC_PROTOCOL_$_UINavigationControllerDelegate
+__OBJC_LABEL_PROTOCOL_$_UINavigationControllerDelegate
+__OBJC_$_PROTOCOL_REFS_UIImagePickerControllerDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_UIImagePickerControllerDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_UIImagePickerControllerDelegate
+__OBJC_PROTOCOL_$_UIImagePickerControllerDelegate
+__OBJC_LABEL_PROTOCOL_$_UIImagePickerControllerDelegate
+__OBJC_$_PROTOCOL_REFS_PHPickerViewControllerDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_PHPickerViewControllerDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_PHPickerViewControllerDelegate
+__OBJC_PROTOCOL_$_PHPickerViewControllerDelegate
+__OBJC_LABEL_PROTOCOL_$_PHPickerViewControllerDelegate
+__OBJC_$_PROTOCOL_REFS_UIAdaptivePresentationControllerDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_UIAdaptivePresentationControllerDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_UIAdaptivePresentationControllerDelegate
+__OBJC_PROTOCOL_$_UIAdaptivePresentationControllerDelegate
+__OBJC_LABEL_PROTOCOL_$_UIAdaptivePresentationControllerDelegate
+__OBJC_$_PROTOCOL_REFS_UNUserNotificationCenterDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_UNUserNotificationCenterDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_UNUserNotificationCenterDelegate
+__OBJC_PROTOCOL_$_UNUserNotificationCenterDelegate
+__OBJC_LABEL_PROTOCOL_$_UNUserNotificationCenterDelegate
+__OBJC_$_PROTOCOL_REFS_FlutterApplicationLifeCycleDelegate
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_FlutterApplicationLifeCycleDelegate
+__OBJC_$_PROTOCOL_METHOD_TYPES_FlutterApplicationLifeCycleDelegate
+__OBJC_PROTOCOL_$_FlutterApplicationLifeCycleDelegate
+__OBJC_LABEL_PROTOCOL_$_FlutterApplicationLifeCycleDelegate
+__OBJC_$_PROTOCOL_REFS_FlutterPlugin
+__OBJC_$_PROTOCOL_CLASS_METHODS_FlutterPlugin
+__OBJC_$_PROTOCOL_INSTANCE_METHODS_OPT_FlutterPlugin
+__OBJC_$_PROTOCOL_CLASS_METHODS_OPT_FlutterPlugin
+__OBJC_$_PROTOCOL_METHOD_TYPES_FlutterPlugin
+__OBJC_PROTOCOL_$_FlutterPlugin
+__OBJC_LABEL_PROTOCOL_$_FlutterPlugin
+__OBJC_CLASS_PROTOCOLS_$_FLTImagePickerPlugin
+__OBJC_METACLASS_RO_$_FLTImagePickerPlugin
+__OBJC_$_INSTANCE_METHODS_FLTImagePickerPlugin
+_OBJC_IVAR_$_FLTImagePickerPlugin._maxImagesAllowed
+_OBJC_IVAR_$_FLTImagePickerPlugin._arguments
+_OBJC_IVAR_$_FLTImagePickerPlugin._pickerViewController
+_OBJC_IVAR_$_FLTImagePickerPlugin._imagePickerControllerOverrides
+_OBJC_IVAR_$_FLTImagePickerPlugin._result
+__OBJC_$_INSTANCE_VARIABLES_FLTImagePickerPlugin
+__OBJC_$_PROP_LIST_FLTImagePickerPlugin
+__OBJC_CLASS_RO_$_FLTImagePickerPlugin
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerPlugin.m
+flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerPlugin.m
+flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTImagePickerPlugin_Test.h
+__destroy_helper_block_e8_32s40s48s56s64s
+__copy_helper_block_e8_32s40s48s56s64s
+__76-[FLTImagePickerPlugin imagePickerController:didFinishPickingMediaWithInfo:]_block_invoke
+__48-[FLTImagePickerPlugin picker:didFinishPicking:]_block_invoke.237
+__48-[FLTImagePickerPlugin picker:didFinishPicking:]_block_invoke_2
+__48-[FLTImagePickerPlugin picker:didFinishPicking:]_block_invoke
+__destroy_helper_block_e8_32s
+__copy_helper_block_e8_32s
+__61-[FLTImagePickerPlugin checkPhotoAuthorizationForAccessLevel]_block_invoke_2
+__61-[FLTImagePickerPlugin checkPhotoAuthorizationForAccessLevel]_block_invoke
+__63-[FLTImagePickerPlugin checkPhotoAuthorizationWithImagePicker:]_block_invoke_2
+__63-[FLTImagePickerPlugin checkPhotoAuthorizationWithImagePicker:]_block_invoke
+__destroy_helper_block_e8_32s40s
+__copy_helper_block_e8_32s40s
+__64-[FLTImagePickerPlugin checkCameraAuthorizationWithImagePicker:]_block_invoke_2
+__64-[FLTImagePickerPlugin checkCameraAuthorizationWithImagePicker:]_block_invoke
+__50-[FLTImagePickerPlugin showCameraWithImagePicker:]_block_invoke
+GetNullableValueForKey
+-[FLTPHPickerSaveImageToPathOperation initWithResult:maxHeight:maxWidth:desiredImageQuality:savedPathBlock:]
+-[FLTPHPickerSaveImageToPathOperation isConcurrent]
+-[FLTPHPickerSaveImageToPathOperation isExecuting]
+-[FLTPHPickerSaveImageToPathOperation isFinished]
+-[FLTPHPickerSaveImageToPathOperation setFinished:]
+-[FLTPHPickerSaveImageToPathOperation setExecuting:]
+-[FLTPHPickerSaveImageToPathOperation completeOperationWithPath:]
+-[FLTPHPickerSaveImageToPathOperation start]
+___44-[FLTPHPickerSaveImageToPathOperation start]_block_invoke
+___44-[FLTPHPickerSaveImageToPathOperation start]_block_invoke.38
+-[FLTPHPickerSaveImageToPathOperation processImage:]
+___52-[FLTPHPickerSaveImageToPathOperation processImage:]_block_invoke
+-[FLTPHPickerSaveImageToPathOperation result]
+-[FLTPHPickerSaveImageToPathOperation setResult:]
+-[FLTPHPickerSaveImageToPathOperation maxHeight]
+-[FLTPHPickerSaveImageToPathOperation setMaxHeight:]
+-[FLTPHPickerSaveImageToPathOperation maxWidth]
+-[FLTPHPickerSaveImageToPathOperation setMaxWidth:]
+-[FLTPHPickerSaveImageToPathOperation desiredImageQuality]
+-[FLTPHPickerSaveImageToPathOperation setDesiredImageQuality:]
+-[FLTPHPickerSaveImageToPathOperation .cxx_destruct]
+_OBJC_SELECTOR_REFERENCES_.8
+_OBJC_IVAR_$_FLTPHPickerSaveImageToPathOperation.getSavedPath
+_OBJC_IVAR_$_FLTPHPickerSaveImageToPathOperation.executing
+_OBJC_IVAR_$_FLTPHPickerSaveImageToPathOperation.finished
+_OBJC_SELECTOR_REFERENCES_.22
+_OBJC_SELECTOR_REFERENCES_.24
+_OBJC_SELECTOR_REFERENCES_.26
+___block_descriptor_40_e8_32s_e28_v24?0"NSData"8"NSError"16l
+___block_descriptor_40_e8_32s_e45_v24?0"<NSItemProviderReading>"8"NSError"16l
+_OBJC_SELECTOR_REFERENCES_.43
+_OBJC_CLASSLIST_REFERENCES_$_.54
+_OBJC_SELECTOR_REFERENCES_.56
+___block_descriptor_48_e8_32s40s_e49_v40?0"NSData"8"NSString"16q24"NSDictionary"32l
+_OBJC_IVAR_$_FLTPHPickerSaveImageToPathOperation._result
+_OBJC_IVAR_$_FLTPHPickerSaveImageToPathOperation._maxHeight
+_OBJC_IVAR_$_FLTPHPickerSaveImageToPathOperation._maxWidth
+_OBJC_IVAR_$_FLTPHPickerSaveImageToPathOperation._desiredImageQuality
+__OBJC_METACLASS_RO_$_FLTPHPickerSaveImageToPathOperation
+__OBJC_$_INSTANCE_METHODS_FLTPHPickerSaveImageToPathOperation
+__OBJC_$_INSTANCE_VARIABLES_FLTPHPickerSaveImageToPathOperation
+__OBJC_$_PROP_LIST_FLTPHPickerSaveImageToPathOperation
+__OBJC_CLASS_RO_$_FLTPHPickerSaveImageToPathOperation
+/Users/candicewright/developer/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTPHPickerSaveImageToPathOperation.m
+flutter/.pub-cache/hosted/pub.dartlang.org/image_picker-0.8.4+11/ios/Classes/FLTPHPickerSaveImageToPathOperation.m
+__52-[FLTPHPickerSaveImageToPathOperation processImage:]_block_invoke
+__44-[FLTPHPickerSaveImageToPathOperation start]_block_invoke.38
+__44-[FLTPHPickerSaveImageToPathOperation start]_block_invoke
+__OBJC_METACLASS_RO_$_PodsDummy_image_picker
+__OBJC_CLASS_RO_$_PodsDummy_image_picker
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods/Target Support Files/image_picker/image_picker-dummy.m

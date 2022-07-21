@@ -1,0 +1,10 @@
+BCSymbolMap Version: 2.0
+Apple clang version 13.0.0 (clang-1300.0.29.30)
+/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS15.2.sdk
+iPhoneOS15.2.sdk
+/Users/candicewright/Library/Developer/Xcode/DerivedData/Runner-gqpclcnngimiyndbwbaimvgewcgs/Build/Intermediates.noindex/ArchiveIntermediates/Runner/IntermediateBuildFilesPath/Pods.build/Release-iphoneos/FirebaseCoreExtension.build/DerivedSources/FirebaseCoreExtension_vers.c
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods/FirebaseCoreExtension/FirebaseCore/Extension/dummy.m
+__OBJC_METACLASS_RO_$_PodsDummy_FirebaseCoreExtension
+__OBJC_CLASS_RO_$_PodsDummy_FirebaseCoreExtension
+/Users/candicewright/developer/flutter_apps/planner/planner_repo/SmartPlanner-Frontend/ios/Pods/Target Support Files/FirebaseCoreExtension/FirebaseCoreExtension-dummy.m
