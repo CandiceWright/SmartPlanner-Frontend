@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/habit.dart';
 import 'package:practice_planner/models/story.dart';
+import 'package:practice_planner/services/capture_video_with_imagepicker.dart';
 import 'package:practice_planner/services/video_capturer.dart';
 import 'package:practice_planner/views/Calendar/calendar_page.dart';
 import 'package:practice_planner/views/navigation_wrapper.dart';
@@ -19,7 +20,6 @@ import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
 
@@ -70,8 +70,26 @@ class _HomePageState extends State<HomePage> {
     //   });
   }
 
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    super.dispose();
+  }
+
+  void updateState() {
+    setState(() {});
+  }
+
   createStory() async {
-    final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
+    XFile? video = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => CaptureVideoWithImagePicker(
+          prevPage: "home",
+          updateState: updateState,
+        ),
+      ),
+    );
+    //final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
     if (video != null) {
       String path = video.path;
       String name = video.name;
@@ -397,26 +415,31 @@ class _HomePageState extends State<HomePage> {
                       return StatefulBuilder(
                           builder: (context, setDialogState) {
                         return SimpleDialog(
+                          backgroundColor: Colors.transparent,
                           contentPadding: const EdgeInsets.all(0),
                           children: [
                             Stack(
                               children: [
                                 Container(
-                                  decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20))),
+                                  color: Colors.transparent,
+                                  // decoration: const BoxDecoration(
+                                  //     borderRadius: BorderRadius.all(
+                                  //         Radius.circular(20))),
                                   //margin: const EdgeInsets.all(20),
                                   child: AspectRatio(
                                     aspectRatio: _videoPlayerController
                                         .value.aspectRatio,
-                                    child: Stack(
-                                      alignment: Alignment.bottomCenter,
-                                      children: <Widget>[
-                                        VideoPlayer(_videoPlayerController),
-                                        VideoProgressIndicator(
-                                            _videoPlayerController,
-                                            allowScrubbing: true),
-                                      ],
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Stack(
+                                        alignment: Alignment.bottomCenter,
+                                        children: <Widget>[
+                                          VideoPlayer(_videoPlayerController),
+                                          VideoProgressIndicator(
+                                              _videoPlayerController,
+                                              allowScrubbing: true),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),

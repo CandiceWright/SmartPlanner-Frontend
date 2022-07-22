@@ -196,19 +196,63 @@ class _CalendarPageState extends State<CalendarPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: startPlanningFromBacklog,
-                        child: const Text(
-                            "Add item from my life's backlog to today's schedule")),
-                    ElevatedButton(
-                        onPressed: _openNewCalendarItemPage,
-                        child: const Text("Create new task/event")),
-                  ]),
+              title: const Text(
+                "Schedule a backlog item or Create a new event?",
+                textAlign: TextAlign.center,
+              ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              content: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: IconButton(
+                      iconSize: 50,
+                      onPressed: startPlanningFromBacklog,
+                      icon: CircleAvatar(
+                        child: const Icon(
+                          Icons.list,
+                          color: Colors.white,
+                        ),
+                        radius: 25,
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: IconButton(
+                      iconSize: 50,
+                      onPressed: _openNewCalendarItemPage,
+                      icon: CircleAvatar(
+                        child: const Icon(
+                          Icons.event,
+                          color: Colors.white,
+                        ),
+                        radius: 25,
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               actions: <Widget>[]);
+          // return AlertDialog(
+          //     content: Column(
+          //         mainAxisSize: MainAxisSize.min,
+          //         mainAxisAlignment: MainAxisAlignment.center,
+          //         children: [
+          //           ElevatedButton(
+          //               onPressed: startPlanningFromBacklog,
+          //               child: const Text(
+          //                   "Add item from my life's backlog to today's schedule")),
+          //           ElevatedButton(
+          //               onPressed: _openNewCalendarItemPage,
+          //               child: const Text("Create new task/event")),
+          //         ]),
+          //     actions: <Widget>[]);
         });
   }
 
@@ -433,124 +477,133 @@ class _CalendarPageState extends State<CalendarPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Stack(
-      children: [
-        Image.asset(
-          PlannerService.sharedInstance.user!.spaceImage,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
+    // return Stack(
+    //   children: [
+    //     Image.asset(
+    //       PlannerService.sharedInstance.user!.spaceImage,
+    //       height: MediaQuery.of(context).size.height,
+    //       width: MediaQuery.of(context).size.width,
+    //       fit: BoxFit.cover,
+    //     ),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
 
-          appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        backgroundColor: Colors.transparent,
 
-            title: Column(
-              children: [
-                Text(
-                  "Today",
-                  // style: GoogleFonts.roboto(
-                  //   textStyle: const TextStyle(
-                  //     color: Colors.white,
-                  //   ),
-                  // ),
-                  style: TextStyle(color: Colors.white),
-                ),
-                // Image.asset(
-                //   "assets/images/pink_planit_today.png",
-                // ),
-              ],
-            ),
-            centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(
-                Icons.note_alt,
-                color: Colors.white,
-              ),
-              tooltip: 'View this backlog item',
-              onPressed: () {
-                //setState(() {});
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) => const NotesPage(
-                              fromPage: "Today",
-                            )));
-              },
-            ),
-            automaticallyImplyLeading: false,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.calendar_today),
-                tooltip: 'View full calendar',
-                onPressed: () {
-                  _goToMonthlyView();
-                },
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.next_week,
-                  color: Colors.white,
-                ),
-                tooltip: 'Tomorrow',
-                onPressed: () {
-                  setState(() {
-                    _openTomorrowSchedulePage();
-                    // if (PlannerService
-                    //     .sharedInstance.user!.didStartTomorrowPlanning) {
-                    //   _openTomorrowSchedulePage();
-                    // } else {
-                    //   _openNoTomorrowPlanPage();
-                    // }
-                  });
-                },
-              ),
-              // TextButton(
-              //   child: const Text("Tomorrow"),
-              //   onPressed: () => {},
+        title: Column(
+          children: [
+            Text(
+              "Today",
+              // style: GoogleFonts.roboto(
+              //   textStyle: const TextStyle(
+              //     color: Colors.white,
+              //   ),
               // ),
-            ],
-            iconTheme: IconThemeData(
-              color: Theme.of(context).primaryColor, //change your color here
+              style: TextStyle(color: Colors.white),
             ),
+            // Image.asset(
+            //   "assets/images/pink_planit_today.png",
+            // ),
+          ],
+        ),
+        centerTitle: true,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    PlannerService.sharedInstance.user!.spaceImage,
+                  ),
+                  fit: BoxFit.fill)),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.note_alt,
+            color: Colors.white,
           ),
-          body: Container(
-            child: SfCalendar(
-              headerStyle: CalendarHeaderStyle(
-                textStyle: TextStyle(color: Colors.white),
-                // textAlign: TextAlign.center,
-              ),
-              view: CalendarView.day,
-              onTap: calendarTapped,
-              initialDisplayDate: DateTime.now(),
-              dataSource: CalendarPage.events,
-              cellBorderColor: Colors.white,
-              timeSlotViewSettings: TimeSlotViewSettings(
-                  timeInterval: Duration(minutes: 30),
-                  timeFormat: 'h:mm',
-                  timeTextStyle: TextStyle(
-                    color: Colors.white,
-                  )),
-              //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-            ),
+          tooltip: 'View this backlog item',
+          onPressed: () {
+            //setState(() {});
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => const NotesPage(
+                          fromPage: "Today",
+                        )));
+          },
+        ),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.calendar_today),
+            tooltip: 'View full calendar',
+            onPressed: () {
+              _goToMonthlyView();
+            },
           ),
-
-          floatingActionButton: FloatingActionButton(
-            //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
-            onPressed: _openNewCalendarItemDialog,
-            tooltip: 'Create new event.',
-            child: const Icon(
-              Icons.add,
+          IconButton(
+            icon: const Icon(
+              Icons.next_week,
               color: Colors.white,
             ),
-            backgroundColor: Theme.of(context).primaryColor,
-          ), // This trailing comma makes auto-formatting nicer for build methods.
-        )
-      ],
+            tooltip: 'Tomorrow',
+            onPressed: () {
+              setState(() {
+                _openTomorrowSchedulePage();
+                // if (PlannerService
+                //     .sharedInstance.user!.didStartTomorrowPlanning) {
+                //   _openTomorrowSchedulePage();
+                // } else {
+                //   _openNoTomorrowPlanPage();
+                // }
+              });
+            },
+          ),
+          // TextButton(
+          //   child: const Text("Tomorrow"),
+          //   onPressed: () => {},
+          // ),
+        ],
+        iconTheme: IconThemeData(
+          color: Theme.of(context).primaryColor, //change your color here
+        ),
+      ),
+      body: Container(
+        child: SfCalendar(
+          // headerStyle: CalendarHeaderStyle(
+          //   textStyle: TextStyle(color: Colors.white),
+          //   // textAlign: TextAlign.center,
+          // ),
+          view: CalendarView.day,
+          onTap: calendarTapped,
+          initialDisplayDate: DateTime.now(),
+          dataSource: CalendarPage.events,
+          //cellBorderColor: Colors.white,
+          timeSlotViewSettings: const TimeSlotViewSettings(
+            timeInterval: Duration(minutes: 30),
+            timeFormat: 'h:mm',
+            // timeTextStyle: TextStyle(
+            //   color: Colors.white,
+            // ),
+          ),
+          //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+        ),
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
+        onPressed: _openNewCalendarItemDialog,
+        tooltip: 'Create new event.',
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+    //],
+    //);
   }
 }

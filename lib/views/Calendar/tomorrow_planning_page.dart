@@ -49,67 +49,93 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Column(
-          children: const [
-            Text(
-              "Tomorrow",
-              style: TextStyle(color: Colors.white),
-            ),
-            // Text(
-            //   DateFormat.yMMMd().format(DateTime.now()),
-            //   style: Theme.of(context).textTheme.subtitle1,
-            // ),
-          ],
-        ),
-        centerTitle: true,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage(
-                    PlannerService.sharedInstance.user!.spaceImage,
-                  ),
-                  fit: BoxFit.fill)),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.note_alt),
-            tooltip: 'View this backlog item',
-            onPressed: () {
-              //setState(() {});
-              Navigator.push(
-                  context,
-                  CupertinoPageRoute(
-                      builder: (context) => const NotesPage(
-                            fromPage: "Tomorrow",
-                          )));
-            },
-          ),
-        ],
-        iconTheme: IconThemeData(
-          color: Theme.of(context).primaryColor, //change your color here
-        ),
-      ),
-      body: Container(
-        child: SfCalendar(
-          view: CalendarView.day,
-          onTap: calendarTapped,
-          initialDisplayDate: DateTime(DateTime.now().year,
-              DateTime.now().month, DateTime.now().day + 1),
-          dataSource: CalendarPage.events,
 
-          //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-        ),
+    //if I decide I want space background on this page
+    return Stack(children: [
+      Image.asset(
+        PlannerService.sharedInstance.user!.spaceImage,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.cover,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openNewCalendarItemDialog,
-        tooltip: 'Create new event.',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Column(
+            children: const [
+              Text(
+                "Tomorrow",
+                style: TextStyle(color: Colors.white),
+              ),
+              // Text(
+              //   DateFormat.yMMMd().format(DateTime.now()),
+              //   style: Theme.of(context).textTheme.subtitle1,
+              // ),
+            ],
+          ),
+          centerTitle: true,
+          // flexibleSpace: Container(
+          //   decoration: BoxDecoration(
+          //       image: DecorationImage(
+          //           image: AssetImage(
+          //             PlannerService.sharedInstance.user!.spaceImage,
+          //           ),
+          //           fit: BoxFit.fill)),
+          // ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.note_alt),
+              tooltip: 'View this backlog item',
+              onPressed: () {
+                //setState(() {});
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => const NotesPage(
+                              fromPage: "Tomorrow",
+                            )));
+              },
+            ),
+          ],
+          iconTheme: IconThemeData(
+            color: Theme.of(context).primaryColor, //change your color here
+          ),
+        ),
+        body: Container(
+          child: SfCalendar(
+            headerStyle: const CalendarHeaderStyle(
+              textStyle: TextStyle(color: Colors.white),
+              // textAlign: TextAlign.center,
+            ),
+            view: CalendarView.day,
+            onTap: calendarTapped,
+            initialDisplayDate: DateTime.now().add(const Duration(days: 1)),
+            minDate: DateTime.now().add(const Duration(days: 1)),
+            maxDate: DateTime.now().add(const Duration(days: 1)),
+            // initialDisplayDate: DateTime(DateTime.now().year,
+            //     DateTime.now().month, DateTime.now().day + 1),
+            dataSource: CalendarPage.events,
+            cellBorderColor: Colors.white,
+            timeSlotViewSettings: const TimeSlotViewSettings(
+              timeInterval: Duration(minutes: 30),
+              timeFormat: 'h:mm',
+              timeTextStyle: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+          ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _openNewCalendarItemDialog,
+          tooltip: 'Create new event.',
+          child: const Icon(Icons.add),
+        ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+    ]);
   }
 
   void unscheduleEvent() {
@@ -377,18 +403,48 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-              content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                        onPressed: startPlanningFromBacklog,
-                        child:
-                            const Text("Schedule item from my life's backlog")),
-                    ElevatedButton(
-                        onPressed: openNewEventPage,
-                        child: const Text("Create new task/event")),
-                  ]),
+              title: const Text(
+                "Schedule a backlog item or Create a new event?",
+                textAlign: TextAlign.center,
+              ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              content: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: IconButton(
+                      iconSize: 50,
+                      onPressed: startPlanningFromBacklog,
+                      icon: CircleAvatar(
+                        child: const Icon(
+                          Icons.list,
+                          color: Colors.white,
+                        ),
+                        radius: 25,
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(8),
+                    child: IconButton(
+                      iconSize: 50,
+                      onPressed: openNewEventPage,
+                      icon: CircleAvatar(
+                        child: const Icon(
+                          Icons.event,
+                          color: Colors.white,
+                        ),
+                        radius: 25,
+                        backgroundColor: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               actions: <Widget>[]);
         });
   }

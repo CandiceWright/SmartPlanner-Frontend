@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:practice_planner/models/definition.dart';
 import 'package:practice_planner/models/event.dart';
+import 'package:practice_planner/services/capture_video_with_imagepicker.dart';
 import 'package:practice_planner/views/Dictionary/edit_definition_page.dart';
 import 'package:practice_planner/views/Dictionary/new_definition_page.dart';
 import 'package:practice_planner/views/Goals/accomplished_goals_page.dart';
@@ -34,19 +36,36 @@ class InwardsPage extends StatefulWidget {
 
 class _InwardsPageState extends State<InwardsPage> {
   late VideoPlayerController _videoPlayerController;
+  final ImagePicker _picker = ImagePicker();
+  late XFile fileMedia;
 
   //ConfettiController _controllerCenter = ConfettiController(duration: const Duration(seconds: 10));
 
   @override
   void initState() {
     super.initState();
+    print("I am about to show video on inwards page");
+    print(PlannerService.sharedInstance.user!.planitVideo);
+    if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+      _videoPlayerController = VideoPlayerController.file(
+          File(PlannerService.sharedInstance.user!.planitVideo))
+        ..initialize().then((_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+          _videoPlayerController.play();
+          _videoPlayerController.setLooping(true);
+        });
+    }
   }
 
-  Future _initVideoPlayer(File videoFile) async {
-    _videoPlayerController = VideoPlayerController.file(videoFile);
-    await _videoPlayerController.initialize();
-    await _videoPlayerController.setLooping(false);
-    await _videoPlayerController.play();
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+    super.dispose();
+  }
+
+  void updateState() {
+    setState(() {});
   }
 
   void _openNewInwardItemPage() {
@@ -57,152 +76,20 @@ class _InwardsPageState extends State<InwardsPage> {
                 NewInwardItemPage(updateContent: _updateContent)));
   }
 
-  void _openEditDefinitionPage(int idx, Definition definition) {
-    Navigator.pop(context);
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => EditDefinitionPage(
-                updateDictionary: _updateContent,
-                idx: idx,
-                definition: definition)));
-  }
-
-  void deleteDefinition(int idx) {
-    Navigator.pop(context);
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Container(
-              child: const Text(
-                "Are you sure you want to delete?",
-                textAlign: TextAlign.center,
-              ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('yes, delete'),
-                onPressed: () async {
-                  var defId =
-                      PlannerService.sharedInstance.user!.dictionaryArr[idx].id;
-                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
-                      '/dictionary/' +
-                      defId.toString());
-                  var response = await http.delete(
-                    url,
-                  );
-                  print('Response status: ${response.statusCode}');
-                  print('Response body: ${response.body}');
-
-                  if (response.statusCode == 200) {
-                    PlannerService.sharedInstance.user!.dictionaryArr
-                        .removeAt(idx);
-                    setState(() {});
-                    Navigator.pop(context);
-                  } else {
-                    //500 error, show an alert
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text(
-                                'Oops! Looks like something went wrong. Please try again.'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
-                },
-              ),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('cancel'))
-            ],
-          );
-        });
-  }
-
-  void _showDefinitionContent(Definition def, int idx) {
-    showDialog(
-      context: context, // user must tap button!
-
-      builder: (BuildContext context) {
-        return AlertDialog(
-          //insetPadding: EdgeInsets.symmetric(vertical: 200, horizontal: 100),
-          //child: Expanded(
-          //child: Container(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          content: Card(
-            elevation: 1,
-            child: Container(
-              margin: EdgeInsets.all(10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    child: Text(
-                      def.name,
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                    ),
-                    padding: EdgeInsets.only(bottom: 10, top: 4),
-                  ),
-                  Padding(
-                    child: Text(
-                      def.definition,
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    padding: EdgeInsets.only(bottom: 10, top: 4),
-                  ),
-
-                  // ElevatedButton(
-                  //     onPressed: () {
-                  //       showGoalCompleteAnimation(idx);
-                  //     },
-                  //     child: const Text(
-                  //       "I DID IT!",
-                  //       style: TextStyle(fontWeight: FontWeight.bold),
-                  //     ))
-                ],
-              ),
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-                onPressed: () => _openEditDefinitionPage(idx, def),
-                child: new Text('edit')),
-            TextButton(
-                onPressed: () {
-                  deleteDefinition(idx);
-                },
-                child: new Text('delete')),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: new Text('close'))
-          ],
-          // ),
-          //),
-        );
-      },
-    );
-  }
-
   void _updateContent() {
     setState(() {});
+  }
+
+  setVideoController(XFile video) {
+    setState(() {
+      _videoPlayerController = VideoPlayerController.file(File(video.path))
+        ..initialize().then((_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+          _videoPlayerController.play();
+          _videoPlayerController.setLooping(true);
+        });
+    });
   }
 
   @override
@@ -229,22 +116,16 @@ class _InwardsPageState extends State<InwardsPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            title: Text("Inwards in Words",
-                //   style: GoogleFonts.roboto(
-                //     textStyle: const TextStyle(
-                //       color: Colors.white,
-                //     ),
-                //   ),
-                // ),
+            title: const Text("Inwards in Words",
                 style: TextStyle(color: Colors.white)),
             centerTitle: true,
-            bottom: PreferredSize(
+            bottom: const PreferredSize(
                 child: Align(
                   alignment: Alignment.center,
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      "Where I get my thoughts out",
+                      "****Some text will go here****",
                       style: TextStyle(color: Colors.white),
                       //textAlign: TextAlign.center,
                     ),
@@ -256,84 +137,169 @@ class _InwardsPageState extends State<InwardsPage> {
           ),
           body: Stack(
             children: [
-              //Container(
-              //child: ListView(
-              ListView(
-                //children: goalsListView,
-                children: List.generate(
-                    PlannerService.sharedInstance.user!.inwardContent.length,
-                    (int index) {
-                  return Padding(
-                      padding: EdgeInsets.all(10),
-                      child: GestureDetector(
-                        child: SingleChildScrollView(
-                          //body: Container(
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.transparent,
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  alignment: Alignment.center,
+                  //color: Colors.transparent,
+                  //     _controller.value.isInitialized
+                  // ? AspectRatio(
+                  //     aspectRatio: _controller.value.aspectRatio,
+                  //     child: VideoPlayer(_controller),
+                  //   )
+                  // : Container(),
+                  child: PlannerService.sharedInstance.user!.hasPlanitVideo
+                      ? (_videoPlayerController.value.isInitialized
+                          ? Container(
+                              margin: EdgeInsets.all(20),
+                              child: AspectRatio(
+                                aspectRatio:
+                                    _videoPlayerController.value.aspectRatio,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Stack(
+                                    alignment: Alignment.bottomCenter,
+                                    children: <Widget>[
+                                      VideoPlayer(_videoPlayerController),
+                                      VideoProgressIndicator(
+                                          _videoPlayerController,
+                                          allowScrubbing: true),
+                                    ],
+                                  ),
+                                ),
+                              ))
+                          : Container())
+                      : Card(
                           child: Column(
-                            children: <Widget>[
-                              Container(
-                                padding: const EdgeInsets.only(top: 20.0),
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(20),
-                                child: FutureBuilder(
-                                  future: _initVideoPlayer(File(PlannerService
-                                      .sharedInstance
-                                      .user!
-                                      .inwardContent[index]
-                                      .media)),
-                                  builder: (context, state) {
-                                    if (state.connectionState ==
-                                        ConnectionState.waiting) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("This is your space, so what do you say?"),
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    XFile? video =
+                                        await Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CaptureVideoWithImagePicker(
+                                          prevPage: "inward",
+                                          updateState: updateState,
+                                        ),
+                                      ),
+                                    );
+
+                                    // print("about to start cameera to record");
+                                    // final XFile? video =
+                                    //     await _picker.pickVideo(
+                                    //         source: ImageSource.camera,
+                                    //         maxDuration:
+                                    //             const Duration(minutes: 7));
+
+                                    // print("video has been recorded");
+                                    //print(video!.path);
+                                    if (video != null) {
+                                      //await video.saveTo(video.path);
+                                      setVideoController(video);
+                                      setState(() {
+                                        fileMedia = video;
+                                        PlannerService.sharedInstance.user!
+                                            .planitVideo = video.path;
+                                        PlannerService.sharedInstance.user!
+                                            .hasPlanitVideo = true;
+                                      });
                                     } else {
-                                      return VideoPlayer(
-                                          _videoPlayerController);
+                                      print("Something is wrong");
+                                      return;
                                     }
                                   },
-                                ),
-                              ),
-                              Text(PlannerService.sharedInstance.user!
-                                  .inwardContent[index].caption),
-                              // ElevatedButton(
-                              //   onPressed: () {},
-                              //   child: Text("Save"),
-                              // ),
-                              // TextButton(
-                              //   onPressed: () {},
-                              //   child: Text("Cancel"),
-                              // ),
+                                  child: Text("Record Video"))
                             ],
                           ),
                         ),
-                        onTap: () => {
-                          _showDefinitionContent(
-                              PlannerService
-                                  .sharedInstance.user!.dictionaryArr[index],
-                              index)
-                        },
-                      )
-                      //Column(
-                      //children: [
+                  // child: _videoPlayerController.value.isInitialized &&
+                  //         PlannerService.sharedInstance.user!.hasPlanitVideo
+                  //     ? Container(
+                  //         margin: EdgeInsets.all(20),
+                  //         child: AspectRatio(
+                  //           aspectRatio:
+                  //               _videoPlayerController.value.aspectRatio,
+                  //           child: ClipRRect(
+                  //             borderRadius: BorderRadius.circular(15),
+                  //             child: Stack(
+                  //               alignment: Alignment.bottomCenter,
+                  //               children: <Widget>[
+                  //                 VideoPlayer(_videoPlayerController),
+                  //                 VideoProgressIndicator(_videoPlayerController,
+                  //                     allowScrubbing: true),
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         ))
+                  //     : Card(
+                  //         child: Column(
+                  //           mainAxisSize: MainAxisSize.min,
+                  //           mainAxisAlignment: MainAxisAlignment.center,
+                  //           children: [
+                  //             Text("This is your space, so what do you say?"),
+                  //             ElevatedButton(
+                  //                 onPressed: () async {
+                  //                   XFile? video =
+                  //                       await Navigator.of(context).push(
+                  //                     MaterialPageRoute(
+                  //                       builder: (context) =>
+                  //                           const CaptureVideoWithImagePicker(),
+                  //                     ),
+                  //                   );
 
-                      //),
-                      );
-                }),
-              ),
-              // margin: EdgeInsets.all(15),
-              //),
+                  //                   // print("about to start cameera to record");
+                  //                   // final XFile? video =
+                  //                   //     await _picker.pickVideo(
+                  //                   //         source: ImageSource.camera,
+                  //                   //         maxDuration:
+                  //                   //             const Duration(minutes: 7));
+
+                  //                   // print("video has been recorded");
+                  //                   //print(video!.path);
+                  //                   if (video != null) {
+                  //                     //await video.saveTo(video.path);
+                  //                     setVideoController(video);
+                  //                     setState(() {
+                  //                       fileMedia = video;
+                  //                       PlannerService.sharedInstance.user!
+                  //                           .planitVideo = video.path;
+                  //                       PlannerService.sharedInstance.user!
+                  //                           .hasPlanitVideo = true;
+                  //                     });
+                  //                   } else {
+                  //                     print("Something is wrong");
+                  //                     return;
+                  //                   }
+                  //                 },
+                  //                 child: Text("Record Video"))
+                  //           ],
+                  //         ),
+                  //       ),
+                ),
+              )
             ],
           ),
 
-          floatingActionButton: FloatingActionButton(
-            onPressed: _openNewInwardItemPage,
-            tooltip: 'Increment',
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-            ),
-            backgroundColor: Theme.of(context).primaryColor,
-          ), // This trailing comma makes auto-formatting nicer for build methods.
+          floatingActionButton: PlannerService
+                  .sharedInstance.user!.hasPlanitVideo
+              ? FloatingActionButton(
+                  onPressed: _openNewInwardItemPage,
+                  tooltip: 'Record new video',
+                  child: const Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                  ),
+                  backgroundColor: Theme.of(context).primaryColor,
+                )
+              : null, // This trailing comma makes auto-formatting nicer for build methods.
         )
       ],
     );

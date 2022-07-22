@@ -20,6 +20,9 @@ class User {
   var email;
   int themeId;
   String spaceImage;
+  bool hasPlanitVideo = false;
+  //String planitVideo = "assets/images/another_planit_animation_video.mp4";
+  String planitVideo = "";
   var goals = <Event>[];
   var scheduledEvents = <Event>[];
   var habits = <Habit>[];
