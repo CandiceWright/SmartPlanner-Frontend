@@ -47,8 +47,8 @@ class _InwardsPageState extends State<InwardsPage> {
     print("I am about to show video on inwards page");
     print(PlannerService.sharedInstance.user!.planitVideo);
     if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-      _videoPlayerController = VideoPlayerController.file(
-          File(PlannerService.sharedInstance.user!.planitVideo))
+      _videoPlayerController = VideoPlayerController.network(
+          PlannerService.sharedInstance.user!.planitVideo)
         ..initialize().then((_) {
           // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
           setState(() {});
