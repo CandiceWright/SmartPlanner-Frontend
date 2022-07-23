@@ -58,7 +58,8 @@ class _CaptureVideoWithImagePickerState
     if (widget.prevPage == "home") {
       createStory(video);
     } else {
-      Navigator.of(context).pop(video);
+      createInwardVideo(video);
+      //Navigator.of(context).pop(video);
     }
   }
 
@@ -83,12 +84,113 @@ class _CaptureVideoWithImagePickerState
     //return Container();
   }
 
+  createInwardVideo(XFile? video) async {
+    if (video != null) {
+      String path = video.path;
+      String name = video.name;
+      print("I am in save inward video");
+      //final thumbnail = await VideoCompress.getFileThumbnail(path);
+      String? result =
+          await PlannerService.firebaseStorage.uploadStory(path, name);
+
+      //store story in db then add story object to the list of stories
+      print("result is ready");
+      print(result);
+      if (result == "error") {
+        //error message
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else {
+        //success and result holds url
+        print("success getting video url");
+        print(result);
+
+        //successfully saved thumbnail and result2 has thumbnail url
+        //save tto db now
+        var url = Uri.parse(
+            PlannerService.sharedInstance.serverUrl + '/user/inwardvideo');
+        var body = {
+          'userId': PlannerService.sharedInstance.user!.id,
+          'url': result,
+          //'thumbnail': PlannerService.sharedInstance.user!.profileImage
+        };
+        String bodyF = jsonEncode(body);
+        var response = await http.patch(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+
+        print("server came back with a response after saving story");
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+        if (response.statusCode == 200) {
+          print("success saving to db");
+          // var decodedBody = json.decode(response.body);
+          // print(decodedBody);
+          // var id = decodedBody["insertId"];
+          // PlannerService.sharedInstance.user!.planitVideo = result!;
+          //Story newStory = Story(id, result!, result2!, DateTime.now());
+          setState(() {
+            // PlannerService.sharedInstance.user!.profileImage = path;
+            PlannerService.sharedInstance.user!.planitVideo = result!;
+
+            PlannerService.sharedInstance.user!.hasPlanitVideo = true;
+          });
+          widget.updateState();
+          Navigator.of(context).pop();
+
+          // Navigator.of(context).push(MaterialPageRoute(
+          //   builder: (context) {
+          //     return const NavigationWrapper();
+          //   },
+          //   settings: const RouteSettings(
+          //     name: 'navigaionPage',
+          //   ),
+          // ));
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
+        //}
+      }
+    } else {
+      Navigator.of(context).pop();
+    }
+  }
+
   createStory(XFile? video) async {
     //final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
     if (video != null) {
       String path = video.path;
       String name = video.name;
-      print("I am in save story");
+      print("I am in save story in capture video");
       final thumbnail = await VideoCompress.getFileThumbnail(path);
       String? result =
           await PlannerService.firebaseStorage.uploadStory(path, name);

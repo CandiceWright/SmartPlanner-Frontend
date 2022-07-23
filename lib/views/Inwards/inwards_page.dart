@@ -65,7 +65,9 @@ class _InwardsPageState extends State<InwardsPage> {
   }
 
   void updateState() {
-    setState(() {});
+    setState(() {
+      setVideoController();
+    });
   }
 
   void _openNewInwardItemPage() {
@@ -80,9 +82,10 @@ class _InwardsPageState extends State<InwardsPage> {
     setState(() {});
   }
 
-  setVideoController(XFile video) {
+  setVideoController() {
     setState(() {
-      _videoPlayerController = VideoPlayerController.file(File(video.path))
+      _videoPlayerController = VideoPlayerController.network(
+          PlannerService.sharedInstance.user!.planitVideo)
         ..initialize().then((_) {
           // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
           setState(() {});
@@ -90,6 +93,15 @@ class _InwardsPageState extends State<InwardsPage> {
           _videoPlayerController.setLooping(true);
         });
     });
+    // setState(() {
+    //   _videoPlayerController = VideoPlayerController.file(File(video.path))
+    //     ..initialize().then((_) {
+    //       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+    //       setState(() {});
+    //       _videoPlayerController.play();
+    //       _videoPlayerController.setLooping(true);
+    //     });
+    // });
   }
 
   @override
@@ -191,8 +203,7 @@ class _InwardsPageState extends State<InwardsPage> {
                                 ),
                                 ElevatedButton(
                                     onPressed: () async {
-                                      XFile? video =
-                                          await Navigator.of(context).push(
+                                      Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               CaptureVideoWithImagePicker(
@@ -201,99 +212,26 @@ class _InwardsPageState extends State<InwardsPage> {
                                           ),
                                         ),
                                       );
-
-                                      // print("about to start cameera to record");
-                                      // final XFile? video =
-                                      //     await _picker.pickVideo(
-                                      //         source: ImageSource.camera,
-                                      //         maxDuration:
-                                      //             const Duration(minutes: 7));
-
-                                      // print("video has been recorded");
-                                      //print(video!.path);
-                                      if (video != null) {
-                                        //await video.saveTo(video.path);
-                                        setVideoController(video);
-                                        setState(() {
-                                          fileMedia = video;
-                                          PlannerService.sharedInstance.user!
-                                              .planitVideo = video.path;
-                                          PlannerService.sharedInstance.user!
-                                              .hasPlanitVideo = true;
-                                        });
-                                      } else {
-                                        print("Something is wrong");
-                                        return;
-                                      }
+                                      // if (video != null) {
+                                      //   //await video.saveTo(video.path);
+                                      //   setVideoController(video);
+                                      //   setState(() {
+                                      //     fileMedia = video;
+                                      //     PlannerService.sharedInstance.user!
+                                      //         .planitVideo = video.path;
+                                      //     PlannerService.sharedInstance.user!
+                                      //         .hasPlanitVideo = true;
+                                      //   });
+                                      // } else {
+                                      //   print("Something is wrong");
+                                      //   return;
+                                      // }
                                     },
                                     child: Text("Record Video"))
                               ],
                             ),
                           ),
                         ),
-                  // child: _videoPlayerController.value.isInitialized &&
-                  //         PlannerService.sharedInstance.user!.hasPlanitVideo
-                  //     ? Container(
-                  //         margin: EdgeInsets.all(20),
-                  //         child: AspectRatio(
-                  //           aspectRatio:
-                  //               _videoPlayerController.value.aspectRatio,
-                  //           child: ClipRRect(
-                  //             borderRadius: BorderRadius.circular(15),
-                  //             child: Stack(
-                  //               alignment: Alignment.bottomCenter,
-                  //               children: <Widget>[
-                  //                 VideoPlayer(_videoPlayerController),
-                  //                 VideoProgressIndicator(_videoPlayerController,
-                  //                     allowScrubbing: true),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ))
-                  //     : Card(
-                  //         child: Column(
-                  //           mainAxisSize: MainAxisSize.min,
-                  //           mainAxisAlignment: MainAxisAlignment.center,
-                  //           children: [
-                  //             Text("This is your space, so what do you say?"),
-                  //             ElevatedButton(
-                  //                 onPressed: () async {
-                  //                   XFile? video =
-                  //                       await Navigator.of(context).push(
-                  //                     MaterialPageRoute(
-                  //                       builder: (context) =>
-                  //                           const CaptureVideoWithImagePicker(),
-                  //                     ),
-                  //                   );
-
-                  //                   // print("about to start cameera to record");
-                  //                   // final XFile? video =
-                  //                   //     await _picker.pickVideo(
-                  //                   //         source: ImageSource.camera,
-                  //                   //         maxDuration:
-                  //                   //             const Duration(minutes: 7));
-
-                  //                   // print("video has been recorded");
-                  //                   //print(video!.path);
-                  //                   if (video != null) {
-                  //                     //await video.saveTo(video.path);
-                  //                     setVideoController(video);
-                  //                     setState(() {
-                  //                       fileMedia = video;
-                  //                       PlannerService.sharedInstance.user!
-                  //                           .planitVideo = video.path;
-                  //                       PlannerService.sharedInstance.user!
-                  //                           .hasPlanitVideo = true;
-                  //                     });
-                  //                   } else {
-                  //                     print("Something is wrong");
-                  //                     return;
-                  //                   }
-                  //                 },
-                  //                 child: Text("Record Video"))
-                  //           ],
-                  //         ),
-                  //       ),
                 ),
               )
             ],

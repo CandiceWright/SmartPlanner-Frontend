@@ -81,7 +81,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   createStory() async {
-    XFile? video = await Navigator.of(context).push(
+    // XFile? video = await Navigator.of(context).push(
+    //   MaterialPageRoute(
+    //     builder: (context) => CaptureVideoWithImagePicker(
+    //       prevPage: "home",
+    //       updateState: updateState,
+    //     ),
+    //   ),
+    // );
+    Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CaptureVideoWithImagePicker(
           prevPage: "home",
@@ -90,130 +98,10 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     //final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
-    if (video != null) {
-      String path = video.path;
-      String name = video.name;
-      print("I am in save story");
-      final thumbnail = await VideoCompress.getFileThumbnail(path);
-      String? result =
-          await PlannerService.firebaseStorage.uploadStory(path, name);
-
-      //store story in db then add story object to the list of stories
-      print("result is ready");
-      print(result);
-      if (result == "error") {
-        //error message
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(
-                    'Oops! Looks like something went wrong. Please try again.'),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
-      } else {
-        //success and result holds url
-        print("success getting video url");
-        print(result);
-
-        //now save the thumbnail
-        String? result2 = await PlannerService.firebaseStorage.uploadPicture(
-            thumbnail.path, "thumbnails/" + p.basename(thumbnail.path));
-
-        if (result2 == "error") {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                      'Oops! Looks like something went wrong. Please try again.'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        } else {
-          //successfully saved thumbnail and result2 has thumbnail url
-          //save tto db now
-          var url = Uri.parse(
-              PlannerService.sharedInstance.serverUrl + '/user/stories');
-          var body = {
-            'userId': PlannerService.sharedInstance.user!.id,
-            'date': DateTime.now().toString(),
-            'url': result,
-            //'thumbnail': PlannerService.sharedInstance.user!.profileImage
-            'thumbnail': result2
-          };
-          String bodyF = jsonEncode(body);
-          var response = await http.post(url,
-              headers: {"Content-Type": "application/json"}, body: bodyF);
-
-          print("server came back with a response after saving story");
-          print('Response status: ${response.statusCode}');
-          print('Response body: ${response.body}');
-
-          if (response.statusCode == 200) {
-            var decodedBody = json.decode(response.body);
-            print(decodedBody);
-            var id = decodedBody["insertId"];
-            Story newStory = Story(id, result!, result2!, DateTime.now());
-            setState(() {
-              // PlannerService.sharedInstance.user!.profileImage = path;
-              PlannerService.sharedInstance.user!.stories.add(newStory);
-            });
-
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) {
-                return const NavigationWrapper();
-              },
-              settings: const RouteSettings(
-                name: 'navigaionPage',
-              ),
-            ));
-          } else {
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(
-                        'Oops! Looks like something went wrong. Please try again.'),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text('OK'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      )
-                    ],
-                  );
-                });
-          }
-        }
-      }
-    }
   }
 
   Future _initVideoPlayer(File videoFile) async {
     final XFile? video = await _picker.pickVideo(source: ImageSource.camera);
-    //saveStory(video!.path, video.name);
-    // print("Im in init player and this is file " + videoFile.path);
-    // _videoPlayerController = VideoPlayerController.file(videoFile);
-    // await _videoPlayerController.initialize();
-    // await _videoPlayerController.setLooping(false);
-    // await _videoPlayerController.play();
   }
 
   void openProfileView() {
@@ -470,53 +358,12 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ],
                             ),
-                            // Row(
-                            //   children: [
-                            //     IconButton(
-                            //         onPressed: () async {
-                            //           await _videoPlayerController.pause();
-                            //           Navigator.pop(context);
-                            //         },
-                            //         icon: const Icon(Icons.close)),
-                            //     IconButton(
-                            //         onPressed: () {
-                            //           deleteStory(index);
-                            //         },
-                            //         icon: const Icon(Icons.delete)),
-                            //   ],
-                            // ),
-                            // Center(
-                            //   child: Container(
-                            //     margin: const EdgeInsets.all(20),
-                            //     child: AspectRatio(
-                            //       aspectRatio:
-                            //           _videoPlayerController.value.aspectRatio,
-                            //       child: Stack(
-                            //         alignment: Alignment.bottomCenter,
-                            //         children: <Widget>[
-                            //           VideoPlayer(_videoPlayerController),
-                            //           VideoProgressIndicator(
-                            //               _videoPlayerController,
-                            //               allowScrubbing: true),
-                            //         ],
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         );
                       });
                     });
               });
           });
-      // return Card(
-      //   color: Colors.blue[index * 100],
-      //   child: Container(
-      //     width: 50.0,
-      //     height: 50.0,
-      //     child: Text("$index"),
-      //   ),
-      // );
     });
 
     stories.addAll(currentStories);
@@ -555,18 +402,6 @@ class _HomePageState extends State<HomePage> {
                         radius: 40,
                       ),
               )),
-          // IconButton(
-          //   icon: Image.asset(
-          //     PlannerService.sharedInstance.user!.profileImage,
-          //     // height: 40,
-          //     // width: 40,
-          //   ),
-          //   tooltip: 'Menu',
-          //   onPressed: () {
-          //     // handle the press
-          //     openProfileView();
-          //   },
-          // ),
         ],
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here
