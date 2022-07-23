@@ -63,7 +63,7 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book_outlined),
-            label: 'Dictionary',
+            label: 'The Cover',
           ),
         ],
         currentIndex: _selectedIndex,

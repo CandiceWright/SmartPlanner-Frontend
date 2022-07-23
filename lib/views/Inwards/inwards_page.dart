@@ -116,8 +116,8 @@ class _InwardsPageState extends State<InwardsPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            title: const Text("Inwards in Words",
-                style: TextStyle(color: Colors.white)),
+            title:
+                const Text("The Cover", style: TextStyle(color: Colors.white)),
             centerTitle: true,
             bottom: const PreferredSize(
                 child: Align(
@@ -125,7 +125,7 @@ class _InwardsPageState extends State<InwardsPage> {
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      "****Some text will go here****",
+                      "This is Me...",
                       style: TextStyle(color: Colors.white),
                       //textAlign: TextAlign.center,
                     ),
@@ -174,50 +174,61 @@ class _InwardsPageState extends State<InwardsPage> {
                               ))
                           : Container())
                       : Card(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("This is your space, so what do you say?"),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    XFile? video =
-                                        await Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            CaptureVideoWithImagePicker(
-                                          prevPage: "inward",
-                                          updateState: updateState,
+                          margin: EdgeInsets.all(15),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(
+                                    "Every now and then we have to think about and remind ourselves who we are. This is it! Record a short video for your planit that you can always look back and reflect on. You can update this video as much as you'd like. So what do you say?",
+                                    style: TextStyle(fontSize: 20),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      XFile? video =
+                                          await Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CaptureVideoWithImagePicker(
+                                            prevPage: "inward",
+                                            updateState: updateState,
+                                          ),
                                         ),
-                                      ),
-                                    );
+                                      );
 
-                                    // print("about to start cameera to record");
-                                    // final XFile? video =
-                                    //     await _picker.pickVideo(
-                                    //         source: ImageSource.camera,
-                                    //         maxDuration:
-                                    //             const Duration(minutes: 7));
+                                      // print("about to start cameera to record");
+                                      // final XFile? video =
+                                      //     await _picker.pickVideo(
+                                      //         source: ImageSource.camera,
+                                      //         maxDuration:
+                                      //             const Duration(minutes: 7));
 
-                                    // print("video has been recorded");
-                                    //print(video!.path);
-                                    if (video != null) {
-                                      //await video.saveTo(video.path);
-                                      setVideoController(video);
-                                      setState(() {
-                                        fileMedia = video;
-                                        PlannerService.sharedInstance.user!
-                                            .planitVideo = video.path;
-                                        PlannerService.sharedInstance.user!
-                                            .hasPlanitVideo = true;
-                                      });
-                                    } else {
-                                      print("Something is wrong");
-                                      return;
-                                    }
-                                  },
-                                  child: Text("Record Video"))
-                            ],
+                                      // print("video has been recorded");
+                                      //print(video!.path);
+                                      if (video != null) {
+                                        //await video.saveTo(video.path);
+                                        setVideoController(video);
+                                        setState(() {
+                                          fileMedia = video;
+                                          PlannerService.sharedInstance.user!
+                                              .planitVideo = video.path;
+                                          PlannerService.sharedInstance.user!
+                                              .hasPlanitVideo = true;
+                                        });
+                                      } else {
+                                        print("Something is wrong");
+                                        return;
+                                      }
+                                    },
+                                    child: Text("Record Video"))
+                              ],
+                            ),
                           ),
                         ),
                   // child: _videoPlayerController.value.isInitialized &&
