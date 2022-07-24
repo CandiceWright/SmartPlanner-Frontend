@@ -4,7 +4,9 @@ import 'package:practice_planner/views/Inwards/inwards_page.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
 import '/views/Calendar/calendar_page.dart';
-import '/views/Backlog/backlog_page.dart';
+// import '/views/Backlog/backlog_page.dart';
+import '/views/Backlog/updated_backlog_page.dart';
+
 import 'Dictionary/dictionary.dart';
 
 class NavigationWrapper extends StatefulWidget {

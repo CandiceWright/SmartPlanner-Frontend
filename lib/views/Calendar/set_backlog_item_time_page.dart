@@ -475,10 +475,6 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
                   fontSize: Theme.of(context).textTheme.subtitle2!.fontSize,
                   color: Colors.white),
             ),
-            // Text(
-            //   DateFormat.yMMMd().format(DateTime.now()),
-            //   style: Theme.of(context).textTheme.subtitle1,
-            // ),
           ],
         ),
         centerTitle: true,

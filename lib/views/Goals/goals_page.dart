@@ -298,7 +298,7 @@ class _GoalsPageState extends State<GoalsPage> {
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      "I will do X by Y",
+                      "I plan to accomplish X by Y",
                       style: TextStyle(color: Colors.white),
                       //textAlign: TextAlign.center,
                     ),
@@ -401,7 +401,7 @@ class _GoalsPageState extends State<GoalsPage> {
                         elevation: 3,
                         margin: EdgeInsets.all(10),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50.0),
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
                         //color: Theme.of(context).colorScheme.primary,
                         color: PlannerService

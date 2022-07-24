@@ -537,7 +537,7 @@ class _CalendarPageState extends State<CalendarPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_today),
+            icon: const Icon(Icons.calendar_month_rounded),
             tooltip: 'View full calendar',
             onPressed: () {
               _goToMonthlyView();
