@@ -153,16 +153,16 @@ class _LoginPageState extends State<LoginPage> {
             for (int i = 0; i < decodedBody.length; i++) {
               var isAccomplished = decodedBody[i]["isAccomplished"];
               var goal = Event(
-                id: decodedBody[i]["goalId"],
-                description: decodedBody[i]["description"],
-                start: DateTime.parse(decodedBody[i]["start"]),
-                end: DateTime.parse(decodedBody[i]["end"]),
-                background:
-                    lifeCategoriesMap[decodedBody[i]["category"]]!.color,
-                category: lifeCategoriesMap[decodedBody[i]["category"]]!,
-                type: "goal",
-                notes: decodedBody[i]["notes"],
-              );
+                  id: decodedBody[i]["goalId"],
+                  description: decodedBody[i]["description"],
+                  start: DateTime.parse(decodedBody[i]["start"]),
+                  end: DateTime.parse(decodedBody[i]["end"]),
+                  background:
+                      lifeCategoriesMap[decodedBody[i]["category"]]!.color,
+                  category: lifeCategoriesMap[decodedBody[i]["category"]]!,
+                  type: "goal",
+                  notes: decodedBody[i]["notes"],
+                  imageUrl: decodedBody[i]["imgUrl"]);
               if (isAccomplished == 1) {
                 goal.isAccomplished = true;
                 accomplishedGoals.add(goal);

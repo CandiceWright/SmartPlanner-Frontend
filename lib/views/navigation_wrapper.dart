@@ -5,6 +5,7 @@ import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
 import '/views/Calendar/calendar_page.dart';
 // import '/views/Backlog/backlog_page.dart';
+//import '/views/Calendar/updated_calendar_page.dart';
 import '/views/Backlog/updated_backlog_page.dart';
 
 import 'Dictionary/dictionary.dart';
@@ -56,8 +57,8 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
             label: 'Backlog',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Calendar',
+            icon: Icon(Icons.schedule),
+            label: 'Schedule',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.track_changes_outlined),

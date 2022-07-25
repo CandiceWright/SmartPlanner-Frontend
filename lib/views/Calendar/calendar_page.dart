@@ -19,6 +19,7 @@ import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
 import 'package:http/http.dart' as http;
+import 'package:date_picker_timeline/date_picker_timeline.dart';
 
 //part 'edit_event_page.dart';
 
@@ -42,6 +43,8 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
+  DateTime _selectedDate = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -493,22 +496,22 @@ class _CalendarPageState extends State<CalendarPage> {
         // the App.build method, and use it to set our appbar title.
         backgroundColor: Colors.transparent,
 
-        title: Column(
-          children: [
-            Text(
-              "Today",
-              // style: GoogleFonts.roboto(
-              //   textStyle: const TextStyle(
-              //     color: Colors.white,
-              //   ),
-              // ),
-              style: TextStyle(color: Colors.white),
-            ),
-            // Image.asset(
-            //   "assets/images/pink_planit_today.png",
-            // ),
-          ],
-        ),
+        // title: Column(
+        //   children: [
+        //     Text(
+        //       "Today",
+        //       // style: GoogleFonts.roboto(
+        //       //   textStyle: const TextStyle(
+        //       //     color: Colors.white,
+        //       //   ),
+        //       // ),
+        //       style: TextStyle(color: Colors.white),
+        //     ),
+        //     // Image.asset(
+        //     //   "assets/images/pink_planit_today.png",
+        //     // ),
+        //   ],
+        // ),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -570,27 +573,192 @@ class _CalendarPageState extends State<CalendarPage> {
           color: Theme.of(context).primaryColor, //change your color here
         ),
       ),
+      //body: Expanded(
       body: Container(
-        child: SfCalendar(
-          // headerStyle: CalendarHeaderStyle(
-          //   textStyle: TextStyle(color: Colors.white),
-          //   // textAlign: TextAlign.center,
-          // ),
-          view: CalendarView.day,
-          onTap: calendarTapped,
-          initialDisplayDate: DateTime.now(),
-          dataSource: CalendarPage.events,
-          //cellBorderColor: Colors.white,
-          timeSlotViewSettings: const TimeSlotViewSettings(
-            timeInterval: Duration(minutes: 30),
-            timeFormat: 'h:mm',
-            // timeTextStyle: TextStyle(
-            //   color: Colors.white,
-            // ),
+        height: MediaQuery.of(context).size.height - // total height
+            kToolbarHeight - // top AppBar height
+            MediaQuery.of(context).padding.top - // top padding
+            kBottomNavigationBarHeight,
+        child: Expanded(
+          child: Column(
+            //mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Row(children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: Text(
+                      DateFormat.MMM().format(_selectedDate),
+                      // _selectedDate.toString("MMMM"),
+                      style: TextStyle(
+                          fontSize: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .fontSize),
+                      // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                    ),
+                  ),
+                  Text(
+                    _selectedDate.year.toString(),
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .fontSize),
+                    // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                  )
+                ]),
+              ),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: DatePicker(
+                  DateTime.now(),
+                  initialSelectedDate: DateTime.now(),
+                  selectionColor: Theme.of(context).primaryColor,
+                  selectedTextColor: Colors.white,
+                  monthTextStyle: const TextStyle(fontSize: 0),
+                  dayTextStyle: const TextStyle(color: Colors.grey),
+                  dateTextStyle: const TextStyle(color: Colors.grey),
+                  onDateChange: (date) {
+                    // New date selected
+                    setState(() {
+                      _selectedDate = date;
+                    });
+                  },
+                ),
+              ),
+              Container(
+                child: SfCalendar(
+                  //showDatePickerButton: true,
+                  // headerStyle: CalendarHeaderStyle(
+                  //   textStyle: TextStyle(color: Colors.white),
+                  //   // textAlign: TextAlign.center,
+                  // ),
+                  headerHeight: 0,
+                  viewHeaderHeight: 0,
+                  cellBorderColor: Colors.transparent,
+                  view: CalendarView.day,
+                  onTap: calendarTapped,
+                  initialDisplayDate: DateTime.now(),
+                  dataSource: CalendarPage.events,
+                  //cellBorderColor: Colors.white,
+                  timeSlotViewSettings: const TimeSlotViewSettings(
+                    timeInterval: Duration(minutes: 30),
+                    timeFormat: 'h:mm',
+                    // timeTextStyle: TextStyle(
+                    //   color: Colors.white,
+                    // ),
+                  ),
+                  appointmentBuilder: (BuildContext context,
+                      CalendarAppointmentDetails details) {
+                    return Card(
+                      child: Row(
+                        children: [
+                          Text("hello"),
+                          Checkbox(value: false, onChanged: (value) {})
+                        ],
+                      ),
+                    );
+                  },
+                  //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+                ),
+              ),
+
+              // Expanded(
+              //   child: Container(
+              //     //height: double.maxFinite,
+              //     child: SingleChildScrollView(
+              //       //child: Expanded(
+              //       //child: Container(
+              //       child: Expanded(
+              //         child: Column(children: [
+              //           //Padding(
+              //           SfCalendar(
+              //             //showDatePickerButton: true,
+              //             // headerStyle: CalendarHeaderStyle(
+              //             //   textStyle: TextStyle(color: Colors.white),
+              //             //   // textAlign: TextAlign.center,
+              //             // ),
+              //             headerHeight: 0,
+              //             viewHeaderHeight: 0,
+              //             cellBorderColor: Colors.transparent,
+              //             view: CalendarView.day,
+              //             onTap: calendarTapped,
+              //             initialDisplayDate: DateTime.now(),
+              //             dataSource: CalendarPage.events,
+              //             //cellBorderColor: Colors.white,
+              //             timeSlotViewSettings: const TimeSlotViewSettings(
+              //               timeInterval: Duration(minutes: 30),
+              //               timeFormat: 'h:mm',
+              //               // timeTextStyle: TextStyle(
+              //               //   color: Colors.white,
+              //               // ),
+              //             ),
+              //             appointmentBuilder: (BuildContext context,
+              //                 CalendarAppointmentDetails details) {
+              //               return Card(
+              //                 child: Row(
+              //                   children: [
+              //                     Text("hello"),
+              //                     Checkbox(value: false, onChanged: (value) {})
+              //                   ],
+              //                 ),
+              //               );
+              //             },
+              //             //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+              //           ),
+              //           //padding: EdgeInsets.all(10),
+              //           //),
+              //         ]),
+              //       ),
+
+              //       //),
+              //       //),
+              //     ),
+              //   ),
+              // ),
+            ],
           ),
-          //EventDataSource(PlannerService.sharedInstance.user.allEvents),
         ),
       ),
+      //),
+
+      // body: Container(
+      //   child: SfCalendar(
+      //     //showDatePickerButton: true,
+      //     // headerStyle: CalendarHeaderStyle(
+      //     //   textStyle: TextStyle(color: Colors.white),
+      //     //   // textAlign: TextAlign.center,
+      //     // ),
+      //     cellBorderColor: Colors.transparent,
+      //     view: CalendarView.day,
+      //     onTap: calendarTapped,
+      //     initialDisplayDate: DateTime.now(),
+      //     dataSource: CalendarPage.events,
+      //     //cellBorderColor: Colors.white,
+      //     timeSlotViewSettings: const TimeSlotViewSettings(
+      //       timeInterval: Duration(minutes: 30),
+      //       timeFormat: 'h:mm',
+      //       // timeTextStyle: TextStyle(
+      //       //   color: Colors.white,
+      //       // ),
+      //     ),
+      //     appointmentBuilder:
+      //         (BuildContext context, CalendarAppointmentDetails details) {
+      //       return Card(
+      //         child: Row(
+      //           children: [
+      //             Text("hello"),
+      //             Checkbox(value: false, onChanged: (value) {})
+      //           ],
+      //         ),
+      //       );
+      //     },
+      //     //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+      //   ),
+      // ),
 
       floatingActionButton: FloatingActionButton(
         //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog

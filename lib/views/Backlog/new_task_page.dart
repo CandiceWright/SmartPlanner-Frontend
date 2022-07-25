@@ -219,7 +219,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                             controller: dateTxtController,
                             readOnly: true,
                             decoration: InputDecoration(
-                              hintText: "Complete on or By (Optional)",
+                              hintText: "Complete by (Optional)",
                               icon: Icon(
                                 Icons.calendar_today,
                                 color: Theme.of(context).colorScheme.primary,
@@ -304,7 +304,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                           child: TextFormField(
                             controller: locationTxtController,
                             decoration: InputDecoration(
-                                hintText: "Location",
+                                hintText: "Location (Optional)",
                                 icon: Icon(
                                   Icons.location_pin,
                                   //color: Colors.pink,

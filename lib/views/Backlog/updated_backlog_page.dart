@@ -246,7 +246,7 @@ class _BacklogPageState extends State<BacklogPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Complete on/by " +
+                    "Complete by " +
                         DateFormat.yMMMd().format(backlogItem.completeBy!),
                     style: const TextStyle(
                       // fontWeight: FontWeight.w400,
@@ -298,7 +298,7 @@ class _BacklogPageState extends State<BacklogPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Complete on/by " +
+                    "Complete by " +
                         DateFormat.yMMMd().format(backlogItem.completeBy!),
                     style: const TextStyle(
                       // fontWeight: FontWeight.w400,
@@ -348,6 +348,9 @@ class _BacklogPageState extends State<BacklogPage> {
       List<Widget> categoryChildren = [];
       for (int i = 0; i < value.length; i++) {
         Widget child = GestureDetector(
+          onTap: () {
+            openViewDialog(value[i], i, key);
+          },
           child: Card(
               elevation: 0,
               shape: RoundedRectangleBorder(
@@ -356,6 +359,7 @@ class _BacklogPageState extends State<BacklogPage> {
               color: Colors.grey.shade100,
               margin: EdgeInsets.all(15),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Checkbox(
                     value: PlannerService
@@ -380,29 +384,30 @@ class _BacklogPageState extends State<BacklogPage> {
                           child: Text(
                             PlannerService.sharedInstance.user!
                                 .backlogMap[key]![i].description,
-                            style: TextStyle(
-                                color: PlannerService.sharedInstance.user!
-                                    .backlogMap[key]![i].category.color,
-                                fontSize: 20,
+                            style: const TextStyle(
+                                // color: PlannerService.sharedInstance.user!
+                                //     .backlogMap[key]![i].category.color,
+                                color: Colors.grey,
+                                fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.all(5),
-                          child: Text("Complete on/by " +
+                          child: Text("Complete by " +
                               DateFormat.yMMMd().format(value[i].completeBy!)),
                         ),
                       ],
                     ),
                   ),
-                  // Padding(
-                  //   padding: EdgeInsets.all(10),
-                  //   child: Icon(
-                  //     Icons.circle,
-                  //     color: PlannerService
-                  //         .sharedInstance.user!.LifeCategoriesColorMap[key],
-                  //   ),
-                  // ),
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Icon(
+                      Icons.circle,
+                      color: PlannerService
+                          .sharedInstance.user!.LifeCategoriesColorMap[key],
+                    ),
+                  ),
                 ],
               )),
         );
@@ -544,19 +549,22 @@ class _BacklogPageState extends State<BacklogPage> {
                       child: Card(
                         //margin: EdgeInsets.all(20),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(10),
                           side: BorderSide(
+                            width: 2.0,
                             color: selectedCategories.containsKey(PlannerService
                                     .sharedInstance
                                     .user!
                                     .lifeCategories[index]
                                     .name)
-                                ? Colors.black
+                                ? Colors.grey.shade700
                                 : Colors.transparent,
                           ),
                         ),
-                        color: Colors.white,
-                        elevation: 2,
+                        //color: Colors.white,
+                        color: PlannerService
+                            .sharedInstance.user!.lifeCategories[index].color,
+                        elevation: 0,
                         //shape: const ContinuousRectangleBorder(),
                         shadowColor: PlannerService
                             .sharedInstance.user!.lifeCategories[index].color,
@@ -568,13 +576,16 @@ class _BacklogPageState extends State<BacklogPage> {
                             children: [
                               Padding(
                                   padding: EdgeInsets.all(10),
-                                  child: Text(PlannerService.sharedInstance
-                                      .user!.lifeCategories[index].name)),
-                              Icon(
-                                Icons.circle,
-                                color: PlannerService.sharedInstance.user!
-                                    .lifeCategories[index].color,
-                              ),
+                                  child: Text(
+                                    PlannerService.sharedInstance.user!
+                                        .lifeCategories[index].name,
+                                    style: TextStyle(color: Colors.white),
+                                  )),
+                              // Icon(
+                              //   Icons.circle,
+                              //   color: PlannerService.sharedInstance.user!
+                              //       .lifeCategories[index].color,
+                              // ),
                             ],
                           )
                         ]),

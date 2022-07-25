@@ -11,6 +11,7 @@ class Event {
   String notes;
   LifeCategory category;
   String? location;
+  String? imageUrl;
   bool isAllDay;
   int? id;
   int? taskIdRef;
@@ -26,6 +27,7 @@ class Event {
       required this.start,
       required this.end,
       required this.background,
+      this.imageUrl,
       this.isAllDay = false,
       this.notes = "",
       required this.category,

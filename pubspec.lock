@@ -120,6 +120,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.5"
+  date_picker_timeline:
+    dependency: "direct main"
+    description:
+      name: date_picker_timeline
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.3"
   dynamic_themes:
     dependency: "direct main"
     description:
@@ -546,6 +553,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.8"
+  timelines:
+    dependency: "direct main"
+    description:
+      name: timelines
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.0"
   timezone:
     dependency: transitive
     description:

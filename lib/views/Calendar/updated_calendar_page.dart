@@ -2,12 +2,12 @@
 //part 'edit_event_page.dart';
 
 import 'dart:convert';
+import 'package:timelines/timelines.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
-import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
@@ -19,6 +19,7 @@ import 'edit_event_page.dart';
 import '../../models/event.dart';
 import '../../models/event_data_source.dart';
 import 'package:http/http.dart' as http;
+import 'package:date_picker_timeline/date_picker_timeline.dart';
 
 //part 'edit_event_page.dart';
 
@@ -42,6 +43,8 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
+  DateTime _selectedDate = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -73,14 +76,6 @@ class _CalendarPageState extends State<CalendarPage> {
     ));
     // Navigator.push(context,
     //     CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
-  }
-
-  void _openNoTomorrowPlanPage() {
-    //this function needs to change to create new goal
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => const NoTomorrowPlanYetPage()));
   }
 
   void openEditEventPage() {
@@ -118,7 +113,7 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
             actions: <Widget>[
               TextButton(
-                child: Text('yes, delete'),
+                child: const Text('yes, delete'),
                 onPressed: () async {
                   if (CalendarPage.selectedEvent != null) {
                     //first send server request
@@ -154,11 +149,11 @@ class _CalendarPageState extends State<CalendarPage> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
-                              title: Text(
+                              title: const Text(
                                   'Oops! Looks like something went wrong. Please try again.'),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('OK'),
+                                  child: const Text('OK'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
@@ -174,7 +169,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('cancel'))
+                  child: const Text('cancel'))
             ],
           );
         });
@@ -207,7 +202,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: IconButton(
                       iconSize: 50,
                       onPressed: startPlanningFromBacklog,
@@ -222,7 +217,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     child: IconButton(
                       iconSize: 50,
                       onPressed: _openNewCalendarItemPage,
@@ -239,20 +234,6 @@ class _CalendarPageState extends State<CalendarPage> {
                 ],
               ),
               actions: <Widget>[]);
-          // return AlertDialog(
-          //     content: Column(
-          //         mainAxisSize: MainAxisSize.min,
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: [
-          //           ElevatedButton(
-          //               onPressed: startPlanningFromBacklog,
-          //               child: const Text(
-          //                   "Add item from my life's backlog to today's schedule")),
-          //           ElevatedButton(
-          //               onPressed: _openNewCalendarItemPage,
-          //               child: const Text("Create new task/event")),
-          //         ]),
-          //     actions: <Widget>[]);
         });
   }
 
@@ -322,11 +303,11 @@ class _CalendarPageState extends State<CalendarPage> {
                             context: context,
                             builder: (context) {
                               return AlertDialog(
-                                title: Text(
+                                title: const Text(
                                     'Oops! Looks like something went wrong. Please try again.'),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: Text('OK'),
+                                    child: const Text('OK'),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
@@ -372,7 +353,7 @@ class _CalendarPageState extends State<CalendarPage> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Container(
-                  child: new Text(
+                  child: Text(
                     '$_subjectText',
                     textAlign: TextAlign.center,
                   ),
@@ -385,13 +366,13 @@ class _CalendarPageState extends State<CalendarPage> {
                       children: [
                         Text(
                           '$_dateText',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 20,
                           ),
                         ),
                         Text(_timeDetails,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 15)),
                         Text(appointmentDetails.notes)
                       ],
@@ -420,7 +401,7 @@ class _CalendarPageState extends State<CalendarPage> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Container(
-                  child: new Text(
+                  child: Text(
                     '$_subjectText',
                     textAlign: TextAlign.center,
                   ),
@@ -433,13 +414,13 @@ class _CalendarPageState extends State<CalendarPage> {
                       children: [
                         Text(
                           '$_dateText',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 20,
                           ),
                         ),
                         Text(_timeDetails,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 15)),
                         Text(appointmentDetails.notes)
                       ],
@@ -451,17 +432,17 @@ class _CalendarPageState extends State<CalendarPage> {
                       onPressed: () {
                         openEditEventPage();
                       },
-                      child: new Text('edit')),
+                      child: const Text('edit')),
                   TextButton(
                       onPressed: () {
                         deleteEvent();
                       },
-                      child: new Text('delete')),
+                      child: const Text('delete')),
                   TextButton(
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      child: new Text('close'))
+                      child: const Text('close'))
                 ],
               );
             });
@@ -485,6 +466,7 @@ class _CalendarPageState extends State<CalendarPage> {
     //       width: MediaQuery.of(context).size.width,
     //       fit: BoxFit.cover,
     //     ),
+
     return Scaffold(
       backgroundColor: Colors.transparent,
 
@@ -495,8 +477,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
         title: Column(
           children: [
-            Text(
-              "Today",
+            const Text(
+              "Schedule",
               // style: GoogleFonts.roboto(
               //   textStyle: const TextStyle(
               //     color: Colors.white,
@@ -571,24 +553,78 @@ class _CalendarPageState extends State<CalendarPage> {
         ),
       ),
       body: Container(
-        child: SfCalendar(
-          // headerStyle: CalendarHeaderStyle(
-          //   textStyle: TextStyle(color: Colors.white),
-          //   // textAlign: TextAlign.center,
-          // ),
-          view: CalendarView.day,
-          onTap: calendarTapped,
-          initialDisplayDate: DateTime.now(),
-          dataSource: CalendarPage.events,
-          //cellBorderColor: Colors.white,
-          timeSlotViewSettings: const TimeSlotViewSettings(
-            timeInterval: Duration(minutes: 30),
-            timeFormat: 'h:mm',
-            // timeTextStyle: TextStyle(
-            //   color: Colors.white,
-            // ),
-          ),
-          //EventDataSource(PlannerService.sharedInstance.user.allEvents),
+        child: Column(
+          //mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Row(children: [
+                Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: Text(
+                    DateFormat.MMM().format(_selectedDate),
+                    // _selectedDate.toString("MMMM"),
+                    style: TextStyle(
+                        fontSize: Theme.of(context)
+                            .textTheme
+                            .displayMedium!
+                            .fontSize),
+                    // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                  ),
+                ),
+                Text(
+                  _selectedDate.year.toString(),
+                  style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                      fontSize:
+                          Theme.of(context).textTheme.displayMedium!.fontSize),
+                  // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                )
+              ]),
+            ),
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: DatePicker(
+                DateTime.now(),
+                initialSelectedDate: DateTime.now(),
+                selectionColor: Theme.of(context).primaryColor,
+                selectedTextColor: Colors.white,
+                monthTextStyle: const TextStyle(color: Colors.grey),
+                dayTextStyle: const TextStyle(color: Colors.grey),
+                dateTextStyle: const TextStyle(color: Colors.grey),
+                onDateChange: (date) {
+                  // New date selected
+                  setState(() {
+                    _selectedDate = date;
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: Container(
+                child: SingleChildScrollView(
+                  //child: Expanded(
+                  //child: Container(
+                  child: Column(children: [
+                    Text("My schedule"),
+                    FixedTimeline.tileBuilder(
+                      // Timeline.tileBuilder(
+                      builder: TimelineTileBuilder.fromStyle(
+                        contentsAlign: ContentsAlign.alternating,
+                        contentsBuilder: (context, index) => Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text('Timeline Event $index'),
+                        ),
+                        itemCount: 10,
+                      ),
+                    ),
+                  ]),
+                  // ),
+                  //),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
 

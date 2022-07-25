@@ -386,6 +386,35 @@ class _GoalsPageState extends State<GoalsPage> {
                                         fontWeight: FontWeight.bold),
                                     textAlign: TextAlign.center,
                                   ),
+                                  CircleAvatar(
+                                    // // backgroundImage: AssetImage(
+                                    //     PlannerService.sharedInstance.user!.profileImage),
+                                    backgroundImage: PlannerService
+                                                .sharedInstance
+                                                .user!
+                                                .goals[index]
+                                                .imageUrl! !=
+                                            ""
+                                        ? NetworkImage(PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .goals[index]
+                                            .imageUrl!)
+                                        : null,
+                                    radius: PlannerService.sharedInstance.user!
+                                                .goals[index].imageUrl! !=
+                                            ""
+                                        ? 40
+                                        : 0,
+                                  ),
+                                  Row(children: [
+                                    Icon(Icons.alarm),
+                                    Text(PlannerService.sharedInstance.user!
+                                            .goals[index].date!
+                                            .difference(DateTime.now())
+                                            .toString() +
+                                        " days remainingg")
+                                  ])
                                 ],
                               ),
                               margin: EdgeInsets.all(15),

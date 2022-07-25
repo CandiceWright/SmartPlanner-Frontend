@@ -7,6 +7,7 @@ import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class NewGoalPage extends StatefulWidget {
   const NewGoalPage({Key? key, required this.updateGoals}) : super(key: key);
@@ -35,6 +36,8 @@ class _NewGoalPageState extends State<NewGoalPage> {
   bool doneBtnDisabled = true;
   var currChosenCategory =
       PlannerService.sharedInstance.user!.lifeCategories[0];
+  final ImagePicker _picker = ImagePicker();
+  XFile? _selectedImg = null;
 
   @override
   void initState() {
@@ -57,71 +60,168 @@ class _NewGoalPageState extends State<NewGoalPage> {
       });
   }
 
+  void chooseImage() {}
+
   void createGoal() async {
+    //first save image and get url
+    String? imgUrl = "";
+    String bodyF = "";
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
-    var body = {
-      'userId': PlannerService.sharedInstance.user!.id,
-      'description': goalTitle,
-      'type': "goal",
-      'start': selectedDate.toString(),
-      'end': selectedDate.toString(),
-      'notes': goalNotes,
-      'category': currChosenCategory.id,
-      'isAllDay': true,
-      'isAccomplished': false
-    };
-    String bodyF = jsonEncode(body);
-    print(bodyF);
+    if (_selectedImg != null) {
+      //save image to storage and get url
+      imgUrl = await PlannerService.firebaseStorage
+          .uploadPicture(_selectedImg!.path, "/goals/" + _selectedImg!.name);
+      if (imgUrl == "error") {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else {
+        var body = {
+          'userId': PlannerService.sharedInstance.user!.id,
+          'description': goalTitle,
+          'type': "goal",
+          'start': selectedDate.toString(),
+          'end': selectedDate.toString(),
+          'notes': goalNotes,
+          'category': currChosenCategory.id,
+          'isAllDay': true,
+          'isAccomplished': false,
+          'imgUrl': imgUrl
+        };
+        bodyF = jsonEncode(body);
+        print(bodyF);
 
-    var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals');
-    var response = await http.post(url,
-        headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+        var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals');
+        var response = await http.post(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      var decodedBody = json.decode(response.body);
-      print(decodedBody);
-      var id = decodedBody["insertId"];
-      var newGoal = Event(
-          id: id,
-          description: goalTitle,
-          type: "goal",
-          start: selectedDate,
-          end: selectedDate,
-          //background: const Color(0xFFFF80b1),
-          background: currChosenCategory.color,
-          isAllDay: true,
-          notes: goalNotes,
-          category: currChosenCategory,
-          isAccomplished: false);
-      PlannerService.sharedInstance.user!.goals.add(newGoal);
-      PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
-        DateTime goal1Date = goal1.start;
-        DateTime goal2Date = goal2.start;
-        return goal1Date.compareTo(goal2Date);
-      });
-      widget.updateGoals();
-      _backToGoalsPage();
-    } else {
-      //500 error, show an alert
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(
-                  'Oops! Looks like something went wrong. Please try again.'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
+        if (response.statusCode == 200) {
+          var decodedBody = json.decode(response.body);
+          print(decodedBody);
+          var id = decodedBody["insertId"];
+          var newGoal = Event(
+              id: id,
+              description: goalTitle,
+              type: "goal",
+              start: selectedDate,
+              end: selectedDate,
+              //background: const Color(0xFFFF80b1),
+              background: currChosenCategory.color,
+              isAllDay: true,
+              notes: goalNotes,
+              category: currChosenCategory,
+              isAccomplished: false,
+              imageUrl: imgUrl);
+          PlannerService.sharedInstance.user!.goals.add(newGoal);
+          PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
+            DateTime goal1Date = goal1.start;
+            DateTime goal2Date = goal2.start;
+            return goal1Date.compareTo(goal2Date);
           });
+          widget.updateGoals();
+          _backToGoalsPage();
+        } else {
+          //500 error, show an alert
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
+      }
+    } else {
+      var body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'description': goalTitle,
+        'type': "goal",
+        'start': selectedDate.toString(),
+        'end': selectedDate.toString(),
+        'notes': goalNotes,
+        'category': currChosenCategory.id,
+        'isAllDay': true,
+        'isAccomplished': false,
+        'imgUrl': imgUrl
+      };
+      bodyF = jsonEncode(body);
+      print(bodyF);
+
+      var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals');
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var decodedBody = json.decode(response.body);
+        print(decodedBody);
+        var id = decodedBody["insertId"];
+        var newGoal = Event(
+            id: id,
+            description: goalTitle,
+            type: "goal",
+            start: selectedDate,
+            end: selectedDate,
+            //background: const Color(0xFFFF80b1),
+            background: currChosenCategory.color,
+            isAllDay: true,
+            notes: goalNotes,
+            category: currChosenCategory,
+            isAccomplished: false,
+            imageUrl: imgUrl);
+        PlannerService.sharedInstance.user!.goals.add(newGoal);
+        PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
+          DateTime goal1Date = goal1.start;
+          DateTime goal2Date = goal2.start;
+          return goal1Date.compareTo(goal2Date);
+        });
+        widget.updateGoals();
+        _backToGoalsPage();
+      } else {
+        //500 error, show an alert
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
     }
   }
 
@@ -274,6 +374,16 @@ class _NewGoalPageState extends State<NewGoalPage> {
                             },
                           ),
                           padding: EdgeInsets.all(20),
+                        ),
+                        Container(
+                          child: IconButton(
+                            icon: Icon(Icons.camera),
+                            onPressed: () async {
+                              _selectedImg = await _picker.pickVideo(
+                                  source: ImageSource.gallery,
+                                  maxDuration: const Duration(minutes: 7));
+                            },
+                          ),
                         ),
                         Container(
                           child: TextFormField(

@@ -1190,10 +1190,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                         showEditCategoryDialog(index);
                                       },
                                       child: Card(
-                                        color: Colors.white,
+                                        //color: Colors.white,
+                                        color: PlannerService.sharedInstance
+                                            .user!.lifeCategories[index].color,
                                         elevation: 2,
-                                        shape:
-                                            const ContinuousRectangleBorder(),
+                                        // shape:
+                                        //     const ContinuousRectangleBorder(),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
                                         shadowColor: PlannerService
                                             .sharedInstance
                                             .user!
@@ -1204,25 +1210,33 @@ class _ProfilePageState extends State<ProfilePage> {
                                             direction: Axis.horizontal,
                                             children: [
                                               Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 //width: 50.0,
                                                 //height: 50.0,
                                                 children: [
                                                   Padding(
                                                       padding:
                                                           EdgeInsets.all(10),
-                                                      child: Text(PlannerService
-                                                          .sharedInstance
-                                                          .user!
-                                                          .lifeCategories[index]
-                                                          .name)),
-                                                  Icon(
-                                                    Icons.circle,
-                                                    color: PlannerService
-                                                        .sharedInstance
-                                                        .user!
-                                                        .lifeCategories[index]
-                                                        .color,
-                                                  ),
+                                                      child: Text(
+                                                        PlannerService
+                                                            .sharedInstance
+                                                            .user!
+                                                            .lifeCategories[
+                                                                index]
+                                                            .name,
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white),
+                                                      )),
+                                                  // Icon(
+                                                  //   Icons.circle,
+                                                  //   color: PlannerService
+                                                  //       .sharedInstance
+                                                  //       .user!
+                                                  //       .lifeCategories[index]
+                                                  //       .color,
+                                                  // ),
                                                 ],
                                               )
                                             ]),
