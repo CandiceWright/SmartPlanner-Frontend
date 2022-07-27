@@ -22,7 +22,7 @@ class Event {
   Event(
       {this.id,
       this.taskIdRef,
-      this.isAccomplished,
+      this.isAccomplished = false,
       required this.description,
       required this.start,
       required this.end,

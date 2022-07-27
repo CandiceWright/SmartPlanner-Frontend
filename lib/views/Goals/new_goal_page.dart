@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -37,7 +38,8 @@ class _NewGoalPageState extends State<NewGoalPage> {
   var currChosenCategory =
       PlannerService.sharedInstance.user!.lifeCategories[0];
   final ImagePicker _picker = ImagePicker();
-  XFile? _selectedImg = null;
+  XFile? _selectedImg;
+  File? fileMedia;
 
   @override
   void initState() {
@@ -68,7 +70,10 @@ class _NewGoalPageState extends State<NewGoalPage> {
     String bodyF = "";
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
+    print("I am in create goal and this is selectedImg");
+    print(_selectedImg);
     if (_selectedImg != null) {
+      print("an image was chosen");
       //save image to storage and get url
       imgUrl = await PlannerService.firebaseStorage
           .uploadPicture(_selectedImg!.path, "/goals/" + _selectedImg!.name);
@@ -157,6 +162,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
         }
       }
     } else {
+      print("no image chosen");
       var body = {
         'userId': PlannerService.sharedInstance.user!.id,
         'description': goalTitle,
@@ -376,14 +382,40 @@ class _NewGoalPageState extends State<NewGoalPage> {
                           padding: EdgeInsets.all(20),
                         ),
                         Container(
-                          child: IconButton(
-                            icon: Icon(Icons.camera),
-                            onPressed: () async {
-                              _selectedImg = await _picker.pickVideo(
-                                  source: ImageSource.gallery,
-                                  maxDuration: const Duration(minutes: 7));
-                            },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.image,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 8, right: 8),
+                                child: TextButton(
+                                  child: Text("Add an image (Optional)"),
+                                  onPressed: () async {
+                                    _selectedImg = await _picker.pickImage(
+                                        source: ImageSource.gallery);
+                                    print(_selectedImg);
+                                    if (_selectedImg != null) {
+                                      setState(() {
+                                        fileMedia = File(_selectedImg!.path);
+                                      });
+                                    }
+                                  },
+
+                                  //style: TextStyle(color: Colors.grey),
+                                ),
+                              )
+                            ],
                           ),
+                        ),
+                        CircleAvatar(
+                          // // backgroundImage: AssetImage(
+                          //     PlannerService.sharedInstance.user!.profileImage),
+                          backgroundImage: _selectedImg != null
+                              ? FileImage(fileMedia!)
+                              : null,
+                          radius: _selectedImg != null ? 40 : 0,
                         ),
                         Container(
                           child: TextFormField(

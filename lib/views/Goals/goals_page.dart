@@ -393,7 +393,7 @@ class _GoalsPageState extends State<GoalsPage> {
                                                 .sharedInstance
                                                 .user!
                                                 .goals[index]
-                                                .imageUrl! !=
+                                                .imageUrl !=
                                             ""
                                         ? NetworkImage(PlannerService
                                             .sharedInstance
@@ -407,14 +407,33 @@ class _GoalsPageState extends State<GoalsPage> {
                                         ? 40
                                         : 0,
                                   ),
-                                  Row(children: [
-                                    Icon(Icons.alarm),
-                                    Text(PlannerService.sharedInstance.user!
-                                            .goals[index].date!
-                                            .difference(DateTime.now())
-                                            .toString() +
-                                        " days remainingg")
-                                  ])
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Icon(
+                                          Icons.alarm,
+                                          color: Colors.white,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: Text(
+                                            PlannerService.sharedInstance.user!
+                                                    .goals[index].start
+                                                    .difference(DateTime.now())
+                                                    .inDays
+                                                    .toString() +
+                                                " days remaining",
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                        const Icon(
+                                          Icons.alarm,
+                                          color: Colors.white,
+                                        ),
+                                      ])
                                 ],
                               ),
                               margin: EdgeInsets.all(15),

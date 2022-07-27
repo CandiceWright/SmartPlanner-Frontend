@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
 import 'package:practice_planner/views/Inwards/inwards_page.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
@@ -25,7 +26,8 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     BacklogPage(),
-    CalendarPage(),
+    //CalendarPage(),
+    TodaySchedulePage(),
     GoalsPage(),
     //DictionaryPage(),
     InwardsPage()

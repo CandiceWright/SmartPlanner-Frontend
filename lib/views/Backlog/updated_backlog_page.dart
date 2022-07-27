@@ -246,7 +246,7 @@ class _BacklogPageState extends State<BacklogPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Complete by " +
+                    "Deadline " +
                         DateFormat.yMMMd().format(backlogItem.completeBy!),
                     style: const TextStyle(
                       // fontWeight: FontWeight.w400,
@@ -346,7 +346,20 @@ class _BacklogPageState extends State<BacklogPage> {
 
     PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
       List<Widget> categoryChildren = [];
+      print("I am building backlog and this is value.length");
+      print(value.length);
       for (int i = 0; i < value.length; i++) {
+        print("trying to find null value:");
+        print("Printing lin 352 below");
+        print(PlannerService
+            .sharedInstance.user!.backlogMap[key]![i].description);
+        print("printing liine 355 below");
+        print(
+            PlannerService.sharedInstance.user!.backlogMap[key]![i].isComplete);
+        print("printing line 358 below");
+        print(DateFormat.yMMMd().format(value[i].completeBy!));
+        print(PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key]);
+
         Widget child = GestureDetector(
           onTap: () {
             openViewDialog(value[i], i, key);
@@ -387,14 +400,14 @@ class _BacklogPageState extends State<BacklogPage> {
                             style: const TextStyle(
                                 // color: PlannerService.sharedInstance.user!
                                 //     .backlogMap[key]![i].category.color,
-                                color: Colors.grey,
+                                color: Colors.black,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
                         Padding(
                           padding: EdgeInsets.all(5),
-                          child: Text("Complete by " +
+                          child: Text("Deadline " +
                               DateFormat.yMMMd().format(value[i].completeBy!)),
                         ),
                       ],
@@ -412,10 +425,9 @@ class _BacklogPageState extends State<BacklogPage> {
               )),
         );
 
-        setState(() {
-          categoryChildren.add(child);
-          //currentlyShownBacklogItems.add(child);
-        });
+        //setState(() {
+        categoryChildren.add(child);
+        //});
       }
 
       backlogItemCardsMap.addAll({key: categoryChildren});
@@ -426,11 +438,13 @@ class _BacklogPageState extends State<BacklogPage> {
 
   List<Widget> updateCurrentlyShownBacklogCards() {
     List<Widget> currentlyShownBacklogItems = [];
-    setState(() {
-      selectedCategories.forEach((key, value) {
+    //setState(() {
+    selectedCategories.forEach((key, value) {
+      setState(() {
         currentlyShownBacklogItems.addAll(backlogItemCardsMap[key]!);
       });
     });
+    //});
     return currentlyShownBacklogItems;
   }
 
@@ -540,7 +554,9 @@ class _BacklogPageState extends State<BacklogPage> {
                           setState(() {
                             selectedCategories.addAll({
                               PlannerService.sharedInstance.user!
-                                  .lifeCategories[index].name: Colors.white
+                                      .lifeCategories[index].name:
+                                  PlannerService.sharedInstance.user!
+                                      .lifeCategories[index].color
                             });
                           });
                         }

@@ -104,6 +104,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
           PlannerService.sharedInstance.user = user;
           PlannerService.sharedInstance.user!.LifeCategoriesColorMap["other"] =
               Colors.grey;
+          PlannerService.sharedInstance.user!.backlogMap.addAll({"other": []});
 
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) {

@@ -63,7 +63,7 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
         title: Column(
           children: const [
             Text(
-              "Calendar",
+              "Monthly",
               style: TextStyle(color: Colors.white),
             ),
             // Text(
