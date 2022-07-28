@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/views/Calendar/calendar_page.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
-import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '/services/planner_service.dart';
@@ -26,9 +26,8 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 
 //part 'edit_event_page.dart';
 
-class CalendarPage extends StatefulWidget {
-  final Function updateEvents;
-  const CalendarPage({Key? key, required this.updateEvents}) : super(key: key);
+class TodaySchedulePage extends StatefulWidget {
+  const TodaySchedulePage({Key? key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -40,13 +39,13 @@ class CalendarPage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<CalendarPage> createState() => _CalendarPageState();
+  State<TodaySchedulePage> createState() => _TodaySchedulePageState();
   static Event? selectedEvent;
   static late EventDataSource events;
   //EventDataSource(PlannerService.sharedInstance.user.allEvents);
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _TodaySchedulePageState extends State<TodaySchedulePage> {
   DateTime _selectedDate = DateTime.now();
   CalendarController calController = CalendarController();
   final DateRangePickerController _dateRangePickerController =
@@ -55,7 +54,7 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    CalendarPage.events =
+    TodaySchedulePage.events =
         EventDataSource(PlannerService.sharedInstance.user!.scheduledEvents);
     //print(PlannerService.sharedInstance.user.backlog);
   }
@@ -105,12 +104,16 @@ class _CalendarPageState extends State<CalendarPage> {
                 )));
   }
 
-  void _goToMonthlyView() {
-    Navigator.push(context,
-        CupertinoPageRoute(builder: (context) => const MonthlyCalendarPage()));
+  void _goToFullCalendarView() {
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => CalendarPage(
+                  updateEvents: _updateEvents,
+                )));
   }
 
-  void _updateEvents() {
+  _updateEvents() {
     setState(() {});
   }
 
@@ -512,14 +515,12 @@ class _CalendarPageState extends State<CalendarPage> {
     //       fit: BoxFit.cover,
     //     ),
     return Scaffold(
-      //backgroundColor: Colors.transparent,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
 
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         backgroundColor: Colors.transparent,
-        title: const Text("Daily", style: TextStyle(color: Colors.white)),
 
         // title: Column(
         //   children: [
@@ -537,6 +538,7 @@ class _CalendarPageState extends State<CalendarPage> {
         //     // ),
         //   ],
         // ),
+        title: const Text("Today", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -562,12 +564,13 @@ class _CalendarPageState extends State<CalendarPage> {
         //                 )));
         //   },
         // ),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_month_rounded),
             tooltip: 'View full calendar',
             onPressed: () {
-              _goToMonthlyView();
+              _goToFullCalendarView();
             },
           ),
           // IconButton(
@@ -588,147 +591,42 @@ class _CalendarPageState extends State<CalendarPage> {
           color: Theme.of(context).primaryColor, //change your color here
         ),
       ),
-      //body: Expanded(
-      // body: Container(
-      //   height: MediaQuery.of(context).size.height - // total height
-      //       kToolbarHeight - // top AppBar height
-      //       MediaQuery.of(context).padding.top - // top padding
-      //       kBottomNavigationBarHeight,
-      //   child: Expanded(
-      //     child: Column(
-      //       //mainAxisAlignment: MainAxisAlignment.center,
-      //       children: <Widget>[
-      //         Padding(
-      //           padding: EdgeInsets.all(10),
-      //           child: Row(children: [
-      //             Padding(
-      //               padding: EdgeInsets.only(right: 8),
-      //               child: Text(
-      //                 DateFormat.MMM().format(_selectedDate),
-      //                 // _selectedDate.toString("MMMM"),
-      //                 style: TextStyle(
-      //                     fontSize: Theme.of(context)
-      //                         .textTheme
-      //                         .displaySmall!
-      //                         .fontSize),
-      //                 // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-      //               ),
-      //             ),
-      //             Text(
-      //               _selectedDate.year.toString(),
-      //               style: TextStyle(
-      //                   color: Theme.of(context).primaryColor,
-      //                   fontSize: Theme.of(context)
-      //                       .textTheme
-      //                       .headlineSmall!
-      //                       .fontSize),
-      //               // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-      //             )
-      //           ]),
-      //         ),
-      //         Padding(
-      //           padding: EdgeInsets.all(10),
-      //           child: DatePicker(
-      //             DateTime.now(),
-      //             initialSelectedDate: DateTime.now(),
-      //             selectionColor: Theme.of(context).primaryColor,
-      //             selectedTextColor: Colors.white,
-      //             monthTextStyle: const TextStyle(fontSize: 0),
-      //             dayTextStyle: const TextStyle(color: Colors.grey),
-      //             dateTextStyle: const TextStyle(color: Colors.grey),
-      //             onDateChange: (date) {
-      //               // New date selected
-      //               setState(() {
-      //                 _selectedDate = date;
-      //                 calController.displayDate = _selectedDate;
-      //               });
-      //             },
-      //           ),
-      //         ),
-      //         Container(
-      //           child: SfCalendar(
-      //             //showDatePickerButton: true,
-      //             // headerStyle: CalendarHeaderStyle(
-      //             //   textStyle: TextStyle(color: Colors.white),
-      //             //   // textAlign: TextAlign.center,
-      //             // ),
-      //             backgroundColor: Colors.white,
-      //             headerHeight: 0,
-      //             viewHeaderHeight: 0,
-      //             //cellBorderColor: Colors.transparent,
-      //             controller: calController,
-      //             view: CalendarView.day,
-      //             onTap: calendarTapped,
-      //             initialDisplayDate: DateTime.now(),
-      //             //minDate: DateTime.now().add(const Duration(days: 1)),
-      //             //maxDate: DateTime.now().add(const Duration(days: 1)),
-      //             dataSource: CalendarPage.events,
-      //             //cellBorderColor: Colors.white,
-      //             timeSlotViewSettings: const TimeSlotViewSettings(
-      //               timeInterval: Duration(minutes: 30),
-      //               timeFormat: 'h:mm',
-      //               // timeTextStyle: TextStyle(
-      //               //   color: Colors.white,
-      //               // ),
-      //             ),
-      //             appointmentBuilder: (BuildContext context,
-      //                 CalendarAppointmentDetails details) {
-      //               final Event meeting = details.appointments.first;
-      //               return Card(
-      //                 child: Row(
-      //                   children: [
-      //                     Text(meeting.description),
-      //                     Checkbox(value: false, onChanged: (value) {})
-      //                   ],
-      //                 ),
-      //               );
-      //             },
-      //             //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-      //           ),
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
-      //),
 
       body: Column(
         children: [
           Padding(
             padding: EdgeInsets.all(10),
-            child: Row(children: [
-              Padding(
-                padding: EdgeInsets.only(right: 8),
-                child: Text(
-                  DateFormat.MMM().format(_selectedDate),
-                  // _selectedDate.toString("MMMM"),
-                  style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.displaySmall!.fontSize),
-                  // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-                ),
+            child: Container(
+              color: Colors.white,
+              child: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 8),
+                    child: Text(
+                      DateFormat.MMM().format(_selectedDate),
+                      // _selectedDate.toString("MMMM"),
+                      style: TextStyle(
+                          fontSize: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .fontSize),
+                      // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                    ),
+                  ),
+                  Text(
+                    _selectedDate.day.toString() +
+                        ", " +
+                        _selectedDate.year.toString(),
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: Theme.of(context)
+                            .textTheme
+                            .headlineSmall!
+                            .fontSize),
+                    // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                  )
+                ],
               ),
-              Text(
-                _selectedDate.year.toString(),
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize:
-                        Theme.of(context).textTheme.headlineSmall!.fontSize),
-                // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-              )
-            ]),
-          ),
-          Container(
-            height: 100,
-            child: SfDateRangePicker(
-              backgroundColor: Colors.white,
-              headerHeight: 0,
-              controller: _dateRangePickerController,
-              //showNavigationArrow: true,
-              allowViewNavigation: false,
-              monthViewSettings:
-                  DateRangePickerMonthViewSettings(numberOfWeeksInView: 1),
-              onSelectionChanged: selectionChanged,
             ),
           ),
           Expanded(
@@ -736,22 +634,22 @@ class _CalendarPageState extends State<CalendarPage> {
               headerHeight: 0,
               viewHeaderHeight: 0,
               //showDatePickerButton: true,
+              headerStyle: CalendarHeaderStyle(
+                textStyle: TextStyle(color: Colors.white),
+                // textAlign: TextAlign.center,
+              ),
               controller: calController,
               onViewChanged: viewChanged,
-              // headerStyle: CalendarHeaderStyle(
-              //   textStyle: TextStyle(color: Colors.white),
-              //   // textAlign: TextAlign.center,
-              // ),
-              //cellBorderColor: Colors.transparent,
+
               view: CalendarView.day,
+              viewNavigationMode: ViewNavigationMode.none,
               onTap: calendarTapped,
               initialDisplayDate: DateTime.now(),
               dataSource: TodaySchedulePage.events,
               //cellBorderColor: Colors.white,
-              timeSlotViewSettings: const TimeSlotViewSettings(
+              timeSlotViewSettings: TimeSlotViewSettings(
                 timeInterval: Duration(hours: 1),
-                //startHour:
-
+                startHour: DateTime.now().hour.toDouble(),
                 //endHour: ,
                 timeIntervalHeight: 80,
                 //timeFormat: 'h:mm',
@@ -827,7 +725,6 @@ class _CalendarPageState extends State<CalendarPage> {
                           PlannerService.sharedInstance.user!.scheduledEvents =
                               TodaySchedulePage.events.appointments!
                                   as List<Event>;
-                          widget.updateEvents();
                         });
                       } else {
                         //500 error, show an alert
@@ -860,41 +757,6 @@ class _CalendarPageState extends State<CalendarPage> {
           ),
         ],
       ),
-
-      // body: Container(
-      //   child: SfCalendar(
-      //     showDatePickerButton: true,
-      //     // headerStyle: CalendarHeaderStyle(
-      //     //   textStyle: TextStyle(color: Colors.white),
-      //     //   // textAlign: TextAlign.center,
-      //     // ),
-      //     //cellBorderColor: Colors.transparent,
-      //     view: CalendarView.day,
-      //     onTap: calendarTapped,
-      //     initialDisplayDate: DateTime.now(),
-      //     dataSource: CalendarPage.events,
-      //     //cellBorderColor: Colors.white,
-      //     timeSlotViewSettings: const TimeSlotViewSettings(
-      //       timeInterval: Duration(minutes: 30),
-      //       timeFormat: 'h:mm',
-      //       // timeTextStyle: TextStyle(
-      //       //   color: Colors.white,
-      //       // ),
-      //     ),
-      //     appointmentBuilder:
-      //         (BuildContext context, CalendarAppointmentDetails details) {
-      //       return Card(
-      //         child: Row(
-      //           children: [
-      //             Text("hello"),
-      //             Checkbox(value: false, onChanged: (value) {})
-      //           ],
-      //         ),
-      //       );
-      //     },
-      //     //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-      //   ),
-      // ),
 
       floatingActionButton: FloatingActionButton(
         //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog

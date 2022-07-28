@@ -190,6 +190,8 @@ class _LoginPageState extends State<LoginPage> {
                     description: decodedBody[i]["description"],
                     start: DateTime.parse(decodedBody[i]["start"]),
                     end: DateTime.parse(decodedBody[i]["end"]),
+                    isAccomplished:
+                        decodedBody[i]["isAccomplished"] == 1 ? true : false,
                     background:
                         lifeCategoriesMap[decodedBody[i]["category"]]!.color,
                     category: lifeCategoriesMap[decodedBody[i]["category"]]!,

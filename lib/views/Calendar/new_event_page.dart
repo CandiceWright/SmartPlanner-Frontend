@@ -6,9 +6,9 @@ import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_item.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/life_category.dart';
+import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
 import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:date_format/date_format.dart';
 import '/models/event.dart';
@@ -40,10 +40,10 @@ class NewEventPage extends StatefulWidget {
   final BacklogMapRef? backlogMapRef;
 
   @override
-  State<NewEventPage> createState() => _NewGoalPageState();
+  State<NewEventPage> createState() => _NewEventPageState();
 }
 
-class _NewGoalPageState extends State<NewEventPage> {
+class _NewEventPageState extends State<NewEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime selectedStartDate = DateTime.now();
   TimeOfDay selectedStartTime = TimeOfDay(hour: 00, minute: 00);
@@ -212,7 +212,7 @@ class _NewGoalPageState extends State<NewEventPage> {
       var body = {
         'userId': PlannerService.sharedInstance.user!.id,
         'description': eventTitle,
-        'type': "goal",
+        'type': "calendar",
         'start': startDateTime.toString(),
         'end': endDateTime.toString(),
         'notes': eventNotes,
@@ -250,14 +250,14 @@ class _NewGoalPageState extends State<NewEventPage> {
 
         events.add(newEvent);
 
-        CalendarPage.events.appointments!.add(events[0]);
+        TodaySchedulePage.events.appointments!.add(events[0]);
 
-        CalendarPage.events
+        TodaySchedulePage.events
             .notifyListeners(CalendarDataSourceAction.add, events);
         PlannerService.sharedInstance.user!.scheduledEvents =
-            CalendarPage.events.appointments! as List<Event>;
+            TodaySchedulePage.events.appointments! as List<Event>;
 
-        CalendarPage.selectedEvent = null;
+        TodaySchedulePage.selectedEvent = null;
 
         _backToEventsPage();
       } else {
