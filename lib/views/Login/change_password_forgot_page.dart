@@ -93,7 +93,7 @@ class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            automaticallyImplyLeading: false,
+            //automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
             elevation: 0.0,
           ),

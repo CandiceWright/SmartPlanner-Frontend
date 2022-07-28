@@ -369,10 +369,18 @@ class _LoginPageState extends State<LoginPage> {
 
                       PlannerService.sharedInstance.user!.stories = stories;
 
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //   builder: (context) {
+                      //     return const EnterPlannerVideoPage();
+                      //   },
+                      // ));
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) {
-                          return const EnterPlannerVideoPage();
+                          return const NavigationWrapper();
                         },
+                        settings: const RouteSettings(
+                          name: 'navigaionPage',
+                        ),
                       ));
                     } else {
                       showDialog(

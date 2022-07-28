@@ -329,248 +329,265 @@ class _EditEventPageState extends State<EditEventPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text("Edit"),
-        centerTitle: true,
-        leading: BackButton(color: Colors.black),
-        actions: [
-          TextButton(
-            onPressed: doneBtnDisabled ? null : editEvent,
-            child: Text("Done"),
-          ),
-          // IconButton(
-          //   icon: const Icon(Icons.check),
-          //   color: Colors.pink,
-          //   tooltip: 'Open shopping cart',
-          //   onPressed: () {
-          //     // handle the press
-          //   },
-          // ),
-        ],
+    return Stack(children: [
+      Image.asset(
+        PlannerService.sharedInstance.user!.spaceImage,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.cover,
       ),
-      body: Card(
-        child: Container(
-          child: ListView(
-            children: [
-              Image.asset(
-                "assets/images/calendar_icon.png",
-                height: 80,
-                width: 80,
-              ),
-              Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: TextFormField(
-                        controller: descriptionTxtController,
-                        decoration: const InputDecoration(
-                          hintText: "What's the event?",
+      Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          backgroundColor: Colors.transparent,
+          title: Text(
+            "Edit",
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+          //leading: BackButton(color: Colors.black),
+          actions: [
+            TextButton(
+              onPressed: doneBtnDisabled ? null : editEvent,
+              child: Text("Done"),
+            ),
+            // IconButton(
+            //   icon: const Icon(Icons.check),
+            //   color: Colors.pink,
+            //   tooltip: 'Open shopping cart',
+            //   onPressed: () {
+            //     // handle the press
+            //   },
+            // ),
+          ],
+        ),
+        body: Card(
+          child: Container(
+            child: ListView(
+              children: [
+                // Image.asset(
+                //   "assets/images/calendar_icon.png",
+                //   height: 80,
+                //   width: 80,
+                // ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: TextFormField(
+                          controller: descriptionTxtController,
+                          decoration: const InputDecoration(
+                            hintText: "What's the event?",
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
+                        padding: EdgeInsets.all(20),
                       ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            child: TextFormField(
-                              controller: startDateTxtController,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                hintText: "Start Date",
-                                icon: Icon(
-                                  Icons.calendar_today,
-                                  color: Theme.of(context).colorScheme.primary,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Padding(
+                              child: TextFormField(
+                                controller: startDateTxtController,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: "Start Date",
+                                  icon: Icon(
+                                    Icons.calendar_today,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
                                 ),
+                                onTap: () => _selectStartDate(context),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
                               ),
-                              onTap: () => _selectStartDate(context),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
+                              padding: EdgeInsets.all(20),
                             ),
-                            padding: EdgeInsets.all(20),
                           ),
-                        ),
-                        Flexible(
-                          child: Padding(
-                            child: TextFormField(
-                              controller: startTimeController,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                hintText: "Time",
-                                icon: Icon(
-                                  Icons.timer,
-                                  color: Theme.of(context).colorScheme.primary,
+                          Flexible(
+                            child: Padding(
+                              child: TextFormField(
+                                controller: startTimeController,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: "Time",
+                                  icon: Icon(
+                                    Icons.timer,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
                                 ),
+                                onTap: () => _selectStartTime(context),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
                               ),
-                              onTap: () => _selectStartTime(context),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
+                              padding: EdgeInsets.all(20),
                             ),
-                            padding: EdgeInsets.all(20),
-                          ),
-                        )
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            child: TextFormField(
-                              controller: endDateTxtController,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                hintText: "End Date",
-                                icon: Icon(
-                                  Icons.calendar_today,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                              onTap: () => _selectEndDate(context),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
-                            padding: EdgeInsets.all(20),
-                          ),
-                        ),
-                        Flexible(
-                          child: Padding(
-                            child: TextFormField(
-                              controller: endTimeController,
-                              readOnly: true,
-                              decoration: InputDecoration(
-                                hintText: "Time",
-                                icon: Icon(
-                                  Icons.timer,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                              onTap: () => _selectEndTime(context),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter some text';
-                                }
-                                return null;
-                              },
-                            ),
-                            padding: EdgeInsets.all(20),
-                          ),
-                        )
-                      ],
-                    ),
-                    Container(
-                      child: TextFormField(
-                        controller: locationTxController,
-                        decoration: InputDecoration(
-                          hintText: "Location",
-                          icon: Icon(
-                            Icons.location_pin,
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
+                          )
+                        ],
                       ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    Container(
-                      child: DropdownButton(
-                        //value: PlannerService.sharedInstance.user.theme.themeId,
-                        value: currChosenCategory,
-                        items: List.generate(
-                            PlannerService.sharedInstance.user!.lifeCategories
-                                .length, (int index) {
-                          return DropdownMenuItem(
-                            //value: "pink",
-                            value: PlannerService
-                                .sharedInstance.user!.lifeCategories[index],
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.circle,
-                                  color: PlannerService.sharedInstance.user!
-                                      .lifeCategories[index].color,
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Padding(
+                              child: TextFormField(
+                                controller: endDateTxtController,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: "End Date",
+                                  icon: Icon(
+                                    Icons.calendar_today,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
                                 ),
-                                Text(PlannerService.sharedInstance.user!
-                                    .lifeCategories[index].name),
-                              ],
+                                onTap: () => _selectEndDate(context),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              padding: EdgeInsets.all(20),
                             ),
-                          );
-                        }),
+                          ),
+                          Flexible(
+                            child: Padding(
+                              child: TextFormField(
+                                controller: endTimeController,
+                                readOnly: true,
+                                decoration: InputDecoration(
+                                  hintText: "Time",
+                                  icon: Icon(
+                                    Icons.timer,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                onTap: () => _selectEndTime(context),
+                                validator: (String? value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter some text';
+                                  }
+                                  return null;
+                                },
+                              ),
+                              padding: EdgeInsets.all(20),
+                            ),
+                          )
+                        ],
+                      ),
+                      Container(
+                        child: TextFormField(
+                          controller: locationTxController,
+                          decoration: InputDecoration(
+                            hintText: "Location",
+                            icon: Icon(
+                              Icons.location_pin,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                        ),
+                        padding: EdgeInsets.all(20),
+                      ),
+                      Container(
+                        child: DropdownButton(
+                          //value: PlannerService.sharedInstance.user.theme.themeId,
+                          value: currChosenCategory,
+                          items: List.generate(
+                              PlannerService.sharedInstance.user!.lifeCategories
+                                  .length, (int index) {
+                            return DropdownMenuItem(
+                              //value: "pink",
+                              value: PlannerService
+                                  .sharedInstance.user!.lifeCategories[index],
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    color: PlannerService.sharedInstance.user!
+                                        .lifeCategories[index].color,
+                                  ),
+                                  Text(PlannerService.sharedInstance.user!
+                                      .lifeCategories[index].name),
+                                ],
+                              ),
+                            );
+                          }),
 
-                        onChanged: (LifeCategory? newValue) {
-                          // onChanged: (newValue) {
-                          setState(() {
-                            currChosenCategory = newValue!;
-                          });
-                        },
-                      ),
-                      padding: EdgeInsets.all(20),
-                    ),
-                    Container(
-                      child: TextFormField(
-                        controller: notesTxtController,
-                        decoration: const InputDecoration(
-                          hintText: "Notes",
-                          fillColor: Colors.white,
+                          onChanged: (LifeCategory? newValue) {
+                            // onChanged: (newValue) {
+                            setState(() {
+                              currChosenCategory = newValue!;
+                            });
+                          },
                         ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        maxLines: null,
-                        minLines: 10,
+                        padding: EdgeInsets.all(20),
                       ),
-                      padding: EdgeInsets.all(20),
-                      margin: EdgeInsets.only(top: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
+                      Container(
+                        child: TextFormField(
+                          controller: notesTxtController,
+                          decoration: const InputDecoration(
+                            hintText: "Notes",
+                            fillColor: Colors.white,
+                          ),
+                          validator: (String? value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter some text';
+                            }
+                            return null;
+                          },
+                          maxLines: null,
+                          minLines: 10,
+                        ),
+                        padding: EdgeInsets.all(20),
+                        margin: EdgeInsets.only(top: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+                    ],
+                  ),
+                )
+              ],
+            ),
+            margin: EdgeInsets.all(15),
           ),
-          margin: EdgeInsets.all(15),
-        ),
-        //color: PlannerService.sharedInstance.user.theme.accentColor,
-        // margin: EdgeInsets.all(20),
-        margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
-        elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          //color: PlannerService.sharedInstance.user.theme.accentColor,
+          // margin: EdgeInsets.all(20),
+          margin: EdgeInsets.only(top: 15, bottom: 40, left: 15, right: 15),
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
         ),
       ),
-    );
+    ]);
   }
 }
