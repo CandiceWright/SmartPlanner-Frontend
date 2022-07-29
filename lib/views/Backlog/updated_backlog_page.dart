@@ -255,7 +255,7 @@ class _BacklogPageState extends State<BacklogPage> {
                             fontSize: 14,
                           ),
                         )
-                      : Text(""),
+                      : Text("No deadline"),
                   Text(backlogItem.notes)
                 ],
               ),
@@ -407,7 +407,7 @@ class _BacklogPageState extends State<BacklogPage> {
                         Padding(
                           padding: EdgeInsets.all(5),
                           child: value[i].completeBy == null
-                              ? const Text("")
+                              ? const Text("No deadline")
                               : Text("Deadline " +
                                   DateFormat.yMMMd()
                                       .format(value[i].completeBy!)),

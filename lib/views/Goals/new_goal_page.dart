@@ -312,6 +312,49 @@ class _NewGoalPageState extends State<NewGoalPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.image,
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 8, right: 8),
+                                    child: TextButton(
+                                      child: Text("Add an image (Optional)"),
+                                      onPressed: () async {
+                                        _selectedImg = await _picker.pickImage(
+                                            source: ImageSource.gallery);
+                                        print(_selectedImg);
+                                        if (_selectedImg != null) {
+                                          setState(() {
+                                            fileMedia =
+                                                File(_selectedImg!.path);
+                                          });
+                                        }
+                                      },
+
+                                      //style: TextStyle(color: Colors.grey),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              CircleAvatar(
+                                // // backgroundImage: AssetImage(
+                                //     PlannerService.sharedInstance.user!.profileImage),
+                                backgroundImage: _selectedImg != null
+                                    ? FileImage(fileMedia!)
+                                    : null,
+                                radius: _selectedImg != null ? 40 : 0,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
                           child: TextFormField(
                             controller: descriptionTxtController,
                             decoration: const InputDecoration(
@@ -348,74 +391,80 @@ class _NewGoalPageState extends State<NewGoalPage> {
                           padding: EdgeInsets.all(20),
                         ),
                         Container(
-                          child: DropdownButton(
-                            //value: PlannerService.sharedInstance.user.theme.themeId,
-                            value: currChosenCategory,
-                            items: List.generate(
-                                PlannerService.sharedInstance.user!
-                                    .lifeCategories.length, (int index) {
-                              return DropdownMenuItem(
-                                //value: "pink",
-                                value: PlannerService
-                                    .sharedInstance.user!.lifeCategories[index],
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      color: PlannerService.sharedInstance.user!
-                                          .lifeCategories[index].color,
-                                    ),
-                                    Text(PlannerService.sharedInstance.user!
-                                        .lifeCategories[index].name),
-                                  ],
-                                ),
-                              );
-                            }),
-
-                            // onChanged: (String? newValue) {
-                            onChanged: (LifeCategory? newValue) {
-                              setState(() {
-                                currChosenCategory = newValue!;
-                              });
-                            },
-                          ),
-                          padding: EdgeInsets.all(20),
-                        ),
-                        Container(
-                          child: Row(
+                          child: Column(
                             children: [
-                              Icon(
-                                Icons.image,
-                                color: Theme.of(context).colorScheme.primary,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(
+                                      "Choose a Life Category",
+                                      style: TextStyle(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                  'Your life categories help you organize your tasks (i.e. business, self-care, fitness, work, school, etc.). You can create new life categories in your profile by clicking on your avatar on the home page.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    },
+                                    icon: Icon(Icons.help),
+                                  )
+                                ],
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 8, right: 8),
-                                child: TextButton(
-                                  child: Text("Add an image (Optional)"),
-                                  onPressed: () async {
-                                    _selectedImg = await _picker.pickImage(
-                                        source: ImageSource.gallery);
-                                    print(_selectedImg);
-                                    if (_selectedImg != null) {
-                                      setState(() {
-                                        fileMedia = File(_selectedImg!.path);
-                                      });
-                                    }
-                                  },
+                              DropdownButton(
+                                //value: PlannerService.sharedInstance.user.theme.themeId,
+                                value: currChosenCategory,
+                                items: List.generate(
+                                    PlannerService.sharedInstance.user!
+                                        .lifeCategories.length, (int index) {
+                                  return DropdownMenuItem(
+                                    //value: "pink",
+                                    value: PlannerService.sharedInstance.user!
+                                        .lifeCategories[index],
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.circle,
+                                          color: PlannerService
+                                              .sharedInstance
+                                              .user!
+                                              .lifeCategories[index]
+                                              .color,
+                                        ),
+                                        Text(PlannerService.sharedInstance.user!
+                                            .lifeCategories[index].name),
+                                      ],
+                                    ),
+                                  );
+                                }),
 
-                                  //style: TextStyle(color: Colors.grey),
-                                ),
-                              )
+                                // onChanged: (String? newValue) {
+                                onChanged: (LifeCategory? newValue) {
+                                  setState(() {
+                                    currChosenCategory = newValue!;
+                                  });
+                                },
+                              ),
                             ],
                           ),
-                        ),
-                        CircleAvatar(
-                          // // backgroundImage: AssetImage(
-                          //     PlannerService.sharedInstance.user!.profileImage),
-                          backgroundImage: _selectedImg != null
-                              ? FileImage(fileMedia!)
-                              : null,
-                          radius: _selectedImg != null ? 40 : 0,
+                          padding: EdgeInsets.all(20),
                         ),
                         Container(
                           child: TextFormField(

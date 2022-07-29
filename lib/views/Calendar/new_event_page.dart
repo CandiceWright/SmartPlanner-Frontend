@@ -484,6 +484,82 @@ class _NewEventPageState extends State<NewEventPage> {
                           ],
                         ),
                         Container(
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(
+                                      "Choose a Life Category",
+                                      style: TextStyle(
+                                          color:
+                                              Theme.of(context).primaryColor),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                  'Your life categories help you organize your tasks (i.e. business, self-care, fitness, work, school, etc.). You can create new life categories in your profile by clicking on your avatar on the home page.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    },
+                                    icon: Icon(Icons.help),
+                                  )
+                                ],
+                              ),
+                              DropdownButton(
+                                //value: PlannerService.sharedInstance.user.theme.themeId,
+                                value: currChosenCategory,
+                                items: List.generate(
+                                    PlannerService.sharedInstance.user!
+                                        .lifeCategories.length, (int index) {
+                                  return DropdownMenuItem(
+                                    //value: "pink",
+                                    value: PlannerService.sharedInstance.user!
+                                        .lifeCategories[index],
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.circle,
+                                          color: PlannerService
+                                              .sharedInstance
+                                              .user!
+                                              .lifeCategories[index]
+                                              .color,
+                                        ),
+                                        Text(PlannerService.sharedInstance.user!
+                                            .lifeCategories[index].name),
+                                      ],
+                                    ),
+                                  );
+                                }),
+
+                                // onChanged: (String? newValue) {
+                                onChanged: (LifeCategory? newValue) {
+                                  setState(() {
+                                    currChosenCategory = newValue!;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                          padding: EdgeInsets.all(20),
+                        ),
+                        Container(
                           child: TextFormField(
                             controller: locationTxtController,
                             decoration: InputDecoration(
@@ -498,40 +574,6 @@ class _NewEventPageState extends State<NewEventPage> {
                                 return 'Please enter some text';
                               }
                               return null;
-                            },
-                          ),
-                          padding: EdgeInsets.all(20),
-                        ),
-                        Container(
-                          child: DropdownButton(
-                            //value: PlannerService.sharedInstance.user.theme.themeId,
-                            value: currChosenCategory,
-                            items: List.generate(
-                                PlannerService.sharedInstance.user!
-                                    .lifeCategories.length, (int index) {
-                              return DropdownMenuItem(
-                                //value: "pink",
-                                value: PlannerService
-                                    .sharedInstance.user!.lifeCategories[index],
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.circle,
-                                      color: PlannerService.sharedInstance.user!
-                                          .lifeCategories[index].color,
-                                    ),
-                                    Text(PlannerService.sharedInstance.user!
-                                        .lifeCategories[index].name),
-                                  ],
-                                ),
-                              );
-                            }),
-
-                            // onChanged: (String? newValue) {
-                            onChanged: (LifeCategory? newValue) {
-                              setState(() {
-                                currChosenCategory = newValue!;
-                              });
                             },
                           ),
                           padding: EdgeInsets.all(20),
