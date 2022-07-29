@@ -8,11 +8,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
-import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
 import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
-import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -70,27 +68,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   updateEvents: _updateEvents,
                   fromPage: "full_calendar",
                 )));
-  }
-
-  void _openTomorrowSchedulePage() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) {
-        return const TomorrowPlanningPage();
-      },
-      settings: const RouteSettings(
-        name: 'TomorrowPage',
-      ),
-    ));
-    // Navigator.push(context,
-    //     CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
-  }
-
-  void _openNoTomorrowPlanPage() {
-    //this function needs to change to create new goal
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => const NoTomorrowPlanYetPage()));
   }
 
   void openEditEventPage() {
@@ -196,7 +173,11 @@ class _CalendarPageState extends State<CalendarPage> {
       MaterialPageRoute(
         settings: const RouteSettings(name: "BacklogScheduling"),
         builder: (context) => ScheduleBacklogItemsPage(
-            updateTomorrowEvents: _updateEvents, fromPage: "today"),
+          updateTomorrowEvents: _updateEvents,
+          fromPage: DateFormat.yMMMd()
+              .format(_dateRangePickerController.selectedDate!),
+          calendarDate: _dateRangePickerController.selectedDate!,
+        ),
       ),
     );
   }
@@ -860,41 +841,6 @@ class _CalendarPageState extends State<CalendarPage> {
           ),
         ],
       ),
-
-      // body: Container(
-      //   child: SfCalendar(
-      //     showDatePickerButton: true,
-      //     // headerStyle: CalendarHeaderStyle(
-      //     //   textStyle: TextStyle(color: Colors.white),
-      //     //   // textAlign: TextAlign.center,
-      //     // ),
-      //     //cellBorderColor: Colors.transparent,
-      //     view: CalendarView.day,
-      //     onTap: calendarTapped,
-      //     initialDisplayDate: DateTime.now(),
-      //     dataSource: CalendarPage.events,
-      //     //cellBorderColor: Colors.white,
-      //     timeSlotViewSettings: const TimeSlotViewSettings(
-      //       timeInterval: Duration(minutes: 30),
-      //       timeFormat: 'h:mm',
-      //       // timeTextStyle: TextStyle(
-      //       //   color: Colors.white,
-      //       // ),
-      //     ),
-      //     appointmentBuilder:
-      //         (BuildContext context, CalendarAppointmentDetails details) {
-      //       return Card(
-      //         child: Row(
-      //           children: [
-      //             Text("hello"),
-      //             Checkbox(value: false, onChanged: (value) {})
-      //           ],
-      //         ),
-      //       );
-      //     },
-      //     //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-      //   ),
-      // ),
 
       floatingActionButton: FloatingActionButton(
         //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog

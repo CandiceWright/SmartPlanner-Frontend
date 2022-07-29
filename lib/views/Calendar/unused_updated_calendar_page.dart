@@ -2,6 +2,7 @@
 //part 'edit_event_page.dart';
 
 import 'dart:convert';
+import 'package:practice_planner/views/Calendar/unused_tomorrow_planning_page.dart';
 import 'package:timelines/timelines.dart';
 
 import 'package:flutter/material.dart';
@@ -10,7 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
-import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -181,7 +181,10 @@ class _CalendarPageState extends State<CalendarPage> {
       MaterialPageRoute(
         settings: const RouteSettings(name: "BacklogScheduling"),
         builder: (context) => ScheduleBacklogItemsPage(
-            updateTomorrowEvents: _updateEvents, fromPage: "today"),
+          updateTomorrowEvents: _updateEvents,
+          fromPage: "today",
+          calendarDate: DateTime.now(),
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
-import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
+import 'package:practice_planner/views/Calendar/unused_tomorrow_planning_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';

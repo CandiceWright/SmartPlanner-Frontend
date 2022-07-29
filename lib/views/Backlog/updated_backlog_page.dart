@@ -245,14 +245,17 @@ class _BacklogPageState extends State<BacklogPage> {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Deadline " +
-                        DateFormat.yMMMd().format(backlogItem.completeBy!),
-                    style: const TextStyle(
-                      // fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                    ),
-                  ),
+                  backlogItem.completeBy != null
+                      ? Text(
+                          "Deadline " +
+                              DateFormat.yMMMd()
+                                  .format(backlogItem.completeBy!),
+                          style: const TextStyle(
+                            // fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
+                        )
+                      : Text(""),
                   Text(backlogItem.notes)
                 ],
               ),
@@ -350,16 +353,16 @@ class _BacklogPageState extends State<BacklogPage> {
       print("I am building backlog and this is value.length");
       print(value.length);
       for (int i = 0; i < value.length; i++) {
-        print("trying to find null value:");
-        print("Printing lin 352 below");
-        print(PlannerService
-            .sharedInstance.user!.backlogMap[key]![i].description);
-        print("printing liine 355 below");
-        print(
-            PlannerService.sharedInstance.user!.backlogMap[key]![i].isComplete);
-        print("printing line 358 below");
-        print(DateFormat.yMMMd().format(value[i].completeBy!));
-        print(PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key]);
+        // print("trying to find null value:");
+        // print("Printing lin 352 below");
+        // print(PlannerService
+        //     .sharedInstance.user!.backlogMap[key]![i].description);
+        // print("printing liine 355 below");
+        // print(
+        //     PlannerService.sharedInstance.user!.backlogMap[key]![i].isComplete);
+        // print("printing line 358 below");
+        // print(DateFormat.yMMMd().format(value[i].completeBy!));
+        // print(PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key]);
 
         Widget child = GestureDetector(
           onTap: () {
@@ -375,18 +378,13 @@ class _BacklogPageState extends State<BacklogPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Checkbox(
-                    value: PlannerService
-                        .sharedInstance.user!.backlogMap[key]![i].isComplete,
-                    shape: const CircleBorder(),
-                    onChanged: (bool? value) {
-                      print(value);
-                      setState(() {
-                        PlannerService.sharedInstance.user!.backlogMap[key]![i]
-                            .isComplete = value;
-                        //_value = value!;
-                      });
-                    },
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Icon(
+                      Icons.circle,
+                      color: PlannerService
+                          .sharedInstance.user!.LifeCategoriesColorMap[key],
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(10),
@@ -408,19 +406,27 @@ class _BacklogPageState extends State<BacklogPage> {
                         ),
                         Padding(
                           padding: EdgeInsets.all(5),
-                          child: Text("Deadline " +
-                              DateFormat.yMMMd().format(value[i].completeBy!)),
+                          child: value[i].completeBy == null
+                              ? const Text("")
+                              : Text("Deadline " +
+                                  DateFormat.yMMMd()
+                                      .format(value[i].completeBy!)),
                         ),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Icon(
-                      Icons.circle,
-                      color: PlannerService
-                          .sharedInstance.user!.LifeCategoriesColorMap[key],
-                    ),
+                  Checkbox(
+                    value: PlannerService
+                        .sharedInstance.user!.backlogMap[key]![i].isComplete,
+                    shape: const CircleBorder(),
+                    onChanged: (bool? value) {
+                      print(value);
+                      setState(() {
+                        PlannerService.sharedInstance.user!.backlogMap[key]![i]
+                            .isComplete = value;
+                        //_value = value!;
+                      });
+                    },
                   ),
                 ],
               )),

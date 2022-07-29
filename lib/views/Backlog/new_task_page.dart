@@ -27,7 +27,9 @@ class NewTaskPage extends StatefulWidget {
 
 class _NewTaskPageState extends State<NewTaskPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DateTime selectedDate = DateTime.now();
+  // DateTime selectedDate = DateTime.now();
+  DateTime? selectedDate;
+
   var dateTxtController = TextEditingController();
   var descriptionTxtController = TextEditingController();
   //var categoryTxtController = TextEditingController();
@@ -47,13 +49,13 @@ class _NewTaskPageState extends State<NewTaskPage> {
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: selectedDate,
+        initialDate: selectedDate == null ? DateTime.now() : selectedDate!,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
-        dateTxtController.text = DateFormat.yMMMd().format(selectedDate);
+        dateTxtController.text = DateFormat.yMMMd().format(selectedDate!);
         //print(DateFormat.yMMMd().format(selectedDate));
       });
   }
@@ -64,7 +66,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
     var body = {
       'userId': PlannerService.sharedInstance.user!.id,
       'description': taskTitle,
-      'completeBy': selectedDate.toString(),
+      'completeBy': selectedDate == null ? "none" : selectedDate.toString(),
       'category': currChosenCategory.id,
       'isComplete': false,
       'location': locationTxtController.text,
@@ -103,10 +105,10 @@ class _NewTaskPageState extends State<NewTaskPage> {
             .addAll({newBacklogItem.category.name: arr});
       }
 
-      if (DateFormat.yMMMd().format(selectedDate) ==
-          DateFormat.yMMMd().format(DateTime.now())) {
-        PlannerService.sharedInstance.user!.todayTasks.add(newBacklogItem);
-      }
+      // if (DateFormat.yMMMd().format(selectedDate!) ==
+      //     DateFormat.yMMMd().format(DateTime.now())) {
+      //   PlannerService.sharedInstance.user!.todayTasks.add(newBacklogItem);
+      // }
       widget.updateBacklog();
       _backToBacklogPage();
     } else {
@@ -267,39 +269,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
                               });
                             },
                           ),
-                          // child: TextFormField(
-                          //   controller: categoryTxtController,
-                          //   decoration: InputDecoration(
-                          //       hintText: "Category",
-                          //       icon: Icon(
-                          //         Icons.category_rounded,
-                          //         color: Theme.of(context).colorScheme.primary,
-                          //       )),
-                          //   validator: (String? value) {
-                          //     if (value == null || value.isEmpty) {
-                          //       return 'Please enter some text';
-                          //     }
-                          //     return null;
-                          //   },
-                          // ),
                           padding: EdgeInsets.all(20),
                         ),
-                        // Container(
-                        //   child: TextFormField(
-                        //     controller: categoryTxtController,
-                        //     decoration: InputDecoration(
-                        //         hintText: "Life Category",
-                        //         icon: Icon(Icons.category_rounded,
-                        //             color: Theme.of(context).colorScheme.primary)),
-                        //     validator: (String? value) {
-                        //       if (value == null || value.isEmpty) {
-                        //         return 'Please enter some text';
-                        //       }
-                        //       return null;
-                        //     },
-                        //   ),
-                        //   padding: EdgeInsets.all(20),
-                        // ),
                         Container(
                           child: TextFormField(
                             controller: locationTxtController,

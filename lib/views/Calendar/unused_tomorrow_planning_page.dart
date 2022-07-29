@@ -474,6 +474,8 @@ class _TomorrowPlanningPageState extends State<TomorrowPlanningPage> {
         builder: (context) => ScheduleBacklogItemsPage(
           updateTomorrowEvents: _updateEvents,
           fromPage: "tomorrow",
+          calendarDate: DateTime(DateTime.now().year, DateTime.now().month,
+              DateTime.now().day + 1),
         ),
       ),
     );

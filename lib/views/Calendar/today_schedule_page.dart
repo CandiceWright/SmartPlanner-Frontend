@@ -9,10 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/calendar_page.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
-import 'package:practice_planner/views/Calendar/no_tomorrow_plan_yet_age.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
-import 'package:practice_planner/views/Calendar/tomorrow_planning_page.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
@@ -69,27 +67,6 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
                   updateEvents: _updateEvents,
                   fromPage: "full_calendar",
                 )));
-  }
-
-  void _openTomorrowSchedulePage() {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) {
-        return const TomorrowPlanningPage();
-      },
-      settings: const RouteSettings(
-        name: 'TomorrowPage',
-      ),
-    ));
-    // Navigator.push(context,
-    //     CupertinoPageRoute(builder: (context) => const TomorrowPlanningPage()));
-  }
-
-  void _openNoTomorrowPlanPage() {
-    //this function needs to change to create new goal
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => const NoTomorrowPlanYetPage()));
   }
 
   void openEditEventPage() {
@@ -199,7 +176,10 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
       MaterialPageRoute(
         settings: const RouteSettings(name: "BacklogScheduling"),
         builder: (context) => ScheduleBacklogItemsPage(
-            updateTomorrowEvents: _updateEvents, fromPage: "today"),
+          updateTomorrowEvents: _updateEvents,
+          fromPage: "today",
+          calendarDate: DateTime.now(),
+        ),
       ),
     );
   }

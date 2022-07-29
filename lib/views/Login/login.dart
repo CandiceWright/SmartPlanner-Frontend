@@ -263,7 +263,7 @@ class _LoginPageState extends State<LoginPage> {
                     var backlogItem = BacklogItem(
                         id: decodedBody[i]["taskId"],
                         description: decodedBody[i]["description"],
-                        completeBy: decodedBody[i]["completeBy"] == null
+                        completeBy: decodedBody[i]["completeBy"] == "none"
                             ? null
                             : DateTime.parse(decodedBody[i]["completeBy"]),
                         scheduledDate: decodedBody[i]["scheduledDate"] == null

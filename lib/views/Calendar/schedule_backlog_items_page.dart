@@ -9,7 +9,10 @@ import 'package:flutter/cupertino.dart';
 
 class ScheduleBacklogItemsPage extends StatefulWidget {
   const ScheduleBacklogItemsPage(
-      {Key? key, required this.updateTomorrowEvents, required this.fromPage})
+      {Key? key,
+      required this.updateTomorrowEvents,
+      required this.fromPage,
+      required this.calendarDate})
       : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -23,6 +26,7 @@ class ScheduleBacklogItemsPage extends StatefulWidget {
 
   final Function updateTomorrowEvents;
   final String fromPage;
+  final DateTime calendarDate;
 
   @override
   State<ScheduleBacklogItemsPage> createState() =>
@@ -30,10 +34,27 @@ class ScheduleBacklogItemsPage extends StatefulWidget {
 }
 
 class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
+  bool noUnscheduledBacklogItems = false;
+
   @override
   void initState() {
     super.initState();
     //print(PlannerService.sharedInstance.user.backlog);
+    getNumberUnscheduledBacklogItems();
+  }
+
+  void getNumberUnscheduledBacklogItems() {
+    int counter = 0;
+    PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
+      for (int i = 0; i < value.length; i++) {
+        if (value[i].scheduledDate == null && !value[i].isComplete!) {
+          counter++;
+        }
+      } //1 per category
+    });
+    if (counter == 0) {
+      noUnscheduledBacklogItems = true;
+    }
   }
 
   void _openNewBacklogItemPage() {
@@ -55,10 +76,12 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
       MaterialPageRoute(
         settings: const RouteSettings(name: "SetTime"),
         builder: (context) => SetBacklogItemTimePage(
-            backlogItem: backlogItem,
-            updateEvents: widget.updateTomorrowEvents,
-            bmRef: bmRef,
-            fromPage: widget.fromPage),
+          backlogItem: backlogItem,
+          updateEvents: widget.updateTomorrowEvents,
+          bmRef: bmRef,
+          fromPage: widget.fromPage,
+          calendarDate: widget.calendarDate,
+        ),
       ),
     );
     // Navigator.push(
@@ -105,13 +128,6 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
           unscheduledExpansionTileChildren.add(child);
           //}
         }
-        // else {
-        //   if (value[i].scheduledDate == DateTime.now()) {
-        //     todayItems.add(child);
-        //   } else {
-        //     tomorrowItems.add(child);
-        //   }
-        // }
       }
       Widget expansionTile = ExpansionTile(
         title: Text(key),
@@ -138,7 +154,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    List<Widget> backlogListView = buildBacklogListView();
+    //List<Widget> backlogListView = buildBacklogListView();
     return Scaffold(
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
@@ -153,11 +169,17 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
               alignment: Alignment.center,
               child: Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: Text(
-                  "Which item do you want to schedule for tomorrow?",
-                  style: TextStyle(color: Colors.white),
-                  //textAlign: TextAlign.center,
-                ),
+                child: widget.fromPage == "today"
+                    ? const Text(
+                        "Add item to today's schedule.",
+                        style: TextStyle(color: Colors.white),
+                        //textAlign: TextAlign.center,
+                      )
+                    : Text(
+                        "Add item to " + widget.fromPage + " schedule",
+                        style: TextStyle(color: Colors.white),
+                        //textAlign: TextAlign.center,
+                      ),
               ),
             ),
             preferredSize: Size.fromHeight(10.0)),
@@ -176,16 +198,47 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
           color: Theme.of(context).primaryColor, //change your color here
         ),
       ),
-      body: Column(
-        children: [
-          // const Text("Which item do you want to schedule for tomorrow?"),
-          Expanded(
-            child: ListView(
-              children: backlogListView,
-            ),
-          )
-        ],
-      ),
+      body: PlannerService.sharedInstance.user!.backlogMap.values.isEmpty ||
+              (PlannerService.sharedInstance.user!.backlogMap.keys.length ==
+                      1 &&
+                  PlannerService.sharedInstance.user!.backlogMap.entries.first
+                          .value.length ==
+                      0)
+          ? Container(
+              margin: EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Text(
+                    "No backlog items have been created yet. Go to your backlog page to get started.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ))
+          : noUnscheduledBacklogItems
+              ? Container(
+                  margin: EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "All of your backlog items are already scheduled. Create a new backlog item to schedule.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ))
+              : Column(
+                  children: [
+                    // const Text("Which item do you want to schedule for tomorrow?"),
+                    Expanded(
+                      child: ListView(
+                        children: buildBacklogListView(),
+                      ),
+                    )
+                  ],
+                ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: _openNewBacklogItemPage,
       //   tooltip: 'Done.',

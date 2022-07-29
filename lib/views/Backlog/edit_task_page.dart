@@ -46,9 +46,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
   late var notesTxtController = TextEditingController(
       text: PlannerService
           .sharedInstance.user!.backlogMap[widget.category]![widget.id].notes);
-  late var dateTxtController = TextEditingController(
-      text: DateFormat.yMMMd().format(PlannerService.sharedInstance.user!
-          .backlogMap[widget.category]![widget.id].completeBy!));
+  late var dateTxtController = TextEditingController();
 
   bool doneBtnDisabled = true;
   late var currChosenCategory = PlannerService
@@ -58,13 +56,22 @@ class _EditTaskPageState extends State<EditTaskPage> {
   void initState() {
     super.initState();
     descriptionTxtController.addListener(setDoneBtnState);
+    if (PlannerService.sharedInstance.user!
+            .backlogMap[widget.category]![widget.id].completeBy !=
+        null) {
+      dateTxtController.text = DateFormat.yMMMd().format(PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[widget.category]![widget.id]
+          .completeBy!);
+    }
     setDoneBtnState();
   }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
-        initialDate: selectedDate!,
+        initialDate: selectedDate == null ? DateTime.now() : selectedDate!,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
@@ -84,7 +91,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
       'taskId': PlannerService
           .sharedInstance.user!.backlogMap[widget.category]![widget.id].id,
       'description': taskTitle,
-      'completeBy': selectedDate.toString(),
+      'completeBy': selectedDate == null ? "none" : selectedDate.toString(),
       'category': currChosenCategory.id,
       'isComplete': false,
       'location': locationTxtController.text,
