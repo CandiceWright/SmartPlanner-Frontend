@@ -337,12 +337,13 @@ class _BacklogPageState extends State<BacklogPage> {
   }
 
   buildBacklogListView() {
-    // selectedCategories.forEach((key, value) {
-    //   if(PlannerService.sharedInstance.user!.backlogMap[key] != null){
-    //     List<BacklogItem> categoryBacklogItems =
-    //       PlannerService.sharedInstance.user!.backlogMap[key]!;
-    //   }
-    // });
+    print("I am trying to see what the correct value to use is");
+    print(PlannerService.sharedInstance.user!.backlogMap.values.isEmpty ||
+        (PlannerService.sharedInstance.user!.backlogMap.keys.length == 1 &&
+            PlannerService.sharedInstance.user!.backlogMap.entries.first.value
+                    .length ==
+                0));
+    print(PlannerService.sharedInstance.user!.backlogMap.values.length);
 
     PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
       List<Widget> categoryChildren = [];
@@ -456,7 +457,7 @@ class _BacklogPageState extends State<BacklogPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    buildBacklogListView();
+    //buildBacklogListView();
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -612,9 +613,29 @@ class _BacklogPageState extends State<BacklogPage> {
             ),
           ),
           Expanded(
-            child: ListView(
-              children: buildBacklogListView(),
-            ),
+            child:
+                PlannerService.sharedInstance.user!.backlogMap.values.isEmpty ||
+                        (PlannerService.sharedInstance.user!.backlogMap.keys
+                                    .length ==
+                                1 &&
+                            PlannerService.sharedInstance.user!.backlogMap
+                                    .entries.first.value.length ==
+                                0)
+                    ? Container(
+                        margin: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Text(
+                              "No backlog items have been created yet. Click the plus sign to get started or the info button at the top to learn more.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ))
+                    : ListView(
+                        children: buildBacklogListView(),
+                      ),
           )
         ],
       ),
