@@ -407,8 +407,8 @@ class _BacklogPageState extends State<BacklogPage> {
                         Padding(
                           padding: EdgeInsets.all(5),
                           child: value[i].completeBy == null
-                              ? const Text("No deadline")
-                              : Text("Deadline " +
+                              ? const Text("No date set")
+                              : Text("Complete by " +
                                   DateFormat.yMMMd()
                                       .format(value[i].completeBy!)),
                         ),

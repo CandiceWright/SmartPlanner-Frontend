@@ -25,12 +25,13 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
-    BacklogPage(),
     //CalendarPage(),
     TodaySchedulePage(),
     GoalsPage(),
+
     //DictionaryPage(),
-    InwardsPage()
+    InwardsPage(),
+    BacklogPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -55,10 +56,6 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Backlog',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.schedule),
             label: 'Schedule',
           ),
@@ -69,6 +66,10 @@ class _NavigationWrapperState extends State<NavigationWrapper> {
           BottomNavigationBarItem(
             icon: Icon(Icons.book_outlined),
             label: 'The Cover',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Backlog',
           ),
         ],
         currentIndex: _selectedIndex,

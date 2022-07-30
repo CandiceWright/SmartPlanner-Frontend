@@ -580,35 +580,96 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
               color: Colors.white,
               child: Row(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 8),
-                    child: Text(
-                      DateFormat.MMM().format(_selectedDate),
-                      // _selectedDate.toString("MMMM"),
-                      style: TextStyle(
-                          fontSize: Theme.of(context)
-                              .textTheme
-                              .displaySmall!
-                              .fontSize),
-                      // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                  //Padding(
+                  //padding: EdgeInsets.only(right: 8),
+                  //child:
+                  Text(
+                    DateFormat.MMM().format(_selectedDate),
+                    // _selectedDate.toString("MMMM"),
+                    style: TextStyle(
+                      fontSize:
+                          Theme.of(context).textTheme.headlineSmall!.fontSize,
+                    ),
+                    // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                  ),
+                  //),
+                  Text(
+                    " " + _selectedDate.day.toString(),
+                    style: TextStyle(
+                      fontSize:
+                          Theme.of(context).textTheme.headlineSmall!.fontSize,
+                      color: Theme.of(context).primaryColor,
                     ),
                   ),
-                  Text(
-                    _selectedDate.day.toString() +
-                        ", " +
-                        _selectedDate.year.toString(),
-                    style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .fontSize),
-                    // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-                  )
+                  // Text(
+                  //   _selectedDate.day.toString() +
+                  //       ", " +
+                  //       _selectedDate.year.toString(),
+                  // style: TextStyle(
+                  //     color: Theme.of(context).primaryColor,
+                  //     fontSize: Theme.of(context)
+                  //         .textTheme
+                  //         .headlineSmall!
+                  //         .fontSize),
+                  //   // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                  // )
                 ],
               ),
             ),
           ),
+
+          ListTile(
+            leading: Image.asset(
+              'assets/images/sunrise.png',
+              // width: 20,
+              // height: 20,
+            ),
+            title: LinearProgressIndicator(
+              value: ((DateTime.now().hour) + 1) / 24,
+              backgroundColor: Colors.grey.shade400,
+              color: Theme.of(context).primaryColor,
+            ),
+            trailing: Image.asset(
+              'assets/images/night.png',
+              // width: 20,
+              // height: 20,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(
+              (24 - ((DateTime.now().hour) + 1)).toString() +
+                  " hours remaining in this day!",
+              textAlign: TextAlign.center,
+            ),
+          ),
+
+          // Container(
+          //   //alignment: Alignment.topCenter,
+          //   //margin: EdgeInsets.all(20),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Padding(
+          //         padding: EdgeInsets.all(5),
+          //         child: Image.asset('assets/images/sunrise.png',
+          //             width: 20, height: 20),
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.all(5),
+          // child: LinearProgressIndicator(
+          //   value: ((DateTime.now().hour) + 1) / 24,
+          //   backgroundColor: Colors.grey.shade400,
+          //   color: Theme.of(context).primaryColor,
+          // ),
+          //       ),
+          //       Padding(
+          //         padding: EdgeInsets.all(5),
+          //         child: Image.asset('assets/images/night.png'),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           Expanded(
             child: SfCalendar(
               headerHeight: 0,

@@ -125,7 +125,7 @@ class _CaptureVideoWithImagePickerState
             PlannerService.sharedInstance.serverUrl + '/user/inwardvideo');
         var body = {
           'userId': PlannerService.sharedInstance.user!.id,
-          'url': result,
+          'inwardVideo': result,
           //'thumbnail': PlannerService.sharedInstance.user!.profileImage
         };
         String bodyF = jsonEncode(body);

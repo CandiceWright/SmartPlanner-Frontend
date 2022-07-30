@@ -84,6 +84,10 @@ class _WelcomePageState extends State<WelcomePage> {
                         "Login",
                         style: TextStyle(fontSize: 18),
                       ),
+                      // style: ButtonStyle(
+                      //   backgroundColor: MaterialStateProperty.all<Color>(
+                      //       const Color(0xffd4ac62)),
+                      // ),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xffef41a8)),
@@ -93,16 +97,18 @@ class _WelcomePageState extends State<WelcomePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "Don't have an account yet?",
                         style: TextStyle(color: Colors.white),
                       ),
                       TextButton(
                           onPressed: signup,
-                          child: Text(
+                          child: const Text(
                             "Sign Up",
                             style: TextStyle(
                               color: Color(0xff7ddcfa),
+                              //color: Color(0xffef41a8)
+                              //color: Color(0xffd4ac62),
                             ),
                           ))
                     ],

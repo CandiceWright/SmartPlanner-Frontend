@@ -13,8 +13,9 @@ class PlannerService {
   static FirebaseStorage firebaseStorage = FirebaseStorage();
   //this is for prod
   //String serverUrl = "https://serve-anotherplanit.com:7343";
+
   //for dev (this is your ip. It changes sometimes so keep this up-to-date)
-  String serverUrl = "http://192.168.1.19:7343";
+  String serverUrl = "http://192.168.1.29:7343";
 
   User? user;
 

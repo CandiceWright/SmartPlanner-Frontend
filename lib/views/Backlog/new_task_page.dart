@@ -221,7 +221,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                             controller: dateTxtController,
                             readOnly: true,
                             decoration: InputDecoration(
-                              hintText: "Deadline (Optional)",
+                              hintText: "Complete by (Optional)",
                               icon: Icon(
                                 Icons.calendar_today,
                                 color: Theme.of(context).colorScheme.primary,

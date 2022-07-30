@@ -470,12 +470,23 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         child: ListView(
           children: [
-            Container(
-              height: 80.0,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: buildStories(),
-              ),
+            Column(
+              children: [
+                Text(
+                  "Stories: Thoughts & Reminders",
+                  style: GoogleFonts.roboto(
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                ),
+                Container(
+                  height: 80.0,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: buildStories(),
+                  ),
+                ),
+              ],
             ),
             Container(
               child: Column(

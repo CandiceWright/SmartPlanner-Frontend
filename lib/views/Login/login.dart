@@ -90,6 +90,11 @@ class _LoginPageState extends State<LoginPage> {
         var didStartPlanningTomorrowInt =
             decodedBody["didStartPlanningTomorrow"];
         var profileImage = decodedBody["profileImage"];
+        var inwardVideoUrl = decodedBody["inwardVideoUrl"] == null
+            ? ""
+            : decodedBody["inwardVideoUrl"];
+        print("printing inward video url");
+        print(decodedBody["inwardVideoUrl"]);
         bool didStartPlanning;
         if (didStartPlanningTomorrowInt == 0) {
           didStartPlanning = false;
@@ -346,6 +351,12 @@ class _LoginPageState extends State<LoginPage> {
                           didStartTomorrowPlanning: didStartPlanning,
                           lifeCategories: lifeCategories);
                       PlannerService.sharedInstance.user = user;
+                      PlannerService.sharedInstance.user!.planitVideo =
+                          inwardVideoUrl;
+                      PlannerService.sharedInstance.user!.hasPlanitVideo =
+                          PlannerService.sharedInstance.user!.planitVideo == ""
+                              ? false
+                              : true;
                       PlannerService.sharedInstance.user!.lifeCategories =
                           lifeCategories;
                       PlannerService.sharedInstance.user!.lifeCategoriesMap =

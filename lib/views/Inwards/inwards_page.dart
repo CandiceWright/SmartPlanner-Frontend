@@ -16,8 +16,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:confetti/confetti.dart';
 import 'package:http/http.dart' as http;
 
-import 'new_inward_item_page.dart';
-
 class InwardsPage extends StatefulWidget {
   const InwardsPage({Key? key}) : super(key: key);
 
@@ -68,14 +66,6 @@ class _InwardsPageState extends State<InwardsPage> {
     setState(() {
       setVideoController();
     });
-  }
-
-  void _openNewInwardItemPage() {
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) =>
-                NewInwardItemPage(updateContent: _updateContent)));
   }
 
   void _updateContent() {
@@ -212,20 +202,6 @@ class _InwardsPageState extends State<InwardsPage> {
                                           ),
                                         ),
                                       );
-                                      // if (video != null) {
-                                      //   //await video.saveTo(video.path);
-                                      //   setVideoController(video);
-                                      //   setState(() {
-                                      //     fileMedia = video;
-                                      //     PlannerService.sharedInstance.user!
-                                      //         .planitVideo = video.path;
-                                      //     PlannerService.sharedInstance.user!
-                                      //         .hasPlanitVideo = true;
-                                      //   });
-                                      // } else {
-                                      //   print("Something is wrong");
-                                      //   return;
-                                      // }
                                     },
                                     child: Text("Record Video"))
                               ],
@@ -240,7 +216,16 @@ class _InwardsPageState extends State<InwardsPage> {
           floatingActionButton: PlannerService
                   .sharedInstance.user!.hasPlanitVideo
               ? FloatingActionButton(
-                  onPressed: _openNewInwardItemPage,
+                  onPressed: () async {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => CaptureVideoWithImagePicker(
+                          prevPage: "inward",
+                          updateState: updateState,
+                        ),
+                      ),
+                    );
+                  },
                   tooltip: 'Record new video',
                   child: const Icon(
                     Icons.camera_alt,

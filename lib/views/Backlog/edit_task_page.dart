@@ -263,7 +263,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
                             controller: dateTxtController,
                             readOnly: true,
                             decoration: InputDecoration(
-                              hintText: "Complete on or By (Optional)",
+                              hintText: "Complete by (Optional)",
                               icon: Icon(
                                 Icons.calendar_today,
                                 color: Theme.of(context).colorScheme.primary,
