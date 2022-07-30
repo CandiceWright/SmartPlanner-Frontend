@@ -51,7 +51,7 @@ class _CaptureVideoWithImagePickerState
     // Navigator.of(context).pop(video);
 
     final XFile? video = await _picker.pickVideo(
-        source: ImageSource.camera, maxDuration: const Duration(minutes: 7));
+        source: ImageSource.camera, maxDuration: const Duration(minutes: 2));
 
     print("video has been recorded");
     //print(video!.path);

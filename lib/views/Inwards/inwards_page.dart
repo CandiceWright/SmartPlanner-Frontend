@@ -118,8 +118,8 @@ class _InwardsPageState extends State<InwardsPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            title:
-                const Text("The Cover", style: TextStyle(color: Colors.white)),
+            title: const Text("Another Planit",
+                style: TextStyle(color: Colors.white)),
             centerTitle: true,
             bottom: const PreferredSize(
                 child: Align(
@@ -127,7 +127,7 @@ class _InwardsPageState extends State<InwardsPage> {
                   child: Padding(
                     padding: EdgeInsets.only(bottom: 10),
                     child: Text(
-                      "This is Me...",
+                      "My Personal Space",
                       style: TextStyle(color: Colors.white),
                       //textAlign: TextAlign.center,
                     ),
@@ -186,7 +186,7 @@ class _InwardsPageState extends State<InwardsPage> {
                                 const Padding(
                                   padding: EdgeInsets.all(10),
                                   child: Text(
-                                    "Every now and then we have to think about and remind ourselves who we are. This is it! Record a short video for your planit that you can always look back and reflect on. You can update this video as much as you'd like. So what do you say?",
+                                    "This is your cover video, 1-2 minutes. Whenever you enter your planit, you'll see it. Think of it as a positive video message to yourself that you can watch and reflect on whenever you want. Tips: This is YOUR space! Add whatever makes you 'YOU' in this cover video. You can record a video or upload your own. ",
                                     style: TextStyle(fontSize: 20),
                                     textAlign: TextAlign.center,
                                   ),
@@ -203,7 +203,7 @@ class _InwardsPageState extends State<InwardsPage> {
                                         ),
                                       );
                                     },
-                                    child: Text("Record Video"))
+                                    child: Text("Create your Cover Video"))
                               ],
                             ),
                           ),
