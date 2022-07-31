@@ -108,7 +108,9 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
 
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) {
-              return const EnterPlannerVideoPage();
+              return const EnterPlannerVideoPage(
+                fromPage: "signup",
+              );
             },
           ));
         } else {

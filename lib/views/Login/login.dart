@@ -385,14 +385,24 @@ class _LoginPageState extends State<LoginPage> {
                       //     return const EnterPlannerVideoPage();
                       //   },
                       // ));
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) {
-                          return const NavigationWrapper();
-                        },
-                        settings: const RouteSettings(
-                          name: 'navigaionPage',
-                        ),
-                      ));
+                      if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const EnterPlannerVideoPage(
+                              fromPage: "login",
+                            );
+                          },
+                        ));
+                      } else {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const NavigationWrapper();
+                          },
+                          settings: const RouteSettings(
+                            name: 'navigaionPage',
+                          ),
+                        ));
+                      }
                     } else {
                       showDialog(
                           context: context,

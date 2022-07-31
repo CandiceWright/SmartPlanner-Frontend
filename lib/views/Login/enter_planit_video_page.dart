@@ -4,7 +4,9 @@ import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 
 class EnterPlannerVideoPage extends StatefulWidget {
-  const EnterPlannerVideoPage({Key? key}) : super(key: key);
+  final String fromPage;
+  const EnterPlannerVideoPage({Key? key, required this.fromPage})
+      : super(key: key);
 
   @override
   State<EnterPlannerVideoPage> createState() => _EnterPlannerVideoPageState();
@@ -16,15 +18,27 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(
-        "assets/images/another_planit_animation_video.mp4")
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-        _controller.play();
-        _controller.setLooping(false);
-        _controller.addListener(checkVideoEnded);
-      });
+    if (widget.fromPage == "signup") {
+      _controller = VideoPlayerController.asset(
+          "assets/images/another_planit_animation_video.mp4")
+        ..initialize().then((_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+          _controller.play();
+          _controller.setLooping(false);
+          _controller.addListener(checkVideoEnded);
+        });
+    } else {
+      _controller = VideoPlayerController.network(
+          PlannerService.sharedInstance.user!.planitVideo)
+        ..initialize().then((_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+          _controller.play();
+          _controller.setLooping(false);
+          _controller.addListener(checkVideoEnded);
+        });
+    }
   }
 
   void checkVideoEnded() {
@@ -39,6 +53,7 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
 
   goToPlanner() {
     _controller.removeListener(checkVideoEnded);
+    _controller.pause();
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const NavigationWrapper();
