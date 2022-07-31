@@ -766,6 +766,22 @@ class _CalendarPageState extends State<CalendarPage> {
                       Radius.circular(8),
                     ),
                   ),
+                  leading: PlannerService.sharedInstance.user!.profileImage ==
+                          "assets/images/profile_pic_icon.png"
+                      ? CircleAvatar(
+                          // // backgroundImage: AssetImage(
+                          //     PlannerService.sharedInstance.user!.profileImage),
+                          backgroundImage: AssetImage(
+                              PlannerService.sharedInstance.user!.profileImage),
+                          radius: 30,
+                        )
+                      : CircleAvatar(
+                          // // backgroundImage: AssetImage(
+                          //     PlannerService.sharedInstance.user!.profileImage),
+                          backgroundImage: NetworkImage(
+                              PlannerService.sharedInstance.user!.profileImage),
+                          radius: 30,
+                        ),
                   trailing: Checkbox(
                     side: const BorderSide(color: Colors.white),
                     //value: meeting.isAccomplished,
