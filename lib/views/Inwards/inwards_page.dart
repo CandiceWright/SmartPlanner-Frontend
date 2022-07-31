@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -44,16 +45,16 @@ class _InwardsPageState extends State<InwardsPage> {
     super.initState();
     print("I am about to show video on inwards page");
     print(PlannerService.sharedInstance.user!.planitVideo);
-    if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-      _videoPlayerController = VideoPlayerController.network(
-          PlannerService.sharedInstance.user!.planitVideo)
-        ..initialize().then((_) {
-          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-          setState(() {});
-          _videoPlayerController.play();
-          _videoPlayerController.setLooping(true);
-        });
-    }
+    //if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+    _videoPlayerController = VideoPlayerController.network(
+        PlannerService.sharedInstance.user!.planitVideo)
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+        _videoPlayerController.play();
+        _videoPlayerController.setLooping(true);
+      });
+    //}
   }
 
   @override
@@ -83,15 +84,97 @@ class _InwardsPageState extends State<InwardsPage> {
           _videoPlayerController.setLooping(true);
         });
     });
-    // setState(() {
-    //   _videoPlayerController = VideoPlayerController.file(File(video.path))
-    //     ..initialize().then((_) {
-    //       // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-    //       setState(() {});
-    //       _videoPlayerController.play();
-    //       _videoPlayerController.setLooping(true);
-    //     });
-    // });
+  }
+
+  createInwardVideo(XFile? video) async {
+    if (video != null) {
+      String path = video.path;
+      String name = video.name;
+      print("I am in save inward video");
+      //final thumbnail = await VideoCompress.getFileThumbnail(path);
+      String? result =
+          await PlannerService.firebaseStorage.uploadStory(path, name);
+
+      //store story in db then add story object to the list of stories
+      print("result is ready");
+      print(result);
+      if (result == "error") {
+        //error message
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      } else {
+        //success and result holds url
+        print("success getting video url");
+        print(result);
+
+        //successfully saved thumbnail and result2 has thumbnail url
+        //save tto db now
+        var url = Uri.parse(
+            PlannerService.sharedInstance.serverUrl + '/user/inwardvideo');
+        var body = {
+          'userId': PlannerService.sharedInstance.user!.id,
+          'inwardVideo': result,
+          //'thumbnail': PlannerService.sharedInstance.user!.profileImage
+        };
+        String bodyF = jsonEncode(body);
+        var response = await http.patch(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+
+        print("server came back with a response after saving story");
+        print('Response status: ${response.statusCode}');
+        print('Response body: ${response.body}');
+
+        if (response.statusCode == 200) {
+          print("success saving to db");
+          // var decodedBody = json.decode(response.body);
+          // print(decodedBody);
+          // var id = decodedBody["insertId"];
+          // PlannerService.sharedInstance.user!.planitVideo = result!;
+          //Story newStory = Story(id, result!, result2!, DateTime.now());
+          setState(() {
+            // PlannerService.sharedInstance.user!.profileImage = path;
+            PlannerService.sharedInstance.user!.planitVideo = result!;
+
+            PlannerService.sharedInstance.user!.hasPlanitVideo = true;
+            setVideoController();
+          });
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
+        //}
+      }
+    } else {
+      return;
+    }
   }
 
   @override
@@ -186,24 +269,63 @@ class _InwardsPageState extends State<InwardsPage> {
                                 const Padding(
                                   padding: EdgeInsets.all(10),
                                   child: Text(
-                                    "This is your cover video, 1-2 minutes. Whenever you enter your planit, you'll see it. Think of it as a positive video message to yourself that you can watch and reflect on whenever you want. Tips: This is YOUR space! Add whatever makes you 'YOU' in this cover video. You can record a video or upload your own. ",
+                                    "This is your cover video, 1-2 minutes. Whenever you enter your planit, you'll see it. Think of it as a positive video message to yourself that you can watch and reflect on whenever you want. Tip: Add whatever makes you 'YOU' in this cover video. You can record a video or upload one. ",
                                     style: TextStyle(fontSize: 20),
                                     textAlign: TextAlign.center,
                                   ),
                                 ),
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CaptureVideoWithImagePicker(
-                                            prevPage: "inward",
-                                            updateState: updateState,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CaptureVideoWithImagePicker(
+                                                prevPage: "inward",
+                                                updateState: updateState,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: CircleAvatar(
+                                          child: const Icon(
+                                            Icons.video_camera_front,
+                                            color: Colors.white,
                                           ),
+                                          radius: 25,
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
                                         ),
-                                      );
-                                    },
-                                    child: Text("Create your Cover Video"))
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          final XFile? video =
+                                              await _picker.pickVideo(
+                                                  source: ImageSource.gallery,
+                                                  maxDuration: const Duration(
+                                                      minutes: 2));
+                                          createInwardVideo(video);
+                                        },
+                                        child: CircleAvatar(
+                                          child: const Icon(
+                                            Icons.upload,
+                                            color: Colors.white,
+                                          ),
+                                          radius: 25,
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
@@ -217,16 +339,76 @@ class _InwardsPageState extends State<InwardsPage> {
                   .sharedInstance.user!.hasPlanitVideo
               ? FloatingActionButton(
                   onPressed: () async {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => CaptureVideoWithImagePicker(
-                          prevPage: "inward",
-                          updateState: updateState,
-                        ),
-                      ),
-                    );
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Change Cover Video"),
+                            content: Row(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CaptureVideoWithImagePicker(
+                                            prevPage: "inward",
+                                            updateState: updateState,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: CircleAvatar(
+                                      child: const Icon(
+                                        Icons.video_camera_front,
+                                        color: Colors.white,
+                                      ),
+                                      radius: 50,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: GestureDetector(
+                                    onTap: () async {
+                                      Navigator.pop(context);
+                                      final XFile? video =
+                                          await _picker.pickVideo(
+                                              source: ImageSource.gallery,
+                                              maxDuration:
+                                                  const Duration(minutes: 2));
+                                      createInwardVideo(video);
+                                    },
+                                    child: CircleAvatar(
+                                      child: const Icon(
+                                        Icons.upload,
+                                        color: Colors.white,
+                                      ),
+                                      radius: 50,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
                   },
-                  tooltip: 'Record new video',
+                  tooltip: 'New video',
                   child: const Icon(
                     Icons.camera_alt,
                     color: Colors.white,
