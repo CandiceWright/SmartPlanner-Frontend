@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_planner/models/goal.dart';
 import 'package:practice_planner/services/planner_service.dart';
+import 'package:practice_planner/services/subscription_provider.dart';
 import 'package:practice_planner/views/Login/enter_planit_video_page.dart';
 import 'package:practice_planner/views/Login/forgot_password_page.dart';
 import 'package:practice_planner/views/Login/password_resetpin_page.dart';
 import 'package:practice_planner/views/Login/signup.dart';
+import 'package:practice_planner/views/Subscription/subscription_page.dart';
 import '../../models/backlog_item.dart';
 import '../../models/definition.dart';
 import '../../models/habit.dart';
@@ -29,8 +31,97 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var emailTextController = TextEditingController();
   var passwordTextController = TextEditingController();
+  var subscriptionProvider = SubscriptionsProvider();
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var questionIndex = 0;
+  @override
+  initState() {
+    // subscriptionProvider.addListener(checkPurchaseStatus);
+    subscriptionProvider.purchaseError.addListener(purchaseError);
+    subscriptionProvider.purchasePending.addListener(purchasePending);
+    subscriptionProvider.purchaseRestored
+        .addListener(purchaseRestoredorComplete);
+    subscriptionProvider.purchaseSuccess
+        .addListener(purchaseRestoredorComplete);
+    super.initState();
+  }
+
+  purchaseError() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+                'Oops! Looks like something went wrong. Please try again.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  purchasePending() {
+    const CircularProgressIndicator(
+      //color: ,
+      value: null,
+      semanticsLabel: 'Linear progress indicator',
+    );
+  }
+
+  purchaseRestoredorComplete() {
+    //show an alert saying that the purchase was restored and prompt them to log back in
+  }
+
+  // checkPurchaseStatus() {
+  //   print("there was an update in subscription provider");
+  //   if (subscriptionProvider.purchaseError == true) {
+  //     print("purchase produced an error");
+  //     //show error
+  //     showDialog(
+  //         context: context,
+  //         builder: (context) {
+  //           return AlertDialog(
+  //             title: Text(
+  //                 'Oops! Looks like something went wrong. Please try again.'),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 child: Text('OK'),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               )
+  //             ],
+  //           );
+  //         });
+  //   } else if (subscriptionProvider.purchaseSuccess == true ||
+  //       subscriptionProvider.purchaseRestored == true) {
+  //     print("purchase was successful or restored");
+  //     //go to next page
+
+  //     showDialog(
+  //         context: context,
+  //         builder: (context) {
+  //           return AlertDialog(
+  //             title: Text(
+  //                 'Great! Your subscription was restored. Try logging in now.'),
+  //             actions: <Widget>[
+  //               TextButton(
+  //                 child: Text('OK'),
+  //                 onPressed: () {
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               )
+  //             ],
+  //           );
+  //         });
+  //   }
+  // }
+
   void login() async {
     //validate login and if successful, go to home of app
     var email = emailTextController.text;
@@ -380,29 +471,85 @@ class _LoginPageState extends State<LoginPage> {
 
                       PlannerService.sharedInstance.user!.stories = stories;
 
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //   builder: (context) {
-                      //     return const EnterPlannerVideoPage();
-                      //   },
-                      // ));
-                      if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) {
-                            return const EnterPlannerVideoPage(
-                              fromPage: "login",
-                            );
-                          },
-                        ));
+                      //check if the user has a subscription
+                      if (subscriptionProvider.purchases.isNotEmpty) {
+                        if (PlannerService
+                            .sharedInstance.user!.hasPlanitVideo) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return const EnterPlannerVideoPage(
+                                fromPage: "login",
+                              );
+                            },
+                          ));
+                        } else {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return const NavigationWrapper();
+                            },
+                            settings: const RouteSettings(
+                              name: 'navigaionPage',
+                            ),
+                          ));
+                        }
                       } else {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) {
-                            return const NavigationWrapper();
-                          },
-                          settings: const RouteSettings(
-                            name: 'navigaionPage',
-                          ),
-                        ));
+                        //show error message to restore purchases or subscribe again
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                    "We weren't able to confirm your subscription. If you still have an active subscription, try restoring your purchase below. Otherwise, your subscription has expired or been cancelled. Subscribe again."),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('Restore'),
+                                    onPressed: () {
+                                      //Navigator.of(context).pop();
+                                      subscriptionProvider.restorePurchases();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Subscribe again'),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) {
+                                          return const SubscriptionPage(
+                                            fromPage: 'login',
+                                          );
+                                        },
+                                      ));
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Cancel'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                ],
+                              );
+                            });
                       }
+
+                      // if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+                      //   Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) {
+                      //       return const EnterPlannerVideoPage(
+                      //         fromPage: "login",
+                      //       );
+                      //     },
+                      //   ));
+                      // } else {
+                      //   Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) {
+                      //       return const NavigationWrapper();
+                      //     },
+                      //     settings: const RouteSettings(
+                      //       name: 'navigaionPage',
+                      //     ),
+                      //   ));
+                      // }
                     } else {
                       showDialog(
                           context: context,

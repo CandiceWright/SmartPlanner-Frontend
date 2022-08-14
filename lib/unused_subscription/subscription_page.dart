@@ -3,17 +3,16 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import '/views/Login/login.dart';
 import '/views/Login/signup.dart';
 
-class WelcomePage extends StatefulWidget {
-  const WelcomePage({Key? key}) : super(key: key);
+class SubscriptionPage extends StatefulWidget {
+  const SubscriptionPage({Key? key}) : super(key: key);
 
   @override
-  State<WelcomePage> createState() => _WelcomePageState();
+  State<SubscriptionPage> createState() => _SubscriptionPageState();
 }
 
 //The widget can be recreated, but the state is attached to the user interface
-class _WelcomePageState extends State<WelcomePage> {
+class _SubscriptionPageState extends State<SubscriptionPage> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
-  var questionIndex = 0;
 
   @override
   void dispose() {}

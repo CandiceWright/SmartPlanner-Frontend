@@ -9,6 +9,7 @@ import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/Login/login.dart';
 import '../../Themes/app_themes.dart';
 import '../../models/user.dart';
+import '../Subscription/subscription_page.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/navigation_wrapper.dart';
 import 'package:http/http.dart' as http;
@@ -106,10 +107,17 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
               Colors.grey;
           PlannerService.sharedInstance.user!.backlogMap.addAll({"other": []});
 
+          // Navigator.of(context).push(MaterialPageRoute(
+          //   builder: (context) {
+          //     return const EnterPlannerVideoPage(
+          //       fromPage: "signup",
+          //     );
+          //   },
+          // ));
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) {
-              return const EnterPlannerVideoPage(
-                fromPage: "signup",
+              return const SubscriptionPage(
+                fromPage: 'signup',
               );
             },
           ));

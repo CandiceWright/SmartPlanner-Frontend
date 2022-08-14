@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/main.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/services/planner_service.dart';
+import 'package:practice_planner/services/subscription_provider.dart';
 import 'package:practice_planner/views/Login/login.dart';
 import 'package:practice_planner/views/Login/planit_name_page.dart';
 import '/views/Goals/goals_page.dart';
@@ -18,6 +19,8 @@ class SignupPage extends StatefulWidget {
 
 //The widget can be recreated, but the state is attached to the user interface
 class _SignupPageState extends State<SignupPage> {
+  var subscriptionProvider = SubscriptionsProvider();
+
   var emailTextController = TextEditingController();
   var passwordTextController = TextEditingController();
   var usernameTextController = TextEditingController();
@@ -33,33 +36,21 @@ class _SignupPageState extends State<SignupPage> {
     //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
   }
 
-  void signup() async {
-    var email = emailTextController.text;
-    var password = passwordTextController.text;
-    //call sign up server route and then go to home of app
-    var url =
-        Uri.parse(PlannerService.sharedInstance.serverUrl + '/email/' + email);
-    var response = await http.get(url);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+  @override
+  initState() {
+    super.initState();
+  }
 
-    if (response.body == "no user exists") {
-      //can go to the next page to get planit name
-      Navigator.push(
-          context,
-          CupertinoPageRoute(
-              builder: (context) => PlanitNamePage(
-                    email: email,
-                    password: password,
-                  )));
-    } else {
-      //show alert that user already exists with that email
+  void signup() async {
+    //first check that this icloud accountt doesn't already have a subscription
+    if (subscriptionProvider.purchases.isNotEmpty) {
+      //user has already subscribed
       showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
               title: Text(
-                  'Oops! Looks like there is already an account with this email. Please sign in.'),
+                  'You have already subscribed and created an account. Only one Planit is allowed per subscription. Please login to your original account.'),
               actions: <Widget>[
                 TextButton(
                   child: Text('OK'),
@@ -70,6 +61,44 @@ class _SignupPageState extends State<SignupPage> {
               ],
             );
           });
+    } else {
+      var email = emailTextController.text;
+      var password = passwordTextController.text;
+      //call sign up server route and then go to home of app
+      var url = Uri.parse(
+          PlannerService.sharedInstance.serverUrl + '/email/' + email);
+      var response = await http.get(url);
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.body == "no user exists") {
+        //can go to the next page to get planit name
+        Navigator.push(
+            context,
+            CupertinoPageRoute(
+                builder: (context) => PlanitNamePage(
+                      email: email,
+                      password: password,
+                    )));
+      } else {
+        //show alert that user already exists with that email
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like there is already an account with this email. Please sign in.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
     }
   }
 

@@ -53,6 +53,8 @@ dependencies:
   video_compress: ^3.1.0
   date_picker_timeline: ^1.2.3
   timelines: ^0.1.0
+  in_app_purchase: ^3.0.6
+  purchases_flutter: ^3.0.0
 
 dev_dependencies:
   flutter_test:
