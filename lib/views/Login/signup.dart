@@ -19,7 +19,7 @@ class SignupPage extends StatefulWidget {
 
 //The widget can be recreated, but the state is attached to the user interface
 class _SignupPageState extends State<SignupPage> {
-  var subscriptionProvider = SubscriptionsProvider();
+  //var subscriptionProvider = SubscriptionsProvider();
 
   var emailTextController = TextEditingController();
   var passwordTextController = TextEditingController();
@@ -43,7 +43,8 @@ class _SignupPageState extends State<SignupPage> {
 
   void signup() async {
     //first check that this icloud accountt doesn't already have a subscription
-    if (subscriptionProvider.purchases.isNotEmpty) {
+    //await PlannerService.subscriptionProvider.restorePurchases();
+    if (PlannerService.subscriptionProvider.purchases.isNotEmpty) {
       //user has already subscribed
       showDialog(
           context: context,

@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:practice_planner/services/planner_service.dart';
+import 'package:http/http.dart' as http;
 
 class SubscriptionsProvider extends ChangeNotifier {
   // save the stream to cancel it onDone
@@ -9,8 +12,10 @@ class SubscriptionsProvider extends ChangeNotifier {
   ValueNotifier purchasePending = ValueNotifier(false);
   ValueNotifier purchaseSuccess = ValueNotifier(false);
   ValueNotifier purchaseError = ValueNotifier(false);
+  ValueNotifier purchaseExpired = ValueNotifier(false);
   ValueNotifier purchaseRestored = ValueNotifier(false);
-  List<String> purchases = [];
+  ValueNotifier showPurchaseRestored = ValueNotifier(false);
+  List<PurchaseDetails> purchases = [];
 
   SubscriptionsProvider() {
     print("I am initializing subscription provider");
@@ -18,6 +23,7 @@ class SubscriptionsProvider extends ChangeNotifier {
         InAppPurchase.instance.purchaseStream;
 
     _streamSubscription = purchaseUpdated.listen((purchaseDetailsList) {
+      print("I am listening for purchase details");
       // Handle the purchased subscriptions
       _purchaseUpdate(purchaseDetailsList);
     }, onDone: () {
@@ -25,6 +31,9 @@ class SubscriptionsProvider extends ChangeNotifier {
     }, onError: (error) {
       // handle the error
     });
+    //should not show restored purchase dialog
+    purchases = [];
+    InAppPurchase.instance.restorePurchases();
   }
 
   _purchaseUpdate(List<PurchaseDetails> purchaseDetailsList) {
@@ -34,6 +43,10 @@ class SubscriptionsProvider extends ChangeNotifier {
       if (purchaseDetails.status == PurchaseStatus.pending) {
         print("purchase is pending");
         purchasePending.value = true;
+        purchaseError.value = false;
+        purchaseExpired.value = false;
+        purchaseSuccess.value = false;
+        purchaseRestored.value = false;
         //_showPendingUI();
 
       } else {
@@ -43,19 +56,28 @@ class SubscriptionsProvider extends ChangeNotifier {
           //_handleError(purchaseDetails.error!);
           print("there was an error");
           purchaseError.value = true;
+          purchasePending.value = false;
+          purchaseExpired.value = false;
+          purchaseSuccess.value = false;
+          purchaseRestored.value = false;
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
-          print("item purchased or restored");
+          print("item purchased");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
           _verifyPurchaseAndEnablePremium(purchaseDetails);
         } else if (purchaseDetails.status == PurchaseStatus.restored) {
-          print("item purchased or restored");
+          print("item restored");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
-          _verifyRestoredPurchase(purchaseDetails);
+          _verifyRestoredAndEnablePremium(purchaseDetails);
         }
 
         // Whenever the purchase is done, complete it by calling complete.
         if (purchaseDetails.pendingCompletePurchase) {
           print("purchase complete");
+          purchasePending.value = false;
+          purchaseError.value = false;
+          purchaseExpired.value = false;
+          purchaseSuccess.value = false;
+          purchaseRestored.value = false;
           await InAppPurchase.instance.completePurchase(purchaseDetails);
         }
       }
@@ -74,7 +96,7 @@ class SubscriptionsProvider extends ChangeNotifier {
     // Hardcode subscriptionIds you want to offer.
     const Set<String> _subscriptionIds = <String>{
       'monthly_subscription',
-      'yearly_subscription'
+      //'yearly_subscription'
     };
     final ProductDetailsResponse response =
         await InAppPurchase.instance.queryProductDetails(_subscriptionIds);
@@ -100,7 +122,126 @@ class SubscriptionsProvider extends ChangeNotifier {
     InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
+  //used to check purchase when user goes out of app and comes back in
+  Future<bool> verifyPurchase(PurchaseDetails purchaseDetails) async {
+    String receipt = purchaseDetails.verificationData.serverVerificationData;
+
+    var body = {
+      'receipt': receipt,
+    };
+    var bodyF = jsonEncode(body);
+    //print(bodyF);
+
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/subscription');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      //print(decodedBody);
+      int status = decodedBody["status"];
+      print("printing status of subscription veriification");
+      print(status);
+      if (status == 0) {
+        int expiresDate =
+            int.parse(decodedBody["latest_receipt_info"][0]["expires_date_ms"]);
+        print("printing expires date");
+        print(expiresDate);
+        int currentDate = DateTime.now().millisecondsSinceEpoch;
+        print(currentDate);
+        if (expiresDate < currentDate) {
+          //expired
+          //purchaseExpired.value = true;
+          print("purchase is expired");
+          return false;
+        } else {
+          print("purchase is good");
+          return true;
+          //purchaseSuccess.value = true;
+          //purchases.add(purchaseDetails.productID);
+        }
+      } else {
+        return false;
+      }
+    } else {
+      //500 error, show an alert
+      purchaseError.value = true;
+    }
+    return false;
+  }
+
   _verifyPurchaseAndEnablePremium(PurchaseDetails purchaseDetails) async {
+    String receipt = purchaseDetails.verificationData.serverVerificationData;
+
+    var body = {
+      'receipt': receipt,
+    };
+    var bodyF = jsonEncode(body);
+    //print(bodyF);
+
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/subscription');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      //print(decodedBody);
+      int status = decodedBody["status"];
+      print("printing status of subscription veriification");
+      print(status);
+      if (status == 0) {
+        int expiresDate =
+            int.parse(decodedBody["latest_receipt_info"][0]["expires_date_ms"]);
+        print("printing expires date");
+        print(expiresDate);
+        int currentDate = DateTime.now().millisecondsSinceEpoch;
+        print(currentDate);
+        if (expiresDate < currentDate) {
+          //expired
+          purchaseExpired.value = true;
+          purchaseError.value = false;
+          purchasePending.value = false;
+          purchaseSuccess.value = false;
+          purchaseRestored.value = false;
+        } else {
+          purchaseSuccess.value = true;
+          purchaseExpired.value = false;
+          purchaseError.value = false;
+          purchasePending.value = false;
+          purchaseRestored.value = false;
+          purchases.add(purchaseDetails);
+        }
+      } else if (status == 21006) {
+        //expired
+        purchaseExpired.value = true;
+        purchaseError.value = false;
+        purchasePending.value = false;
+        purchaseSuccess.value = false;
+        purchaseRestored.value = false;
+      } else {
+        purchaseError.value = true;
+        purchaseExpired.value = false;
+        purchasePending.value = false;
+        purchaseSuccess.value = false;
+        purchaseRestored.value = false;
+      }
+    } else {
+      //500 error, show an alert
+      purchaseError.value = true;
+      purchaseExpired.value = false;
+      purchasePending.value = false;
+      purchaseSuccess.value = false;
+      purchaseRestored.value = false;
+    }
+  }
+
+  _verifyRestoredAndEnablePremium(PurchaseDetails purchaseDetails) async {
     // check if the purchase is valid by calling your server including the receipt data.
     // bool valid = await _verifyPurchase(purchaseDetails);
     // if (valid) {
@@ -111,18 +252,80 @@ class SubscriptionsProvider extends ChangeNotifier {
     //   // The receipt is not valid. Don't enable any subscription features.
     //   // _handleInvalidPurchase(purchaseDetails);
     // }
+    String receipt = purchaseDetails.verificationData.serverVerificationData;
 
-    purchaseSuccess.value = true;
-    purchases.add(purchaseDetails.productID);
+    var body = {
+      'receipt': receipt,
+    };
+    var bodyF = jsonEncode(body);
+    //print(bodyF);
+
+    var url =
+        Uri.parse(PlannerService.sharedInstance.serverUrl + '/subscription');
+    var response = await http.post(url,
+        headers: {"Content-Type": "application/json"}, body: bodyF);
+    print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      var decodedBody = json.decode(response.body);
+      //print(decodedBody);
+      int status = decodedBody["status"];
+      print("printing status of subscription veriification");
+      print(status);
+      if (status == 0) {
+        int expiresDate =
+            int.parse(decodedBody["latest_receipt_info"][0]["expires_date_ms"]);
+        print("printing expires date");
+        print(expiresDate);
+        int currentDate = DateTime.now().millisecondsSinceEpoch;
+        print(currentDate);
+        if (expiresDate < currentDate) {
+          //expired
+          purchaseExpired.value = true;
+          purchaseError.value = false;
+          purchasePending.value = false;
+          purchaseSuccess.value = false;
+          purchaseRestored.value = false;
+        } else {
+          purchaseExpired.value = false;
+          purchaseError.value = false;
+          purchasePending.value = false;
+          purchaseSuccess.value = false;
+          purchaseRestored.value = true;
+          purchases.add(purchaseDetails);
+        }
+      } else if (status == 21006) {
+        //expired
+        purchaseExpired.value = true;
+        purchaseError.value = false;
+        purchasePending.value = false;
+        purchaseSuccess.value = false;
+        purchaseRestored.value = false;
+      } else {
+        //error
+        purchaseError.value = true;
+        purchaseExpired.value = false;
+        purchasePending.value = false;
+        purchaseSuccess.value = false;
+        purchaseRestored.value = false;
+      }
+    } else {
+      //500 error, show an alert
+      purchaseError.value = true;
+      purchaseExpired.value = false;
+      purchasePending.value = false;
+      purchaseSuccess.value = false;
+      purchaseRestored.value = false;
+    }
   }
-
-  _verifyRestoredPurchase(PurchaseDetails pd) {}
 
   _verifyPurchase(PurchaseDetails purchaseDetails) async {
     // check if the purchase is valid by calling your server including the receipt data.
   }
 
   restorePurchases() {
+    purchases = [];
     InAppPurchase.instance.restorePurchases();
   }
 

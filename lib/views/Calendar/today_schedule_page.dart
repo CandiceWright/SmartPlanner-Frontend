@@ -574,74 +574,82 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
 
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Container(
-              color: Colors.white,
-              child: Row(
-                children: [
-                  //Padding(
-                  //padding: EdgeInsets.only(right: 8),
-                  //child:
-                  Text(
-                    DateFormat.MMM().format(_selectedDate),
-                    // _selectedDate.toString("MMMM"),
-                    style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.headlineSmall!.fontSize,
-                    ),
-                    // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+          Container(
+            color: Colors.white,
+            child: Column(children: [
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Container(
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      //Padding(
+                      //padding: EdgeInsets.only(right: 8),
+                      //child:
+                      Text(
+                        DateFormat.MMM().format(_selectedDate),
+                        // _selectedDate.toString("MMMM"),
+                        style: TextStyle(
+                          fontSize: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .fontSize,
+                        ),
+                        // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                      ),
+                      //),
+                      Text(
+                        " " + _selectedDate.day.toString(),
+                        style: TextStyle(
+                          fontSize: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .fontSize,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      // Text(
+                      //   _selectedDate.day.toString() +
+                      //       ", " +
+                      //       _selectedDate.year.toString(),
+                      // style: TextStyle(
+                      //     color: Theme.of(context).primaryColor,
+                      //     fontSize: Theme.of(context)
+                      //         .textTheme
+                      //         .headlineSmall!
+                      //         .fontSize),
+                      //   // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                      // )
+                    ],
                   ),
-                  //),
-                  Text(
-                    " " + _selectedDate.day.toString(),
-                    style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.headlineSmall!.fontSize,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  // Text(
-                  //   _selectedDate.day.toString() +
-                  //       ", " +
-                  //       _selectedDate.year.toString(),
-                  // style: TextStyle(
-                  //     color: Theme.of(context).primaryColor,
-                  //     fontSize: Theme.of(context)
-                  //         .textTheme
-                  //         .headlineSmall!
-                  //         .fontSize),
-                  //   // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-                  // )
-                ],
+                ),
               ),
-            ),
-          ),
-
-          ListTile(
-            leading: Image.asset(
-              'assets/images/sunrise.png',
-              // width: 20,
-              // height: 20,
-            ),
-            title: LinearProgressIndicator(
-              value: ((DateTime.now().hour) + 1) / 24,
-              backgroundColor: Colors.grey.shade400,
-              color: Theme.of(context).primaryColor,
-            ),
-            trailing: Image.asset(
-              'assets/images/night.png',
-              // width: 20,
-              // height: 20,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Text(
-              (24 - ((DateTime.now().hour) + 1)).toString() +
-                  " hours remaining in this day!",
-              textAlign: TextAlign.center,
-            ),
+              ListTile(
+                leading: Image.asset(
+                  'assets/images/sunrise.png',
+                  // width: 20,
+                  // height: 20,
+                ),
+                title: LinearProgressIndicator(
+                  value: ((DateTime.now().hour) + 1) / 24,
+                  backgroundColor: Colors.grey.shade400,
+                  color: Theme.of(context).primaryColor,
+                ),
+                trailing: Image.asset(
+                  'assets/images/night.png',
+                  // width: 20,
+                  // height: 20,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  (24 - ((DateTime.now().hour) + 1)).toString() +
+                      " hours remaining in this day!",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ]),
           ),
 
           // Container(
@@ -691,121 +699,122 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
               timeSlotViewSettings: TimeSlotViewSettings(
                 timeInterval: Duration(hours: 1),
                 startHour: DateTime.now().hour.toDouble(),
-                //endHour: ,
-                timeIntervalHeight: 80,
-                //timeFormat: 'h:mm',
-                // timeTextStyle: TextStyle(
-                //   color: Colors.white,
-                // ),
+                timeIntervalHeight: 120,
               ),
               appointmentBuilder:
                   (BuildContext context, CalendarAppointmentDetails details) {
                 final Event meeting = details.appointments.first;
-                return ListTile(
-                  tileColor: meeting.category.color,
-                  title: Text(
-                    meeting.description,
-                    style: const TextStyle(
+                return Container(
+                  //alignment: Alignment.topLeft,
+                  //height: 30,
+                  child: ListTile(
+                    tileColor: meeting.category.color,
+                    title: Text(
+                      meeting.description,
+                      style: const TextStyle(
                         color: Colors.white,
                         // fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    DateFormat('h:mm').format(meeting.start) +
-                        " - " +
-                        DateFormat('h:mm').format(meeting.end),
-                    // DateFormat.Hm().format(meeting.start.toLocal()) +
-                    //     " - " +
-                    //     DateFormat.Hm().format(meeting.end.toLocal()),
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(8),
+                        //fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  leading: PlannerService.sharedInstance.user!.profileImage ==
-                          "assets/images/profile_pic_icon.png"
-                      ? CircleAvatar(
-                          // // backgroundImage: AssetImage(
-                          //     PlannerService.sharedInstance.user!.profileImage),
-                          backgroundImage: AssetImage(
-                              PlannerService.sharedInstance.user!.profileImage),
-                          radius: 30,
-                        )
-                      : CircleAvatar(
-                          // // backgroundImage: AssetImage(
-                          //     PlannerService.sharedInstance.user!.profileImage),
-                          backgroundImage: NetworkImage(
-                              PlannerService.sharedInstance.user!.profileImage),
-                          radius: 30,
-                        ),
-                  trailing: Checkbox(
-                    side: const BorderSide(color: Colors.white),
-                    //value: meeting.isAccomplished,
-                    value: TodaySchedulePage
-                        .events
-                        .appointments![TodaySchedulePage.events.appointments!
-                            .indexOf(meeting)]
-                        .isAccomplished,
-                    shape: const CircleBorder(),
-                    onChanged: (bool? value) async {
-                      print(value);
-                      //setState(() async {
-                      //update on server and then update locally
-                      //meeting.isAccomplished = value;
-                      int id = meeting.id!;
-                      var body = {
-                        'eventId': id,
-                        'eventStatus': value,
-                      };
-                      String bodyF = jsonEncode(body);
-                      print(bodyF);
+                    subtitle: Text(
+                      DateFormat('h:mm').format(meeting.start) +
+                          " - " +
+                          DateFormat('h:mm').format(meeting.end),
+                      // DateFormat.Hm().format(meeting.start.toLocal()) +
+                      //     " - " +
+                      //     DateFormat.Hm().format(meeting.end.toLocal()),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8),
+                      ),
+                    ),
+                    leading: PlannerService.sharedInstance.user!.profileImage ==
+                            "assets/images/profile_pic_icon.png"
+                        ? CircleAvatar(
+                            // // backgroundImage: AssetImage(
+                            //     PlannerService.sharedInstance.user!.profileImage),
+                            backgroundImage: AssetImage(PlannerService
+                                .sharedInstance.user!.profileImage),
+                            //radius: 30,
+                          )
+                        : CircleAvatar(
+                            // // backgroundImage: AssetImage(
+                            //     PlannerService.sharedInstance.user!.profileImage),
+                            backgroundImage: NetworkImage(PlannerService
+                                .sharedInstance.user!.profileImage),
+                            //radius: 30,
+                          ),
+                    trailing: Checkbox(
+                      side: const BorderSide(color: Colors.white),
+                      //value: meeting.isAccomplished,
+                      value: TodaySchedulePage
+                          .events
+                          .appointments![TodaySchedulePage.events.appointments!
+                              .indexOf(meeting)]
+                          .isAccomplished,
+                      shape: const CircleBorder(),
+                      onChanged: (bool? value) async {
+                        print(value);
+                        //setState(() async {
+                        //update on server and then update locally
+                        //meeting.isAccomplished = value;
+                        int id = meeting.id!;
+                        var body = {
+                          'eventId': id,
+                          'eventStatus': value,
+                        };
+                        String bodyF = jsonEncode(body);
+                        print(bodyF);
 
-                      var url = Uri.parse(
-                          PlannerService.sharedInstance.serverUrl +
-                              '/user/calendar/event/status');
-                      var response = await http.patch(url,
-                          headers: {"Content-Type": "application/json"},
-                          body: bodyF);
-                      print('Response status: ${response.statusCode}');
-                      print('Response body: ${response.body}');
+                        var url = Uri.parse(
+                            PlannerService.sharedInstance.serverUrl +
+                                '/user/calendar/event/status');
+                        var response = await http.patch(url,
+                            headers: {"Content-Type": "application/json"},
+                            body: bodyF);
+                        print('Response status: ${response.statusCode}');
+                        print('Response body: ${response.body}');
 
-                      if (response.statusCode == 200) {
-                        setState(() {
-                          TodaySchedulePage
-                              .events
-                              .appointments![TodaySchedulePage
-                                  .events.appointments!
-                                  .indexOf(meeting)]
-                              .isAccomplished = value;
-                          PlannerService.sharedInstance.user!.scheduledEvents =
-                              TodaySchedulePage.events.appointments!
-                                  as List<Event>;
-                        });
-                      } else {
-                        //500 error, show an alert
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(
-                                    'Oops! Looks like something went wrong. Please try again.'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  )
-                                ],
-                              );
-                            });
-                      }
+                        if (response.statusCode == 200) {
+                          setState(() {
+                            TodaySchedulePage
+                                .events
+                                .appointments![TodaySchedulePage
+                                    .events.appointments!
+                                    .indexOf(meeting)]
+                                .isAccomplished = value;
+                            PlannerService
+                                    .sharedInstance.user!.scheduledEvents =
+                                TodaySchedulePage.events.appointments!
+                                    as List<Event>;
+                          });
+                        } else {
+                          //500 error, show an alert
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(
+                                      'Oops! Looks like something went wrong. Please try again.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        }
 
-                      //PlannerService.sharedInstance.user.f
-                      //});
-                    },
+                        //PlannerService.sharedInstance.user.f
+                        //});
+                      },
+                    ),
                   ),
                 );
               },

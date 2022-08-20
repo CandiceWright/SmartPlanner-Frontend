@@ -569,136 +569,43 @@ class _CalendarPageState extends State<CalendarPage> {
           color: Theme.of(context).primaryColor, //change your color here
         ),
       ),
-      //body: Expanded(
-      // body: Container(
-      //   height: MediaQuery.of(context).size.height - // total height
-      //       kToolbarHeight - // top AppBar height
-      //       MediaQuery.of(context).padding.top - // top padding
-      //       kBottomNavigationBarHeight,
-      //   child: Expanded(
-      //     child: Column(
-      //       //mainAxisAlignment: MainAxisAlignment.center,
-      //       children: <Widget>[
-      //         Padding(
-      //           padding: EdgeInsets.all(10),
-      //           child: Row(children: [
-      //             Padding(
-      //               padding: EdgeInsets.only(right: 8),
-      //               child: Text(
-      //                 DateFormat.MMM().format(_selectedDate),
-      //                 // _selectedDate.toString("MMMM"),
-      //                 style: TextStyle(
-      //                     fontSize: Theme.of(context)
-      //                         .textTheme
-      //                         .displaySmall!
-      //                         .fontSize),
-      //                 // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-      //               ),
-      //             ),
-      //             Text(
-      //               _selectedDate.year.toString(),
-      //               style: TextStyle(
-      //                   color: Theme.of(context).primaryColor,
-      //                   fontSize: Theme.of(context)
-      //                       .textTheme
-      //                       .headlineSmall!
-      //                       .fontSize),
-      //               // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-      //             )
-      //           ]),
-      //         ),
-      //         Padding(
-      //           padding: EdgeInsets.all(10),
-      //           child: DatePicker(
-      //             DateTime.now(),
-      //             initialSelectedDate: DateTime.now(),
-      //             selectionColor: Theme.of(context).primaryColor,
-      //             selectedTextColor: Colors.white,
-      //             monthTextStyle: const TextStyle(fontSize: 0),
-      //             dayTextStyle: const TextStyle(color: Colors.grey),
-      //             dateTextStyle: const TextStyle(color: Colors.grey),
-      //             onDateChange: (date) {
-      //               // New date selected
-      //               setState(() {
-      //                 _selectedDate = date;
-      //                 calController.displayDate = _selectedDate;
-      //               });
-      //             },
-      //           ),
-      //         ),
-      //         Container(
-      //           child: SfCalendar(
-      //             //showDatePickerButton: true,
-      //             // headerStyle: CalendarHeaderStyle(
-      //             //   textStyle: TextStyle(color: Colors.white),
-      //             //   // textAlign: TextAlign.center,
-      //             // ),
-      //             backgroundColor: Colors.white,
-      //             headerHeight: 0,
-      //             viewHeaderHeight: 0,
-      //             //cellBorderColor: Colors.transparent,
-      //             controller: calController,
-      //             view: CalendarView.day,
-      //             onTap: calendarTapped,
-      //             initialDisplayDate: DateTime.now(),
-      //             //minDate: DateTime.now().add(const Duration(days: 1)),
-      //             //maxDate: DateTime.now().add(const Duration(days: 1)),
-      //             dataSource: CalendarPage.events,
-      //             //cellBorderColor: Colors.white,
-      //             timeSlotViewSettings: const TimeSlotViewSettings(
-      //               timeInterval: Duration(minutes: 30),
-      //               timeFormat: 'h:mm',
-      //               // timeTextStyle: TextStyle(
-      //               //   color: Colors.white,
-      //               // ),
-      //             ),
-      //             appointmentBuilder: (BuildContext context,
-      //                 CalendarAppointmentDetails details) {
-      //               final Event meeting = details.appointments.first;
-      //               return Card(
-      //                 child: Row(
-      //                   children: [
-      //                     Text(meeting.description),
-      //                     Checkbox(value: false, onChanged: (value) {})
-      //                   ],
-      //                 ),
-      //               );
-      //             },
-      //             //EventDataSource(PlannerService.sharedInstance.user.allEvents),
-      //           ),
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
-      //),
 
       body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Row(children: [
-              Padding(
-                padding: EdgeInsets.only(right: 8),
-                child: Text(
-                  DateFormat.MMM().format(_selectedDate),
-                  // _selectedDate.toString("MMMM"),
-                  style: TextStyle(
-                      fontSize:
-                          Theme.of(context).textTheme.displaySmall!.fontSize),
-                  // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-                ),
-              ),
-              Text(
-                _selectedDate.year.toString(),
-                style: TextStyle(
-                    color: Theme.of(context).primaryColor,
-                    fontSize:
-                        Theme.of(context).textTheme.headlineSmall!.fontSize),
-                // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-              )
-            ]),
-          ),
+          Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Row(children: [
+                      Padding(
+                        padding: EdgeInsets.only(right: 8),
+                        child: Text(
+                          DateFormat.MMM().format(_selectedDate),
+                          // _selectedDate.toString("MMMM"),
+                          style: TextStyle(
+                              fontSize: Theme.of(context)
+                                  .textTheme
+                                  .displaySmall!
+                                  .fontSize),
+                          // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                        ),
+                      ),
+                      Text(
+                        _selectedDate.year.toString(),
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: Theme.of(context)
+                                .textTheme
+                                .headlineSmall!
+                                .fontSize),
+                        // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
+                      )
+                    ]),
+                  ),
+                ],
+              )),
           Container(
             height: 100,
             child: SfDateRangePicker(
@@ -731,14 +638,7 @@ class _CalendarPageState extends State<CalendarPage> {
               //cellBorderColor: Colors.white,
               timeSlotViewSettings: const TimeSlotViewSettings(
                 timeInterval: Duration(hours: 1),
-                //startHour:
-
-                //endHour: ,
-                timeIntervalHeight: 80,
-                //timeFormat: 'h:mm',
-                // timeTextStyle: TextStyle(
-                //   color: Colors.white,
-                // ),
+                timeIntervalHeight: 120,
               ),
               appointmentBuilder:
                   (BuildContext context, CalendarAppointmentDetails details) {
@@ -773,14 +673,14 @@ class _CalendarPageState extends State<CalendarPage> {
                           //     PlannerService.sharedInstance.user!.profileImage),
                           backgroundImage: AssetImage(
                               PlannerService.sharedInstance.user!.profileImage),
-                          radius: 30,
+                          //radius: 30,
                         )
                       : CircleAvatar(
                           // // backgroundImage: AssetImage(
                           //     PlannerService.sharedInstance.user!.profileImage),
                           backgroundImage: NetworkImage(
                               PlannerService.sharedInstance.user!.profileImage),
-                          radius: 30,
+                          //radius: 30,
                         ),
                   trailing: Checkbox(
                     side: const BorderSide(color: Colors.white),

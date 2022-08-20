@@ -25,13 +25,11 @@ class _WelcomePageState extends State<WelcomePage> {
 
   void login() {
     print("I am in login function");
+    //Navigator.of(context).pushNamed('/login');
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const LoginPage();
       },
-      // settings: const RouteSettings(
-      //   name: 'navigaionPage',
-      // ),
     ));
     // Navigator.push(
     //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));

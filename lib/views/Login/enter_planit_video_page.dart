@@ -79,15 +79,43 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-            automaticallyImplyLeading: false,
+            title: const Text("Another Planit",
+                style: TextStyle(color: Colors.white)),
+            centerTitle: true,
+            bottom: const PreferredSize(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      "My Personal Space",
+                      style: TextStyle(color: Colors.white),
+                      //textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+                preferredSize: Size.fromHeight(10.0)),
             backgroundColor: Colors.transparent,
+            automaticallyImplyLeading: false,
             elevation: 0.0,
           ),
           body: _controller.value.isInitialized
-              ? AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                )
+              ? Container(
+                  margin: EdgeInsets.all(20),
+                  child: AspectRatio(
+                    aspectRatio: _controller.value.aspectRatio,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: <Widget>[
+                          VideoPlayer(_controller),
+                          VideoProgressIndicator(_controller,
+                              allowScrubbing: true),
+                        ],
+                      ),
+                    ),
+                  ))
               : Container(),
           persistentFooterButtons: [
             Row(

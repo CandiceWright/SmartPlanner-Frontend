@@ -12,7 +12,8 @@ import 'firebase_storage_service.dart';
 class PlannerService {
   static PlannerService sharedInstance = PlannerService();
   static FirebaseStorage firebaseStorage = FirebaseStorage();
-  //static SubscriptionsProvider subscriptionProvider = SubscriptionsProvider();
+  static SubscriptionsProvider subscriptionProvider = SubscriptionsProvider();
+  //var subscriptionProvider;
   //this is for prod
   //String serverUrl = "https://serve-anotherplanit.com:7343";
 

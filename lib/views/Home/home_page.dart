@@ -473,7 +473,7 @@ class _HomePageState extends State<HomePage> {
             Column(
               children: [
                 Text(
-                  "Stories: Thoughts & Reminders",
+                  "Stories: Video Thoughts & Reminders",
                   style: GoogleFonts.roboto(
                     textStyle: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),

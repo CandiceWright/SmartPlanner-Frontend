@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:practice_planner/Themes/app_themes.dart';
 import 'package:practice_planner/models/life_category.dart';
+import 'package:practice_planner/services/subscription_provider.dart';
 import 'package:practice_planner/views/Home/home_page.dart';
 import '../Login/login.dart';
 import '../navigation_wrapper.dart';
@@ -812,18 +813,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (response.statusCode == 200) {
       if (response.body == "password updated successfully") {
-        //show error
-        Navigator.of(context).pop();
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return const LoginPage();
-          },
-          // settings: const RouteSettings(
-          //   name: 'navigaionPage',
-          // ),
-        ));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (BuildContext context) => LoginPage(),
+          ),
+          (route) => false,
+        );
       } else {
-        //all good. show dialong for new password
         Navigator.of(context).pop();
         showDialog(
             context: context,
@@ -1330,14 +1327,25 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       ElevatedButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) {
-                                return const LoginPage();
-                              },
-                              // settings: const RouteSettings(
-                              //   name: 'navigaionPage',
-                              // ),
-                            ));
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) => LoginPage(),
+                              ),
+                              (route) => false,
+                            );
+                            // Navigator.of(context).pushNamedAndRemoveUntil(
+                            //     '/login', (Route<dynamic> route) => false);
+                            // Navigator.popUntil(
+                            //     context, ModalRoute.withName('/login'));
+                            // Navigator.popUntil(context,
+                            //     (route) => route.isFirst && route.isCurrent);
+                            // Navigator.of(context)
+                            //     .pushReplacement(MaterialPageRoute(
+                            //   builder: (context) {
+                            //     return const LoginPage();
+                            //   },
+                            // ));
                           },
                           child: Text("Log out")),
                     ],

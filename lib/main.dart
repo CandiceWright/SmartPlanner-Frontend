@@ -2,13 +2,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:practice_planner/services/planner_service.dart';
+import 'package:practice_planner/services/subscription_provider.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
+import 'package:practice_planner/views/Login/login.dart';
 import 'views/Login/welcome_page.dart';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import '/Themes/app_themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  //PlannerService.subscriptionProvider = SubscriptionsProvider();
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
@@ -132,6 +135,9 @@ class MyApp extends StatelessWidget {
             //       elevation: 0),
             // ),
             home: const WelcomePage(),
+            routes: {
+              '/login': (context) => const LoginPage(),
+            },
           );
         });
   }

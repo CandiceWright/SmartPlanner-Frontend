@@ -269,7 +269,7 @@ class _InwardsPageState extends State<InwardsPage> {
                                 const Padding(
                                   padding: EdgeInsets.all(10),
                                   child: Text(
-                                    "This is your cover video, 1-2 minutes. Whenever you enter your planit, you'll see it. Think of it as a positive video message to yourself that you can watch and reflect on whenever you want. Tip: Add whatever makes you 'YOU' in this cover video. You can record a video or upload one. ",
+                                    "This is your cover video, 1-2 minutes. Whenever you enter your planit, you'll see it. Add whatever makes you happy in this cover video. You can record a video or upload one. ",
                                     style: TextStyle(fontSize: 20),
                                     textAlign: TextAlign.center,
                                   ),
