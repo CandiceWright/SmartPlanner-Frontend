@@ -17,6 +17,7 @@ class User {
   var planitName;
   int id;
   String profileImage;
+  String receipt;
   var email;
   int themeId;
   String spaceImage;
@@ -51,6 +52,7 @@ class User {
   User(
       {required this.id,
       required this.planitName,
+      required this.receipt,
       //required this.username,
       required this.email,
       //required this.theme,

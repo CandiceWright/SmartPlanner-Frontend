@@ -92,6 +92,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
         if (response3.statusCode == 200) {
           var user = User(
               id: widget.userId,
+              receipt: "",
               planitName: widget.planitName,
               email: widget.email,
               profileImage: "assets/images/profile_pic_icon.png",

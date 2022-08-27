@@ -18,7 +18,7 @@ class PlannerService {
   //String serverUrl = "https://serve-anotherplanit.com:7343";
 
   //for dev (this is your ip. It changes sometimes so keep this up-to-date)
-  String serverUrl = "http://192.168.0.101:7343";
+  String serverUrl = "http://192.168.0.103:7343";
 
   User? user;
 

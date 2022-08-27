@@ -101,6 +101,7 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
           ),
           body: _controller.value.isInitialized
               ? Container(
+                  alignment: Alignment.center,
                   margin: EdgeInsets.all(20),
                   child: AspectRatio(
                     aspectRatio: _controller.value.aspectRatio,

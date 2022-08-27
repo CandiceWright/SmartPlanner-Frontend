@@ -43,6 +43,8 @@ class _LoginPageState extends State<LoginPage> {
     //     .addListener(purchasePending);
     PlannerService.subscriptionProvider.purchaseRestored
         .addListener(purchaseRestored);
+    PlannerService.subscriptionProvider.receipt.addListener(saveReceipt);
+
     // subscriptionProvider.purchaseSuccess
     //     .addListener(purchaseRestoredorComplete);
     // PlannerService.subscriptionProvider.purchaseExpired
@@ -60,6 +62,8 @@ class _LoginPageState extends State<LoginPage> {
         .removeListener(purchaseRestored);
     PlannerService.subscriptionProvider.purchaseExpired
         .removeListener(purchaseExpired);
+    PlannerService.subscriptionProvider.receipt.removeListener(saveReceipt);
+
     super.dispose();
   }
 
@@ -79,6 +83,9 @@ class _LoginPageState extends State<LoginPage> {
                       .removeListener(purchasePending);
                   PlannerService.subscriptionProvider.purchaseRestored
                       .removeListener(purchaseRestored);
+                  PlannerService.subscriptionProvider.receipt
+                      .removeListener(saveReceipt);
+
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) {
                       return const SubscriptionPage(
@@ -121,36 +128,113 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   purchaseRestored() {
-    //show an alert saying that the purchase was restored and prompt them to log back in
-    //Navigator.pop(context);
-    PlannerService.subscriptionProvider.purchaseRestored.value = false;
-    if (shouldShowRestoredDialog) {
-      showDialog(
+    if (PlannerService.subscriptionProvider.purchaseRestored.value) {
+      print("purchase restored");
+    }
+
+    //PlannerService.subscriptionProvider.purchaseRestored.value = false;
+    //if (shouldShowRestoredDialog) {
+    // showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder: (context) {
+    //       return AlertDialog(
+    //         title: const Text(
+    //             "We've attempted to restore your purchase. You can try logging in."),
+    //         actions: <Widget>[
+    //           TextButton(
+    //             child: Text('OK'),
+    //             onPressed: () {
+    //               //Navigator.of(context).pop();
+    //               shouldShowRestoredDialog = false;
+
+    //               Navigator.pushAndRemoveUntil(
+    //                 context,
+    //                 MaterialPageRoute(
+    //                   builder: (BuildContext context) => LoginPage(),
+    //                 ),
+    //                 (route) => false,
+    //               );
+    //             },
+    //           )
+    //         ],
+    //       );
+    //     });
+    //}
+  }
+
+  saveReceipt() async {
+    if (PlannerService.subscriptionProvider.receipt.value != "") {
+      print("Saving receipt");
+      var receipt = PlannerService.subscriptionProvider.receipt.value;
+      print(receipt);
+      var body = {
+        'receipt': receipt,
+        'userId': PlannerService.sharedInstance.user!.id
+      };
+      var bodyF = jsonEncode(body);
+      //print(bodyF);
+
+      var url =
+          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/receipt');
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        //PlannerService.sharedInstance.user!.receipt = receipt;
+        //I am done with these values so now I can reset thee values
+        PlannerService.subscriptionProvider.purchaseSuccess.value = false;
+        PlannerService.subscriptionProvider.purchaseRestored.value = false;
+        PlannerService.subscriptionProvider.receipt.value = "";
+        PlannerService.sharedInstance.user!.receipt = receipt;
+        //if (shouldShowRestoredDialog) {
+        showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) {
             return AlertDialog(
-              title: Text(
-                  'Great! Your subscription has been restored. Please login.'),
+              title: const Text(
+                  "We've attempted to restore your purchase. You can try logging in."),
               actions: <Widget>[
                 TextButton(
                   child: Text('OK'),
                   onPressed: () {
-                    //Navigator.of(context).pop();
+                    Navigator.of(context).pop();
                     shouldShowRestoredDialog = false;
 
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => LoginPage(),
-                      ),
-                      (route) => false,
-                    );
+                    // Navigator.pushAndRemoveUntil(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (BuildContext context) => LoginPage(),
+                    //   ),
+                    //   (route) => false,
+                    // );
                   },
                 )
               ],
             );
-          });
+          },
+        );
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
     }
   }
 
@@ -249,9 +333,11 @@ class _LoginPageState extends State<LoginPage> {
               );
             });
       } else {
+        //correct password.
         var decodedBody = json.decode(response.body);
         print(decodedBody);
         var userId = decodedBody["userId"];
+        var receipt = decodedBody["receipt"];
         var planitName = decodedBody["planitName"];
         var themeId = decodedBody["theme"];
         var spaceTheme = decodedBody["spaceTheme"];
@@ -269,6 +355,8 @@ class _LoginPageState extends State<LoginPage> {
         } else {
           didStartPlanning = true;
         }
+
+        //get all information then check receipt validity
 
         var lifeCategories = <LifeCategory>[];
         Map<int, LifeCategory>? lifeCategoriesMap = {};
@@ -509,6 +597,7 @@ class _LoginPageState extends State<LoginPage> {
                       DynamicTheme.of(context)!.setTheme(themeId);
                       var user = User(
                           id: userId,
+                          receipt: receipt,
                           planitName: planitName,
                           email: email,
                           //profileImage: "assets/images/profile_pic_icon.png",
@@ -548,132 +637,106 @@ class _LoginPageState extends State<LoginPage> {
 
                       PlannerService.sharedInstance.user!.stories = stories;
 
-                      //check if the user has a subscription
-                      if (PlannerService
-                          .subscriptionProvider.purchases.isNotEmpty) {
-                        bool isValid = true;
-                        print("this is th length of purchases");
-                        print(PlannerService
-                            .subscriptionProvider.purchases.length);
-                        for (int i = 0;
-                            i <
-                                PlannerService
-                                    .subscriptionProvider.purchases.length;
-                            i++) {
-                          print(
-                              PlannerService.subscriptionProvider.purchases[i]);
-                          bool valid = await PlannerService.subscriptionProvider
-                              .verifyPurchase(PlannerService
-                                  .subscriptionProvider.purchases[i]);
-                          if (!valid) {
-                            isValid = false;
-                          }
-                        }
-                        if (!isValid) {
-                          showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text(
-                                      'Looks like your subscription has expired. Please choose a subscription plan.'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('Ok'),
-                                      onPressed: () {
-                                        PlannerService
-                                            .subscriptionProvider.purchaseError
-                                            .removeListener(purchaseError);
-                                        PlannerService.subscriptionProvider
-                                            .purchasePending
-                                            .removeListener(purchasePending);
-                                        PlannerService.subscriptionProvider
-                                            .purchaseRestored
-                                            .removeListener(purchaseRestored);
-                                        PlannerService.subscriptionProvider
-                                            .purchaseExpired
-                                            .removeListener(purchaseExpired);
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: (context) {
-                                            return const SubscriptionPage(
-                                              fromPage: 'login',
-                                            );
-                                          },
-                                        ));
+                      //check to make sure their subscription is valid before you let them into planit
+                      //validate receipt
+                      String receiptStatus = await PlannerService
+                          .subscriptionProvider
+                          .verifyPurchase(receipt);
+
+                      if (receiptStatus == "expired") {
+                        //either receipt is expired or need to be restored
+
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Looks like your subscription has expired. Resubscribe to access your planit.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('Ok, Resubscribe'),
+                                  onPressed: () {
+                                    PlannerService
+                                        .subscriptionProvider.purchaseError
+                                        .removeListener(purchaseError);
+                                    PlannerService
+                                        .subscriptionProvider.purchasePending
+                                        .removeListener(purchasePending);
+                                    PlannerService
+                                        .subscriptionProvider.purchaseRestored
+                                        .removeListener(purchaseRestored);
+                                    PlannerService
+                                        .subscriptionProvider.purchaseExpired
+                                        .removeListener(purchaseExpired);
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) {
+                                        return const SubscriptionPage(
+                                          fromPage: 'login',
+                                        );
                                       },
-                                    ),
-                                  ],
-                                );
-                              });
-                        } else {
-                          PlannerService.subscriptionProvider.purchaseError
-                              .removeListener(purchaseError);
-                          PlannerService.subscriptionProvider.purchasePending
-                              .removeListener(purchasePending);
-                          PlannerService.subscriptionProvider.purchaseRestored
-                              .removeListener(purchaseRestored);
-                          PlannerService.subscriptionProvider.purchaseExpired
-                              .removeListener(purchaseExpired);
-                          if (PlannerService
-                              .sharedInstance.user!.hasPlanitVideo) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) {
-                                return const EnterPlannerVideoPage(
-                                  fromPage: "login",
-                                );
-                              },
-                            ));
-                          } else {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) {
-                                return const NavigationWrapper();
-                              },
-                              settings: const RouteSettings(
-                                name: 'navigaionPage',
-                              ),
-                            ));
-                          }
-                        }
-                      } else {
-                        //show error message to restore purchases or subscribe again
+                                    ));
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                        // showDialog(
+                        //     context: context,
+                        //     builder: (context) {
+                        //       return AlertDialog(
+                        //         title: Text(
+                        //             "We weren't able to confirm your subscription. If you believe you have an active subscription, try restoring your purchase below. Otherwise, your subscription has expired. Resubscribe below."),
+                        //         actions: <Widget>[
+                        //           TextButton(
+                        //             child: Text('Try to Restore'),
+                        //             onPressed: () {
+                        //               //Navigator.of(context).pop();
+                        //               shouldShowRestoredDialog = true;
+                        //               PlannerService.subscriptionProvider.restorePurchases();
+                        //             },
+                        //           ),
+                        //           TextButton(
+                        //             child: Text('Resubscribe'),
+                        //             onPressed: () {
+                        //               PlannerService.subscriptionProvider.purchaseError
+                        //                   .removeListener(purchaseError);
+                        //               PlannerService.subscriptionProvider.purchasePending
+                        //                   .removeListener(purchasePending);
+                        //               PlannerService.subscriptionProvider.purchaseRestored
+                        //                   .removeListener(purchaseRestored);
+                        //               PlannerService.subscriptionProvider.purchaseExpired
+                        //                   .removeListener(purchaseExpired);
+                        //               Navigator.of(context).push(MaterialPageRoute(
+                        //                 builder: (context) {
+                        //                   return const SubscriptionPage(
+                        //                     fromPage: 'login',
+                        //                   );
+                        //                 },
+                        //               ));
+                        //             },
+                        //           ),
+                        //           TextButton(
+                        //             child: Text('Cancel'),
+                        //             onPressed: () {
+                        //               Navigator.of(context).pop();
+                        //             },
+                        //           )
+                        //         ],
+                        //       );
+                        //     });
+                      } else if (receiptStatus == "error") {
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
                                 title: Text(
-                                    "We weren't able to confirm your subscription. If you still have an active subscription, try restoring your purchase below. Otherwise, your subscription has expired. You can resubscribe now."),
+                                    'Oops! Looks like something went wrong. Please try again.'),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: Text('Restore'),
-                                    onPressed: () {
-                                      //Navigator.of(context).pop();
-                                      shouldShowRestoredDialog = true;
-                                      PlannerService.subscriptionProvider
-                                          .restorePurchases();
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: Text('Resubscribe'),
-                                    onPressed: () {
-                                      PlannerService
-                                          .subscriptionProvider.purchasePending
-                                          .removeListener(purchasePending);
-                                      PlannerService
-                                          .subscriptionProvider.purchaseRestored
-                                          .removeListener(purchaseRestored);
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) {
-                                          return const SubscriptionPage(
-                                            fromPage: 'login',
-                                          );
-                                        },
-                                      ));
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: Text('Cancel'),
+                                    child: Text('OK'),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     },
@@ -681,26 +744,36 @@ class _LoginPageState extends State<LoginPage> {
                                 ],
                               );
                             });
+                      } else {
+                        //Receipt is valid so Get all user information
+                        PlannerService.subscriptionProvider.purchaseError
+                            .removeListener(purchaseError);
+                        PlannerService.subscriptionProvider.purchasePending
+                            .removeListener(purchasePending);
+                        PlannerService.subscriptionProvider.purchaseRestored
+                            .removeListener(purchaseRestored);
+                        PlannerService.subscriptionProvider.purchaseExpired
+                            .removeListener(purchaseExpired);
+                        if (PlannerService
+                            .sharedInstance.user!.hasPlanitVideo) {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return const EnterPlannerVideoPage(
+                                fromPage: "login",
+                              );
+                            },
+                          ));
+                        } else {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return const NavigationWrapper();
+                            },
+                            settings: const RouteSettings(
+                              name: 'navigaionPage',
+                            ),
+                          ));
+                        }
                       }
-
-                      // if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-                      //   Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) {
-                      //       return const EnterPlannerVideoPage(
-                      //         fromPage: "login",
-                      //       );
-                      //     },
-                      //   ));
-                      // } else {
-                      //   Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) {
-                      //       return const NavigationWrapper();
-                      //     },
-                      //     settings: const RouteSettings(
-                      //       name: 'navigaionPage',
-                      //     ),
-                      //   ));
-                      // }
                     } else {
                       showDialog(
                           context: context,

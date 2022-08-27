@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/services/planner_service.dart';
@@ -7,6 +9,7 @@ import 'package:practice_planner/views/navigation_wrapper.dart';
 import '../Login/enter_planit_video_page.dart';
 import '/views/Login/login.dart';
 import '/views/Login/signup.dart';
+import 'package:http/http.dart' as http;
 
 class SubscriptionPage extends StatefulWidget {
   final String fromPage;
@@ -33,10 +36,11 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         .removeListener(purchaseError);
     PlannerService.subscriptionProvider.purchasePending
         .removeListener(purchasePending);
-    PlannerService.subscriptionProvider.purchaseRestored
-        .removeListener(purchaseRestoredorComplete);
+    // PlannerService.subscriptionProvider.purchaseRestored
+    //     .removeListener(purchaseRestoredorComplete);
     PlannerService.subscriptionProvider.purchaseSuccess
         .removeListener(purchaseRestoredorComplete);
+    PlannerService.subscriptionProvider.receipt.removeListener(saveReceipt);
     super.dispose();
   }
 
@@ -46,8 +50,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         .addListener(purchaseError);
     PlannerService.subscriptionProvider.purchasePending
         .addListener(purchasePending);
-    PlannerService.subscriptionProvider.purchaseRestored
-        .addListener(purchaseRestoredorComplete);
+    // PlannerService.subscriptionProvider.purchaseRestored
+    //     .addListener(purchaseRestoredorComplete);
+    PlannerService.subscriptionProvider.receipt.addListener(saveReceipt);
     PlannerService.subscriptionProvider.purchaseSuccess
         .addListener(purchaseRestoredorComplete);
 
@@ -61,6 +66,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   purchaseError() {
     if (PlannerService.subscriptionProvider.purchaseError.value) {
+      PlannerService.subscriptionProvider.purchaseError.value = false;
       showDialog(
           context: context,
           builder: (context) {
@@ -99,53 +105,133 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     }
   }
 
-  purchaseRestoredorComplete() {
-    print("purchase complete");
-    if (PlannerService.subscriptionProvider.purchaseRestored.value ||
-        PlannerService.subscriptionProvider.purchaseSuccess.value) {
-      //I am done with these values so now I can reset thee values
-      PlannerService.subscriptionProvider.purchaseSuccess.value = false;
-      PlannerService.subscriptionProvider.purchaseRestored.value = false;
-      print(widget.fromPage);
-      //remove listeners here
-      // PlannerService.subscriptionProvider.purchaseError
-      //     .removeListener(purchaseError);
-      // PlannerService.subscriptionProvider.purchasePending
-      //     .removeListener(purchasePending);
-      // PlannerService.subscriptionProvider.purchaseRestored
-      //     .removeListener(purchaseRestoredorComplete);
-      // PlannerService.subscriptionProvider.purchaseSuccess
-      //     .removeListener(purchaseRestoredorComplete);
-      if (widget.fromPage == "login") {
-        if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+  saveReceipt() async {
+    if (PlannerService.subscriptionProvider.receipt.value != "") {
+      print("Saving receipt on subscription page");
+      var receipt = PlannerService.subscriptionProvider.receipt.value;
+      print(receipt);
+      var body = {
+        'receipt': receipt,
+        'userId': PlannerService.sharedInstance.user!.id
+      };
+      var bodyF = jsonEncode(body);
+      //print(bodyF);
+
+      var url =
+          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/receipt');
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        PlannerService.sharedInstance.user!.receipt = receipt;
+        //I am done with these values so now I can reset thee values
+        PlannerService.subscriptionProvider.purchaseSuccess.value = false;
+        PlannerService.subscriptionProvider.purchaseRestored.value = false;
+        PlannerService.subscriptionProvider.receipt.value = "";
+        PlannerService.sharedInstance.user!.receipt = receipt;
+        print(widget.fromPage);
+
+        //need to save receipt tto database
+
+        if (widget.fromPage == "login") {
+          if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) {
+                return const EnterPlannerVideoPage(
+                  fromPage: "login",
+                );
+              },
+            ));
+          } else {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (context) {
+                return const NavigationWrapper();
+              },
+              settings: const RouteSettings(
+                name: 'navigaionPage',
+              ),
+            ));
+          }
+        } else {
+          //signup
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) {
               return const EnterPlannerVideoPage(
-                fromPage: "login",
+                fromPage: "signup",
               );
             },
           ));
-        } else {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) {
-              return const NavigationWrapper();
-            },
-            settings: const RouteSettings(
-              name: 'navigaionPage',
-            ),
-          ));
         }
       } else {
-        //signup
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) {
-            return const EnterPlannerVideoPage(
-              fromPage: "signup",
-            );
-          },
-        ));
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
       }
     }
+  }
+
+  purchaseRestoredorComplete() {
+    //print("purchase was successful");
+    if (PlannerService.subscriptionProvider.purchaseSuccess.value ||
+        PlannerService.subscriptionProvider.purchaseRestored.value) {
+      print("purchase complete");
+    }
+
+    // if (PlannerService.subscriptionProvider.purchaseRestored.value ||
+    //     PlannerService.subscriptionProvider.purchaseSuccess.value) {
+    //   //store the receipt in your db
+    //   //I am done with these values so now I can reset thee values
+    //   PlannerService.subscriptionProvider.purchaseSuccess.value = false;
+    //   PlannerService.subscriptionProvider.purchaseRestored.value = false;
+    //   print(widget.fromPage);
+
+    //   //need to save receipt tto database
+
+    //   if (widget.fromPage == "login") {
+    //     if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //         builder: (context) {
+    //           return const EnterPlannerVideoPage(
+    //             fromPage: "login",
+    //           );
+    //         },
+    //       ));
+    //     } else {
+    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //         builder: (context) {
+    //           return const NavigationWrapper();
+    //         },
+    //         settings: const RouteSettings(
+    //           name: 'navigaionPage',
+    //         ),
+    //       ));
+    //     }
+    //   } else {
+    //     //signup
+    //     Navigator.of(context).pushReplacement(MaterialPageRoute(
+    //       builder: (context) {
+    //         return const EnterPlannerVideoPage(
+    //           fromPage: "signup",
+    //         );
+    //       },
+    //     ));
+    //   }
+    // }
   }
 
   // checkPurchaseStatus() {
@@ -218,16 +304,17 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   }
 
   void subscribe() async {
-    //if (selectedSubscription == "monthly") {
-    //find the product detail for monthly
-    ProductDetails pd =
-        products.firstWhere((element) => element.id == "monthly_subscription");
-    PlannerService.subscriptionProvider.purchaseProduct(pd);
-    // } else {
-    //   ProductDetails pd =
-    //       products.firstWhere((element) => element.id == "yearly_subscription");
-    //   PlannerService.subscriptionProvider.purchaseProduct(pd);
-    // }
+    PlannerService.subscriptionProvider.purchaseInProgress = true;
+    if (selectedSubscription == "monthly") {
+      //find the product detail for monthly
+      ProductDetails pd = products
+          .firstWhere((element) => element.id == "monthly_subscription");
+      PlannerService.subscriptionProvider.purchaseProduct(pd);
+    } else {
+      ProductDetails pd =
+          products.firstWhere((element) => element.id == "yearly_subscription");
+      PlannerService.subscriptionProvider.purchaseProduct(pd);
+    }
   }
 
   @override
@@ -286,13 +373,54 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               ),
               Padding(
                 padding: EdgeInsets.all(6),
-                child: const Text(
-                  "\$1.99/month",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  children: [
+                    Text(
+                      "\$1.99/month",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Checkbox(
+                        value: monthlySelected,
+                        onChanged: (value) {
+                          print("monthly subscription chosen");
+                          setState(() {
+                            monthlySelected = value!;
+                            yearlySelected = !value;
+                            selectedSubscription = "monthly";
+                            setDoneBtnState();
+                          });
+                        })
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(6),
+                child: Column(
+                  children: [
+                    Text(
+                      "One year for \$19.99",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Checkbox(
+                        value: yearlySelected,
+                        onChanged: (value) {
+                          print("yearly subscription chosen");
+                          setState(() {
+                            monthlySelected = !value!;
+                            yearlySelected = value;
+                            selectedSubscription = "yearly";
+                            setDoneBtnState();
+                          });
+                        })
+                  ],
                 ),
               ),
 

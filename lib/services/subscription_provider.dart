@@ -15,6 +15,8 @@ class SubscriptionsProvider extends ChangeNotifier {
   ValueNotifier purchaseExpired = ValueNotifier(false);
   ValueNotifier purchaseRestored = ValueNotifier(false);
   ValueNotifier showPurchaseRestored = ValueNotifier(false);
+  ValueNotifier receipt = ValueNotifier("");
+  bool purchaseInProgress = false;
   List<PurchaseDetails> purchases = [];
 
   SubscriptionsProvider() {
@@ -32,8 +34,8 @@ class SubscriptionsProvider extends ChangeNotifier {
       // handle the error
     });
     //should not show restored purchase dialog
-    purchases = [];
-    InAppPurchase.instance.restorePurchases();
+    //spurchases = [];
+    //InAppPurchase.instance.restorePurchases();
   }
 
   _purchaseUpdate(List<PurchaseDetails> purchaseDetailsList) {
@@ -47,6 +49,7 @@ class SubscriptionsProvider extends ChangeNotifier {
         purchaseExpired.value = false;
         purchaseSuccess.value = false;
         purchaseRestored.value = false;
+
         //_showPendingUI();
 
       } else {
@@ -63,7 +66,9 @@ class SubscriptionsProvider extends ChangeNotifier {
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
           print("item purchased");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
-          _verifyPurchaseAndEnablePremium(purchaseDetails);
+          if (purchaseInProgress) {
+            _verifyPurchaseAndEnablePremium(purchaseDetails);
+          }
         } else if (purchaseDetails.status == PurchaseStatus.restored) {
           print("item restored");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
@@ -96,7 +101,7 @@ class SubscriptionsProvider extends ChangeNotifier {
     // Hardcode subscriptionIds you want to offer.
     const Set<String> _subscriptionIds = <String>{
       'monthly_subscription',
-      //'yearly_subscription'
+      'yearly_subscription'
     };
     final ProductDetailsResponse response =
         await InAppPurchase.instance.queryProductDetails(_subscriptionIds);
@@ -122,9 +127,9 @@ class SubscriptionsProvider extends ChangeNotifier {
     InAppPurchase.instance.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
-  //used to check purchase when user goes out of app and comes back in
-  Future<bool> verifyPurchase(PurchaseDetails purchaseDetails) async {
-    String receipt = purchaseDetails.verificationData.serverVerificationData;
+  //used to check purchase when user goes out of app and comes back in. also during login
+  Future<String> verifyPurchase(String receipt) async {
+    //String receipt = purchaseDetails.verificationData.serverVerificationData;
 
     var body = {
       'receipt': receipt,
@@ -156,28 +161,30 @@ class SubscriptionsProvider extends ChangeNotifier {
           //expired
           //purchaseExpired.value = true;
           print("purchase is expired");
-          return false;
+          //return false;
+          return "expired";
         } else {
           print("purchase is good");
-          return true;
-          //purchaseSuccess.value = true;
-          //purchases.add(purchaseDetails.productID);
+          //return true;
+          return ("valid");
         }
       } else {
-        return false;
+        //error
+        //return false;
+        return "error";
       }
     } else {
       //500 error, show an alert
-      purchaseError.value = true;
+      //purchaseError.value = true;
+      return "error";
     }
-    return false;
   }
 
   _verifyPurchaseAndEnablePremium(PurchaseDetails purchaseDetails) async {
-    String receipt = purchaseDetails.verificationData.serverVerificationData;
+    //String receipt = purchaseDetails.verificationData.serverVerificationData;
 
     var body = {
-      'receipt': receipt,
+      'receipt': purchaseDetails.verificationData.serverVerificationData,
     };
     var bodyF = jsonEncode(body);
     //print(bodyF);
@@ -188,6 +195,7 @@ class SubscriptionsProvider extends ChangeNotifier {
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
     //print('Response body: ${response.body}');
+    purchaseInProgress = false;
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
@@ -210,12 +218,15 @@ class SubscriptionsProvider extends ChangeNotifier {
           purchaseSuccess.value = false;
           purchaseRestored.value = false;
         } else {
+          //purchase is good
           purchaseSuccess.value = true;
           purchaseExpired.value = false;
           purchaseError.value = false;
           purchasePending.value = false;
           purchaseRestored.value = false;
           purchases.add(purchaseDetails);
+          receipt.value =
+              purchaseDetails.verificationData.serverVerificationData;
         }
       } else if (status == 21006) {
         //expired
@@ -252,10 +263,10 @@ class SubscriptionsProvider extends ChangeNotifier {
     //   // The receipt is not valid. Don't enable any subscription features.
     //   // _handleInvalidPurchase(purchaseDetails);
     // }
-    String receipt = purchaseDetails.verificationData.serverVerificationData;
+    //String receipt = purchaseDetails.verificationData.serverVerificationData;
 
     var body = {
-      'receipt': receipt,
+      'receipt': purchaseDetails.verificationData.serverVerificationData,
     };
     var bodyF = jsonEncode(body);
     //print(bodyF);
@@ -266,6 +277,7 @@ class SubscriptionsProvider extends ChangeNotifier {
         headers: {"Content-Type": "application/json"}, body: bodyF);
     print('Response status: ${response.statusCode}');
     //print('Response body: ${response.body}');
+    purchaseInProgress = false;
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
@@ -288,12 +300,15 @@ class SubscriptionsProvider extends ChangeNotifier {
           purchaseSuccess.value = false;
           purchaseRestored.value = false;
         } else {
+          //good
           purchaseExpired.value = false;
           purchaseError.value = false;
           purchasePending.value = false;
           purchaseSuccess.value = false;
           purchaseRestored.value = true;
           purchases.add(purchaseDetails);
+          receipt.value =
+              purchaseDetails.verificationData.serverVerificationData;
         }
       } else if (status == 21006) {
         //expired
@@ -320,16 +335,20 @@ class SubscriptionsProvider extends ChangeNotifier {
     }
   }
 
-  _verifyPurchase(PurchaseDetails purchaseDetails) async {
-    // check if the purchase is valid by calling your server including the receipt data.
-  }
-
   restorePurchases() {
     purchases = [];
     InAppPurchase.instance.restorePurchases();
+    //InAppPurchase.instance.();
   }
 
   listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
     // Purchased Subscriptions
   }
+}
+
+class ReceiptVerificationResponse {
+  bool isValid;
+  String error;
+
+  ReceiptVerificationResponse(this.isValid, this.error);
 }

@@ -62,57 +62,61 @@ class _NavigationWrapperState extends State<NavigationWrapper>
   void didChangeAppLifecycleState(AppLifecycleState state) async {
     super.didChangeAppLifecycleState(state);
     _isInForeground = state == AppLifecycleState.resumed;
-    if (_isInForeground) {
+    if (_isInForeground &&
+        !PlannerService.subscriptionProvider.purchaseInProgress) {
       print("app is in foreground");
-      //PlannerService.subscriptionProvider.dispose();
-      //PlannerService.subscriptionProvider = SubscriptionsProvider();
-      //check to see if purchase is  still valid, if not, show an error
-      bool isValid = true;
-      for (int i = 0;
-          i < PlannerService.subscriptionProvider.purchases.length;
-          i++) {
-        bool valid = await PlannerService.subscriptionProvider
-            .verifyPurchase(PlannerService.subscriptionProvider.purchases[i]);
-        if (!valid) {
-          isValid = false;
-        }
-      }
 
-      print(PlannerService.subscriptionProvider.purchaseError.value);
-      print(PlannerService.subscriptionProvider.purchaseExpired.value);
-      print(PlannerService.subscriptionProvider.purchasePending.value);
-      print(PlannerService.subscriptionProvider.purchaseRestored.value);
-      print(PlannerService.subscriptionProvider.purchaseSuccess.value);
-      if (!isValid &&
-          !(PlannerService.subscriptionProvider.purchaseError.value ||
-              PlannerService.subscriptionProvider.purchaseExpired.value ||
-              PlannerService.subscriptionProvider.purchasePending.value ||
-              PlannerService.subscriptionProvider.purchaseRestored.value ||
-              PlannerService.subscriptionProvider.purchaseSuccess.value)) {
-        //if all are false, that means there is no purchase in progress
+      //check to see if purchase is  still valid, if not, show an error
+      print("printing receipt line 69");
+      print(PlannerService.sharedInstance.user!.receipt);
+      String receiptStatus = await PlannerService.subscriptionProvider
+          .verifyPurchase(PlannerService.sharedInstance.user!.receipt);
+
+      if (receiptStatus == "expired") {
         showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(
-                    'Looks like your subscription has expired. Please choose a subscription plan.'),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('Ok'),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) {
-                          return const SubscriptionPage(
-                            fromPage: 'login',
-                          );
-                        },
-                      ));
-                    },
-                  ),
-                ],
-              );
-            });
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Looks like your subscription has expired. Resubscribe to access your planit..'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Ok, Resubscribe'),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return const SubscriptionPage(
+                          fromPage: 'login',
+                        );
+                      },
+                    ));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else if (receiptStatus == "error") {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+      } else {
+        print("in navigation wrapper the purchase is good");
       }
     }
   }
