@@ -360,7 +360,6 @@ class _InwardsPageState extends State<InwardsPage> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   alignment: Alignment.center,
-
                   child: PlannerService.sharedInstance.user!.hasPlanitVideo
                       ? (FutureBuilder(
                           future: setVideoController(),
@@ -464,100 +463,6 @@ class _InwardsPageState extends State<InwardsPage> {
                             ),
                           ),
                         ),
-
-                  // child: PlannerService.sharedInstance.user!.hasPlanitVideo
-                  //     ? (_videoPlayerController.value.isInitialized
-                  //         ? Container(
-                  //             margin: EdgeInsets.all(20),
-                  //             child: AspectRatio(
-                  //               aspectRatio:
-                  //                   _videoPlayerController.value.aspectRatio,
-                  //               child: ClipRRect(
-                  //                 borderRadius: BorderRadius.circular(15),
-                  //                 child: Stack(
-                  //                   alignment: Alignment.bottomCenter,
-                  //                   children: <Widget>[
-                  //                     VideoPlayer(_videoPlayerController),
-                  //                     VideoProgressIndicator(
-                  //                         _videoPlayerController,
-                  //                         allowScrubbing: true),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             ))
-                  //         : Container())
-                  //     : Card(
-                  //         margin: EdgeInsets.all(15),
-                  //         child: Padding(
-                  //           padding: EdgeInsets.all(10),
-                  //           child: Column(
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             mainAxisAlignment: MainAxisAlignment.center,
-                  //             children: [
-                  //               const Padding(
-                  //                 padding: EdgeInsets.all(10),
-                  //                 child: Text(
-                  //                   "This is your cover video, 1-2 minutes. Whenever you enter your planit, you'll see it. Add whatever makes you happy in this cover video. You can record a video or upload one. ",
-                  //                   style: TextStyle(fontSize: 20),
-                  //                   textAlign: TextAlign.center,
-                  //                 ),
-                  //               ),
-                  //               Row(
-                  //                 mainAxisAlignment: MainAxisAlignment.center,
-                  //                 children: [
-                  //                   Padding(
-                  //                     padding: EdgeInsets.all(10),
-                  //                     child: GestureDetector(
-                  //                       onTap: () {
-                  //                         Navigator.of(context).push(
-                  //                           MaterialPageRoute(
-                  //                             builder: (context) =>
-                  //                                 CaptureVideoWithImagePicker(
-                  //                               prevPage: "inward",
-                  //                               updateState: updateState,
-                  //                             ),
-                  //                           ),
-                  //                         );
-                  //                       },
-                  //                       child: CircleAvatar(
-                  //                         child: const Icon(
-                  //                           Icons.video_camera_front,
-                  //                           color: Colors.white,
-                  //                         ),
-                  //                         radius: 25,
-                  //                         backgroundColor:
-                  //                             Theme.of(context).primaryColor,
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                   Padding(
-                  //                     padding: EdgeInsets.all(10),
-                  //                     child: GestureDetector(
-                  //                       onTap: () async {
-                  //                         final XFile? video =
-                  //                             await _picker.pickVideo(
-                  //                                 source: ImageSource.gallery,
-                  //                                 maxDuration: const Duration(
-                  //                                     minutes: 2));
-                  //                         setInwardVideo(video);
-                  //                       },
-                  //                       child: CircleAvatar(
-                  //                         child: const Icon(
-                  //                           Icons.upload,
-                  //                           color: Colors.white,
-                  //                         ),
-                  //                         radius: 25,
-                  //                         backgroundColor:
-                  //                             Theme.of(context).primaryColor,
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       ),
                 ),
               )
             ],

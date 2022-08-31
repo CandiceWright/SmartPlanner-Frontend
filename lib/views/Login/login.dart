@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/models/goal.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/services/subscription_provider.dart';
@@ -78,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
             actions: <Widget>[
               TextButton(
                 child: Text('Ok'),
-                onPressed: () {
+                onPressed: () async {
                   PlannerService.subscriptionProvider.purchasePending
                       .removeListener(purchasePending);
                   PlannerService.subscriptionProvider.purchaseRestored
@@ -86,13 +87,28 @@ class _LoginPageState extends State<LoginPage> {
                   PlannerService.subscriptionProvider.receipt
                       .removeListener(saveReceipt);
 
+                  //get subscription products
+                  List<ProductDetails> productDetails = await PlannerService
+                      .subscriptionProvider
+                      .fetchSubscriptions();
+
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) {
-                      return const SubscriptionPage(
+                      return SubscriptionPage(
                         fromPage: 'login',
+                        products: productDetails,
                       );
                     },
                   ));
+
+                  // Navigator.of(context).push(MaterialPageRoute(
+                  //   builder: (context) {
+                  //     return SubscriptionPage(
+                  //       fromPage: 'login',
+                  //       products: productDetails,
+                  //     );
+                  //   },
+                  // ));
                 },
               ),
             ],
@@ -661,7 +677,7 @@ class _LoginPageState extends State<LoginPage> {
                               actions: <Widget>[
                                 TextButton(
                                   child: Text('Ok, Resubscribe'),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     PlannerService
                                         .subscriptionProvider.purchaseError
                                         .removeListener(purchaseError);
@@ -674,14 +690,30 @@ class _LoginPageState extends State<LoginPage> {
                                     PlannerService
                                         .subscriptionProvider.purchaseExpired
                                         .removeListener(purchaseExpired);
+
+                                    //get subscription products
+                                    List<ProductDetails> productDetails =
+                                        await PlannerService
+                                            .subscriptionProvider
+                                            .fetchSubscriptions();
+
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                       builder: (context) {
-                                        return const SubscriptionPage(
-                                          fromPage: 'login',
-                                        );
+                                        return SubscriptionPage(
+                                            fromPage: 'login',
+                                            products: productDetails);
                                       },
                                     ));
+
+                                    // Navigator.of(context)
+                                    //     .push(MaterialPageRoute(
+                                    //   builder: (context) {
+                                    //     return const SubscriptionPage(
+                                    //       fromPage: 'login',
+                                    //     );
+                                    //   },
+                                    // ));
                                   },
                                 ),
                               ],

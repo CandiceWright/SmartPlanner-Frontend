@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/services/subscription_provider.dart';
 import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
 import 'package:practice_planner/views/Inwards/inwards_page.dart';
@@ -83,14 +84,27 @@ class _NavigationWrapperState extends State<NavigationWrapper>
               actions: <Widget>[
                 TextButton(
                   child: Text('Ok, Resubscribe'),
-                  onPressed: () {
+                  onPressed: () async {
+                    //get subscription products
+                    List<ProductDetails> productDetails = await PlannerService
+                        .subscriptionProvider
+                        .fetchSubscriptions();
+
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return const SubscriptionPage(
+                        return SubscriptionPage(
                           fromPage: 'login',
+                          products: productDetails,
                         );
                       },
                     ));
+                    // Navigator.of(context).push(MaterialPageRoute(
+                    //   builder: (context) {
+                    //     return const SubscriptionPage(
+                    //       fromPage: 'login',
+                    //     );
+                    //   },
+                    // ));
                   },
                 ),
               ],

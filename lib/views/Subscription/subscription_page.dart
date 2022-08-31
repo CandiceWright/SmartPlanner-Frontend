@@ -13,7 +13,10 @@ import 'package:http/http.dart' as http;
 
 class SubscriptionPage extends StatefulWidget {
   final String fromPage;
-  const SubscriptionPage({Key? key, required this.fromPage}) : super(key: key);
+  final List<ProductDetails> products;
+  const SubscriptionPage(
+      {Key? key, required this.fromPage, required this.products})
+      : super(key: key);
 
   @override
   State<SubscriptionPage> createState() => _SubscriptionPageState();
@@ -28,7 +31,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   bool doneBtnDisabled = true;
   bool monthlySelected = false;
   bool yearlySelected = false;
-  List<ProductDetails> products = [];
+  //List<ProductDetails> products = [];
 
   @override
   void dispose() {
@@ -56,13 +59,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     PlannerService.subscriptionProvider.purchaseSuccess
         .addListener(purchaseRestoredorComplete);
 
-    getSubscitpions();
+    //getSubscitpions();
     super.initState();
   }
 
-  getSubscitpions() async {
-    products = await PlannerService.subscriptionProvider.fetchSubscriptions();
-  }
+  // getSubscitpions() async {
+  //   products = await PlannerService.subscriptionProvider.fetchSubscriptions();
+  // }
 
   purchaseError() {
     if (PlannerService.subscriptionProvider.purchaseError.value) {
@@ -307,14 +310,30 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
     PlannerService.subscriptionProvider.purchaseInProgress = true;
     if (selectedSubscription == "monthly") {
       //find the product detail for monthly
-      ProductDetails pd = products
+      ProductDetails pd = widget.products
           .firstWhere((element) => element.id == "monthly_subscription");
       PlannerService.subscriptionProvider.purchaseProduct(pd);
     } else {
-      ProductDetails pd =
-          products.firstWhere((element) => element.id == "yearly_subscription");
+      ProductDetails pd = widget.products
+          .firstWhere((element) => element.id == "yearly_subscription");
       PlannerService.subscriptionProvider.purchaseProduct(pd);
     }
+  }
+
+  void subscribeMonthly() async {
+    PlannerService.subscriptionProvider.purchaseInProgress = true;
+    //find the product detail for monthly
+    ProductDetails pd = widget.products
+        .firstWhere((element) => element.id == "monthly_subscription");
+    PlannerService.subscriptionProvider.purchaseProduct(pd);
+  }
+
+  void subscribeYearly() async {
+    PlannerService.subscriptionProvider.purchaseInProgress = true;
+
+    ProductDetails pd = widget.products
+        .firstWhere((element) => element.id == "yearly_subscription");
+    PlannerService.subscriptionProvider.purchaseProduct(pd);
   }
 
   @override
@@ -357,112 +376,94 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           ),
           body: Column(
             children: [
+              // const Padding(
+              //   padding: EdgeInsets.all(8),
+              //   child: Text(
+              //     "Your first week is free. Try it out!",
+              //     style: TextStyle(
+              //         color: Colors.white,
+              //         fontSize: 20,
+              //         fontWeight: FontWeight.bold),
+              //     textAlign: TextAlign.center,
+              //   ),
+              // ),
+
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "Try it out free, 1 week!",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const Text(
+                "After free trial, choose your subscription option below.",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
               Padding(
                 child: Image.asset(
                   "assets/images/planit_logo.png",
                 ),
                 padding: EdgeInsets.all(10),
               ),
-              const Text(
-                "Free trial 1 week.",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              Padding(
-                padding: EdgeInsets.all(6),
-                child: Column(
-                  children: [
-                    Text(
-                      "\$1.99/month",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    Checkbox(
-                        value: monthlySelected,
-                        onChanged: (value) {
-                          print("monthly subscription chosen");
-                          setState(() {
-                            monthlySelected = value!;
-                            yearlySelected = !value;
-                            selectedSubscription = "monthly";
-                            setDoneBtnState();
-                          });
-                        })
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(6),
-                child: Column(
-                  children: [
-                    Text(
-                      "One year for \$19.99",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    Checkbox(
-                        value: yearlySelected,
-                        onChanged: (value) {
-                          print("yearly subscription chosen");
-                          setState(() {
-                            monthlySelected = !value!;
-                            yearlySelected = value;
-                            selectedSubscription = "yearly";
-                            setDoneBtnState();
-                          });
-                        })
-                  ],
-                ),
-              ),
 
-              //Don't want to keep your Planit after the free trial? No problem, cancel any time before the 7 day trial ends and you'll pay nothing.
-              //Row(
-              //children: [
-              // Card(
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(10.0),
+              // const Padding(
+              //   padding: EdgeInsets.all(8),
+              //   child: Text(
+              //     "Try it out free, 1 week!",
+              //     style: TextStyle(
+              //         color: Colors.white,
+              //         fontSize: 18,
+              //         fontWeight: FontWeight.bold),
+              //     textAlign: TextAlign.center,
               //   ),
-              //   color: Colors.white,
-              //   child: Column(children: [
-              //     const Text(
-              //       ' \$1.99/month',
-              //       style:
-              //           TextStyle(color: const Color(0xffef41a8), fontSize: 20),
-              //       textAlign: TextAlign.center,
-              //     ),
-              //     const Text(
-              //       "Full Access to all Planit Features",
-              //     ),
-              //     // Checkbox(
-              //     //     value: monthlySelected,
-              //     //     onChanged: (value) {
-              //     //       print("monthly subscription chosen");
-              //     //       setState(() {
-              //     //         monthlySelected = true;
-              //     //         yearlySelected = false;
-              //     //         selectedSubscription = "monthly";
-              //     //         setDoneBtnState();
-              //     //       });
-              //     //     })
-              //   ]),
               // ),
+              // const Text(
+              //   "After free trial, choose your subscription below.",
+              //   style: TextStyle(
+              //     color: Colors.white,
+              //     fontSize: 14,
+              //   ),
+              //   textAlign: TextAlign.center,
+              // ),
+
+              // Padding(
+              //   padding: EdgeInsets.all(8),
+              //   child: ElevatedButton(
+              //     onPressed: doneBtnDisabled ? null : subscribe,
+              //     //onPressed: subscribe,
+
+              //     child: Text(
+              //       "Subscribe & Go to my Planit",
+              //       style: TextStyle(fontSize: 18),
+              //     ),
+              //     // style: ButtonStyle(
+              //     //   backgroundColor: MaterialStateProperty.all<Color>(
+              //     //       const Color(0xffd4ac62)),
+              //     // ),
+              //     style: ButtonStyle(
+              //       backgroundColor: MaterialStateProperty.all<Color>(
+              //           const Color(0xffef41a8)),
+              //     ),
+              //   ),
+              // ),
+
               Padding(
                 padding: EdgeInsets.all(8),
                 child: ElevatedButton(
-                  // onPressed: doneBtnDisabled ? null : subscribe,
-                  onPressed: subscribe,
+                  //onPressed: doneBtnDisabled ? null : subscribeMonthly,
+                  onPressed: subscribeMonthly,
 
                   child: Text(
-                    "Subscribe & Go to my Planit",
+                    "Monthly \$1.99",
                     style: TextStyle(fontSize: 18),
                   ),
                   // style: ButtonStyle(
@@ -475,107 +476,49 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   ),
                 ),
               ),
-
-              const Text(
-                "You will not be charged until your 1 week trial ends.",
-                style: TextStyle(
-                  color: Colors.white,
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "or",
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                  ),
                 ),
-                textAlign: TextAlign.center,
               ),
-              const Text(
-                "Cancel at any time.",
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const Text(
-                "Full Access to all Planit Features",
-              ),
+              Padding(
+                padding: EdgeInsets.all(8),
+                child: ElevatedButton(
+                  //onPressed: doneBtnDisabled ? null : subscribeYearly,
+                  onPressed: subscribeYearly,
 
-              // Card(
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(20.0),
-              //   ),
-              //   color: Colors.white,
-              //   child: Column(children: [
-              //     const Text(
-              //       ' \$19.99/year',
-              //       style:
-              //           TextStyle(color: const Color(0xffef41a8), fontSize: 20),
-              //       textAlign: TextAlign.center,
-              //     ),
-              //     const Text(
-              //       "Full Access to all Planit Features",
-              //     ),
-              //     Checkbox(
-              //         value: yearlySelected,
-              //         onChanged: (value) {
-              //           print("yearly subscription chosen");
-              //           setState(() {
-              //             yearlySelected = true;
-              //             monthlySelected = false;
-              //             selectedSubscription = "yearly";
-              //             setDoneBtnState();
-              //           });
-              //         })
-              //   ]),
-              // )
-              //],
-              //)
+                  child: Text(
+                    "Yearly \$19.99",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  // style: ButtonStyle(
+                  //   backgroundColor: MaterialStateProperty.all<Color>(
+                  //       const Color(0xffd4ac62)),
+                  // ),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xffef41a8)),
+                  ),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your trial ends and you won't be charged.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              )
             ],
           ),
-          // persistentFooterButtons: [
-          //   Container(
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         // FractionallySizedBox(
-          //         //   widthFactor: 0.5,
-          //         //   child: ElevatedButton(
-          //         //     // onPressed: doneBtnDisabled ? null : subscribe,
-          //         //     onPressed: subscribe,
-
-          //         //     child: Text(
-          //         //       "Subscribe",
-          //         //       //style: TextStyle(fontSize: 18),
-          //         //     ),
-          //         //     // style: ButtonStyle(
-          //         //     //   backgroundColor: MaterialStateProperty.all<Color>(
-          //         //     //       const Color(0xffd4ac62)),
-          //         //     // ),
-          //         //     style: ButtonStyle(
-          //         //       backgroundColor: MaterialStateProperty.all<Color>(
-          //         //           const Color(0xffef41a8)),
-          //         //     ),
-          //         //   ),
-          //         // ),
-          //         //Row(
-          //         // mainAxisAlignment: MainAxisAlignment.center,
-          //         //children: [
-          //         TextButton(
-          //             onPressed: () {
-          //               Navigator.of(context).pushReplacement(MaterialPageRoute(
-          //                 builder: (context) {
-          //                   return const WelcomePage();
-          //                 },
-          //               ));
-          //             },
-          //             child: const Text(
-          //               "Cancel",
-          //               style: TextStyle(
-          //                 color: Color(0xff7ddcfa),
-          //                 //color: Color(0xffef41a8)
-          //                 //color: Color(0xffd4ac62),
-          //               ),
-          //             ))
-          //         //],
-          //         //)
-          //       ],
-          //     ),
-          //   )
-          // ],
         ),
       ],
     );

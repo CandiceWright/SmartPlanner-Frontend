@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/navigation_wrapper.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 class EnterPlannerVideoPage extends StatefulWidget {
   final String fromPage;
@@ -13,47 +16,134 @@ class EnterPlannerVideoPage extends StatefulWidget {
 }
 
 class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
-  late VideoPlayerController _controller;
+  late VideoPlayerController _videoPlayerController;
 
   @override
   void initState() {
     super.initState();
-    if (widget.fromPage == "signup") {
-      _controller = VideoPlayerController.asset(
+    // if (widget.fromPage == "signup") {
+    // } else {}
+  }
+
+  Future setVideoController() async {
+    print("I am setting video controller");
+    if (widget.fromPage == "signup" ||
+        !PlannerService.sharedInstance.user!.hasPlanitVideo) {
+      _videoPlayerController = VideoPlayerController.asset(
           "assets/images/another_planit_animation_video.mp4")
         ..initialize().then((_) {
           // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
           setState(() {});
-          _controller.play();
-          _controller.setLooping(false);
-          _controller.addListener(checkVideoEnded);
+          _videoPlayerController.play();
+          _videoPlayerController.setLooping(false);
+          _videoPlayerController.addListener(checkVideoEnded);
         });
     } else {
-      _controller = VideoPlayerController.network(
-          PlannerService.sharedInstance.user!.planitVideo)
-        ..initialize().then((_) {
-          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-          setState(() {});
-          _controller.play();
-          _controller.setLooping(false);
-          _controller.addListener(checkVideoEnded);
-        });
+      if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+        if (File(PlannerService.sharedInstance.user!.planitVideoLocalPath)
+            .existsSync()) {
+          print("file exists");
+          //the file exists!
+          //can use file
+          _videoPlayerController = VideoPlayerController.file(
+              File(PlannerService.sharedInstance.user!.planitVideoLocalPath));
+          await _videoPlayerController.initialize();
+          await _videoPlayerController.setLooping(false);
+          await _videoPlayerController.play();
+          _videoPlayerController.addListener(checkVideoEnded);
+        } else {
+          print("file does not exists");
+          //need to get the video from s3
+          //first get s3 get url, then store file locally and
+          Object presignedUrl = await PlannerService.aws.getPresignedUrl(
+              "get", PlannerService.sharedInstance.user!.planitVideo);
+          if (presignedUrl != "error") {
+            var url = Uri.parse(presignedUrl.toString());
+            print(
+                "this is the url i am trying to get in inwards page line 103");
+            print(url);
+            var response = await http.get(url);
+            print('Response status: ${response.statusCode}');
+            if (response.statusCode == 200) {
+              //file is in resonse.body
+              //need to save it to PlannerService.sharedInstant.user.planitVideoLocalPath
+              print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
+              //String path = await lss.getlocalFilePath('hi');
+              final directory = await getApplicationDocumentsDirectory();
+              String path = directory.path;
+              print("thiis is the path to local directtory");
+              print(path);
+
+              File file = File('$path/cover.mov');
+              await file.writeAsBytes(response.bodyBytes);
+
+              _videoPlayerController =
+                  VideoPlayerController.file(File('$path/cover.mov'));
+              await _videoPlayerController.initialize();
+              await _videoPlayerController.setLooping(false);
+              await _videoPlayerController.play();
+              _videoPlayerController.addListener(checkVideoEnded);
+
+              PlannerService.sharedInstance.user!.planitVideoLocalPath =
+                  '$path/cover.mov';
+            } else {
+              //show error
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                          'Oops! Looks like something went wrong. Please try again.'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  });
+            }
+          } else {
+            //show error
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              },
+            );
+          }
+        }
+      }
     }
   }
 
   void checkVideoEnded() {
     print("in check video ended");
-    if (_controller.value.position == _controller.value.duration) {
+    if (_videoPlayerController.value.position ==
+        _videoPlayerController.value.duration) {
       print("its true");
-      print(_controller.value.position);
-      print(_controller.value.duration);
+      print(_videoPlayerController.value.position);
+      print(_videoPlayerController.value.duration);
       goToPlanner();
     }
   }
 
   goToPlanner() {
-    _controller.removeListener(checkVideoEnded);
-    _controller.pause();
+    _videoPlayerController.removeListener(checkVideoEnded);
+    _videoPlayerController.pause();
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const NavigationWrapper();
@@ -99,25 +189,48 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
             automaticallyImplyLeading: false,
             elevation: 0.0,
           ),
-          body: _controller.value.isInitialized
-              ? Container(
+          body: Stack(
+            children: [
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.transparent,
+                  ),
+                  clipBehavior: Clip.antiAlias,
                   alignment: Alignment.center,
-                  margin: EdgeInsets.all(20),
-                  child: AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: <Widget>[
-                          VideoPlayer(_controller),
-                          VideoProgressIndicator(_controller,
-                              allowScrubbing: true),
-                        ],
-                      ),
-                    ),
-                  ))
-              : Container(),
+                  child: FutureBuilder(
+                    future: setVideoController(),
+                    builder: (context, state) {
+                      if (state.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        //return VideoPlayer(_videoPlayerController);
+                        return Container(
+                            margin: EdgeInsets.all(20),
+                            child: AspectRatio(
+                              aspectRatio:
+                                  _videoPlayerController.value.aspectRatio,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(15),
+                                child: Stack(
+                                  alignment: Alignment.bottomCenter,
+                                  children: <Widget>[
+                                    VideoPlayer(_videoPlayerController),
+                                    VideoProgressIndicator(
+                                        _videoPlayerController,
+                                        allowScrubbing: true),
+                                  ],
+                                ),
+                              ),
+                            ));
+                      }
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
           persistentFooterButtons: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -145,36 +258,11 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
         ),
       ],
     );
-    // return MaterialApp(
-    //   title: 'Video Demo',
-    //   home: Scaffold(
-    //     body: Center(
-    //       child: _controller.value.isInitialized
-    //           ? AspectRatio(
-    //               aspectRatio: _controller.value.aspectRatio,
-    //               child: VideoPlayer(_controller),
-    //             )
-    //           : Container(),
-    //     ),
-    //     floatingActionButton: FloatingActionButton(
-    //       onPressed: () {
-    //         setState(() {
-    //           _controller.value.isPlaying
-    //               ? _controller.pause()
-    //               : _controller.play();
-    //         });
-    //       },
-    //       child: Icon(
-    //         _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 
   @override
   void dispose() {
     super.dispose();
-    _controller.dispose();
+    _videoPlayerController.dispose();
   }
 }

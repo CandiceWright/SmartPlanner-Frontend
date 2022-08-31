@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/main.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/services/planner_service.dart';
@@ -13,6 +14,7 @@ import '../Subscription/subscription_page.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/navigation_wrapper.dart';
 import 'package:http/http.dart' as http;
+import 'package:practice_planner/services/subscription_provider.dart';
 
 import 'enter_planit_video_page.dart';
 
@@ -115,11 +117,15 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
           //     );
           //   },
           // ));
+
+          //get subscription products
+          List<ProductDetails> productDetails =
+              await PlannerService.subscriptionProvider.fetchSubscriptions();
+
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) {
-              return const SubscriptionPage(
-                fromPage: 'signup',
-              );
+              return SubscriptionPage(
+                  fromPage: 'signup', products: productDetails);
             },
           ));
         } else {
