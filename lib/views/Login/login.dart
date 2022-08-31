@@ -347,6 +347,9 @@ class _LoginPageState extends State<LoginPage> {
         var inwardVideoUrl = decodedBody["inwardVideoUrl"] == null
             ? ""
             : decodedBody["inwardVideoUrl"];
+        var coverVideoLocalPath = decodedBody["coverVideoLocalPath"] == null
+            ? ""
+            : decodedBody["coverVideoLocalPath"];
         print("printing inward video url");
         print(decodedBody["inwardVideoUrl"]);
         bool didStartPlanning;
@@ -610,6 +613,8 @@ class _LoginPageState extends State<LoginPage> {
                       PlannerService.sharedInstance.user = user;
                       PlannerService.sharedInstance.user!.planitVideo =
                           inwardVideoUrl;
+                      PlannerService.sharedInstance.user!.planitVideoLocalPath =
+                          coverVideoLocalPath;
                       PlannerService.sharedInstance.user!.hasPlanitVideo =
                           PlannerService.sharedInstance.user!.planitVideo == ""
                               ? false

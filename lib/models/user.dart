@@ -24,6 +24,7 @@ class User {
   bool hasPlanitVideo = false;
   //String planitVideo = "assets/images/another_planit_animation_video.mp4";
   String planitVideo = "";
+  String planitVideoLocalPath = "";
   var goals = <Event>[];
   var scheduledEvents = <Event>[];
   var habits = <Habit>[];
