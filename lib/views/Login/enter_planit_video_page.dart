@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:practice_planner/services/planner_service.dart';
@@ -30,16 +31,16 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
     if (widget.fromPage == "signup" ||
         !PlannerService.sharedInstance.user!.hasPlanitVideo) {
       _videoPlayerController = VideoPlayerController.asset(
-          "assets/images/another_planit_animation_video.mp4")
-        ..initialize().then((_) {
-          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-          setState(() {});
-          _videoPlayerController.play();
-          _videoPlayerController.setLooping(false);
-          _videoPlayerController.addListener(checkVideoEnded);
-        });
+          "assets/images/another_planit_animation_video.mp4");
+      await _videoPlayerController.initialize();
+      // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+
+      await _videoPlayerController.play();
+      await _videoPlayerController.setLooping(false);
+      _videoPlayerController.addListener(checkVideoEnded);
     } else {
       if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+        print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
         if (File(PlannerService.sharedInstance.user!.planitVideoLocalPath)
             .existsSync()) {
           print("file exists");
@@ -77,15 +78,53 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
               File file = File('$path/cover.mov');
               await file.writeAsBytes(response.bodyBytes);
 
-              _videoPlayerController =
-                  VideoPlayerController.file(File('$path/cover.mov'));
-              await _videoPlayerController.initialize();
-              await _videoPlayerController.setLooping(false);
-              await _videoPlayerController.play();
-              _videoPlayerController.addListener(checkVideoEnded);
-
               PlannerService.sharedInstance.user!.planitVideoLocalPath =
                   '$path/cover.mov';
+
+              //update local path for cover in db
+              //save new local path of story in db
+              var body = {
+                'userId': PlannerService.sharedInstance.user!.id,
+                'inwardVideoUrl':
+                    PlannerService.sharedInstance.user!.planitVideo,
+                'coverVideoLocalPath': '$path/cover.mov',
+              };
+              String bodyF = jsonEncode(body);
+              print(bodyF);
+
+              var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                  '/user/inwardvideo');
+              var response2 = await http.patch(url,
+                  headers: {"Content-Type": "application/json"}, body: bodyF);
+              print('Response status: ${response2.statusCode}');
+              print('Response body: ${response2.body}');
+
+              if (response2.statusCode == 200) {
+                _videoPlayerController =
+                    VideoPlayerController.file(File('$path/cover.mov'));
+                await _videoPlayerController.initialize();
+                await _videoPlayerController.setLooping(false);
+                await _videoPlayerController.play();
+                _videoPlayerController.addListener(checkVideoEnded);
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                          'Oops! Looks like something went wrong. Please try again.'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  },
+                );
+              }
             } else {
               //show error
               showDialog(

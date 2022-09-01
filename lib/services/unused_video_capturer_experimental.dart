@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:practice_planner/models/story.dart';
-import 'package:practice_planner/services/video_preview.dart';
+import 'package:practice_planner/services/unused_video_preview.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:practice_planner/views/navigation_wrapper.dart';
 import 'package:video_compress/video_compress.dart';
@@ -146,11 +146,11 @@ class _VideoCapturerState extends State<VideoCapturer> {
           var decodedBody = json.decode(response.body);
           print(decodedBody);
           var id = decodedBody["insertId"];
-          Story newStory = Story(id, result!, result2!, DateTime.now());
-          setState(() {
-            // PlannerService.sharedInstance.user!.profileImage = path;
-            PlannerService.sharedInstance.user!.stories.add(newStory);
-          });
+          // Story newStory = Story(id, result!, result2!, DateTime.now());
+          // setState(() {
+          //   // PlannerService.sharedInstance.user!.profileImage = path;
+          //   PlannerService.sharedInstance.user!.stories.add(newStory);
+          // });
 
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) {

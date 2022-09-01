@@ -2,9 +2,10 @@ import 'dart:io';
 
 class Story {
   int id;
-  String video; //url
+  String videoAwsPath; //url
+  String localPath;
   String thumbnail;
   DateTime date = DateTime.now();
 
-  Story(this.id, this.video, this.thumbnail, this.date);
+  Story(this.id, this.videoAwsPath, this.localPath, this.thumbnail, this.date);
 }

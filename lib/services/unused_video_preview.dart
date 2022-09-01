@@ -133,11 +133,11 @@ class _VideoPreviewPageState extends State<VideoPreviewPage> {
           var decodedBody = json.decode(response.body);
           print(decodedBody);
           var id = decodedBody["insertId"];
-          Story newStory = Story(id, result!, result2!, DateTime.now());
-          setState(() {
-            // PlannerService.sharedInstance.user!.profileImage = path;
-            PlannerService.sharedInstance.user!.stories.add(newStory);
-          });
+          // Story newStory = Story(id, result!, result2!, DateTime.now());
+          // setState(() {
+          //   // PlannerService.sharedInstance.user!.profileImage = path;
+          //   PlannerService.sharedInstance.user!.stories.add(newStory);
+          // });
           // Navigator.of(context).popUntil((route) {
           //   return route.settings.name == 'navigaionPage';
           // });

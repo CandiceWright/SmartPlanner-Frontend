@@ -23,7 +23,7 @@ class User {
   String spaceImage;
   bool hasPlanitVideo = false;
   //String planitVideo = "assets/images/another_planit_animation_video.mp4";
-  String planitVideo = "";
+  String planitVideo = ""; //aws path
   String planitVideoLocalPath = "";
   var goals = <Event>[];
   var scheduledEvents = <Event>[];

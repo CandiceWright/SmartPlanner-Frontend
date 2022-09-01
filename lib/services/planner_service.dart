@@ -116,46 +116,4 @@ class PlannerService {
       print("error in planner service line 116");
     }
   }
-
-  // saveCoverVideo(String tempPath, String localPath, String name) async {//with firebase
-  //   String? result =
-  //       await PlannerService.firebaseStorage.uploadStory(tempPath, name);
-
-  //   //store story in db then add story object to the list of stories
-  //   print("result is ready");
-  //   print(result);
-  //   if (result == "error") {
-  //     //error message
-  //     //return "error";
-  //   } else {
-  //     //success and result holds url
-  //     print("success getting video url");
-  //     print(result);
-
-  //     //save tto db now
-  //     var url = Uri.parse(
-  //         PlannerService.sharedInstance.serverUrl + '/user/inwardvideo');
-  //     var body = {
-  //       'userId': PlannerService.sharedInstance.user!.id,
-  //       'inwardVideoUrl': result,
-  //       'coverVideoLocalPath': localPath
-  //       //'thumbnail': PlannerService.sharedInstance.user!.profileImage
-  //     };
-  //     String bodyF = jsonEncode(body);
-  //     var response = await http.patch(url,
-  //         headers: {"Content-Type": "application/json"}, body: bodyF);
-
-  //     print("server came back with a response after saving story");
-  //     print('Response status: ${response.statusCode}');
-  //     print('Response body: ${response.body}');
-
-  //     if (response.statusCode == 200) {
-  //       print("success saving to db");
-  //     } else {
-  //       //maybe create a listening variable in navigation wrapper to show some error
-  //       print("error saving to db");
-  //     }
-  //     //}
-  //   }
-  // }
 }

@@ -1,6 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:practice_planner/services/video_preview.dart';
+import 'package:practice_planner/services/unused_video_preview.dart';
 
 import '../../services/planner_service.dart';
 

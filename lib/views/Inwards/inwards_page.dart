@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
@@ -84,14 +85,6 @@ class _InwardsPageState extends State<InwardsPage> {
       await _videoPlayerController.initialize();
       await _videoPlayerController.setLooping(true);
       await _videoPlayerController.play();
-      // _videoPlayerController = VideoPlayerController.file(
-      //     File(PlannerService.sharedInstance.user!.planitVideoLocalPath))
-      //   ..initialize().then((_) {
-      //     // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-      //     setState(() {});
-      //     _videoPlayerController.play();
-      //     _videoPlayerController.setLooping(true);
-      //   });
     } else {
       print("file does not exists");
       //need to get the video from s3
@@ -113,43 +106,55 @@ class _InwardsPageState extends State<InwardsPage> {
           String path = directory.path;
           print("thiis is the path to local directtory");
           print(path);
-          // Future<File> file =
-          //     File(PlannerService.sharedInstance.user!.planitVideoLocalPath)
-          //         .writeAsBytes(response.bodyBytes);
 
           File file = File('$path/cover.mov');
           await file.writeAsBytes(response.bodyBytes);
-          // setState(() {
-          //   print("I am setting the local path in planner service");
-          //   PlannerService.sharedInstance.user!.planitVideoLocalPath =
-          //       '$path/cover.mov';
-          // });
 
-          _videoPlayerController =
-              VideoPlayerController.file(File('$path/cover.mov'));
-          await _videoPlayerController.initialize();
-          await _videoPlayerController.setLooping(true);
-          await _videoPlayerController.play();
           PlannerService.sharedInstance.user!.planitVideoLocalPath =
               '$path/cover.mov';
 
-          // _videoPlayerController =
-          //     VideoPlayerController.file(File('$path/cover.mov'))
-          //       ..initialize().then((_) {
-          //         print("video is initialized");
-          //         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-          //         setState(() {});
-          //         PlannerService.sharedInstance.user!.planitVideoLocalPath =
-          //             '$path/cover.mov';
-          //         _videoPlayerController.play();
-          //         _videoPlayerController.setLooping(true);
-          //       });
+          //update local path for cover in db
+          //save new local path of story in db
+          var body = {
+            'userId': PlannerService.sharedInstance.user!.id,
+            'inwardVideoUrl': PlannerService.sharedInstance.user!.planitVideo,
+            'coverVideoLocalPath': '$path/cover.mov',
+          };
+          String bodyF = jsonEncode(body);
+          print(bodyF);
 
-          //need to update in db
+          var url = Uri.parse(
+              PlannerService.sharedInstance.serverUrl + '/user/inwardvideo');
+          var response2 = await http.patch(url,
+              headers: {"Content-Type": "application/json"}, body: bodyF);
+          print('Response status: ${response2.statusCode}');
+          print('Response body: ${response2.body}');
 
-          // _videoPlayerController = VideoPlayerController.file(
-          //     File(PlannerService.sharedInstance.user!.planitVideoLocalPath))
-
+          if (response2.statusCode == 200) {
+            _videoPlayerController =
+                VideoPlayerController.file(File('$path/cover.mov'));
+            await _videoPlayerController.initialize();
+            await _videoPlayerController.setLooping(true);
+            await _videoPlayerController.play();
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              },
+            );
+          }
         } else {
           //show error
           showDialog(
@@ -201,16 +206,21 @@ class _InwardsPageState extends State<InwardsPage> {
 
       //save video locally
 
-      String videolocation = await lss.writeFile(video, name);
+      //String videolocation = await lss.writeFile(video, name);
+      String videolocation = await lss.writeFile(video, 'cover.mov');
       setState(() {
-        // PlannerService.sharedInstance.user!.profileImage = path;
         PlannerService.sharedInstance.user!.planitVideoLocalPath =
             videolocation;
 
         PlannerService.sharedInstance.user!.hasPlanitVideo = true;
         setVideoController();
       });
-      PlannerService.sharedInstance.storeCoverVideo(path, videolocation, name);
+      //PlannerService.sharedInstance.storeCoverVideo(path, videolocation, name);
+      // PlannerService.sharedInstance
+      //     .storeCoverVideo(path, videolocation, 'cover.mov');
+      var userId = PlannerService.sharedInstance.user!.id.toString();
+      PlannerService.sharedInstance
+          .storeCoverVideo(path, videolocation, 'cover$userId.mov');
     } else {
       return;
     }

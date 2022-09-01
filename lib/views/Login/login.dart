@@ -607,6 +607,7 @@ class _LoginPageState extends State<LoginPage> {
                         var story = Story(
                             decodedBody[i]["storyId"],
                             decodedBody[i]["videoUrl"],
+                            decodedBody[i]["videoLocalPath"],
                             decodedBody[i]["thumbnail"],
                             DateTime.parse(decodedBody[i]["date"]));
                         stories.add(story);

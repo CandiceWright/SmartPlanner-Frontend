@@ -2,26 +2,20 @@
 
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/habit.dart';
-import 'package:practice_planner/models/story.dart';
 import 'package:practice_planner/services/capture_video_with_imagepicker.dart';
-import 'package:practice_planner/services/video_capturer.dart';
-import 'package:practice_planner/views/Calendar/calendar_page.dart';
-import 'package:practice_planner/views/navigation_wrapper.dart';
+
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
-import '/views/Goals/goals_page.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as p;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -59,15 +53,6 @@ class _HomePageState extends State<HomePage> {
     //print(PlannerService.sharedInstance.user.backlog);
     newHabitTextController.addListener(setSaveHabitBtnState);
     editHabitTxtController.addListener(setEditHabitBtnState);
-
-    // _videoPlayerController = VideoPlayerController.network(videourl)
-    //   ..initialize().then((_) {
-    //     // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-    //     setState(() {});
-    //     _videoPlayerController.play();
-    //     _videoPlayerController.setLooping(true);
-    //     //_videoPlayerController.addListener(checkVideoEnded);
-    //   });
   }
 
   @override
@@ -149,43 +134,45 @@ class _HomePageState extends State<HomePage> {
                   print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
+                    //need to delete from aws
+
                     //delete file from firebase
-                    String? result = await PlannerService.firebaseStorage
-                        .deleteFile(PlannerService
-                            .sharedInstance.user!.stories[idx].video);
-                    print("firebase delete done");
-                    print(result);
-                    if (result! == "success") {
-                      PlannerService.sharedInstance.user!.stories.removeAt(idx);
-                      setState(() {});
-                      //Navigator.pop(context);
-                      _videoPlayerController.pause();
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) {
-                          return const NavigationWrapper();
-                        },
-                        settings: const RouteSettings(
-                          name: 'navigaionPage',
-                        ),
-                      ));
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text(
-                                  'Oops! Looks like something went wrong. Please try again.'),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              ],
-                            );
-                          });
-                    }
+                    // String? result = await PlannerService.firebaseStorage
+                    //     .deleteFile(PlannerService
+                    //         .sharedInstance.user!.stories[idx].video);
+                    // print("firebase delete done");
+                    // print(result);
+                    // if (result! == "success") {
+                    //   PlannerService.sharedInstance.user!.stories.removeAt(idx);
+                    //   setState(() {});
+                    //   //Navigator.pop(context);
+                    //   _videoPlayerController.pause();
+                    //   Navigator.of(context).push(MaterialPageRoute(
+                    //     builder: (context) {
+                    //       return const NavigationWrapper();
+                    //     },
+                    //     settings: const RouteSettings(
+                    //       name: 'navigaionPage',
+                    //     ),
+                    //   ));
+                    // } else {
+                    //   showDialog(
+                    //       context: context,
+                    //       builder: (context) {
+                    //         return AlertDialog(
+                    //           title: const Text(
+                    //               'Oops! Looks like something went wrong. Please try again.'),
+                    //           actions: <Widget>[
+                    //             TextButton(
+                    //               child: const Text('OK'),
+                    //               onPressed: () {
+                    //                 Navigator.of(context).pop();
+                    //               },
+                    //             )
+                    //           ],
+                    //         );
+                    //       });
+                    // }
                   } else {
                     //500 error, show an alert
                     showDialog(
@@ -215,6 +202,131 @@ class _HomePageState extends State<HomePage> {
             ],
           );
         });
+  }
+
+  Future setVideoController(int index) async {
+    //PlannerService.sharedInstance.user!.stories[index].video
+    print("I am setting video controller foor story");
+    if (File(PlannerService.sharedInstance.user!.stories[index].localPath)
+        .existsSync()) {
+      print("file exists");
+      //the file exists!
+      //can use file
+      _videoPlayerController = VideoPlayerController.file(
+          File(PlannerService.sharedInstance.user!.stories[index].localPath));
+      await _videoPlayerController.initialize();
+      await _videoPlayerController.setLooping(true);
+      await _videoPlayerController.play();
+      //return;
+    } else {
+      print("file does not exists");
+      //need to get the video from s3
+      //first get s3 get url, then store file locally and
+      Object presignedUrl = await PlannerService.aws.getPresignedUrl("get",
+          PlannerService.sharedInstance.user!.stories[index].videoAwsPath);
+      if (presignedUrl != "error") {
+        var url = Uri.parse(presignedUrl.toString());
+        print("this is the url i am trying to get in inwards page line 103");
+        print(url);
+        var response = await http.get(url);
+        print('Response status: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          //file is in resonse.body
+
+          final directory = await getApplicationDocumentsDirectory();
+          String path = directory.path;
+
+          var storyId =
+              PlannerService.sharedInstance.user!.stories[index].id.toString();
+
+          File file = File('$path/story$storyId.mov');
+          // File file = File(
+          //     PlannerService.sharedInstance.user!.stories[index].localPath);
+          await file.writeAsBytes(response.bodyBytes);
+          PlannerService.sharedInstance.user!.stories[index].localPath =
+              '$path/story$storyId.mov';
+
+          //save new local path of story in db
+          var body = {
+            'storyId': PlannerService.sharedInstance.user!.stories[index].id,
+            'localPath': '$path/story$storyId.mov',
+          };
+          String bodyF = jsonEncode(body);
+          print(bodyF);
+
+          var url = Uri.parse(
+              PlannerService.sharedInstance.serverUrl + '/user/stories');
+          var response2 = await http.patch(url,
+              headers: {"Content-Type": "application/json"}, body: bodyF);
+          print('Response status: ${response2.statusCode}');
+          print('Response body: ${response2.body}');
+          if (response2.statusCode == 200) {
+            _videoPlayerController =
+                VideoPlayerController.file(File('$path/story$storyId.mov'));
+            await _videoPlayerController.initialize();
+            await _videoPlayerController.setLooping(true);
+            await _videoPlayerController.play();
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              },
+            );
+          }
+
+          //return;
+        } else {
+          //show error
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
+      } else {
+        //show error
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+      }
+    }
   }
 
   List<Widget> buildTodayTaskListView() {
@@ -263,13 +375,6 @@ class _HomePageState extends State<HomePage> {
       ),
       onTap: () {
         createStory();
-        //print("ready to recordx");
-        // Navigator.push(
-        //     context,
-        //     CupertinoPageRoute(
-        //         builder: (context) => const VideoCapturer(
-        //               videoType: "story",
-        //             )));
       },
     );
     stories.add(addStoryWidget);
@@ -286,83 +391,159 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(5),
           ),
           onTap: () {
-            _videoPlayerController = VideoPlayerController.network(
-                PlannerService.sharedInstance.user!.stories[index].video)
-              ..initialize().then((_) {
-                // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-                setState(() {});
-                _videoPlayerController.play();
-                _videoPlayerController.setLooping(true);
+            showDialog(
+                barrierDismissible: false,
+                context: context, // user must tap button!
 
-                // _controller.addListener(checkVideoEnded);
-                showDialog(
-                    barrierDismissible: false,
-                    context: context, // user must tap button!
-
-                    builder: (BuildContext context) {
-                      return StatefulBuilder(
-                          builder: (context, setDialogState) {
-                        return SimpleDialog(
-                          backgroundColor: Colors.transparent,
-                          contentPadding: const EdgeInsets.all(0),
-                          children: [
-                            Stack(
-                              children: [
-                                Container(
-                                  color: Colors.transparent,
-                                  // decoration: const BoxDecoration(
-                                  //     borderRadius: BorderRadius.all(
-                                  //         Radius.circular(20))),
-                                  //margin: const EdgeInsets.all(20),
-                                  child: AspectRatio(
-                                    aspectRatio: _videoPlayerController
-                                        .value.aspectRatio,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: Stack(
-                                        alignment: Alignment.bottomCenter,
-                                        children: <Widget>[
-                                          VideoPlayer(_videoPlayerController),
-                                          VideoProgressIndicator(
-                                              _videoPlayerController,
-                                              allowScrubbing: true),
-                                        ],
+                builder: (BuildContext context) {
+                  return StatefulBuilder(builder: (context, setDialogState) {
+                    return SimpleDialog(
+                      backgroundColor: Colors.transparent,
+                      contentPadding: const EdgeInsets.all(0),
+                      children: [
+                        (FutureBuilder(
+                          future: setVideoController(index),
+                          builder: (context, state) {
+                            if (state.connectionState ==
+                                ConnectionState.waiting) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else {
+                              //return VideoPlayer(_videoPlayerController);
+                              return Stack(
+                                children: [
+                                  Container(
+                                    color: Colors.transparent,
+                                    child: AspectRatio(
+                                      aspectRatio: _videoPlayerController
+                                          .value.aspectRatio,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: Stack(
+                                          alignment: Alignment.bottomCenter,
+                                          children: <Widget>[
+                                            VideoPlayer(_videoPlayerController),
+                                            VideoProgressIndicator(
+                                                _videoPlayerController,
+                                                allowScrubbing: true),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.all(5),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: IconButton(
-                                            onPressed: () async {
-                                              await _videoPlayerController
-                                                  .pause();
-                                              Navigator.pop(context);
-                                            },
-                                            icon: const Icon(Icons.close)),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(5),
-                                        child: IconButton(
-                                            onPressed: () {
-                                              deleteStory(index);
-                                            },
-                                            icon: const Icon(Icons.delete)),
-                                      ),
-                                    ],
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.all(5),
+                                          child: IconButton(
+                                              onPressed: () async {
+                                                await _videoPlayerController
+                                                    .pause();
+                                                Navigator.pop(context);
+                                              },
+                                              icon: const Icon(Icons.close)),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(5),
+                                          child: IconButton(
+                                              onPressed: () {
+                                                deleteStory(index);
+                                              },
+                                              icon: const Icon(Icons.delete)),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        );
-                      });
-                    });
-              });
+                                ],
+                              );
+                            }
+                          },
+                        ))
+
+                        // Stack(
+                        //   children: [
+                        //     Container(
+                        //         color: Colors.transparent,
+                        //         child: (FutureBuilder(
+                        //           future: setVideoController(index),
+                        //           builder: (context, state) {
+                        //             if (state.connectionState ==
+                        //                 ConnectionState.waiting) {
+                        //               return const Center(
+                        //                   child: CircularProgressIndicator());
+                        //             } else {
+                        //               //return VideoPlayer(_videoPlayerController);
+                        //               return AspectRatio(
+                        //                 aspectRatio: _videoPlayerController
+                        //                     .value.aspectRatio,
+                        //                 child: ClipRRect(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(15),
+                        //                   child: Stack(
+                        //                     alignment: Alignment.bottomCenter,
+                        //                     children: <Widget>[
+                        //                       VideoPlayer(
+                        //                           _videoPlayerController),
+                        //                       VideoProgressIndicator(
+                        //                           _videoPlayerController,
+                        //                           allowScrubbing: true),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //               );
+                        //             }
+                        //           },
+                        //         ))
+                        //         // child: AspectRatio(
+                        //         //   aspectRatio:
+                        //         //       _videoPlayerController.value.aspectRatio,
+                        //         //   child: ClipRRect(
+                        //         //     borderRadius: BorderRadius.circular(15),
+                        //         //     child: Stack(
+                        //         //       alignment: Alignment.bottomCenter,
+                        //         //       children: <Widget>[
+                        //         //         VideoPlayer(_videoPlayerController),
+                        //         //         VideoProgressIndicator(
+                        //         //             _videoPlayerController,
+                        //         //             allowScrubbing: true),
+                        //         //       ],
+                        //         //     ),
+                        //         //   ),
+                        //         // ),
+                        //         ),
+                        //     Padding(
+                        //       padding: EdgeInsets.all(5),
+                        //       child: Row(
+                        //         children: [
+                        //           Padding(
+                        //             padding: EdgeInsets.all(5),
+                        //             child: IconButton(
+                        //                 onPressed: () async {
+                        //                   await _videoPlayerController.pause();
+                        //                   Navigator.pop(context);
+                        //                 },
+                        //                 icon: const Icon(Icons.close)),
+                        //           ),
+                        //           Padding(
+                        //             padding: EdgeInsets.all(5),
+                        //             child: IconButton(
+                        //                 onPressed: () {
+                        //                   deleteStory(index);
+                        //                 },
+                        //                 icon: const Icon(Icons.delete)),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                      ],
+                    );
+                  });
+                });
+            //});
           });
     });
 
