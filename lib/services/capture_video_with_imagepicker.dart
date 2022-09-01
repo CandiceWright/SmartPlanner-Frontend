@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -124,12 +125,119 @@ class _CaptureVideoWithImagePickerState
       //first save story locally
       String videolocation = await lss.writeFile(video, filename);
 
-      //now save the thumbnail
+      //also save thumbnail locally
       final thumbnail = await VideoCompress.getFileThumbnail(path);
-      String? result2 = await PlannerService.firebaseStorage.uploadPicture(
-          thumbnail.path, "thumbnails/" + p.basename(thumbnail.path));
+      final directory = await getApplicationDocumentsDirectory();
+      String localDirPath = directory.path;
+      String newThumbnailPath = '$localDirPath/$filename' 'thumbnail';
+      File newThumbnail = await thumbnail.rename(newThumbnailPath);
 
-      if (result2 == "error") {
+      //partially save story to db with thumbnail firebase url so that I can quuickly save story
+      var url =
+          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/stories');
+      var body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'date': DateTime.now().toString(),
+        'url': "stories/" + filename,
+        'localPath': videolocation,
+        'localthumbnailPath': newThumbnailPath,
+        'thumbnail': ""
+      };
+      String bodyF = jsonEncode(body);
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+
+      print("server came back with a response after saving story");
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var decodedBody = json.decode(response.body);
+        print(decodedBody);
+        var id = decodedBody["insertId"];
+        Story newStory = Story(id, "stories/" + filename, videolocation, "",
+            newThumbnailPath, DateTime.now());
+        setState(() {
+          // PlannerService.sharedInstance.user!.profileImage = path;
+          PlannerService.sharedInstance.user!.stories.add(newStory);
+        });
+        widget.updateState();
+
+        //Navigator.of(context).pop();
+        Navigator.pop(context,
+            saveStoryElements(id, path, filename, videolocation, newThumbnail));
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      //error
+      Navigator.of(context).pop();
+    }
+  }
+
+  saveStoryElements(int storyId, String path, String filename,
+      String videolocation, File thumbnail) async {
+    PlannerService.sharedInstance
+        .uploadStoryVideotoS3(path, videolocation, filename);
+    //now save the thumbnail
+
+    print("this is the thumbnails path when I am about to save to firebase");
+    print(thumbnail.path);
+    String? result2 = await PlannerService.firebaseStorage.uploadPicture(
+        thumbnail.path, "thumbnails/" + p.basename(thumbnail.path));
+
+    if (result2 == "error") {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else {
+      //successfully saved thumbnail and result2 has thumbnail url
+      //update thumbnail firebase url in db
+      var url = Uri.parse(
+          PlannerService.sharedInstance.serverUrl + '/user/stories/thumbnail');
+      var body = {
+        'storyId': storyId,
+        'thumbnailUrl': result2,
+        //'thumbnail': PlannerService.sharedInstance.user!.profileImage
+      };
+      String bodyF = jsonEncode(body);
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+
+      print("server came back with a response after saving video");
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode != 200) {
         showDialog(
             context: context,
             builder: (context) {
@@ -146,67 +254,11 @@ class _CaptureVideoWithImagePickerState
                 ],
               );
             });
-      } else {
-        //successfully saved thumbnail and result2 has thumbnail url
-        //save story to db now
-        print("video location before saving in db");
-        print(videolocation);
-        var url = Uri.parse(
-            PlannerService.sharedInstance.serverUrl + '/user/stories');
-        var body = {
-          'userId': PlannerService.sharedInstance.user!.id,
-          'date': DateTime.now().toString(),
-          'url': "stories/" + filename,
-          'localPath': videolocation,
-          //'thumbnail': PlannerService.sharedInstance.user!.profileImage
-          'thumbnail': result2
-        };
-        String bodyF = jsonEncode(body);
-        var response = await http.post(url,
-            headers: {"Content-Type": "application/json"}, body: bodyF);
-
-        print("server came back with a response after saving story");
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
-
-        if (response.statusCode == 200) {
-          var decodedBody = json.decode(response.body);
-          print(decodedBody);
-          var id = decodedBody["insertId"];
-          Story newStory = Story(id, "stories/" + filename, videolocation,
-              result2!, DateTime.now());
-          setState(() {
-            // PlannerService.sharedInstance.user!.profileImage = path;
-            PlannerService.sharedInstance.user!.stories.add(newStory);
-          });
-          widget.updateState();
-          PlannerService.sharedInstance
-              .uploadStoryVideotoS3(path, videolocation, filename);
-
-          Navigator.of(context).pop();
-        } else {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(
-                    'Oops! Looks like something went wrong. Please try again.'),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            },
-          );
-        }
       }
-    } else {
-      //error
-      Navigator.of(context).pop();
+      // else {
+      //   //maybe create a listening variable in navigation wrapper to show some error
+      //   print("error saving to db");
+      // }
     }
   }
 }

@@ -383,11 +383,22 @@ class _HomePageState extends State<HomePage> {
         PlannerService.sharedInstance.user!.stories.length, (int index) {
       return GestureDetector(
           child: Padding(
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(
-                  PlannerService.sharedInstance.user!.stories[index].thumbnail),
-              radius: 30,
-            ),
+            child: File(PlannerService
+                        .sharedInstance.user!.stories[index].localThumbnailPath)
+                    .existsSync()
+                ? CircleAvatar(
+                    backgroundImage: FileImage(File(PlannerService
+                        .sharedInstance
+                        .user!
+                        .stories[index]
+                        .localThumbnailPath)),
+                    radius: 30,
+                  )
+                : CircleAvatar(
+                    backgroundImage: NetworkImage(PlannerService
+                        .sharedInstance.user!.stories[index].thumbnail),
+                    radius: 30,
+                  ),
             padding: const EdgeInsets.all(5),
           ),
           onTap: () {

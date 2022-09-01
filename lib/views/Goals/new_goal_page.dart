@@ -358,7 +358,6 @@ class _NewGoalPageState extends State<NewGoalPage> {
                         Container(
                           child: TextFormField(
                             controller: descriptionTxtController,
-                            onTap: () {},
                             decoration: const InputDecoration(
                               hintText: "What's your goal?",
                             ),

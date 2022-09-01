@@ -31,6 +31,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   bool doneBtnDisabled = true;
   bool monthlySelected = false;
   bool yearlySelected = false;
+  late ProductDetails monthlyProduct;
+  late ProductDetails yearlyProduct;
+
   //List<ProductDetails> products = [];
 
   @override
@@ -49,6 +52,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   @override
   initState() {
+    monthlyProduct = widget.products
+        .firstWhere((element) => element.id == "monthly_subscription");
+    yearlyProduct = widget.products
+        .firstWhere((element) => element.id == "yearly_subscription");
     PlannerService.subscriptionProvider.purchaseError
         .addListener(purchaseError);
     PlannerService.subscriptionProvider.purchasePending
@@ -194,104 +201,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         PlannerService.subscriptionProvider.purchaseRestored.value) {
       print("purchase complete");
     }
-
-    // if (PlannerService.subscriptionProvider.purchaseRestored.value ||
-    //     PlannerService.subscriptionProvider.purchaseSuccess.value) {
-    //   //store the receipt in your db
-    //   //I am done with these values so now I can reset thee values
-    //   PlannerService.subscriptionProvider.purchaseSuccess.value = false;
-    //   PlannerService.subscriptionProvider.purchaseRestored.value = false;
-    //   print(widget.fromPage);
-
-    //   //need to save receipt tto database
-
-    //   if (widget.fromPage == "login") {
-    //     if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //         builder: (context) {
-    //           return const EnterPlannerVideoPage(
-    //             fromPage: "login",
-    //           );
-    //         },
-    //       ));
-    //     } else {
-    //       Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //         builder: (context) {
-    //           return const NavigationWrapper();
-    //         },
-    //         settings: const RouteSettings(
-    //           name: 'navigaionPage',
-    //         ),
-    //       ));
-    //     }
-    //   } else {
-    //     //signup
-    //     Navigator.of(context).pushReplacement(MaterialPageRoute(
-    //       builder: (context) {
-    //         return const EnterPlannerVideoPage(
-    //           fromPage: "signup",
-    //         );
-    //       },
-    //     ));
-    //   }
-    // }
   }
-
-  // checkPurchaseStatus() {
-  //   print("there was an update in subscription provider");
-  //   if (subscriptionProvider.purchaseError == true) {
-  //     print("purchase produced an error");
-  //     //show error
-  //     showDialog(
-  //         context: context,
-  //         builder: (context) {
-  //           return AlertDialog(
-  //             title: Text(
-  //                 'Oops! Looks like something went wrong. Please try again.'),
-  //             actions: <Widget>[
-  //               TextButton(
-  //                 child: Text('OK'),
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //               )
-  //             ],
-  //           );
-  //         });
-  //   } else if (subscriptionProvider.purchaseSuccess == true) {
-  //     print("purchase was successful");
-  //     //go to next page
-  //     if (widget.fromPage == "login") {
-  //       if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-  //         Navigator.of(context).push(MaterialPageRoute(
-  //           builder: (context) {
-  //             return const EnterPlannerVideoPage(
-  //               fromPage: "login",
-  //             );
-  //           },
-  //         ));
-  //       } else {
-  //         Navigator.of(context).push(MaterialPageRoute(
-  //           builder: (context) {
-  //             return const NavigationWrapper();
-  //           },
-  //           settings: const RouteSettings(
-  //             name: 'navigaionPage',
-  //           ),
-  //         ));
-  //       }
-  //     } else {
-  //       //signup
-  //       Navigator.of(context).push(MaterialPageRoute(
-  //         builder: (context) {
-  //           return const EnterPlannerVideoPage(
-  //             fromPage: "signup",
-  //           );
-  //         },
-  //       ));
-  //     }
-  //   }
-  // }
 
   void setDoneBtnState() {
     if (selectedSubscription != "") {
@@ -360,34 +270,9 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
             elevation: 0.0,
-            // bottom: const PreferredSize(
-            //     child: Align(
-            //       alignment: Alignment.center,
-            //       child: Padding(
-            //         padding: EdgeInsets.only(bottom: 10),
-            //         child: Text(
-            //           "Choose your subscription plan.",
-            //           style: TextStyle(color: Colors.white),
-            //           //textAlign: TextAlign.center,
-            //         ),
-            //       ),
-            //     ),
-            //     preferredSize: Size.fromHeight(10.0)),
           ),
           body: Column(
             children: [
-              // const Padding(
-              //   padding: EdgeInsets.all(8),
-              //   child: Text(
-              //     "Your first week is free. Try it out!",
-              //     style: TextStyle(
-              //         color: Colors.white,
-              //         fontSize: 20,
-              //         fontWeight: FontWeight.bold),
-              //     textAlign: TextAlign.center,
-              //   ),
-              // ),
-
               const Padding(
                 padding: EdgeInsets.all(8),
                 child: Text(
@@ -407,55 +292,12 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-
               Padding(
                 child: Image.asset(
                   "assets/images/planit_logo.png",
                 ),
                 padding: EdgeInsets.all(10),
               ),
-
-              // const Padding(
-              //   padding: EdgeInsets.all(8),
-              //   child: Text(
-              //     "Try it out free, 1 week!",
-              //     style: TextStyle(
-              //         color: Colors.white,
-              //         fontSize: 18,
-              //         fontWeight: FontWeight.bold),
-              //     textAlign: TextAlign.center,
-              //   ),
-              // ),
-              // const Text(
-              //   "After free trial, choose your subscription below.",
-              //   style: TextStyle(
-              //     color: Colors.white,
-              //     fontSize: 14,
-              //   ),
-              //   textAlign: TextAlign.center,
-              // ),
-
-              // Padding(
-              //   padding: EdgeInsets.all(8),
-              //   child: ElevatedButton(
-              //     onPressed: doneBtnDisabled ? null : subscribe,
-              //     //onPressed: subscribe,
-
-              //     child: Text(
-              //       "Subscribe & Go to my Planit",
-              //       style: TextStyle(fontSize: 18),
-              //     ),
-              //     // style: ButtonStyle(
-              //     //   backgroundColor: MaterialStateProperty.all<Color>(
-              //     //       const Color(0xffd4ac62)),
-              //     // ),
-              //     style: ButtonStyle(
-              //       backgroundColor: MaterialStateProperty.all<Color>(
-              //           const Color(0xffef41a8)),
-              //     ),
-              //   ),
-              // ),
-
               Padding(
                 padding: EdgeInsets.all(8),
                 child: ElevatedButton(
@@ -463,7 +305,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   onPressed: subscribeMonthly,
 
                   child: Text(
-                    "Monthly \$1.99",
+                    //"Monthly \$1.99",
+                    "Monthly " + monthlyProduct.price,
                     style: TextStyle(fontSize: 18),
                   ),
                   // style: ButtonStyle(
@@ -493,7 +336,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   onPressed: subscribeYearly,
 
                   child: Text(
-                    "Yearly \$19.99",
+                    //"Yearly \$19.99",
+                    "Yearly " + yearlyProduct.price,
                     style: TextStyle(fontSize: 18),
                   ),
                   // style: ButtonStyle(

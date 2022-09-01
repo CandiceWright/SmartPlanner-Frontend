@@ -609,6 +609,7 @@ class _LoginPageState extends State<LoginPage> {
                             decodedBody[i]["videoUrl"],
                             decodedBody[i]["videoLocalPath"],
                             decodedBody[i]["thumbnail"],
+                            decodedBody[i]["localthumbnailPath"],
                             DateTime.parse(decodedBody[i]["date"]));
                         stories.add(story);
                         //PlannerService.sharedInstance.user!.stories.add(story);
