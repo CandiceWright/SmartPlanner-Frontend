@@ -135,9 +135,9 @@ class MyApp extends StatelessWidget {
             //       elevation: 0),
             // ),
             home: const WelcomePage(),
-            routes: {
-              '/login': (context) => const LoginPage(),
-            },
+            // routes: {
+            //   '/login': (context) => const LoginPage(),
+            // },
           );
         });
   }

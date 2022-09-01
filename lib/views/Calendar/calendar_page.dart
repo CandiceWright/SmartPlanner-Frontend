@@ -471,6 +471,10 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
+    print(_dateRangePickerController.selectedDate.toString());
+    setState(() {
+      _selectedDate = _dateRangePickerController.selectedDate!;
+    });
     SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
       calController.displayDate = args.value;
     });
@@ -581,9 +585,12 @@ class _CalendarPageState extends State<CalendarPage> {
                     child: Row(children: [
                       Padding(
                         padding: EdgeInsets.only(right: 8),
-                        child: Text(
+                        child:
+                            // Text(
+                            //   DateFormat.MMM()
+                            //       .format(_dateRangePickerController.selectedDate!),
+                            Text(
                           DateFormat.MMM().format(_selectedDate),
-                          // _selectedDate.toString("MMMM"),
                           style: TextStyle(
                               fontSize: Theme.of(context)
                                   .textTheme
@@ -594,6 +601,8 @@ class _CalendarPageState extends State<CalendarPage> {
                       ),
                       Text(
                         _selectedDate.year.toString(),
+                        // _dateRangePickerController.selectedDate!.year
+                        //     .toString(),
                         style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontSize: Theme.of(context)

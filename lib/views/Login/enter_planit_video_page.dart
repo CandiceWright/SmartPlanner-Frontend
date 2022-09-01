@@ -18,15 +18,26 @@ class EnterPlannerVideoPage extends StatefulWidget {
 
 class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
   late VideoPlayerController _videoPlayerController;
+  late VideoPlayerController _signupvideoPlayerController;
+  late Future setVideoControllerFunc;
 
   @override
   void initState() {
     super.initState();
+    setVideoControllerFunc = setVideoController();
     // if (widget.fromPage == "signup") {
     // } else {}
+    // _signupvideoPlayerController = VideoPlayerController.asset(
+    //     "assets/images/another_planit_animation_video.mp4")
+    //   ..initialize().then((_) {
+    //     _signupvideoPlayerController.play();
+    //     _signupvideoPlayerController.setLooping(false);
+    //     _signupvideoPlayerController.addListener(checkVideoEnded);
+    //   });
   }
 
-  Future setVideoController() async {
+//Future setVideoController() async {
+  setVideoController() async {
     print("I am setting video controller");
     if (widget.fromPage == "signup" ||
         !PlannerService.sharedInstance.user!.hasPlanitVideo) {
@@ -178,11 +189,20 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
       print(_videoPlayerController.value.duration);
       goToPlanner();
     }
+    // if (_signupvideoPlayerController.value.position ==
+    //     _signupvideoPlayerController.value.duration) {
+    //   print("its true");
+    //   print(_signupvideoPlayerController.value.position);
+    //   print(_signupvideoPlayerController.value.duration);
+    //   goToPlanner();
+    // }
   }
 
   goToPlanner() {
     _videoPlayerController.removeListener(checkVideoEnded);
     _videoPlayerController.pause();
+    //_signupvideoPlayerController.removeListener(checkVideoEnded);
+    //_signupvideoPlayerController.pause();
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const NavigationWrapper();
@@ -238,8 +258,31 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   alignment: Alignment.center,
-                  child: FutureBuilder(
-                    future: setVideoController(),
+                  child:
+                      // widget.fromPage == "signup"
+                      //     ? Container(
+                      //         margin: EdgeInsets.all(20),
+                      //         child: AspectRatio(
+                      //           aspectRatio:
+                      //               _signupvideoPlayerController.value.aspectRatio,
+                      //           child: ClipRRect(
+                      //             borderRadius: BorderRadius.circular(15),
+                      //             child: Stack(
+                      //               alignment: Alignment.bottomCenter,
+                      //               children: <Widget>[
+                      //                 VideoPlayer(_signupvideoPlayerController),
+                      //                 VideoProgressIndicator(
+                      //                     _signupvideoPlayerController,
+                      //                     allowScrubbing: true),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ))
+                      //     :
+
+                      FutureBuilder(
+                    //future: setVideoController(),
+                    future: setVideoControllerFunc,
                     builder: (context, state) {
                       if (state.connectionState == ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
