@@ -38,7 +38,7 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
 
 //Future setVideoController() async {
   setVideoController() async {
-    print("I am setting video controller");
+    //print("I am setting video controller");
     if (widget.fromPage == "signup" ||
         !PlannerService.sharedInstance.user!.hasPlanitVideo) {
       _videoPlayerController = VideoPlayerController.asset(
@@ -51,10 +51,10 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
       _videoPlayerController.addListener(checkVideoEnded);
     } else {
       if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-        print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
+        //print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
         if (File(PlannerService.sharedInstance.user!.planitVideoLocalPath)
             .existsSync()) {
-          print("file exists");
+          //print("file exists");
           //the file exists!
           //can use file
           _videoPlayerController = VideoPlayerController.file(
@@ -64,27 +64,27 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
           await _videoPlayerController.play();
           _videoPlayerController.addListener(checkVideoEnded);
         } else {
-          print("file does not exists");
+          //print("file does not exists");
           //need to get the video from s3
           //first get s3 get url, then store file locally and
           Object presignedUrl = await PlannerService.aws.getPresignedUrl(
               "get", PlannerService.sharedInstance.user!.planitVideo);
           if (presignedUrl != "error") {
             var url = Uri.parse(presignedUrl.toString());
-            print(
-                "this is the url i am trying to get in inwards page line 103");
-            print(url);
+            //print(
+            //"this is the url i am trying to get in inwards page line 103");
+            //print(url);
             var response = await http.get(url);
-            print('Response status: ${response.statusCode}');
+            //print('Response status: ${response.statusCode}');
             if (response.statusCode == 200) {
               //file is in resonse.body
               //need to save it to PlannerService.sharedInstant.user.planitVideoLocalPath
-              print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
+              //print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
               //String path = await lss.getlocalFilePath('hi');
               final directory = await getApplicationDocumentsDirectory();
               String path = directory.path;
-              print("thiis is the path to local directtory");
-              print(path);
+              //print("thiis is the path to local directtory");
+              //print(path);
 
               File file = File('$path/cover.mov');
               await file.writeAsBytes(response.bodyBytes);
@@ -101,14 +101,14 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
                 'coverVideoLocalPath': '$path/cover.mov',
               };
               String bodyF = jsonEncode(body);
-              print(bodyF);
+              //print(bodyF);
 
               var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
                   '/user/inwardvideo');
               var response2 = await http.patch(url,
                   headers: {"Content-Type": "application/json"}, body: bodyF);
-              print('Response status: ${response2.statusCode}');
-              print('Response body: ${response2.body}');
+              //print('Response status: ${response2.statusCode}');
+              //print('Response body: ${response2.body}');
 
               if (response2.statusCode == 200) {
                 _videoPlayerController =
@@ -181,19 +181,19 @@ class _EnterPlannerVideoPageState extends State<EnterPlannerVideoPage> {
   }
 
   void checkVideoEnded() {
-    print("in check video ended");
+    //print("in check video ended");
     if (_videoPlayerController.value.position ==
         _videoPlayerController.value.duration) {
-      print("its true");
-      print(_videoPlayerController.value.position);
-      print(_videoPlayerController.value.duration);
+      //print("its true");
+      //print(_videoPlayerController.value.position);
+      //print(_videoPlayerController.value.duration);
       goToPlanner();
     }
     // if (_signupvideoPlayerController.value.position ==
     //     _signupvideoPlayerController.value.duration) {
-    //   print("its true");
-    //   print(_signupvideoPlayerController.value.position);
-    //   print(_signupvideoPlayerController.value.duration);
+    //   //print("its true");
+    //   //print(_signupvideoPlayerController.value.position);
+    //   //print(_signupvideoPlayerController.value.duration);
     //   goToPlanner();
     // }
   }

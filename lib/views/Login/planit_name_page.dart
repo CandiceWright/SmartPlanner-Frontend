@@ -48,13 +48,13 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
       'profileImage': "assets/images/profile_pic_icon.png"
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/signup');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       if (response.body == "planit name taken") {
@@ -77,7 +77,7 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
       } else {
         //can go to the next page to choose theme
         var decodedBody = json.decode(response.body);
-        print(decodedBody);
+        //print(decodedBody);
         var id = decodedBody["insertId"];
         Navigator.push(
             context,

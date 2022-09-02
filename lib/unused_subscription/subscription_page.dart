@@ -23,7 +23,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   }
 
   void login() {
-    print("I am in login function");
+    //print("I am in login function");
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const LoginPage();
@@ -37,7 +37,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   }
 
   void signup() {
-    print("I am in signup function");
+    //print("I am in signup function");
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const SignupPage();

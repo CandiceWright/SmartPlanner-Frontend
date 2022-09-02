@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/event.dart';
@@ -46,7 +46,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
     super.initState();
     dateTxtController.addListener(setDoneBtnState);
     descriptionTxtController.addListener(setDoneBtnState);
-    print("I am on new goals page");
+    //print("I am on new goals page");
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -59,7 +59,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
       setState(() {
         selectedDate = picked;
         dateTxtController.text = DateFormat.yMMMd().format(selectedDate);
-        //print(DateFormat.yMMMd().format(selectedDate));
+        ////print(DateFormat.yMMMd().format(selectedDate));
       });
   }
 
@@ -69,16 +69,73 @@ class _NewGoalPageState extends State<NewGoalPage> {
     //first save image and get url
     String? imgUrl = "";
     String bodyF = "";
+    String imagePath = "";
     var goalTitle = descriptionTxtController.text;
     var goalNotes = notesTxtController.text;
-    print("I am in create goal and this is selectedImg");
-    print(_selectedImg);
+    //print("I am in create goal and this is selectedImg");
+    //print(_selectedImg);
     if (_selectedImg != null) {
-      print("an image was chosen");
-      //save image to storage and get url
-      imgUrl = await PlannerService.firebaseStorage
-          .uploadPicture(_selectedImg!.path, "/goals/" + _selectedImg!.name);
-      if (imgUrl == "error") {
+      //print("an image was chosen");
+      //save image locally first
+      final directory = await getApplicationDocumentsDirectory();
+      String localDirPath = directory.path;
+      String imageName = _selectedImg!.name;
+      imagePath = '$localDirPath/$imageName';
+      _selectedImg!.saveTo(imagePath);
+
+      //save goal without image url first
+      var body = {
+        'userId': PlannerService.sharedInstance.user!.id,
+        'description': goalTitle,
+        'type': "goal",
+        'start': selectedDate.toString(),
+        'end': selectedDate.toString(),
+        'notes': goalNotes,
+        'category': currChosenCategory.id,
+        'isAllDay': true,
+        'isAccomplished': false,
+        'imgUrl': imgUrl,
+        'localImgPath': imagePath
+      };
+      bodyF = jsonEncode(body);
+      //print(bodyF);
+
+      var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals');
+      var response = await http.post(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        var decodedBody = json.decode(response.body);
+        //print(decodedBody);
+        var id = decodedBody["insertId"];
+        var newGoal = Event(
+          id: id,
+          description: goalTitle,
+          type: "goal",
+          start: selectedDate,
+          end: selectedDate,
+          //background: const Color(0xFFFF80b1),
+          background: currChosenCategory.color,
+          isAllDay: true,
+          notes: goalNotes,
+          category: currChosenCategory,
+          isAccomplished: false,
+          imageUrl: imgUrl,
+        );
+        newGoal.localImgPath = imagePath;
+        PlannerService.sharedInstance.user!.goals.add(newGoal);
+        PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
+          DateTime goal1Date = goal1.start;
+          DateTime goal2Date = goal2.start;
+          return goal1Date.compareTo(goal2Date);
+        });
+        widget.updateGoals();
+        //_backToGoalsPage();
+        Navigator.pop(context, storeGoalMedia(id));
+      } else {
+        //500 error, show an alert
         showDialog(
             context: context,
             builder: (context) {
@@ -95,75 +152,9 @@ class _NewGoalPageState extends State<NewGoalPage> {
                 ],
               );
             });
-      } else {
-        var body = {
-          'userId': PlannerService.sharedInstance.user!.id,
-          'description': goalTitle,
-          'type': "goal",
-          'start': selectedDate.toString(),
-          'end': selectedDate.toString(),
-          'notes': goalNotes,
-          'category': currChosenCategory.id,
-          'isAllDay': true,
-          'isAccomplished': false,
-          'imgUrl': imgUrl
-        };
-        bodyF = jsonEncode(body);
-        print(bodyF);
-
-        var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals');
-        var response = await http.post(url,
-            headers: {"Content-Type": "application/json"}, body: bodyF);
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
-
-        if (response.statusCode == 200) {
-          var decodedBody = json.decode(response.body);
-          print(decodedBody);
-          var id = decodedBody["insertId"];
-          var newGoal = Event(
-              id: id,
-              description: goalTitle,
-              type: "goal",
-              start: selectedDate,
-              end: selectedDate,
-              //background: const Color(0xFFFF80b1),
-              background: currChosenCategory.color,
-              isAllDay: true,
-              notes: goalNotes,
-              category: currChosenCategory,
-              isAccomplished: false,
-              imageUrl: imgUrl);
-          PlannerService.sharedInstance.user!.goals.add(newGoal);
-          PlannerService.sharedInstance.user!.goals.sort((goal1, goal2) {
-            DateTime goal1Date = goal1.start;
-            DateTime goal2Date = goal2.start;
-            return goal1Date.compareTo(goal2Date);
-          });
-          widget.updateGoals();
-          _backToGoalsPage();
-        } else {
-          //500 error, show an alert
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                      'Oops! Looks like something went wrong. Please try again.'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        }
       }
     } else {
-      print("no image chosen");
+      //print("no image chosen");
       var body = {
         'userId': PlannerService.sharedInstance.user!.id,
         'description': goalTitle,
@@ -174,20 +165,21 @@ class _NewGoalPageState extends State<NewGoalPage> {
         'category': currChosenCategory.id,
         'isAllDay': true,
         'isAccomplished': false,
-        'imgUrl': imgUrl
+        'imgUrl': imgUrl,
+        'localImgPath': imagePath
       };
       bodyF = jsonEncode(body);
-      print(bodyF);
+      //print(bodyF);
 
       var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals');
       var response = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         var decodedBody = json.decode(response.body);
-        print(decodedBody);
+        //print(decodedBody);
         var id = decodedBody["insertId"];
         var newGoal = Event(
             id: id,
@@ -232,12 +224,55 @@ class _NewGoalPageState extends State<NewGoalPage> {
     }
   }
 
+  storeGoalMedia(int goalId) async {
+    //save image to storage and get url
+    String? imgUrl = await PlannerService.firebaseStorage
+        .uploadPicture(_selectedImg!.path, "/goals/" + _selectedImg!.name);
+    if (imgUrl == "error") {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else {
+      var body = {'imgUrl': imgUrl};
+      String bodyF = "";
+      bodyF = jsonEncode(body);
+      //print(bodyF);
+
+      var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+          '/goals/' +
+          goalId.toString() +
+          '/image');
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
+
+      if (response.statusCode != 200) {
+        //500 error, notify app of an alert. listen for this alert in navigation wrapper
+
+      }
+    }
+  }
+
   void setDoneBtnState() {
-    print(dateTxtController.text);
-    print(descriptionTxtController.text);
+    //print(dateTxtController.text);
+    //print(descriptionTxtController.text);
     if (dateTxtController.text != "" && descriptionTxtController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {
@@ -330,7 +365,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
                                       onPressed: () async {
                                         _selectedImg = await _picker.pickImage(
                                             source: ImageSource.gallery);
-                                        print(_selectedImg);
+                                        //print(_selectedImg);
                                         if (_selectedImg != null) {
                                           setState(() {
                                             fileMedia =

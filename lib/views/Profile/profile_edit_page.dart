@@ -61,7 +61,7 @@
 //         selectedStartDate = picked;
 //         startDateTxtController.text =
 //             DateFormat.yMMMd().format(selectedStartDate);
-//         //print(DateFormat.yMMMd().format(selectedDate));
+//         ////print(DateFormat.yMMMd().format(selectedDate));
 //       });
 //   }
 
@@ -75,7 +75,7 @@
 //       setState(() {
 //         selectedEndDate = picked;
 //         endDateTxtController.text = DateFormat.yMMMd().format(selectedEndDate);
-//         //print(DateFormat.yMMMd().format(selectedDate));
+//         ////print(DateFormat.yMMMd().format(selectedDate));
 //       });
 //   }
 
@@ -149,14 +149,14 @@
 //   }
 
 //   void setDoneBtnState() {
-//     print(descriptionTxtController.text);
+//     //print(descriptionTxtController.text);
 //     if (startDateTxtController.text != "" &&
 //         endDateTxtController.text != "" &&
 //         startTimeController.text != "" &&
 //         endTimeController.text != "" &&
 //         descriptionTxtController.text != "") {
 //       setState(() {
-//         print("button enabled");
+//         //print("button enabled");
 //         doneBtnDisabled = false;
 //       });
 //     } else {

@@ -83,8 +83,8 @@ class _EditEventPageState extends State<EditEventPage> {
     endDateTxtController.addListener(setDoneBtnState);
     descriptionTxtController.addListener(setDoneBtnState);
     setDoneBtnState();
-    print("I am printing selected end datte");
-    print(selectedEndDate);
+    //print("I am printing selected end datte");
+    //print(selectedEndDate);
   }
 
   Future<void> _selectStartDate(BuildContext context) async {
@@ -105,7 +105,7 @@ class _EditEventPageState extends State<EditEventPage> {
           endDateTxtController.text =
               DateFormat.yMMMd().format(selectedEndDate);
         }
-        //print(DateFormat.yMMMd().format(selectedDate));
+        ////print(DateFormat.yMMMd().format(selectedDate));
       });
     }
     // final DateTime? picked = await showDatePicker(
@@ -118,7 +118,7 @@ class _EditEventPageState extends State<EditEventPage> {
     //     selectedStartDate = picked;
     //     startDateTxtController.text =
     //         DateFormat.yMMMd().format(selectedStartDate);
-    //     //print(DateFormat.yMMMd().format(selectedDate));
+    //     ////print(DateFormat.yMMMd().format(selectedDate));
     //   });
   }
 
@@ -133,7 +133,7 @@ class _EditEventPageState extends State<EditEventPage> {
       setState(() {
         selectedEndDate = picked;
         endDateTxtController.text = DateFormat.yMMMd().format(selectedEndDate);
-        //print(DateFormat.yMMMd().format(selectedDate));
+        ////print(DateFormat.yMMMd().format(selectedDate));
       });
     // final DateTime? picked = await showDatePicker(
     //     context: context,
@@ -144,7 +144,7 @@ class _EditEventPageState extends State<EditEventPage> {
     //   setState(() {
     //     selectedEndDate = picked;
     //     endDateTxtController.text = DateFormat.yMMMd().format(selectedEndDate);
-    //     //print(DateFormat.yMMMd().format(selectedDate));
+    //     ////print(DateFormat.yMMMd().format(selectedDate));
     //   });
   }
 
@@ -169,7 +169,7 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   Future<Null> _selectEndTime(BuildContext context) async {
-    print(selectedEndTime);
+    //print(selectedEndTime);
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: selectedEndTime,
@@ -236,14 +236,14 @@ class _EditEventPageState extends State<EditEventPage> {
           'isAllDay': true
         };
         String bodyF = jsonEncode(body);
-        print(bodyF);
+        //print(bodyF);
 
         var url =
             Uri.parse(PlannerService.sharedInstance.serverUrl + '/calendar');
         var response = await http.patch(url,
             headers: {"Content-Type": "application/json"}, body: bodyF);
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        //print('Response status: ${response.statusCode}');
+        //print('Response body: ${response.body}');
 
         if (response.statusCode == 200) {
           TodaySchedulePage.events.appointments!.removeAt(TodaySchedulePage
@@ -303,11 +303,11 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   void setDoneBtnState() {
-    print(descriptionTxtController.text);
+    //print(descriptionTxtController.text);
     if (startDateTxtController.text != "" &&
         descriptionTxtController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {

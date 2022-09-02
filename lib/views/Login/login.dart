@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/models/goal.dart';
 import 'package:practice_planner/services/planner_service.dart';
@@ -33,6 +34,7 @@ class _LoginPageState extends State<LoginPage> {
   var emailTextController = TextEditingController();
   var passwordTextController = TextEditingController();
   bool shouldShowRestoredDialog = false;
+  bool isloggingIn = false;
   //var subscriptionProvider = SubscriptionsProvider();
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var questionIndex = 0;
@@ -144,69 +146,13 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   purchaseRestored() {
-    if (PlannerService.subscriptionProvider.purchaseRestored.value) {
-      print("purchase restored");
-    }
+    // if (PlannerService.subscriptionProvider.purchaseRestored.value) {
+    //   //print("purchase restored");
+    // }
 
     //PlannerService.subscriptionProvider.purchaseRestored.value = false;
-    //if (shouldShowRestoredDialog) {
-    // showDialog(
-    //     context: context,
-    //     barrierDismissible: false,
-    //     builder: (context) {
-    //       return AlertDialog(
-    //         title: const Text(
-    //             "We've attempted to restore your purchase. You can try logging in."),
-    //         actions: <Widget>[
-    //           TextButton(
-    //             child: Text('OK'),
-    //             onPressed: () {
-    //               //Navigator.of(context).pop();
-    //               shouldShowRestoredDialog = false;
-
-    //               Navigator.pushAndRemoveUntil(
-    //                 context,
-    //                 MaterialPageRoute(
-    //                   builder: (BuildContext context) => LoginPage(),
-    //                 ),
-    //                 (route) => false,
-    //               );
-    //             },
-    //           )
-    //         ],
-    //       );
-    //     });
-    //}
-  }
-
-  saveReceipt() async {
-    if (PlannerService.subscriptionProvider.receipt.value != "") {
-      print("Saving receipt");
-      var receipt = PlannerService.subscriptionProvider.receipt.value;
-      print(receipt);
-      var body = {
-        'receipt': receipt,
-        'userId': PlannerService.sharedInstance.user!.id
-      };
-      var bodyF = jsonEncode(body);
-      //print(bodyF);
-
-      var url =
-          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/receipt');
-      var response = await http.patch(url,
-          headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      //print('Response body: ${response.body}');
-
-      if (response.statusCode == 200) {
-        //PlannerService.sharedInstance.user!.receipt = receipt;
-        //I am done with these values so now I can reset thee values
-        PlannerService.subscriptionProvider.purchaseSuccess.value = false;
-        PlannerService.subscriptionProvider.purchaseRestored.value = false;
-        PlannerService.subscriptionProvider.receipt.value = "";
-        PlannerService.sharedInstance.user!.receipt = receipt;
-        //if (shouldShowRestoredDialog) {
-        showDialog(
+    if (shouldShowRestoredDialog) {
+      showDialog(
           context: context,
           barrierDismissible: false,
           builder: (context) {
@@ -217,22 +163,78 @@ class _LoginPageState extends State<LoginPage> {
                 TextButton(
                   child: Text('OK'),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    //Navigator.of(context).pop();
                     shouldShowRestoredDialog = false;
 
-                    // Navigator.pushAndRemoveUntil(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (BuildContext context) => LoginPage(),
-                    //   ),
-                    //   (route) => false,
-                    // );
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => LoginPage(),
+                      ),
+                      (route) => false,
+                    );
                   },
                 )
               ],
             );
-          },
-        );
+          });
+    }
+  }
+
+  saveReceipt() async {
+    if (PlannerService.subscriptionProvider.receipt.value != "") {
+      //print("Saving receipt");
+      var receipt = PlannerService.subscriptionProvider.receipt.value;
+      //print(receipt);
+      var body = {
+        'receipt': receipt,
+        'userId': PlannerService.sharedInstance.user!.id
+      };
+      var bodyF = jsonEncode(body);
+      ////print(bodyF);
+
+      var url =
+          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/receipt');
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+      //print('Response status: ${response.statusCode}');
+      ////print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        //PlannerService.sharedInstance.user!.receipt = receipt;
+        //I am done with these values so now I can reset thee values
+        PlannerService.subscriptionProvider.purchaseSuccess.value = false;
+        PlannerService.subscriptionProvider.purchaseRestored.value = false;
+        PlannerService.subscriptionProvider.receipt.value = "";
+        PlannerService.sharedInstance.user!.receipt = receipt;
+        // if (shouldShowRestoredDialog) {
+        // showDialog(
+        //   context: context,
+        //   barrierDismissible: false,
+        //   builder: (context) {
+        //     return AlertDialog(
+        //       title: const Text(
+        //           "We've attempted to restore your purchase. You can try logging in."),
+        //       actions: <Widget>[
+        //         TextButton(
+        //           child: Text('OK'),
+        //           onPressed: () {
+        //             Navigator.of(context).pop();
+        //             shouldShowRestoredDialog = false;
+
+        //             // Navigator.pushAndRemoveUntil(
+        //             //   context,
+        //             //   MaterialPageRoute(
+        //             //     builder: (BuildContext context) => LoginPage(),
+        //             //   ),
+        //             //   (route) => false,
+        //             // );
+        //           },
+        //         )
+        //       ],
+        //     );
+        //   },
+        // );
       } else {
         showDialog(
             context: context,
@@ -255,9 +257,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // checkPurchaseStatus() {
-  //   print("there was an update in subscription provider");
+  //   //print("there was an update in subscription provider");
   //   if (subscriptionProvider.purchaseError == true) {
-  //     print("purchase produced an error");
+  //     //print("purchase produced an error");
   //     //show error
   //     showDialog(
   //         context: context,
@@ -277,7 +279,7 @@ class _LoginPageState extends State<LoginPage> {
   //         });
   //   } else if (subscriptionProvider.purchaseSuccess == true ||
   //       subscriptionProvider.purchaseRestored == true) {
-  //     print("purchase was successful or restored");
+  //     //print("purchase was successful or restored");
   //     //go to next page
 
   //     showDialog(
@@ -305,13 +307,13 @@ class _LoginPageState extends State<LoginPage> {
     var password = passwordTextController.text;
     var body = {'email': email, 'password': password};
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/login');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       if (response.body == "no user exists") {
@@ -350,10 +352,14 @@ class _LoginPageState extends State<LoginPage> {
             });
       } else {
         //correct password.
+        setState(() {
+          isloggingIn = true;
+        });
         var decodedBody = json.decode(response.body);
-        print(decodedBody);
+        //print(decodedBody);
         var userId = decodedBody["userId"];
-        var receipt = decodedBody["receipt"];
+        var receipt =
+            decodedBody["receipt"] == null ? "" : decodedBody["receipt"];
         var planitName = decodedBody["planitName"];
         var themeId = decodedBody["theme"];
         var spaceTheme = decodedBody["spaceTheme"];
@@ -366,8 +372,8 @@ class _LoginPageState extends State<LoginPage> {
         var coverVideoLocalPath = decodedBody["coverVideoLocalPath"] == null
             ? ""
             : decodedBody["coverVideoLocalPath"];
-        print("printing inward video url");
-        print(decodedBody["inwardVideoUrl"]);
+        //print("printing inward video url");
+        //print(decodedBody["inwardVideoUrl"]);
         bool didStartPlanning;
         if (didStartPlanningTomorrowInt == 0) {
           didStartPlanning = false;
@@ -393,17 +399,17 @@ class _LoginPageState extends State<LoginPage> {
         var stories = <Story>[];
 
         //get all life categories
-        print("getting all life categories");
+        //print("getting all life categories");
         var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
             '/categories/' +
             userId.toString());
         var response2 = await http.get(url);
-        print('Response status: ${response2.statusCode}');
-        print('Response body: ${response2.body}');
+        //print('Response status: ${response2.statusCode}');
+        //print('Response body: ${response2.body}');
 
         if (response2.statusCode == 200) {
           var decodedBody = json.decode(response2.body);
-          print(decodedBody);
+          //print(decodedBody);
           //lifeCategories = decodedBody;
           for (int i = 0; i < decodedBody.length; i++) {
             LifeCategory lc = LifeCategory(
@@ -419,17 +425,17 @@ class _LoginPageState extends State<LoginPage> {
           }
 
           //get all goals
-          print("getting all goals");
+          //print("getting all goals");
           var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
               '/goals/' +
               userId.toString());
           var response3 = await http
               .get(url, headers: {"Content-Type": "application/json"});
-          print('Response status: ${response3.statusCode}');
-          print('Response body: ${response3.body}');
+          //print('Response status: ${response3.statusCode}');
+          //print('Response body: ${response3.body}');
           if (response3.statusCode == 200) {
             var decodedBody = json.decode(response3.body);
-            print(decodedBody);
+            //print(decodedBody);
             for (int i = 0; i < decodedBody.length; i++) {
               var isAccomplished = decodedBody[i]["isAccomplished"];
               var goal = Event(
@@ -443,6 +449,7 @@ class _LoginPageState extends State<LoginPage> {
                   type: "goal",
                   notes: decodedBody[i]["notes"],
                   imageUrl: decodedBody[i]["imgUrl"]);
+              goal.localImgPath = decodedBody[i]["localImgPath"];
               if (isAccomplished == 1) {
                 goal.isAccomplished = true;
                 accomplishedGoals.add(goal);
@@ -453,17 +460,17 @@ class _LoginPageState extends State<LoginPage> {
             }
 
             //get all calendar events
-            print("getting all calendar events");
+            //print("getting all calendar events");
             var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
                 '/calendar/' +
                 userId.toString());
             var response4 = await http.get(url);
-            print('Response status: ${response4.statusCode}');
-            print('Response body: ${response4.body}');
+            //print('Response status: ${response4.statusCode}');
+            //print('Response body: ${response4.body}');
 
             if (response4.statusCode == 200) {
               var decodedBody = json.decode(response4.body);
-              print(decodedBody);
+              //print(decodedBody);
               for (int i = 0; i < decodedBody.length; i++) {
                 var event = Event(
                     id: decodedBody[i]["eventId"],
@@ -484,17 +491,17 @@ class _LoginPageState extends State<LoginPage> {
               }
 
               //get all habits
-              print("getting all habits");
+              //print("getting all habits");
               var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
                   '/habits/' +
                   userId.toString());
               var response5 = await http.get(url);
-              print('Response status: ${response5.statusCode}');
-              print('Response body: ${response5.body}');
+              //print('Response status: ${response5.statusCode}');
+              //print('Response body: ${response5.body}');
 
               if (response5.statusCode == 200) {
                 var decodedBody = json.decode(response5.body);
-                print(decodedBody);
+                //print(decodedBody);
                 for (int i = 0; i < decodedBody.length; i++) {
                   bool sun = decodedBody[i]["sun"] == 1 ? true : false;
                   bool mon = decodedBody[i]["mon"] == 1 ? true : false;
@@ -521,18 +528,18 @@ class _LoginPageState extends State<LoginPage> {
 
                 //you will need to get all backlog items next and all dictionary items
                 //get all backlog items
-                print("getting all backlog");
+                //print("getting all backlog");
                 var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
                     '/backlog/' +
                     userId.toString());
                 var response6 = await http.get(url);
-                print('Response status: ${response6.statusCode}');
-                print('Response body: ${response6.body}');
+                //print('Response status: ${response6.statusCode}');
+                //print('Response body: ${response6.body}');
 
                 if (response6.statusCode == 200) {
-                  print("got all backlog");
+                  //print("got all backlog");
                   var decodedBody = json.decode(response6.body);
-                  print(decodedBody);
+                  //print(decodedBody);
                   for (int i = 0; i < decodedBody.length; i++) {
                     var isComplete;
                     if (decodedBody[i]["isComplete"] == 1) {
@@ -572,12 +579,12 @@ class _LoginPageState extends State<LoginPage> {
                       '/dictionary/' +
                       userId.toString());
                   var response7 = await http.get(url);
-                  print('Response status: ${response7.statusCode}');
-                  print('Response body: ${response7.body}');
+                  //print('Response status: ${response7.statusCode}');
+                  //print('Response body: ${response7.body}');
 
                   if (response7.statusCode == 200) {
                     var decodedBody = json.decode(response7.body);
-                    print(decodedBody);
+                    //print(decodedBody);
                     for (int i = 0; i < decodedBody.length; i++) {
                       var definition = Definition(decodedBody[i]["defId"],
                           decodedBody[i]["name"], decodedBody[i]["def"]);
@@ -595,14 +602,14 @@ class _LoginPageState extends State<LoginPage> {
                     String bodyF = jsonEncode(body);
                     var response8 = await http.get(url);
 
-                    print(
-                        "server came back with a response after saving story");
-                    print('Response status: ${response8.statusCode}');
-                    print('Response body: ${response8.body}');
+                    //print(
+                    // "server came back with a response after saving story");
+                    //print('Response status: ${response8.statusCode}');
+                    //print('Response body: ${response8.body}');
 
                     if (response8.statusCode == 200) {
                       var decodedBody = json.decode(response8.body);
-                      print(decodedBody);
+                      //print(decodedBody);
                       for (int i = 0; i < decodedBody.length; i++) {
                         var story = Story(
                             decodedBody[i]["storyId"],
@@ -660,6 +667,14 @@ class _LoginPageState extends State<LoginPage> {
 
                       PlannerService.sharedInstance.user!.stories = stories;
 
+                      final directory =
+                          await getApplicationDocumentsDirectory();
+                      String localDirPath = directory.path;
+                      String profilePicPath = '$localDirPath/profilepic';
+
+                      PlannerService.sharedInstance.user!.localProfileImage =
+                          profilePicPath;
+
                       //check to make sure their subscription is valid before you let them into planit
                       //validate receipt
                       String receiptStatus = await PlannerService
@@ -668,7 +683,9 @@ class _LoginPageState extends State<LoginPage> {
 
                       if (receiptStatus == "expired") {
                         //either receipt is expired or need to be restored
-
+                        setState(() {
+                          isloggingIn = false;
+                        });
                         showDialog(
                           context: context,
                           barrierDismissible: false,
@@ -692,6 +709,8 @@ class _LoginPageState extends State<LoginPage> {
                                     PlannerService
                                         .subscriptionProvider.purchaseExpired
                                         .removeListener(purchaseExpired);
+                                    PlannerService.subscriptionProvider.receipt
+                                        .removeListener(saveReceipt);
 
                                     //get subscription products
                                     List<ProductDetails> productDetails =
@@ -722,50 +741,6 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           },
                         );
-                        // showDialog(
-                        //     context: context,
-                        //     builder: (context) {
-                        //       return AlertDialog(
-                        //         title: Text(
-                        //             "We weren't able to confirm your subscription. If you believe you have an active subscription, try restoring your purchase below. Otherwise, your subscription has expired. Resubscribe below."),
-                        //         actions: <Widget>[
-                        //           TextButton(
-                        //             child: Text('Try to Restore'),
-                        //             onPressed: () {
-                        //               //Navigator.of(context).pop();
-                        //               shouldShowRestoredDialog = true;
-                        //               PlannerService.subscriptionProvider.restorePurchases();
-                        //             },
-                        //           ),
-                        //           TextButton(
-                        //             child: Text('Resubscribe'),
-                        //             onPressed: () {
-                        //               PlannerService.subscriptionProvider.purchaseError
-                        //                   .removeListener(purchaseError);
-                        //               PlannerService.subscriptionProvider.purchasePending
-                        //                   .removeListener(purchasePending);
-                        //               PlannerService.subscriptionProvider.purchaseRestored
-                        //                   .removeListener(purchaseRestored);
-                        //               PlannerService.subscriptionProvider.purchaseExpired
-                        //                   .removeListener(purchaseExpired);
-                        //               Navigator.of(context).push(MaterialPageRoute(
-                        //                 builder: (context) {
-                        //                   return const SubscriptionPage(
-                        //                     fromPage: 'login',
-                        //                   );
-                        //                 },
-                        //               ));
-                        //             },
-                        //           ),
-                        //           TextButton(
-                        //             child: Text('Cancel'),
-                        //             onPressed: () {
-                        //               Navigator.of(context).pop();
-                        //             },
-                        //           )
-                        //         ],
-                        //       );
-                        //     });
                       } else if (receiptStatus == "error") {
                         showDialog(
                             context: context,
@@ -793,6 +768,8 @@ class _LoginPageState extends State<LoginPage> {
                             .removeListener(purchaseRestored);
                         PlannerService.subscriptionProvider.purchaseExpired
                             .removeListener(purchaseExpired);
+                        PlannerService.subscriptionProvider.receipt
+                            .removeListener(saveReceipt);
                         if (PlannerService
                             .sharedInstance.user!.hasPlanitVideo) {
                           Navigator.of(context).push(MaterialPageRoute(
@@ -961,10 +938,15 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void forgotPassword() {
+    PlannerService.subscriptionProvider.purchaseError
+        .removeListener(purchaseError);
     PlannerService.subscriptionProvider.purchasePending
         .removeListener(purchasePending);
     PlannerService.subscriptionProvider.purchaseRestored
         .removeListener(purchaseRestored);
+    PlannerService.subscriptionProvider.purchaseExpired
+        .removeListener(purchaseExpired);
+    PlannerService.subscriptionProvider.receipt.removeListener(saveReceipt);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const ForgotPasswordPage();
@@ -973,21 +955,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void signup() {
-    print("I am in signup function");
+    //print("I am in signup function");
+    PlannerService.subscriptionProvider.purchaseError
+        .removeListener(purchaseError);
     PlannerService.subscriptionProvider.purchasePending
         .removeListener(purchasePending);
     PlannerService.subscriptionProvider.purchaseRestored
         .removeListener(purchaseRestored);
+    PlannerService.subscriptionProvider.purchaseExpired
+        .removeListener(purchaseExpired);
+    PlannerService.subscriptionProvider.receipt.removeListener(saveReceipt);
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const SignupPage();
       },
-      // settings: const RouteSettings(
-      //   name: 'navigaionPage',
-      // ),
     ));
-    // Navigator.push(
-    //     context, CupertinoPageRoute(builder: (context) => NavigationWrapper()));
   }
 
   @override
@@ -1002,148 +984,154 @@ class _LoginPageState extends State<LoginPage> {
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
         ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            // Here we take the value from the MyHomePage object that was created by
-            // the App.build method, and use it to set our appbar title.
-            automaticallyImplyLeading: false,
-            backgroundColor: Colors.transparent,
-            elevation: 0.0,
-          ),
-          body: ListView(
-            children: [
-              Padding(
-                child: Image.asset(
-                  "assets/images/planit_logo.png",
+        isloggingIn
+            ? Container(
+                child: const CircularProgressIndicator(),
+                alignment: Alignment.center,
+              )
+            : Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  // Here we take the value from the MyHomePage object that was created by
+                  // the App.build method, and use it to set our appbar title.
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
                 ),
-                padding: EdgeInsets.all(10),
-              ),
-              Container(
-                margin: EdgeInsets.all(15),
-                child: Column(
+                body: ListView(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(5),
-                      child: TextFormField(
-                        controller: emailTextController,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                          hintText: "Email",
-                          icon: Icon(
-                            Icons.email,
-                            color: Colors.white,
-                          ),
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter email';
-                          }
-                          return null;
-                        },
+                      child: Image.asset(
+                        "assets/images/planit_logo.png",
                       ),
+                      padding: EdgeInsets.all(10),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: TextFormField(
-                        controller: passwordTextController,
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                            hintText: "Password",
-                            icon: Icon(
-                              Icons.password,
-                              color: Colors.white,
+                    Container(
+                      margin: EdgeInsets.all(15),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: TextFormField(
+                              controller: emailTextController,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              decoration: const InputDecoration(
+                                hintText: "Email",
+                                icon: Icon(
+                                  Icons.email,
+                                  color: Colors.white,
+                                ),
+                                border: OutlineInputBorder(),
+                                filled: true,
+                                fillColor: Colors.white,
+                              ),
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter email';
+                                }
+                                return null;
+                              },
                             ),
-                            border: OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.white),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter password';
-                          }
-                          return null;
-                        },
+                          ),
+                          Padding(
+                            padding: EdgeInsets.all(5),
+                            child: TextFormField(
+                              controller: passwordTextController,
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              decoration: const InputDecoration(
+                                  hintText: "Password",
+                                  icon: Icon(
+                                    Icons.password,
+                                    color: Colors.white,
+                                  ),
+                                  border: OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.white),
+                              validator: (String? value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter password';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          persistentFooterButtons: [
-            Container(
-              child: Column(
-                children: [
-                  FractionallySizedBox(
-                    widthFactor: 0.5,
-                    child: ElevatedButton(
-                      onPressed: login,
-                      child: Text(
-                        "Login",
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xffef41a8)),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Forgot Password?",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      TextButton(
-                          onPressed: forgotPassword,
-                          child: Text(
-                            "Get Help!",
-                            style: TextStyle(
-                              color: Color(0xff7ddcfa),
+                persistentFooterButtons: [
+                  Container(
+                    child: Column(
+                      children: [
+                        FractionallySizedBox(
+                          widthFactor: 0.5,
+                          child: ElevatedButton(
+                            onPressed: login,
+                            child: Text(
+                              "Login",
+                              style: TextStyle(fontSize: 18),
                             ),
-                          ))
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Don't have an account yet?",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      TextButton(
-                          onPressed: signup,
-                          child: Text(
-                            "Sign Up",
-                            style: TextStyle(
-                              color: Color(0xff7ddcfa),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  const Color(0xffef41a8)),
                             ),
-                          ))
-                    ],
-                  ),
-                  TextButton(
-                      onPressed: () {
-                        shouldShowRestoredDialog = true;
-                        PlannerService.subscriptionProvider.restorePurchases();
-                      },
-                      child: Text(
-                        "Restore Purchase",
-                        style: TextStyle(
-                          color: Color(0xff7ddcfa),
+                          ),
                         ),
-                      ))
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Forgot Password?",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            TextButton(
+                                onPressed: forgotPassword,
+                                child: Text(
+                                  "Get Help!",
+                                  style: TextStyle(
+                                    color: Color(0xff7ddcfa),
+                                  ),
+                                ))
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Don't have an account yet?",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            TextButton(
+                                onPressed: signup,
+                                child: Text(
+                                  "Sign Up",
+                                  style: TextStyle(
+                                    color: Color(0xff7ddcfa),
+                                  ),
+                                ))
+                          ],
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              shouldShowRestoredDialog = true;
+                              PlannerService.subscriptionProvider
+                                  .restorePurchases();
+                            },
+                            child: Text(
+                              "Restore Purchase",
+                              style: TextStyle(
+                                color: Color(0xff7ddcfa),
+                              ),
+                            ))
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
       ],
     );
   }

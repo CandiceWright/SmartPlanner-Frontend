@@ -78,7 +78,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
       setState(() {
         selectedDate = picked;
         dateTxtController.text = DateFormat.yMMMd().format(selectedDate!);
-        //print(DateFormat.yMMMd().format(selectedDate));
+        ////print(DateFormat.yMMMd().format(selectedDate));
       });
     }
   }
@@ -98,13 +98,13 @@ class _EditTaskPageState extends State<EditTaskPage> {
       'notes': notesTxtController.text
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/backlog');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       PlannerService
@@ -184,7 +184,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
   void setDoneBtnState() {
     if (descriptionTxtController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {

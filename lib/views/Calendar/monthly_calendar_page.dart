@@ -29,7 +29,7 @@ class _MonthlyCalendarPageState extends State<MonthlyCalendarPage> {
   @override
   void initState() {
     super.initState();
-    //print(PlannerService.sharedInstance.user.backlog);
+    ////print(PlannerService.sharedInstance.user.backlog);
   }
 
   void _openNewCalendarItemPage() {

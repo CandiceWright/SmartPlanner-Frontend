@@ -57,7 +57,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
   @override
   void initState() {
     super.initState();
-    //print(PlannerService.sharedInstance.user.backlog);
+    ////print(PlannerService.sharedInstance.user.backlog);
     startTimeController.addListener(setDoneBtnState);
     endTimeController.addListener(setDoneBtnState);
   }
@@ -114,18 +114,18 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
         'backlogItemRef': widget.backlogItem.id
       };
       String bodyF = jsonEncode(body);
-      print(bodyF);
+      //print(bodyF);
 
       var url =
           Uri.parse(PlannerService.sharedInstance.serverUrl + '/calendar');
       var response = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         var decodedBody = json.decode(response.body);
-        print(decodedBody);
+        //print(decodedBody);
         var id = decodedBody["insertId"];
 
         //update task with event id and scheduled date (call schedule task server route)
@@ -135,14 +135,14 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           'scheduledDate': startDateTime.toString(),
         };
         String bodyF = jsonEncode(body);
-        print(bodyF);
+        //print(bodyF);
 
         var url = Uri.parse(
             PlannerService.sharedInstance.serverUrl + '/backlog/schedule');
         var response2 = await http.patch(url,
             headers: {"Content-Type": "application/json"}, body: bodyF);
-        print('Response status: ${response2.statusCode}');
-        print('Response body: ${response2.body}');
+        //print('Response status: ${response2.statusCode}');
+        //print('Response body: ${response2.body}');
 
         if (response2.statusCode == 200) {
           var newEvent = Event(
@@ -233,7 +233,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
   void setDoneBtnState() {
     if (startTimeController.text != "" && endTimeController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {

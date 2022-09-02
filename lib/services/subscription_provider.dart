@@ -20,12 +20,12 @@ class SubscriptionsProvider extends ChangeNotifier {
   List<PurchaseDetails> purchases = [];
 
   SubscriptionsProvider() {
-    print("I am initializing subscription provider");
+    //print("I am initializing subscription provider");
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         InAppPurchase.instance.purchaseStream;
 
     _streamSubscription = purchaseUpdated.listen((purchaseDetailsList) {
-      print("I am listening for purchase details");
+      //print("I am listening for purchase details");
       // Handle the purchased subscriptions
       _purchaseUpdate(purchaseDetailsList);
     }, onDone: () {
@@ -43,7 +43,7 @@ class SubscriptionsProvider extends ChangeNotifier {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       // Sometimes the purchase is not completely done yet, in this case, show the pending UI again.
       if (purchaseDetails.status == PurchaseStatus.pending) {
-        print("purchase is pending");
+        //print("purchase is pending");
         purchasePending.value = true;
         purchaseError.value = false;
         purchaseExpired.value = false;
@@ -57,27 +57,27 @@ class SubscriptionsProvider extends ChangeNotifier {
         if (purchaseDetails.status == PurchaseStatus.error) {
           // This happens if you close the app or dismiss the purchase dialog.
           //_handleError(purchaseDetails.error!);
-          print("there was an error");
+          //print("there was an error");
           purchaseError.value = true;
           purchasePending.value = false;
           purchaseExpired.value = false;
           purchaseSuccess.value = false;
           purchaseRestored.value = false;
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
-          print("item purchased");
+          //print("item purchased");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
           if (purchaseInProgress) {
             _verifyPurchaseAndEnablePremium(purchaseDetails);
           }
         } else if (purchaseDetails.status == PurchaseStatus.restored) {
-          print("item restored");
+          //print("item restored");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
           _verifyRestoredAndEnablePremium(purchaseDetails);
         }
 
         // Whenever the purchase is done, complete it by calling complete.
         if (purchaseDetails.pendingCompletePurchase) {
-          print("purchase complete");
+          //print("purchase complete");
           purchasePending.value = false;
           purchaseError.value = false;
           purchaseExpired.value = false;
@@ -135,36 +135,36 @@ class SubscriptionsProvider extends ChangeNotifier {
       'receipt': receipt,
     };
     var bodyF = jsonEncode(body);
-    //print(bodyF);
+    ////print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/subscription');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    //print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    ////print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
-      //print(decodedBody);
+      ////print(decodedBody);
       int status = decodedBody["status"];
-      print("printing status of subscription veriification");
-      print(status);
+      //print("printing status of subscription veriification");
+      //print(status);
       if (status == 0) {
         int expiresDate =
             int.parse(decodedBody["latest_receipt_info"][0]["expires_date_ms"]);
-        print("printing expires date");
-        print(expiresDate);
+        //print("printing expires date");
+        //print(expiresDate);
         int currentDate = DateTime.now().millisecondsSinceEpoch;
-        print(currentDate);
+        //print(currentDate);
         if (expiresDate < currentDate) {
           //expired
           //purchaseExpired.value = true;
-          print("purchase is expired");
+          //print("purchase is expired");
           //return false;
           return "expired";
         } else {
-          print("purchase is good");
+          //print("purchase is good");
           //return true;
           return ("valid");
         }
@@ -187,29 +187,29 @@ class SubscriptionsProvider extends ChangeNotifier {
       'receipt': purchaseDetails.verificationData.serverVerificationData,
     };
     var bodyF = jsonEncode(body);
-    //print(bodyF);
+    ////print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/subscription');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    //print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    ////print('Response body: ${response.body}');
     purchaseInProgress = false;
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
-      //print(decodedBody);
+      ////print(decodedBody);
       int status = decodedBody["status"];
-      print("printing status of subscription veriification");
-      print(status);
+      //print("printing status of subscription veriification");
+      //print(status);
       if (status == 0) {
         int expiresDate =
             int.parse(decodedBody["latest_receipt_info"][0]["expires_date_ms"]);
-        print("printing expires date");
-        print(expiresDate);
+        //print("printing expires date");
+        //print(expiresDate);
         int currentDate = DateTime.now().millisecondsSinceEpoch;
-        print(currentDate);
+        //print(currentDate);
         if (expiresDate < currentDate) {
           //expired
           purchaseExpired.value = true;
@@ -269,29 +269,29 @@ class SubscriptionsProvider extends ChangeNotifier {
       'receipt': purchaseDetails.verificationData.serverVerificationData,
     };
     var bodyF = jsonEncode(body);
-    //print(bodyF);
+    ////print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/subscription');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    //print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    ////print('Response body: ${response.body}');
     purchaseInProgress = false;
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
-      //print(decodedBody);
+      ////print(decodedBody);
       int status = decodedBody["status"];
-      print("printing status of subscription veriification");
-      print(status);
+      //print("printing status of subscription veriification");
+      //print(status);
       if (status == 0) {
         int expiresDate =
             int.parse(decodedBody["latest_receipt_info"][0]["expires_date_ms"]);
-        print("printing expires date");
-        print(expiresDate);
+        //print("printing expires date");
+        //print(expiresDate);
         int currentDate = DateTime.now().millisecondsSinceEpoch;
-        print(currentDate);
+        //print(currentDate);
         if (expiresDate < currentDate) {
           //expired
           purchaseExpired.value = true;

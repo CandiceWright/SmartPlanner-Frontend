@@ -12,6 +12,7 @@ class Event {
   LifeCategory category;
   String? location;
   String? imageUrl;
+  String? localImgPath = "";
   bool isAllDay;
   int? id;
   int? taskIdRef;

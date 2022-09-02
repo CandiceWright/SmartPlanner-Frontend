@@ -55,7 +55,7 @@ class _CalendarPageState extends State<CalendarPage> {
     super.initState();
     CalendarPage.events =
         EventDataSource(PlannerService.sharedInstance.user!.scheduledEvents);
-    //print(PlannerService.sharedInstance.user.backlog);
+    ////print(PlannerService.sharedInstance.user.backlog);
   }
 
   void _openNewCalendarItemPage() {
@@ -116,8 +116,8 @@ class _CalendarPageState extends State<CalendarPage> {
                     var response = await http.delete(
                       url,
                     );
-                    print('Response status: ${response.statusCode}');
-                    print('Response body: ${response.body}');
+                    //print('Response status: ${response.statusCode}');
+                    //print('Response body: ${response.body}');
 
                     if (response.statusCode == 200) {
                       TodaySchedulePage.events.appointments!.removeAt(
@@ -271,7 +271,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         'taskId': TodaySchedulePage.selectedEvent!.taskIdRef
                       };
                       String bodyF = jsonEncode(body);
-                      print(bodyF);
+                      //print(bodyF);
 
                       var url = Uri.parse(
                           PlannerService.sharedInstance.serverUrl +
@@ -279,8 +279,8 @@ class _CalendarPageState extends State<CalendarPage> {
                       var response = await http.post(url,
                           headers: {"Content-Type": "application/json"},
                           body: bodyF);
-                      print('Response status: ${response.statusCode}');
-                      print('Response body: ${response.body}');
+                      //print('Response status: ${response.statusCode}');
+                      //print('Response body: ${response.body}');
 
                       if (response.statusCode == 200) {
                         //delete event & unschedule backlog item
@@ -343,7 +343,7 @@ class _CalendarPageState extends State<CalendarPage> {
   void calendarTapped(CalendarTapDetails details) {
     if (details.targetElement == CalendarElement.appointment ||
         details.targetElement == CalendarElement.agenda) {
-      print(details.appointments![0].toString());
+      //print(details.appointments![0].toString());
       final Event appointmentDetails = details.appointments![0];
       var _subjectText = appointmentDetails.description;
       var _dateText = DateFormat('MMMM dd, yyyy')
@@ -355,7 +355,7 @@ class _CalendarPageState extends State<CalendarPage> {
           DateFormat('hh:mm a').format(appointmentDetails.end).toString();
       var _timeDetails = '$_startTimeText - $_endTimeText';
       TodaySchedulePage.selectedEvent = appointmentDetails;
-      print(TodaySchedulePage.selectedEvent!.id);
+      //print(TodaySchedulePage.selectedEvent!.id);
 
       if (appointmentDetails.backlogMapRef != null) {
         //is a backlog item
@@ -471,7 +471,7 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   void selectionChanged(DateRangePickerSelectionChangedArgs args) {
-    print(_dateRangePickerController.selectedDate.toString());
+    //print(_dateRangePickerController.selectedDate.toString());
     setState(() {
       _selectedDate = _dateRangePickerController.selectedDate!;
     });
@@ -701,7 +701,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         .isAccomplished,
                     shape: const CircleBorder(),
                     onChanged: (bool? value) async {
-                      print(value);
+                      //print(value);
                       //setState(() async {
                       //update on server and then update locally
                       //meeting.isAccomplished = value;
@@ -711,7 +711,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         'eventStatus': value,
                       };
                       String bodyF = jsonEncode(body);
-                      print(bodyF);
+                      //print(bodyF);
 
                       var url = Uri.parse(
                           PlannerService.sharedInstance.serverUrl +
@@ -719,8 +719,8 @@ class _CalendarPageState extends State<CalendarPage> {
                       var response = await http.patch(url,
                           headers: {"Content-Type": "application/json"},
                           body: bodyF);
-                      print('Response status: ${response.statusCode}');
-                      print('Response body: ${response.body}');
+                      //print('Response status: ${response.statusCode}');
+                      //print('Response body: ${response.body}');
 
                       if (response.statusCode == 200) {
                         setState(() {

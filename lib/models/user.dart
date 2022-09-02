@@ -17,6 +17,7 @@ class User {
   var planitName;
   int id;
   String profileImage;
+  String localProfileImage = "";
   String receipt;
   var email;
   int themeId;

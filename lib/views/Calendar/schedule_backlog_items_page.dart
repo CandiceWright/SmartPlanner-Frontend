@@ -39,7 +39,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
   @override
   void initState() {
     super.initState();
-    //print(PlannerService.sharedInstance.user.backlog);
+    ////print(PlannerService.sharedInstance.user.backlog);
     getNumberUnscheduledBacklogItems();
   }
 
@@ -67,7 +67,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
   }
 
   void _updateBacklogList() {
-    print("I am in update backlog");
+    //print("I am in update backlog");
     setState(() {});
   }
 
@@ -93,7 +93,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
   }
 
   List<Widget> buildBacklogListView() {
-    //print("building backlog view");
+    ////print("building backlog view");
     List<Widget> todayItems = [];
     List<Widget> tomorrowItems = [];
 
@@ -112,7 +112,7 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
             value: PlannerService
                 .sharedInstance.user!.backlogMap[key]![i].isComplete,
             onChanged: (bool? checked) {
-              //print(value);
+              ////print(value);
               BacklogMapRef bmRef =
                   BacklogMapRef(categoryName: key, arrayIdx: i);
               setTime(value[i], bmRef);

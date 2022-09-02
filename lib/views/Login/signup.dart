@@ -69,8 +69,8 @@ class _SignupPageState extends State<SignupPage> {
       var url = Uri.parse(
           PlannerService.sharedInstance.serverUrl + '/email/' + email);
       var response = await http.get(url);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.body == "no user exists") {
         //can go to the next page to get planit name

@@ -21,10 +21,10 @@ class PlannerService {
   static SubscriptionsProvider subscriptionProvider = SubscriptionsProvider();
   //var subscriptionProvider;
   //this is for prod
-  //String serverUrl = "https://serve-anotherplanit.com:7343";
+  String serverUrl = "https://serve-anotherplanit.com:7343";
 
   //for dev (this is your ip. It changes sometimes so keep this up-to-date)
-  String serverUrl = "http://192.168.1.157:7343";
+  //String serverUrl = "http://192.168.1.157:7343";
 
   User? user;
 
@@ -44,17 +44,17 @@ class PlannerService {
     if (presignedUrl != "error") {
       File file = File(tempPath);
       var url = Uri.parse(presignedUrl.toString());
-      print("this is the url i am trying to put");
-      print(url);
+      //print("this is the url i am trying to put");
+      //print(url);
       var response = await http.put(url,
           headers: {
             //"Content-Type": "text/plain",
             //"Key": "stories/" + filename
           },
           body: file.readAsBytesSync());
-      print('Response status: ${response.statusCode}');
+      //print('Response status: ${response.statusCode}');
       if (response.statusCode == 200) {
-        print("video saved to s3");
+        //print("video saved to s3");
         //save tto db now
         var url = Uri.parse(
             PlannerService.sharedInstance.serverUrl + '/user/inwardvideo');
@@ -68,23 +68,23 @@ class PlannerService {
         var response = await http.patch(url,
             headers: {"Content-Type": "application/json"}, body: bodyF);
 
-        print("server came back with a response after saving video");
-        print('Response status: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        //print("server came back with a response after saving video");
+        //print('Response status: ${response.statusCode}');
+        //print('Response body: ${response.body}');
 
         if (response.statusCode == 200) {
-          print("success saving to db");
+          //print("success saving to db");
         } else {
           //maybe create a listening variable in navigation wrapper to show some error
-          print("error saving to db");
+          //print("error saving to db");
         }
       } else {
         //should create listening variable for error in navigation wrapper to show an error dialog if this error occurs
-        print("error in planner service line 82");
+        //print("error in planner service line 82");
       }
     } else {
       //should create listening variable for error in navigation wrapper to show an error dialog if this error occurs
-      print("error in planner service line 85");
+      //print("error in planner service line 85");
     }
   }
 
@@ -96,24 +96,24 @@ class PlannerService {
     if (presignedUrl != "error") {
       File file = File(tempPath);
       var url = Uri.parse(presignedUrl.toString());
-      print("this is the url i am trying to put");
-      print(url);
+      //print("this is the url i am trying to put");
+      //print(url);
       var response = await http.put(url,
           headers: {
             //"Content-Type": "text/plain",
             //"Key": "stories/" + filename
           },
           body: file.readAsBytesSync());
-      print('Response status: ${response.statusCode}');
+      //print('Response status: ${response.statusCode}');
       if (response.statusCode == 200) {
-        print("video saved to s3");
+        //print("video saved to s3");
       } else {
         //should create listening variable for error in navigation wrapper to show an error dialog if this error occurs
-        print("error in planner service line 113");
+        //print("error in planner service line 113");
       }
     } else {
       //should create listening variable for error in navigation wrapper to show an error dialog if this error occurs
-      print("error in planner service line 116");
+      //print("error in planner service line 116");
     }
   }
 }

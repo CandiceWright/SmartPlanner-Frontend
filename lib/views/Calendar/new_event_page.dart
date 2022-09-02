@@ -100,7 +100,7 @@ class _NewEventPageState extends State<NewEventPage> {
           endDateTxtController.text =
               DateFormat.yMMMd().format(selectedEndDate);
         }
-        //print(DateFormat.yMMMd().format(selectedDate));
+        ////print(DateFormat.yMMMd().format(selectedDate));
       });
     }
   }
@@ -116,7 +116,7 @@ class _NewEventPageState extends State<NewEventPage> {
       setState(() {
         selectedEndDate = picked;
         endDateTxtController.text = DateFormat.yMMMd().format(selectedEndDate);
-        //print(DateFormat.yMMMd().format(selectedDate));
+        ////print(DateFormat.yMMMd().format(selectedDate));
       });
   }
 
@@ -220,18 +220,18 @@ class _NewEventPageState extends State<NewEventPage> {
         'isAllDay': true
       };
       String bodyF = jsonEncode(body);
-      print(bodyF);
+      //print(bodyF);
 
       var url =
           Uri.parse(PlannerService.sharedInstance.serverUrl + '/calendar');
       var response = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         var decodedBody = json.decode(response.body);
-        print(decodedBody);
+        //print(decodedBody);
         var id = decodedBody["insertId"];
         var newEvent = Event(
           id: id,
@@ -282,14 +282,14 @@ class _NewEventPageState extends State<NewEventPage> {
   }
 
   void setDoneBtnState() {
-    print(descriptionTxtController.text);
+    //print(descriptionTxtController.text);
     if (startDateTxtController.text != "" &&
         endDateTxtController.text != "" &&
         startTimeController.text != "" &&
         endTimeController.text != "" &&
         descriptionTxtController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {

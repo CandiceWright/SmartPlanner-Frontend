@@ -24,7 +24,7 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   void login() {
-    print("I am in login function");
+    //print("I am in login function");
     //Navigator.of(context).pushNamed('/login');
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
@@ -36,7 +36,7 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   void signup() {
-    print("I am in signup function");
+    //print("I am in signup function");
     Navigator.of(context).push(MaterialPageRoute(
       builder: (context) {
         return const SignupPage();

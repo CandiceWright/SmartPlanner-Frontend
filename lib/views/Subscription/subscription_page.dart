@@ -98,10 +98,10 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   purchasePending() {
     if (PlannerService.subscriptionProvider.purchasePending.value) {
-      print("i got notification of purchase pending in subscription pagee");
+      //print("i got notification of purchase pending in subscription pagee");
       showDialog(
           context: context,
-          barrierDismissible: false,
+          //barrierDismissible: false,
           builder: (context) {
             return const AlertDialog(
               title: Text('One Sec...'),
@@ -117,22 +117,22 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
 
   saveReceipt() async {
     if (PlannerService.subscriptionProvider.receipt.value != "") {
-      print("Saving receipt on subscription page");
+      //print("Saving receipt on subscription page");
       var receipt = PlannerService.subscriptionProvider.receipt.value;
-      print(receipt);
+      //print(receipt);
       var body = {
         'receipt': receipt,
         'userId': PlannerService.sharedInstance.user!.id
       };
       var bodyF = jsonEncode(body);
-      //print(bodyF);
+      ////print(bodyF);
 
       var url =
           Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/receipt');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      //print('Response body: ${response.body}');
+      //print('Response status: ${response.statusCode}');
+      ////print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         PlannerService.sharedInstance.user!.receipt = receipt;
@@ -141,7 +141,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         PlannerService.subscriptionProvider.purchaseRestored.value = false;
         PlannerService.subscriptionProvider.receipt.value = "";
         PlannerService.sharedInstance.user!.receipt = receipt;
-        print(widget.fromPage);
+        //print(widget.fromPage);
 
         //need to save receipt tto database
 
@@ -196,17 +196,17 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   }
 
   purchaseRestoredorComplete() {
-    //print("purchase was successful");
+    ////print("purchase was successful");
     if (PlannerService.subscriptionProvider.purchaseSuccess.value ||
         PlannerService.subscriptionProvider.purchaseRestored.value) {
-      print("purchase complete");
+      //print("purchase complete");
     }
   }
 
   void setDoneBtnState() {
     if (selectedSubscription != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {

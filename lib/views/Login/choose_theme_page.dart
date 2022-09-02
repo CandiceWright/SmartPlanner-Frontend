@@ -52,8 +52,8 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
     String bodyF = jsonEncode(body);
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       DynamicTheme.of(context)!.setTheme(themeId);
@@ -64,7 +64,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
         'userId': widget.userId
       };
       String bodyF = jsonEncode(body);
-      print(bodyF);
+      //print(bodyF);
 
       var url =
           Uri.parse(PlannerService.sharedInstance.serverUrl + '/categories');
@@ -73,7 +73,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
 
       if (response2.statusCode == 200) {
         var decodedBody = json.decode(response2.body);
-        print(decodedBody);
+        //print(decodedBody);
         var id = decodedBody["insertId"];
 
 //save spacetheme choice

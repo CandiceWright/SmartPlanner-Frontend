@@ -28,7 +28,7 @@ class _NotesPageState extends State<NotesPage> {
   @override
   void initState() {
     super.initState();
-    //print(PlannerService.sharedInstance.user.backlog);
+    ////print(PlannerService.sharedInstance.user.backlog);
   }
 
   @override

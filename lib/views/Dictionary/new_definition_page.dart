@@ -52,18 +52,18 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
       'def': definition,
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/dictionary');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
-      print(decodedBody);
+      //print(decodedBody);
       var id = decodedBody["insertId"];
       var newDefinition = Definition(id, name, definition);
       PlannerService.sharedInstance.user!.dictionaryArr.add(newDefinition);
@@ -98,12 +98,12 @@ class _NewDefinitionPageState extends State<NewDefinitionPage> {
   }
 
   void setDoneBtnState() {
-    print(defintionTxtController.text);
-    print(descriptionTxtController.text);
+    //print(defintionTxtController.text);
+    //print(descriptionTxtController.text);
     if (defintionTxtController.text != "" &&
         descriptionTxtController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {

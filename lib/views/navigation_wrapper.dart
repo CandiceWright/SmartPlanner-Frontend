@@ -54,7 +54,7 @@ class _NavigationWrapperState extends State<NavigationWrapper>
 
   @override
   void dispose() {
-    print("I am disposing navigation wrapper");
+    //print("I am disposing navigation wrapper");
     WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
@@ -65,11 +65,11 @@ class _NavigationWrapperState extends State<NavigationWrapper>
     _isInForeground = state == AppLifecycleState.resumed;
     if (_isInForeground &&
         !PlannerService.subscriptionProvider.purchaseInProgress) {
-      print("app is in foreground");
+      //print("app is in foreground");
 
       //check to see if purchase is  still valid, if not, show an error
-      print("printing receipt line 69");
-      print(PlannerService.sharedInstance.user!.receipt);
+      //print("printing receipt line 69");
+      //print(PlannerService.sharedInstance.user!.receipt);
       String receiptStatus = await PlannerService.subscriptionProvider
           .verifyPurchase(PlannerService.sharedInstance.user!.receipt);
 
@@ -130,7 +130,7 @@ class _NavigationWrapperState extends State<NavigationWrapper>
           },
         );
       } else {
-        print("in navigation wrapper the purchase is good");
+        //print("in navigation wrapper the purchase is good");
       }
     }
   }

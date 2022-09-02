@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +39,7 @@ class _GoalsPageState extends State<GoalsPage> {
     super.initState();
     _controllerCenter =
         ConfettiController(duration: const Duration(seconds: 4));
-    //print(PlannerService.sharedInstance.user.goals);
+    ////print(PlannerService.sharedInstance.user.goals);
   }
 
   void _openNewGoalPage() {
@@ -65,14 +66,14 @@ class _GoalsPageState extends State<GoalsPage> {
     //first update on server
     var body = {'goalId': eventId, 'isAccomplished': true};
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/goals/status');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       PlannerService.sharedInstance.user!.accomplishedGoals.add(PlannerService
@@ -83,7 +84,7 @@ class _GoalsPageState extends State<GoalsPage> {
       _updateGoalsList();
       Navigator.pop(context);
       _controllerCenter.play();
-      print("Yayy you did it");
+      //print("Yayy you did it");
     } else {
       //500 error, show an alert
       showDialog(
@@ -128,8 +129,8 @@ class _GoalsPageState extends State<GoalsPage> {
                   var response = await http.delete(
                     url,
                   );
-                  print('Response status: ${response.statusCode}');
-                  print('Response body: ${response.body}');
+                  //print('Response status: ${response.statusCode}');
+                  //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
                     PlannerService.sharedInstance.user!.goals.removeAt(idx);
@@ -249,7 +250,7 @@ class _GoalsPageState extends State<GoalsPage> {
   }
 
   void _updateGoalsList() {
-    print("I am in update goals");
+    //print("I am in update goals");
     setState(() {});
   }
 
@@ -390,20 +391,40 @@ class _GoalsPageState extends State<GoalsPage> {
                                     // // backgroundImage: AssetImage(
                                     //     PlannerService.sharedInstance.user!.profileImage),
                                     backgroundImage: PlannerService
+                                                    .sharedInstance
+                                                    .user!
+                                                    .goals[index]
+                                                    .imageUrl !=
+                                                "" ||
+                                            PlannerService
+                                                    .sharedInstance
+                                                    .user!
+                                                    .goals[index]
+                                                    .localImgPath !=
+                                                ""
+                                        ? (!File(PlannerService.sharedInstance.user!.goals[index].localImgPath!)
+                                                .existsSync()
+                                            ? NetworkImage(PlannerService
                                                 .sharedInstance
                                                 .user!
                                                 .goals[index]
-                                                .imageUrl !=
-                                            ""
-                                        ? NetworkImage(PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .goals[index]
-                                            .imageUrl!)
+                                                .imageUrl!)
+                                            : FileImage(File(PlannerService
+                                                    .sharedInstance
+                                                    .user!
+                                                    .goals[index]
+                                                    .localImgPath!))
+                                                as ImageProvider)
                                         : null,
                                     radius: PlannerService.sharedInstance.user!
-                                                .goals[index].imageUrl! !=
-                                            ""
+                                                    .goals[index].imageUrl! !=
+                                                "" ||
+                                            PlannerService
+                                                    .sharedInstance
+                                                    .user!
+                                                    .goals[index]
+                                                    .localImgPath !=
+                                                ""
                                         ? 40
                                         : 0,
                                   ),

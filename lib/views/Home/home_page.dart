@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/habit.dart';
 import 'package:practice_planner/services/capture_video_with_imagepicker.dart';
+import 'package:practice_planner/views/navigation_wrapper.dart';
 
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:video_player/video_player.dart';
@@ -50,7 +51,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    //print(PlannerService.sharedInstance.user.backlog);
+    ////print(PlannerService.sharedInstance.user.backlog);
     newHabitTextController.addListener(setSaveHabitBtnState);
     editHabitTxtController.addListener(setEditHabitBtnState);
   }
@@ -103,10 +104,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void deleteStory(int idx) {
-    print("this is the current size of stories");
-    print(PlannerService.sharedInstance.user!.stories.length);
-    print("this is tthe index of curr story");
-    print(idx);
+    //print("this is the current size of stories");
+    //print(PlannerService.sharedInstance.user!.stories.length);
+    //print("this is tthe index of curr story");
+    //print(idx);
     //Navigator.pop(context);
     showDialog(
         context: context,
@@ -130,31 +131,33 @@ class _HomePageState extends State<HomePage> {
                   var response = await http.delete(
                     url,
                   );
-                  print('Response status: ${response.statusCode}');
-                  print('Response body: ${response.body}');
+                  //print('Response status: ${response.statusCode}');
+                  //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
                     //need to delete from aws
+
+                    setState(() {
+                      PlannerService.sharedInstance.user!.stories.removeAt(idx);
+                    });
+                    //Navigator.pop(context);
+                    _videoPlayerController.pause();
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return const NavigationWrapper();
+                      },
+                      settings: const RouteSettings(
+                        name: 'navigaionPage',
+                      ),
+                    ));
 
                     //delete file from firebase
                     // String? result = await PlannerService.firebaseStorage
                     //     .deleteFile(PlannerService
                     //         .sharedInstance.user!.stories[idx].video);
-                    // print("firebase delete done");
-                    // print(result);
+                    // //print("firebase delete done");
+                    // //print(result);
                     // if (result! == "success") {
-                    //   PlannerService.sharedInstance.user!.stories.removeAt(idx);
-                    //   setState(() {});
-                    //   //Navigator.pop(context);
-                    //   _videoPlayerController.pause();
-                    //   Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) {
-                    //       return const NavigationWrapper();
-                    //     },
-                    //     settings: const RouteSettings(
-                    //       name: 'navigaionPage',
-                    //     ),
-                    //   ));
                     // } else {
                     //   showDialog(
                     //       context: context,
@@ -209,7 +212,7 @@ class _HomePageState extends State<HomePage> {
     print("I am setting video controller foor story");
     if (File(PlannerService.sharedInstance.user!.stories[index].localPath)
         .existsSync()) {
-      print("file exists");
+      //print("file exists");
       //the file exists!
       //can use file
       _videoPlayerController = VideoPlayerController.file(
@@ -219,17 +222,17 @@ class _HomePageState extends State<HomePage> {
       await _videoPlayerController.play();
       //return;
     } else {
-      print("file does not exists");
+      //print("file does not exists");
       //need to get the video from s3
       //first get s3 get url, then store file locally and
       Object presignedUrl = await PlannerService.aws.getPresignedUrl("get",
           PlannerService.sharedInstance.user!.stories[index].videoAwsPath);
       if (presignedUrl != "error") {
         var url = Uri.parse(presignedUrl.toString());
-        print("this is the url i am trying to get in inwards page line 103");
-        print(url);
+        //print("this is the url i am trying to get in inwards page line 103");
+        //print(url);
         var response = await http.get(url);
-        print('Response status: ${response.statusCode}');
+        //print('Response status: ${response.statusCode}');
         if (response.statusCode == 200) {
           //file is in resonse.body
 
@@ -247,19 +250,21 @@ class _HomePageState extends State<HomePage> {
               '$path/story$storyId.mov';
 
           //save new local path of story in db
+          print("I am saving new local path of story to db");
           var body = {
             'storyId': PlannerService.sharedInstance.user!.stories[index].id,
             'localPath': '$path/story$storyId.mov',
+            'field': 'videoLocalPath'
           };
           String bodyF = jsonEncode(body);
-          print(bodyF);
+          //print(bodyF);
 
           var url = Uri.parse(
               PlannerService.sharedInstance.serverUrl + '/user/stories');
           var response2 = await http.patch(url,
               headers: {"Content-Type": "application/json"}, body: bodyF);
-          print('Response status: ${response2.statusCode}');
-          print('Response body: ${response2.body}');
+          //print('Response status: ${response2.statusCode}');
+          //print('Response body: ${response2.body}');
           if (response2.statusCode == 200) {
             _videoPlayerController =
                 VideoPlayerController.file(File('$path/story$storyId.mov'));
@@ -330,7 +335,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> buildTodayTaskListView() {
-    print("building today tasks widget");
+    //print("building today tasks widget");
     List<Widget> todayTasksWidgets = [];
     for (int i = 0;
         i < PlannerService.sharedInstance.user!.todayTasks.length;
@@ -341,7 +346,7 @@ class _HomePageState extends State<HomePage> {
         value: PlannerService.sharedInstance.user!.todayTasks[i].isComplete,
         selected: PlannerService.sharedInstance.user!.todayTasks[i].isComplete,
         onChanged: (bool? value) {
-          print(value);
+          //print(value);
           setState(() {
             PlannerService.sharedInstance.user!.todayTasks[i].isComplete =
                 value;
@@ -764,7 +769,7 @@ class _HomePageState extends State<HomePage> {
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Sunday"]!,
                                     onChanged: (bool? value) {
-                                      print(value);
+                                      //print(value);
                                       //first create habit map
                                       Map<String, bool> habitMap = {
                                         "Sunday": value!,
@@ -818,7 +823,7 @@ class _HomePageState extends State<HomePage> {
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Mon"]!,
                                     onChanged: (bool? value) {
-                                      print(value);
+                                      //print(value);
                                       //first create habit map
                                       Map<String, bool> habitMap = {
                                         "Sunday": PlannerService
@@ -872,7 +877,7 @@ class _HomePageState extends State<HomePage> {
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Tues"]!,
                                     onChanged: (bool? value) {
-                                      print(value);
+                                      //print(value);
                                       //first create habit map
                                       Map<String, bool> habitMap = {
                                         "Sunday": PlannerService
@@ -926,7 +931,7 @@ class _HomePageState extends State<HomePage> {
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Wed"]!,
                                     onChanged: (bool? value) {
-                                      print(value);
+                                      //print(value);
                                       Map<String, bool> habitMap = {
                                         "Sunday": PlannerService
                                             .sharedInstance
@@ -979,7 +984,7 @@ class _HomePageState extends State<HomePage> {
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Thurs"]!,
                                     onChanged: (bool? value) {
-                                      print(value);
+                                      //print(value);
                                       Map<String, bool> habitMap = {
                                         "Sunday": PlannerService
                                             .sharedInstance
@@ -1032,7 +1037,7 @@ class _HomePageState extends State<HomePage> {
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Friday"]!,
                                     onChanged: (bool? value) {
-                                      print(value);
+                                      //print(value);
                                       Map<String, bool> habitMap = {
                                         "Sunday": PlannerService
                                             .sharedInstance
@@ -1085,7 +1090,7 @@ class _HomePageState extends State<HomePage> {
                                     value: PlannerService.sharedInstance.user!
                                         .habits[i].habitTrackerMap["Saturday"]!,
                                     onChanged: (bool? value) {
-                                      print(value);
+                                      //print(value);
                                       Map<String, bool> habitMap = {
                                         "Sunday": PlannerService
                                             .sharedInstance
@@ -1234,7 +1239,7 @@ class _HomePageState extends State<HomePage> {
         setDialogState(() {
           if (text != "") {
             setState(() {
-              print("button enabled");
+              //print("button enabled");
               saveHabitBtnDisabled = false;
             });
           } else {
@@ -1263,17 +1268,17 @@ class _HomePageState extends State<HomePage> {
       'description': newHabitTextController.text,
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/habits');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
-      print(decodedBody);
+      //print(decodedBody);
       var id = decodedBody["insertId"];
       var newHabit = Habit(id: id, description: newHabitTextController.text);
       setState(() {
@@ -1305,7 +1310,7 @@ class _HomePageState extends State<HomePage> {
   void setSaveHabitBtnState() {
     if (newHabitTextController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         saveHabitBtnDisabled = false;
       });
     } else {
@@ -1318,7 +1323,7 @@ class _HomePageState extends State<HomePage> {
   /***************edit habit***********/
 
   editHabitClicked(int i) {
-    print("Buttton was pressed");
+    //print("Buttton was pressed");
     //habitClicked(i);
     //setEditHabitBtnState();
     editHabitTxtController.text =
@@ -1344,13 +1349,13 @@ class _HomePageState extends State<HomePage> {
                   onPressed: editHabitBtnDisabled
                       ? null
                       : () {
-                          print("pressed");
+                          //print("pressed");
                           callEditHabit(i, "nameUpdate", null);
                         }),
               TextButton(
                   child: const Text('delete'),
                   onPressed: () {
-                    print("delete button pressed");
+                    //print("delete button pressed");
                     deleteHabit(i);
                   }),
               TextButton(
@@ -1376,7 +1381,7 @@ class _HomePageState extends State<HomePage> {
         setDialogState(() {
           if (text != "") {
             setState(() {
-              print("button enabled");
+              //print("button enabled");
               editHabitBtnDisabled = false;
             });
           } else {
@@ -1401,7 +1406,7 @@ class _HomePageState extends State<HomePage> {
   void setEditHabitBtnState() {
     if (editHabitTxtController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         editHabitBtnDisabled = false;
       });
     } else {
@@ -1456,13 +1461,13 @@ class _HomePageState extends State<HomePage> {
     }
     //first make call to server
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/habits');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       if (updateType == "nameUpdate") {
@@ -1512,7 +1517,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   deleteHabit(i) {
-    print("in delete habit");
+    //print("in delete habit");
     Navigator.pop(context);
     showDialog(
         context: context,
@@ -1537,8 +1542,8 @@ class _HomePageState extends State<HomePage> {
                   var response = await http.delete(
                     url,
                   );
-                  print('Response status: ${response.statusCode}');
-                  print('Response body: ${response.body}');
+                  //print('Response status: ${response.statusCode}');
+                  //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
                     PlannerService.sharedInstance.user!.habits.removeAt(i);

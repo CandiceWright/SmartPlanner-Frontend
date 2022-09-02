@@ -40,7 +40,7 @@ class _BacklogPageState extends State<BacklogPage> {
   @override
   void initState() {
     super.initState();
-    //print(PlannerService.sharedInstance.user.backlog);
+    ////print(PlannerService.sharedInstance.user.backlog);
   }
 
   void _openNewBacklogItemPage() {
@@ -53,12 +53,12 @@ class _BacklogPageState extends State<BacklogPage> {
   }
 
   void _updateBacklogList() {
-    print("I am in update backlog");
+    //print("I am in update backlog");
     setState(() {});
   }
 
   openEditBacklogItemPage(int idx, String category) {
-    print(PlannerService.sharedInstance.user!.backlogMap[category]![idx]);
+    //print(PlannerService.sharedInstance.user!.backlogMap[category]![idx]);
     Navigator.pop(context);
     Navigator.push(
         context,
@@ -99,8 +99,8 @@ class _BacklogPageState extends State<BacklogPage> {
                   var response = await http.delete(
                     url,
                   );
-                  print('Response status: ${response.statusCode}');
-                  print('Response body: ${response.body}');
+                  //print('Response status: ${response.statusCode}');
+                  //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
                     PlannerService.sharedInstance.user!.backlogMap[key]!
@@ -164,15 +164,15 @@ class _BacklogPageState extends State<BacklogPage> {
                         .sharedInstance.user!.backlogMap[key]![idx].id
                   };
                   String bodyF = jsonEncode(body);
-                  print(bodyF);
+                  //print(bodyF);
 
                   var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
                       '/backlog/unscheduletask');
                   var response = await http.post(url,
                       headers: {"Content-Type": "application/json"},
                       body: bodyF);
-                  print('Response status: ${response.statusCode}');
-                  print('Response body: ${response.body}');
+                  //print('Response status: ${response.statusCode}');
+                  //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
                     //delete event & unschedule backlog item
@@ -340,29 +340,29 @@ class _BacklogPageState extends State<BacklogPage> {
   }
 
   buildBacklogListView() {
-    print("I am trying to see what the correct value to use is");
-    print(PlannerService.sharedInstance.user!.backlogMap.values.isEmpty ||
-        (PlannerService.sharedInstance.user!.backlogMap.keys.length == 1 &&
-            PlannerService.sharedInstance.user!.backlogMap.entries.first.value
-                    .length ==
-                0));
-    print(PlannerService.sharedInstance.user!.backlogMap.values.length);
+    //print("I am trying to see what the correct value to use is");
+    //print(PlannerService.sharedInstance.user!.backlogMap.values.isEmpty ||
+    // (PlannerService.sharedInstance.user!.backlogMap.keys.length == 1 &&
+    //     PlannerService.sharedInstance.user!.backlogMap.entries.first.value
+    //             .length ==
+    //         0));
+    //print(PlannerService.sharedInstance.user!.backlogMap.values.length);
 
     PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
       List<Widget> categoryChildren = [];
-      print("I am building backlog and this is value.length");
-      print(value.length);
+      //print("I am building backlog and this is value.length");
+      //print(value.length);
       for (int i = 0; i < value.length; i++) {
-        // print("trying to find null value:");
-        // print("Printing lin 352 below");
-        // print(PlannerService
+        // //print("trying to find null value:");
+        // //print("Printing lin 352 below");
+        // //print(PlannerService
         //     .sharedInstance.user!.backlogMap[key]![i].description);
-        // print("printing liine 355 below");
-        // print(
+        // //print("printing liine 355 below");
+        // //print(
         //     PlannerService.sharedInstance.user!.backlogMap[key]![i].isComplete);
-        // print("printing line 358 below");
-        // print(DateFormat.yMMMd().format(value[i].completeBy!));
-        // print(PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key]);
+        // //print("printing line 358 below");
+        // //print(DateFormat.yMMMd().format(value[i].completeBy!));
+        // //print(PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key]);
 
         Widget child = GestureDetector(
           onTap: () {
@@ -420,7 +420,7 @@ class _BacklogPageState extends State<BacklogPage> {
                         .sharedInstance.user!.backlogMap[key]![i].isComplete,
                     shape: const CircleBorder(),
                     onChanged: (bool? value) {
-                      print(value);
+                      //print(value);
                       setState(() {
                         PlannerService.sharedInstance.user!.backlogMap[key]![i]
                             .isComplete = value;

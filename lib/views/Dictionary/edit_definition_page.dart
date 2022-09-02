@@ -63,14 +63,14 @@ class _EditDefinitionPageState extends State<EditDefinitionPage> {
       'definition': definition,
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/dictionary');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       PlannerService.sharedInstance.user!.dictionaryArr[widget.idx].name = name;
@@ -100,12 +100,12 @@ class _EditDefinitionPageState extends State<EditDefinitionPage> {
   }
 
   void setDoneBtnState() {
-    print(defintionTxtController.text);
-    print(descriptionTxtController.text);
+    //print(defintionTxtController.text);
+    //print(descriptionTxtController.text);
     if (defintionTxtController.text != "" &&
         descriptionTxtController.text != "") {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         doneBtnDisabled = false;
       });
     } else {

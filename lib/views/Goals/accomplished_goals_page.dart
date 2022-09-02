@@ -112,7 +112,7 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
   }
 
   void _updateGoalsList() {
-    print("I am in update goals");
+    //print("I am in update goals");
     setState(() {});
   }
 

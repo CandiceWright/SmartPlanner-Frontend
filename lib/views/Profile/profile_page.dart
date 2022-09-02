@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
+
     categoryNameTxtController.addListener(setCategoryDoneBtnState);
     emailTxtConroller.addListener(setAccountUpdateBtnState);
     usernameTxtFieldController.addListener(setAccountUpdateBtnState);
@@ -71,18 +75,18 @@ class _ProfilePageState extends State<ProfilePage> {
       'userId': PlannerService.sharedInstance.user!.id
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/categories');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       var decodedBody = json.decode(response.body);
-      print(decodedBody);
+      //print(decodedBody);
       var id = decodedBody["insertId"];
       var category =
           LifeCategory(id, categoryNameTxtController.text, pickerColor);
@@ -119,8 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void setAccountUpdateBtnState() {
-    print("printing email ttext");
-    print(emailTxtConroller.text);
+    //print("printing email ttext");
+    //print(emailTxtConroller.text);
     if ((usernameTxtFieldController.text != "" ||
             emailTxtConroller.text != "") &&
         (usernameTxtFieldController.text !=
@@ -146,14 +150,14 @@ class _ProfilePageState extends State<ProfilePage> {
         'planitName': usernameTxtFieldController.text,
       };
       String bodyF = jsonEncode(body);
-      print(bodyF);
+      //print(bodyF);
 
       var url = Uri.parse(
           PlannerService.sharedInstance.serverUrl + '/user/planitname');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         PlannerService.sharedInstance.user!.planitName =
@@ -185,14 +189,14 @@ class _ProfilePageState extends State<ProfilePage> {
         'email': emailTxtConroller.text,
       };
       String bodyF = jsonEncode(body);
-      print(bodyF);
+      //print(bodyF);
 
       var url =
           Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/email');
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         PlannerService.sharedInstance.user!.email = emailTxtConroller.text;
@@ -221,12 +225,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void setCategoryDoneBtnState() {
-    print("I am in set done button state");
-    print(categoryNameTxtController.text);
-    print(hasSelectedColor);
+    //print("I am in set done button state");
+    //print(categoryNameTxtController.text);
+    //print(hasSelectedColor);
     if (categoryNameTxtController.text != "" && hasSelectedColor) {
       setState(() {
-        print("button enabled");
+        //print("button enabled");
         categoryDoneBtnDisabled = false;
       });
     } else {
@@ -238,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
 // ValueChanged<Color> callback
   void changeColor(Color color) {
-    print("I am in change color");
+    //print("I am in change color");
     setState(() {
       pickerColor = color;
       hasSelectedColor = true;
@@ -261,7 +265,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   if (categoryNameTxtController.text != "" &&
                       hasSelectedColor) {
                     setState(() {
-                      print("button enabled");
+                      //print("button enabled");
                       categoryDoneBtnDisabled = false;
                     });
                   } else {
@@ -294,7 +298,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 hasSelectedColor = true;
                 if (categoryNameTxtController.text != "" && hasSelectedColor) {
                   setState(() {
-                    print("button enabled");
+                    //print("button enabled");
                     categoryDoneBtnDisabled = false;
                   });
                 } else {
@@ -402,7 +406,7 @@ class _ProfilePageState extends State<ProfilePage> {
               setDialogState(() {
                 if (editCategoryTxtController.text != "" && hasSelectedColor) {
                   setState(() {
-                    print("button enabled");
+                    //print("button enabled");
                     saveEditCategoryBtnDisabled = false;
                   });
                 } else {
@@ -435,7 +439,7 @@ class _ProfilePageState extends State<ProfilePage> {
               hasSelectedColor = true;
               if (editCategoryTxtController.text != "" && hasSelectedColor) {
                 setState(() {
-                  print("button enabled");
+                  //print("button enabled");
                   saveEditCategoryBtnDisabled = false;
                 });
               } else {
@@ -459,14 +463,14 @@ class _ProfilePageState extends State<ProfilePage> {
       'categoryId': PlannerService.sharedInstance.user!.lifeCategories[idx].id
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/categories');
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       var oldCategoryName =
@@ -522,9 +526,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future pickImage() async {
     //await _picker.pickImage(source: ImageSource.gallery);
+    //print("I am picking image");
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     var path = image!.path;
     var name = image.name;
+    //imageCache!.clear();
+
+    //save image locally
+    // final directory = await getApplicationDocumentsDirectory();
+    // String localDirPath = directory.path;
+    // String profilePicPath = '$localDirPath/profilepic';
+    // File file = File(profilePicPath);
+    // file.delete();
+    // image.saveTo(profilePicPath);
+
+    // setState(() {
+    //   //print("setting path state");
+    //   PlannerService.sharedInstance.user!.localProfileImage = profilePicPath;
+    // });
 
     //first upload image to firebase and get image url. then save url to db
     String? result =
@@ -559,16 +578,81 @@ class _ProfilePageState extends State<ProfilePage> {
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
 
-      print("server came back with a response after saving image");
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print("server came back with a response after saving image");
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        print(PlannerService.sharedInstance.user!.profileImage = result!);
+        ////print(PlannerService.sharedInstance.user!.profileImage = result!);
         setState(() {
           // PlannerService.sharedInstance.user!.profileImage = path;
-          PlannerService.sharedInstance.user!.profileImage = result;
+          PlannerService.sharedInstance.user!.profileImage = result!;
         });
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Oops! Looks like something went wrong. Please try again.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
+    }
+  }
+
+  storeProfileImage(String path, String name) async {
+    //first upload image to firebase and get image url. then save url to db
+    String? result =
+        await PlannerService.firebaseStorage.uploadProfilePic(path, name);
+    if (result == "error") {
+      //error message
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  'Oops! Looks like something went wrong. Please try again.'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else {
+      //success and result holds url to profile pic so store in db
+      var url = Uri.parse(
+          PlannerService.sharedInstance.serverUrl + '/user/profileimage');
+      var body = {
+        'image': result,
+        'id': PlannerService.sharedInstance.user!.id
+      };
+      String bodyF = jsonEncode(body);
+      var response = await http.patch(url,
+          headers: {"Content-Type": "application/json"}, body: bodyF);
+
+      //print("server came back with a response after saving image");
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        //print(PlannerService.sharedInstance.user!.profileImage = result!);
+        //setState(() {
+        // PlannerService.sharedInstance.user!.profileImage = path;
+        PlannerService.sharedInstance.user!.profileImage = result!;
+        //});
       } else {
         showDialog(
             context: context,
@@ -638,7 +722,7 @@ class _ProfilePageState extends State<ProfilePage> {
         setDialogState(() {
           if (text != "") {
             setState(() {
-              print("button enabled");
+              //print("button enabled");
               enterCurrentPasswordBtnDisabled = false;
             });
           } else {
@@ -667,13 +751,13 @@ class _ProfilePageState extends State<ProfilePage> {
       'password': currentPasswordTextController.text
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url = Uri.parse(PlannerService.sharedInstance.serverUrl + '/login');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       if (response.body == "wrong password") {
@@ -771,7 +855,7 @@ class _ProfilePageState extends State<ProfilePage> {
             setDialogState(() {
               if (text != "") {
                 setState(() {
-                  print("button enabled");
+                  //print("button enabled");
                   enterNewPasswordBtnDisabled = false;
                 });
               } else {
@@ -802,14 +886,14 @@ class _ProfilePageState extends State<ProfilePage> {
       'newPass': newPasswordTextController.text
     };
     String bodyF = jsonEncode(body);
-    print(bodyF);
+    //print(bodyF);
 
     var url =
         Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/password');
     var response = await http.post(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       if (response.body == "password updated successfully") {
@@ -869,8 +953,8 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       setState(() {
@@ -911,8 +995,8 @@ class _ProfilePageState extends State<ProfilePage> {
     String bodyF = jsonEncode(body);
     var response = await http.patch(url,
         headers: {"Content-Type": "application/json"}, body: bodyF);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    //print('Response status: ${response.statusCode}');
+    //print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       setState(() {
@@ -1002,7 +1086,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                   .sharedInstance.user!.profileImage),
                               radius: 40,
                             )
-                          : CircleAvatar(
+                          :
+                          // File(PlannerService
+                          //             .sharedInstance.user!.localProfileImage)
+                          //         .existsSync()
+                          //     ? CircleAvatar(
+                          //         backgroundImage: FileImage(File(PlannerService
+                          //             .sharedInstance.user!.localProfileImage)),
+                          //         radius: 30,
+                          //       )
+                          //     :
+                          CircleAvatar(
                               // // backgroundImage: AssetImage(
                               //     PlannerService.sharedInstance.user!.profileImage),
                               backgroundImage: NetworkImage(PlannerService
@@ -1175,7 +1269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         .lifeCategories.length, (int index) {
                                   return GestureDetector(
                                       onTap: () {
-                                        //print("I tapped.");
+                                        ////print("I tapped.");
                                         editCategoryTxtController.text =
                                             PlannerService.sharedInstance.user!
                                                 .lifeCategories[index].name;

@@ -50,15 +50,15 @@ class _CaptureVideoWithImagePickerState
     // final XFile? video = await _picker.pickVideo(
     //     source: ImageSource.camera, maxDuration: const Duration(minutes: 7));
 
-    // print("video has been recorded");
-    // print(video!.path);
+    // //print("video has been recorded");
+    // //print(video!.path);
     // Navigator.of(context).pop(video);
 
     final XFile? video = await _picker.pickVideo(
         source: ImageSource.camera, maxDuration: const Duration(minutes: 2));
 
-    print("video has been recorded");
-    //print(video!.path);
+    //print("video has been recorded");
+    ////print(video!.path);
     if (widget.prevPage == "home") {
       createStory(video);
     } else {
@@ -93,7 +93,7 @@ class _CaptureVideoWithImagePickerState
     if (video != null) {
       String path = video.path;
       String name = video.name;
-      print("I am in save inward video");
+      //print("I am in save inward video");
 
       //save video locally
       String videolocation = await lss.writeFile(video, 'cover.mov');
@@ -132,7 +132,9 @@ class _CaptureVideoWithImagePickerState
       String newThumbnailPath = '$localDirPath/$filename' 'thumbnail';
       File newThumbnail = await thumbnail.rename(newThumbnailPath);
 
-      //partially save story to db with thumbnail firebase url so that I can quuickly save story
+      print("I am about to save story to db without thumbnail url");
+
+      //partially save story to db without thumbnail firebase url so that I can quuickly save story
       var url =
           Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/stories');
       var body = {
@@ -147,13 +149,13 @@ class _CaptureVideoWithImagePickerState
       var response = await http.post(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
 
-      print("server came back with a response after saving story");
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print("server came back with a response after saving story");
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         var decodedBody = json.decode(response.body);
-        print(decodedBody);
+        //print(decodedBody);
         var id = decodedBody["insertId"];
         Story newStory = Story(id, "stories/" + filename, videolocation, "",
             newThumbnailPath, DateTime.now());
@@ -197,35 +199,40 @@ class _CaptureVideoWithImagePickerState
         .uploadStoryVideotoS3(path, videolocation, filename);
     //now save the thumbnail
 
-    print("this is the thumbnails path when I am about to save to firebase");
-    print(thumbnail.path);
+    //print("this is the thumbnails path when I am about to save to firebase");
+    //print(thumbnail.path);
     String? result2 = await PlannerService.firebaseStorage.uploadPicture(
         thumbnail.path, "thumbnails/" + p.basename(thumbnail.path));
+    print("this is result2 (thumbnail url) after saving thumbnail to firebase");
+    print(result2);
 
     if (result2 == "error") {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(
-                  'Oops! Looks like something went wrong. Please try again.'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          });
+      //print("an error occurred with firebase while trying to upload thumbnail");
+      // showDialog(
+      //     context: context,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //         title: Text(
+      //             'Oops! Looks like something went wrong. Please try again.'),
+      //         actions: <Widget>[
+      //           TextButton(
+      //             child: Text('OK'),
+      //             onPressed: () {
+      //               Navigator.of(context).pop();
+      //             },
+      //           )
+      //         ],
+      //       );
+      //     });
     } else {
       //successfully saved thumbnail and result2 has thumbnail url
       //update thumbnail firebase url in db
-      var url = Uri.parse(
-          PlannerService.sharedInstance.serverUrl + '/user/stories/thumbnail');
+      print("firebase was succeessful now updating thumbnail url in db");
+      var url =
+          Uri.parse(PlannerService.sharedInstance.serverUrl + '/user/stories');
       var body = {
         'storyId': storyId,
+        'field': "thumbnailUrl",
         'thumbnailUrl': result2,
         //'thumbnail': PlannerService.sharedInstance.user!.profileImage
       };
@@ -233,31 +240,33 @@ class _CaptureVideoWithImagePickerState
       var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
 
-      print("server came back with a response after saving video");
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      //print("server came back with a response after saving video");
+      //print('Response status: ${response.statusCode}');
+      //print('Response body: ${response.body}');
 
       if (response.statusCode != 200) {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(
-                    'Oops! Looks like something went wrong. Please try again.'),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
+        //need to show an  error with some listener in navigatio controller
+        print("an error occurred while trying to storee tthumbnal url");
+        // showDialog(
+        //     context: context,
+        //     builder: (context) {
+        //       return AlertDialog(
+        //         title: Text(
+        //             'Oops! Looks like something went wrong. Please try again.'),
+        //         actions: <Widget>[
+        //           TextButton(
+        //             child: Text('OK'),
+        //             onPressed: () {
+        //               Navigator.of(context).pop();
+        //             },
+        //           )
+        //         ],
+        //       );
+        //     });
       }
       // else {
       //   //maybe create a listening variable in navigation wrapper to show some error
-      //   print("error saving to db");
+      //   //print("error saving to db");
       // }
     }
   }

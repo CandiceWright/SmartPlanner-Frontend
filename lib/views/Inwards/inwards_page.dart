@@ -38,8 +38,8 @@ class _InwardsPageState extends State<InwardsPage> {
   @override
   void initState() {
     super.initState();
-    //print("I am about to show video on inwards page");
-    //print(PlannerService.sharedInstance.user!.planitVideo);
+    ////print("I am about to show video on inwards page");
+    ////print(PlannerService.sharedInstance.user!.planitVideo);
     // if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
     //   setVideoController();
     // }
@@ -74,10 +74,10 @@ class _InwardsPageState extends State<InwardsPage> {
   //   });
   // }
   Future setVideoController() async {
-    print("I am setting video controller");
+    //print("I am setting video controller");
     if (File(PlannerService.sharedInstance.user!.planitVideoLocalPath)
         .existsSync()) {
-      print("file exists");
+      //print("file exists");
       //the file exists!
       //can use file
       _videoPlayerController = VideoPlayerController.file(
@@ -86,26 +86,26 @@ class _InwardsPageState extends State<InwardsPage> {
       await _videoPlayerController.setLooping(true);
       await _videoPlayerController.play();
     } else {
-      print("file does not exists");
+      //print("file does not exists");
       //need to get the video from s3
       //first get s3 get url, then store file locally and
       Object presignedUrl = await PlannerService.aws.getPresignedUrl(
           "get", PlannerService.sharedInstance.user!.planitVideo);
       if (presignedUrl != "error") {
         var url = Uri.parse(presignedUrl.toString());
-        print("this is the url i am trying to get in inwards page line 103");
-        print(url);
+        //print("this is the url i am trying to get in inwards page line 103");
+        //print(url);
         var response = await http.get(url);
-        print('Response status: ${response.statusCode}');
+        //print('Response status: ${response.statusCode}');
         if (response.statusCode == 200) {
           //file is in resonse.body
           //need to save it to PlannerService.sharedInstant.user.planitVideoLocalPath
-          print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
+          //print(PlannerService.sharedInstance.user!.planitVideoLocalPath);
           //String path = await lss.getlocalFilePath('hi');
           final directory = await getApplicationDocumentsDirectory();
           String path = directory.path;
-          print("thiis is the path to local directtory");
-          print(path);
+          //print("thiis is the path to local directtory");
+          //print(path);
 
           File file = File('$path/cover.mov');
           await file.writeAsBytes(response.bodyBytes);
@@ -121,14 +121,14 @@ class _InwardsPageState extends State<InwardsPage> {
             'coverVideoLocalPath': '$path/cover.mov',
           };
           String bodyF = jsonEncode(body);
-          print(bodyF);
+          //print(bodyF);
 
           var url = Uri.parse(
               PlannerService.sharedInstance.serverUrl + '/user/inwardvideo');
           var response2 = await http.patch(url,
               headers: {"Content-Type": "application/json"}, body: bodyF);
-          print('Response status: ${response2.statusCode}');
-          print('Response body: ${response2.body}');
+          //print('Response status: ${response2.statusCode}');
+          //print('Response body: ${response2.body}');
 
           if (response2.statusCode == 200) {
             _videoPlayerController =
@@ -202,7 +202,7 @@ class _InwardsPageState extends State<InwardsPage> {
     if (video != null) {
       String path = video.path;
       String name = video.name;
-      print("I am in save inward video");
+      //print("I am in save inward video");
 
       //save video locally
 
@@ -230,14 +230,14 @@ class _InwardsPageState extends State<InwardsPage> {
   //   if (video != null) {
   //     String path = video.path;
   //     String name = video.name;
-  //     print("I am in save inward video");
+  //     //print("I am in save inward video");
   //     //final thumbnail = await VideoCompress.getFileThumbnail(path);
   //     String? result =
   //         await PlannerService.firebaseStorage.uploadStory(path, name);
 
   //     //store story in db then add story object to the list of stories
-  //     print("result is ready");
-  //     print(result);
+  //     //print("result is ready");
+  //     //print(result);
   //     if (result == "error") {
   //       //error message
   //       showDialog(
@@ -258,8 +258,8 @@ class _InwardsPageState extends State<InwardsPage> {
   //           });
   //     } else {
   //       //success and result holds url
-  //       print("success getting video url");
-  //       print(result);
+  //       //print("success getting video url");
+  //       //print(result);
 
   //       //successfully saved thumbnail and result2 has thumbnail url
   //       //save tto db now
@@ -274,14 +274,14 @@ class _InwardsPageState extends State<InwardsPage> {
   //       var response = await http.patch(url,
   //           headers: {"Content-Type": "application/json"}, body: bodyF);
 
-  //       print("server came back with a response after saving story");
-  //       print('Response status: ${response.statusCode}');
-  //       print('Response body: ${response.body}');
+  //       //print("server came back with a response after saving story");
+  //       //print('Response status: ${response.statusCode}');
+  //       //print('Response body: ${response.body}');
 
   //       if (response.statusCode == 200) {
-  //         print("success saving to db");
+  //         //print("success saving to db");
   //         // var decodedBody = json.decode(response.body);
-  //         // print(decodedBody);
+  //         // //print(decodedBody);
   //         // var id = decodedBody["insertId"];
   //         // PlannerService.sharedInstance.user!.planitVideo = result!;
   //         //Story newStory = Story(id, result!, result2!, DateTime.now());
