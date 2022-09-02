@@ -747,12 +747,42 @@ class _LoginPageState extends State<LoginPage> {
                             builder: (context) {
                               return AlertDialog(
                                 title: Text(
-                                    'Oops! Looks like something went wrong. Please try again.'),
+                                    "we weren't able to confirm your subscription. Please try to resubscribe. If you have already paid, you will not be charged again."),
                                 actions: <Widget>[
                                   TextButton(
                                     child: Text('OK'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
+                                    onPressed: () async {
+                                      PlannerService
+                                          .subscriptionProvider.purchaseError
+                                          .removeListener(purchaseError);
+                                      PlannerService
+                                          .subscriptionProvider.purchasePending
+                                          .removeListener(purchasePending);
+                                      PlannerService
+                                          .subscriptionProvider.purchaseRestored
+                                          .removeListener(purchaseRestored);
+                                      PlannerService
+                                          .subscriptionProvider.purchaseExpired
+                                          .removeListener(purchaseExpired);
+                                      PlannerService
+                                          .subscriptionProvider.receipt
+                                          .removeListener(saveReceipt);
+
+                                      //get subscription products
+                                      List<ProductDetails> productDetails =
+                                          await PlannerService
+                                              .subscriptionProvider
+                                              .fetchSubscriptions();
+
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) {
+                                          return SubscriptionPage(
+                                              fromPage: 'login',
+                                              products: productDetails);
+                                        },
+                                      ));
+                                      //Navigator.of(context).pop();
                                     },
                                   )
                                 ],
