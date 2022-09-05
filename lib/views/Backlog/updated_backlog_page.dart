@@ -34,6 +34,7 @@ class _BacklogPageState extends State<BacklogPage> {
   FontWeight? expandedTileFontWeight = FontWeight.bold;
   // List<Widget> currentlyShownBacklogItems = [];
   Map<String, List<Widget>> backlogItemCardsMap = {};
+  List<Widget> currentlyShownBacklogItems = [];
   var selectedCategories =
       PlannerService.sharedInstance.user!.LifeCategoriesColorMap;
 
@@ -340,107 +341,221 @@ class _BacklogPageState extends State<BacklogPage> {
   }
 
   buildBacklogListView() {
-    //print("I am trying to see what the correct value to use is");
-    //print(PlannerService.sharedInstance.user!.backlogMap.values.isEmpty ||
-    // (PlannerService.sharedInstance.user!.backlogMap.keys.length == 1 &&
-    //     PlannerService.sharedInstance.user!.backlogMap.entries.first.value
-    //             .length ==
-    //         0));
-    //print(PlannerService.sharedInstance.user!.backlogMap.values.length);
+    //new implementation idea
+    List<BacklogMapRef> backlogItemsToShow = [];
 
-    PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
-      List<Widget> categoryChildren = [];
-      //print("I am building backlog and this is value.length");
-      //print(value.length);
-      for (int i = 0; i < value.length; i++) {
-        // //print("trying to find null value:");
-        // //print("Printing lin 352 below");
-        // //print(PlannerService
-        //     .sharedInstance.user!.backlogMap[key]![i].description);
-        // //print("printing liine 355 below");
-        // //print(
-        //     PlannerService.sharedInstance.user!.backlogMap[key]![i].isComplete);
-        // //print("printing line 358 below");
-        // //print(DateFormat.yMMMd().format(value[i].completeBy!));
-        // //print(PlannerService.sharedInstance.user!.LifeCategoriesColorMap[key]);
-
-        Widget child = GestureDetector(
-          onTap: () {
-            openViewDialog(value[i], i, key);
-          },
-          child: Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              color: Colors.grey.shade100,
-              margin: EdgeInsets.all(15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Icon(
-                      Icons.circle,
-                      color: PlannerService
-                          .sharedInstance.user!.LifeCategoriesColorMap[key],
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(5),
-                          child: Text(
-                            PlannerService.sharedInstance.user!
-                                .backlogMap[key]![i].description,
-                            style: const TextStyle(
-                                // color: PlannerService.sharedInstance.user!
-                                //     .backlogMap[key]![i].category.color,
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(5),
-                          child: value[i].completeBy == null
-                              ? const Text("No date set")
-                              : Text("Complete by " +
-                                  DateFormat.yMMMd()
-                                      .format(value[i].completeBy!)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Checkbox(
-                    value: PlannerService
-                        .sharedInstance.user!.backlogMap[key]![i].isComplete,
-                    shape: const CircleBorder(),
-                    onChanged: (bool? value) {
-                      //print(value);
-                      setState(() {
-                        PlannerService.sharedInstance.user!.backlogMap[key]![i]
-                            .isComplete = value;
-                        //_value = value!;
-                      });
-                    },
-                  ),
-                ],
-              )),
-        );
-
-        //setState(() {
-        categoryChildren.add(child);
-        //});
+    selectedCategories.forEach((key, value) {
+      List<BacklogItem> list =
+          PlannerService.sharedInstance.user!.backlogMap[key]!;
+      for (int i = 0; i < list.length; i++) {
+        BacklogMapRef bmr = BacklogMapRef(categoryName: key, arrayIdx: i);
+        backlogItemsToShow.add(bmr);
       }
-
-      backlogItemCardsMap.addAll({key: categoryChildren});
     });
-    return updateCurrentlyShownBacklogCards();
-    //return backloglistview;
+
+    backlogItemsToShow.sort((backlogItem1, backlogItem2) {
+      DateTime backlogItem1Date = PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[backlogItem1.categoryName]![backlogItem1.arrayIdx]
+          .completeBy!;
+      DateTime backlogItem2Date = PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[backlogItem2.categoryName]![backlogItem2.arrayIdx]
+          .completeBy!;
+      return backlogItem1Date.compareTo(backlogItem2Date);
+    });
+
+    List<Widget> backlogItemCardsToShow = [];
+
+    for (int i = 0; i < backlogItemsToShow.length; i++) {
+      Widget child = GestureDetector(
+        onTap: () {
+          openViewDialog(
+              PlannerService.sharedInstance.user!.backlogMap[
+                  backlogItemsToShow[i]
+                      .categoryName]![backlogItemsToShow[i].arrayIdx],
+              backlogItemsToShow[i].arrayIdx,
+              backlogItemsToShow[i].categoryName);
+        },
+        child: Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            color: Colors.grey.shade100,
+            margin: EdgeInsets.all(15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Icon(
+                    Icons.circle,
+                    color: PlannerService
+                            .sharedInstance.user!.LifeCategoriesColorMap[
+                        backlogItemsToShow[i].categoryName],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(5),
+                        child: Text(
+                          PlannerService
+                              .sharedInstance
+                              .user!
+                              .backlogMap[backlogItemsToShow[i].categoryName]![
+                                  backlogItemsToShow[i].arrayIdx]
+                              .description,
+                          style: const TextStyle(
+                              // color: PlannerService.sharedInstance.user!
+                              //     .backlogMap[key]![i].category.color,
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(5),
+                        child: PlannerService
+                                    .sharedInstance
+                                    .user!
+                                    .backlogMap[
+                                        backlogItemsToShow[i].categoryName]![
+                                        backlogItemsToShow[i].arrayIdx]
+                                    .completeBy ==
+                                null
+                            ? const Text("No date set")
+                            : Text("Complete by " +
+                                DateFormat.yMMMd().format(PlannerService
+                                    .sharedInstance
+                                    .user!
+                                    .backlogMap[
+                                        backlogItemsToShow[i].categoryName]![
+                                        backlogItemsToShow[i].arrayIdx]
+                                    .completeBy!)),
+                      ),
+                    ],
+                  ),
+                ),
+                Checkbox(
+                  value: PlannerService
+                      .sharedInstance
+                      .user!
+                      .backlogMap[backlogItemsToShow[i].categoryName]![
+                          backlogItemsToShow[i].arrayIdx]
+                      .isComplete,
+                  shape: const CircleBorder(),
+                  onChanged: (bool? value) {
+                    //print(value);
+                    setState(() {
+                      PlannerService
+                          .sharedInstance
+                          .user!
+                          .backlogMap[backlogItemsToShow[i].categoryName]![
+                              backlogItemsToShow[i].arrayIdx]
+                          .isComplete = value;
+
+                      //_value = value!;
+                    });
+                  },
+                ),
+              ],
+            )),
+      );
+      backlogItemCardsToShow.add(child);
+    }
+    setState(() {
+      currentlyShownBacklogItems = backlogItemCardsToShow;
+    });
+    //return backlogItemCardsToShow;
+
+    // PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
+    //   List<Widget> categoryChildren = [];
+    //   //print("I am building backlog and this is value.length");
+    //   //print(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     Widget child = GestureDetector(
+    //       onTap: () {
+    //         openViewDialog(value[i], i, key);
+    //       },
+    //       child: Card(
+    //           elevation: 0,
+    //           shape: RoundedRectangleBorder(
+    //             borderRadius: BorderRadius.circular(15),
+    //           ),
+    //           color: Colors.grey.shade100,
+    //           margin: EdgeInsets.all(15),
+    //           child: Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               Padding(
+    //                 padding: EdgeInsets.all(10),
+    //                 child: Icon(
+    //                   Icons.circle,
+    //                   color: PlannerService
+    //                       .sharedInstance.user!.LifeCategoriesColorMap[key],
+    //                 ),
+    //               ),
+    //               Padding(
+    //                 padding: EdgeInsets.all(10),
+    //                 child: Column(
+    //                   mainAxisAlignment: MainAxisAlignment.center,
+    //                   children: [
+    //                     Padding(
+    //                       padding: EdgeInsets.all(5),
+    //                       child: Text(
+    //                         PlannerService.sharedInstance.user!
+    //                             .backlogMap[key]![i].description,
+    //                         style: const TextStyle(
+    //                             // color: PlannerService.sharedInstance.user!
+    //                             //     .backlogMap[key]![i].category.color,
+    //                             color: Colors.black,
+    //                             fontSize: 16,
+    //                             fontWeight: FontWeight.bold),
+    //                       ),
+    //                     ),
+    //                     Padding(
+    //                       padding: EdgeInsets.all(5),
+    //                       child: value[i].completeBy == null
+    //                           ? const Text("No date set")
+    //                           : Text("Complete by " +
+    //                               DateFormat.yMMMd()
+    //                                   .format(value[i].completeBy!)),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //               Checkbox(
+    //                 value: PlannerService
+    //                     .sharedInstance.user!.backlogMap[key]![i].isComplete,
+    //                 shape: const CircleBorder(),
+    //                 onChanged: (bool? value) {
+    //                   //print(value);
+    //                   setState(() {
+    //                     PlannerService.sharedInstance.user!.backlogMap[key]![i]
+    //                         .isComplete = value;
+    //                     //_value = value!;
+    //                   });
+    //                 },
+    //               ),
+    //             ],
+    //           )),
+    //     );
+
+    //     //setState(() {
+    //     categoryChildren.add(child);
+    //     //});
+    //   }
+
+    //   backlogItemCardsMap.addAll({key: categoryChildren});
+    // });
+    //return updateCurrentlyShownBacklogCards();
   }
 
   List<Widget> updateCurrentlyShownBacklogCards() {
@@ -463,7 +578,7 @@ class _BacklogPageState extends State<BacklogPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    //buildBacklogListView();
+    buildBacklogListView();
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -567,7 +682,8 @@ class _BacklogPageState extends State<BacklogPage> {
                             });
                           });
                         }
-                        updateCurrentlyShownBacklogCards();
+                        //updateCurrentlyShownBacklogCards();
+                        buildBacklogListView();
                       },
                       child: Card(
                         //margin: EdgeInsets.all(20),
@@ -640,7 +756,8 @@ class _BacklogPageState extends State<BacklogPage> {
                           ],
                         ))
                     : ListView(
-                        children: buildBacklogListView(),
+                        //children: buildBacklogListView(),
+                        children: currentlyShownBacklogItems,
                       ),
           )
         ],

@@ -57,6 +57,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
         selectedDate = picked;
         dateTxtController.text = DateFormat.yMMMd().format(selectedDate!);
         ////print(DateFormat.yMMMd().format(selectedDate));
+        setDoneBtnState();
+        print(selectedDate);
       });
   }
 
@@ -104,11 +106,14 @@ class _NewTaskPageState extends State<NewTaskPage> {
         PlannerService.sharedInstance.user!.backlogMap
             .addAll({newBacklogItem.category.name: arr});
       }
+      // PlannerService.sharedInstance.user!.backlogItems.add(newBacklogItem);
+      // PlannerService.sharedInstance.user!.backlogItems
+      //     .sort((backlogItem1, backlogItem2) {
+      //   DateTime backlogItem1Date = backlogItem1.completeBy!;
+      //   DateTime backlogItem2Date = backlogItem2.completeBy!;
+      //   return backlogItem1Date.compareTo(backlogItem2Date);
+      // });
 
-      // if (DateFormat.yMMMd().format(selectedDate!) ==
-      //     DateFormat.yMMMd().format(DateTime.now())) {
-      //   PlannerService.sharedInstance.user!.todayTasks.add(newBacklogItem);
-      // }
       widget.updateBacklog();
       _backToBacklogPage();
     } else {
@@ -134,8 +139,10 @@ class _NewTaskPageState extends State<NewTaskPage> {
 
   void setDoneBtnState() {
     //print(dateTxtController.text);
-    //print(descriptionTxtController.text);
-    if (descriptionTxtController.text != "") {
+    print("setting done button state");
+    print(descriptionTxtController.text);
+    print(selectedDate);
+    if (descriptionTxtController.text != "" && selectedDate != null) {
       setState(() {
         //print("button enabled");
         doneBtnDisabled = false;
@@ -221,7 +228,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
                             controller: dateTxtController,
                             readOnly: true,
                             decoration: InputDecoration(
-                              hintText: "Complete by (Optional)",
+                              hintText: "Complete by",
                               icon: Icon(
                                 Icons.calendar_today,
                                 color: Theme.of(context).colorScheme.primary,
