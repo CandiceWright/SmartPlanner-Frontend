@@ -4,6 +4,8 @@ import 'package:practice_planner/main.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/services/subscription_provider.dart';
+import 'package:practice_planner/views/Legal/privacy_policy_page.dart';
+import 'package:practice_planner/views/Legal/terms_of_use.dart';
 import 'package:practice_planner/views/Login/login.dart';
 import 'package:practice_planner/views/Login/planit_name_page.dart';
 import '/views/Goals/goals_page.dart';
@@ -202,6 +204,42 @@ class _SignupPageState extends State<SignupPage> {
                             const Color(0xffef41a8)),
                       ),
                     ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return const PrivacyPolicyPage();
+                            },
+                          ));
+                        },
+                        child: Text(
+                          "Privacy Policy",
+                          style: TextStyle(color: Color(0xff7ddcfa)),
+                        ),
+                      ),
+                      Text(
+                        "and",
+                        style: TextStyle(color: Colors.white),
+                        textAlign: TextAlign.center,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return const TermsPage();
+                            },
+                          ));
+                        },
+                        child: Text(
+                          "Terms of Use.",
+                          style: TextStyle(color: Color(0xff7ddcfa)),
+                        ),
+                      ),
+                    ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
