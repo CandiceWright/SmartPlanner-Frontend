@@ -1029,71 +1029,131 @@ class _LoginPageState extends State<LoginPage> {
                   backgroundColor: Colors.transparent,
                   elevation: 0.0,
                 ),
-                body: ListView(
+                body: Column(
                   children: [
-                    Padding(
-                      child: Image.asset(
-                        "assets/images/planit_logo.png",
+                    Expanded(
+                      child: Padding(
+                        child: Image.asset(
+                          "assets/images/planit_logo.png",
+                        ),
+                        padding: EdgeInsets.all(10),
                       ),
-                      padding: EdgeInsets.all(10),
                     ),
-                    Container(
-                      margin: EdgeInsets.all(15),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(5),
-                            child: TextFormField(
-                              controller: emailTextController,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              decoration: const InputDecoration(
-                                hintText: "Email",
-                                icon: Icon(
-                                  Icons.email,
-                                  color: Colors.white,
-                                ),
-                                border: OutlineInputBorder(),
-                                filled: true,
-                                fillColor: Colors.white,
-                              ),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter email';
-                                }
-                                return null;
-                              },
-                            ),
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: TextFormField(
+                        controller: emailTextController,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        decoration: const InputDecoration(
+                          hintText: "Email",
+                          icon: Icon(
+                            Icons.email,
+                            color: Colors.white,
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(5),
-                            child: TextFormField(
-                              controller: passwordTextController,
-                              obscureText: true,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              decoration: const InputDecoration(
-                                  hintText: "Password",
-                                  icon: Icon(
-                                    Icons.password,
-                                    color: Colors.white,
-                                  ),
-                                  border: OutlineInputBorder(),
-                                  filled: true,
-                                  fillColor: Colors.white),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter password';
-                                }
-                                return null;
-                              },
+                          border: OutlineInputBorder(),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter email';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: TextFormField(
+                        controller: passwordTextController,
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        decoration: const InputDecoration(
+                            hintText: "Password",
+                            icon: Icon(
+                              Icons.password,
+                              color: Colors.white,
                             ),
-                          ),
-                        ],
+                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.white),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter password';
+                          }
+                          return null;
+                        },
                       ),
                     ),
                   ],
                 ),
+                // body: ListView(
+                //   children: [
+                //     Padding(
+                //       child: Image.asset(
+                //         "assets/images/planit_logo.png",
+                //       ),
+                //       padding: EdgeInsets.all(10),
+                //     ),
+                //     Container(
+                //       margin: EdgeInsets.all(15),
+                //       child: Column(
+                //         children: [
+                //           Padding(
+                //             padding: EdgeInsets.all(5),
+                //             child: TextFormField(
+                //               controller: emailTextController,
+                //               enableSuggestions: false,
+                //               autocorrect: false,
+                //               decoration: const InputDecoration(
+                //                 hintText: "Email",
+                //                 icon: Icon(
+                //                   Icons.email,
+                //                   color: Colors.white,
+                //                 ),
+                //                 border: OutlineInputBorder(),
+                //                 filled: true,
+                //                 fillColor: Colors.white,
+                //               ),
+                //               validator: (String? value) {
+                //                 if (value == null || value.isEmpty) {
+                //                   return 'Please enter email';
+                //                 }
+                //                 return null;
+                //               },
+                //             ),
+                //           ),
+                //           Padding(
+                //             padding: EdgeInsets.all(5),
+                //             child: TextFormField(
+                //               controller: passwordTextController,
+                //               obscureText: true,
+                //               enableSuggestions: false,
+                //               autocorrect: false,
+                //               decoration: const InputDecoration(
+                //                   hintText: "Password",
+                //                   icon: Icon(
+                //                     Icons.password,
+                //                     color: Colors.white,
+                //                   ),
+                //                   border: OutlineInputBorder(),
+                //                   filled: true,
+                //                   fillColor: Colors.white),
+                //               validator: (String? value) {
+                //                 if (value == null || value.isEmpty) {
+                //                   return 'Please enter password';
+                //                 }
+                //                 return null;
+                //               },
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 persistentFooterButtons: [
                   Container(
                     child: Column(

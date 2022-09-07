@@ -124,89 +124,63 @@ class _SignupPageState extends State<SignupPage> {
             backgroundColor: Colors.transparent,
             elevation: 0.0,
           ),
-          body: ListView(
+          body: Column(
             children: [
-              Padding(
-                child: Image.asset(
-                  "assets/images/welcome_graphic_brownpink.png",
+              Expanded(
+                child: Padding(
+                  child: Image.asset(
+                    "assets/images/welcome_graphic_brownpink.png",
+                  ),
+                  padding: EdgeInsets.all(10),
                 ),
-                padding: EdgeInsets.all(10),
               ),
-              Container(
-                margin: EdgeInsets.all(15),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: TextFormField(
-                        controller: emailTextController,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                          hintText: "Email",
-                          icon: Icon(
-                            Icons.email,
-                            color: Colors.white,
-                          ),
-                          border: OutlineInputBorder(),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter email';
-                          }
-                          return null;
-                        },
-                        //style: TextStyle(color: Colors.white),
-                      ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: TextFormField(
+                  controller: emailTextController,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  decoration: const InputDecoration(
+                    hintText: "Email",
+                    icon: Icon(
+                      Icons.email,
+                      color: Colors.white,
                     ),
-                    // Padding(
-                    //   padding: EdgeInsets.all(5),
-                    //   child: TextFormField(
-                    //     controller: emailTextController,
-                    //     decoration: const InputDecoration(
-                    //         hintText: "Username",
-                    //         icon: Icon(
-                    //           Icons.person,
-                    //           color: Colors.white,
-                    //         ),
-                    //         border: OutlineInputBorder(),
-                    //         filled: true,
-                    //         fillColor: Colors.white),
-                    //     validator: (String? value) {
-                    //       if (value == null || value.isEmpty) {
-                    //         return 'Please enter password';
-                    //       }
-                    //       return null;
-                    //     },
-                    //   ),
-                    // ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: TextFormField(
-                        controller: passwordTextController,
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        decoration: const InputDecoration(
-                            hintText: "Password",
-                            icon: Icon(
-                              Icons.password,
-                              color: Colors.white,
-                            ),
-                            border: OutlineInputBorder(),
-                            filled: true,
-                            fillColor: Colors.white),
-                        validator: (String? value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter password';
-                          }
-                          return null;
-                        },
+                    border: OutlineInputBorder(),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter email';
+                    }
+                    return null;
+                  },
+                  //style: TextStyle(color: Colors.white),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: TextFormField(
+                  controller: passwordTextController,
+                  obscureText: true,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  decoration: const InputDecoration(
+                      hintText: "Password",
+                      icon: Icon(
+                        Icons.password,
+                        color: Colors.white,
                       ),
-                    ),
-                  ],
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.white),
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter password';
+                    }
+                    return null;
+                  },
                 ),
               ),
             ],
