@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/services/subscription_provider.dart';
@@ -267,23 +267,32 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             //   "Another Planit",
             //   style: TextStyle(color: Colors.white),
             // ),
+            title: const Text(
+              "Try it out free, 1 week!",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            centerTitle: true,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
             elevation: 0.0,
           ),
           body: Column(
             children: [
-              const Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  "Try it out free, 1 week!",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              // const Padding(
+              //   padding: EdgeInsets.all(8),
+              //   child: Text(
+              //     "Try it out free, 1 week!",
+              //     style: TextStyle(
+              //         color: Colors.white,
+              //         fontSize: 20,
+              //         fontWeight: FontWeight.bold),
+              //     textAlign: TextAlign.center,
+              //   ),
+              // ),
               const Text(
                 "After free trial, choose your subscription option below.",
                 style: TextStyle(
@@ -292,12 +301,113 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              Padding(
-                child: Image.asset(
-                  "assets/images/planit_logo.png",
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "You will have access to all app features.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                padding: EdgeInsets.all(10),
               ),
+
+              Expanded(
+                flex: 2,
+                child: Container(
+                    //height: 400,
+                    margin: EdgeInsets.only(bottom: 30),
+                    child: CarouselSlider(
+                      options: CarouselOptions(
+                        autoPlayInterval: const Duration(seconds: 2),
+                        height: 500,
+                        viewportFraction: 0.4,
+                        aspectRatio: 2,
+                        enlargeCenterPage: true,
+                        scrollDirection: Axis.horizontal,
+                        autoPlay: true,
+                      ),
+                      items: [
+                        Container(
+                          child: Column(children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                child: Image.asset(
+                                  "assets/images/home.jpg",
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
+                        Container(
+                          child: Column(children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                child: Image.asset(
+                                  "assets/images/stories.jpg",
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
+                        Container(
+                          child: Column(children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                child: Image.asset(
+                                  "assets/images/schedule.jpg",
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
+                        Container(
+                          child: Column(children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                child: Image.asset(
+                                  "assets/images/goals.jpg",
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
+                        Container(
+                          child: Column(children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                                child: Image.asset(
+                                  "assets/images/backlog.jpg",
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ]),
+                        ),
+                      ],
+                    )),
+              ),
+
               Padding(
                 padding: EdgeInsets.all(8),
                 child: ElevatedButton(
@@ -309,10 +419,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                     "Monthly " + monthlyProduct.price,
                     style: TextStyle(fontSize: 18),
                   ),
-                  // style: ButtonStyle(
-                  //   backgroundColor: MaterialStateProperty.all<Color>(
-                  //       const Color(0xffd4ac62)),
-                  // ),
+
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                         const Color(0xffef41a8)),
@@ -350,19 +457,29 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your trial ends and you won't be charged.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              )
+              // const Padding(
+              //   padding: EdgeInsets.all(8),
+              //   child: Text(
+              //     "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your trial ends and you won't be charged.",
+              //     style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 14,
+              //     ),
+              //     textAlign: TextAlign.center,
+              //   ),
+              // )
             ],
           ),
+          persistentFooterButtons: const [
+            Text(
+              "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your trial ends and you won't be charged.",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ],
     );
