@@ -294,20 +294,20 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               //   ),
               // ),
               const Text(
-                "After free trial, choose your subscription option below.",
+                "Another Planit is a subscription-based app.",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
                 textAlign: TextAlign.center,
               ),
               const Padding(
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.all(4),
                 child: Text(
-                  "You will have access to all app features.",
+                  "After your free trial, your subscription will begin.",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14,
+                    fontSize: 12,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -407,7 +407,17 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       ],
                     )),
               ),
-
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "Choose your subscription and get started on your planit.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
               Padding(
                 padding: EdgeInsets.all(8),
                 child: ElevatedButton(
@@ -475,7 +485,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your trial ends and you won't be charged.",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 14,
+                fontSize: 12,
               ),
               textAlign: TextAlign.center,
             ),
