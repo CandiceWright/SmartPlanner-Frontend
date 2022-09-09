@@ -1024,6 +1024,73 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  void deleteAccount() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(
+              child: const Text(
+                "Are you sure you want to delete your account? ",
+                textAlign: TextAlign.center,
+              ),
+            ),
+            content: Text(
+                "This action cannot be reversed. If yes, all of your content along with your account will be deleted. After account deletion, end your subscription in your phone settings."),
+            actions: <Widget>[
+              TextButton(
+                child: Text('yes, delete my account.'),
+                onPressed: () async {
+                  //first send server request
+                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                      '/user/' +
+                      PlannerService.sharedInstance.user!.id.toString());
+                  var response = await http.delete(
+                    url,
+                  );
+                  print('Response status: ${response.statusCode}');
+                  print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
+                    //navigate to login screen
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => LoginPage(),
+                      ),
+                      (route) => false,
+                    );
+                  } else {
+                    //500 error, show an alert
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Oops! Looks like something went wrong. Please try again.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
+                  }
+                },
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('cancel'))
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -1423,6 +1490,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             TextButton(
                                 onPressed: () => {changePasswordClicked()},
                                 child: Text("Change Password")),
+                            TextButton(
+                                onPressed: () => {deleteAccount()},
+                                child: Text("Delete Account")),
                           ],
                         ),
                         color: Colors.white,
