@@ -20,7 +20,7 @@ class SubscriptionsProvider extends ChangeNotifier {
   List<PurchaseDetails> purchases = [];
 
   SubscriptionsProvider() {
-    //print("I am initializing subscription provider");
+    print("I am initializing subscription provider");
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         InAppPurchase.instance.purchaseStream;
 
@@ -64,14 +64,16 @@ class SubscriptionsProvider extends ChangeNotifier {
           purchaseSuccess.value = false;
           purchaseRestored.value = false;
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
-          //print("item purchased");
+          print("item purchased");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
+          purchases.add(purchaseDetails);
           if (purchaseInProgress) {
             _verifyPurchaseAndEnablePremium(purchaseDetails);
           }
         } else if (purchaseDetails.status == PurchaseStatus.restored) {
           //print("item restored");
           // Huge SUCCESS! This case handles the happy case whenever the user purchased or restored the purchase
+          purchases.add(purchaseDetails);
           _verifyRestoredAndEnablePremium(purchaseDetails);
         }
 
@@ -224,7 +226,7 @@ class SubscriptionsProvider extends ChangeNotifier {
           purchaseError.value = false;
           purchasePending.value = false;
           purchaseRestored.value = false;
-          purchases.add(purchaseDetails);
+          //purchases.add(purchaseDetails);
           receipt.value =
               purchaseDetails.verificationData.serverVerificationData;
         }
@@ -306,7 +308,7 @@ class SubscriptionsProvider extends ChangeNotifier {
           purchasePending.value = false;
           purchaseSuccess.value = false;
           purchaseRestored.value = true;
-          purchases.add(purchaseDetails);
+          //purchases.add(purchaseDetails);
           receipt.value =
               purchaseDetails.verificationData.serverVerificationData;
         }

@@ -109,6 +109,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Planner App',
             theme: theme,
+            debugShowCheckedModeBanner: false,
             // theme: ThemeData(
             //   // This is the theme of your application.
             //   //

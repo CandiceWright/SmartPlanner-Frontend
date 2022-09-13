@@ -5,6 +5,7 @@ import 'package:practice_planner/services/subscription_provider.dart';
 import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
 import 'package:practice_planner/views/Inwards/inwards_page.dart';
 import 'package:practice_planner/views/Subscription/subscription_page.dart';
+import 'package:practice_planner/views/Subscription/subscription_page_no_free_trial.dart';
 import '../services/planner_service.dart';
 import '/views/Goals/goals_page.dart';
 import '/views/Home/home_page.dart';
@@ -92,7 +93,7 @@ class _NavigationWrapperState extends State<NavigationWrapper>
 
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) {
-                        return SubscriptionPage(
+                        return SubscriptionPageNoTrial(
                           fromPage: 'login',
                           products: productDetails,
                         );

@@ -40,6 +40,7 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   initState() {
+    //PlannerService.subscriptionProvider.purchaseInProgress = false;
     super.initState();
   }
 

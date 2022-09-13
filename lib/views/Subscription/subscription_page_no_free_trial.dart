@@ -11,19 +11,20 @@ import '/views/Login/login.dart';
 import '/views/Login/signup.dart';
 import 'package:http/http.dart' as http;
 
-class SubscriptionPage extends StatefulWidget {
+class SubscriptionPageNoTrial extends StatefulWidget {
   final String fromPage;
   final List<ProductDetails> products;
-  const SubscriptionPage(
+  const SubscriptionPageNoTrial(
       {Key? key, required this.fromPage, required this.products})
       : super(key: key);
 
   @override
-  State<SubscriptionPage> createState() => _SubscriptionPageState();
+  State<SubscriptionPageNoTrial> createState() =>
+      _SubscriptionPageNoTrialState();
 }
 
 //The widget can be recreated, but the state is attached to the user interface
-class _SubscriptionPageState extends State<SubscriptionPage> {
+class _SubscriptionPageNoTrialState extends State<SubscriptionPageNoTrial> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var subscriptionProvider = SubscriptionsProvider();
 
@@ -294,24 +295,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               //   ),
               // ),
               const Text(
-                "Try the app out free for one week!",
+                "A subscription is required to use the app. Here's why!",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              const Padding(
-                padding: EdgeInsets.all(4),
-                child: Text(
-                  "A subscription is required to use the app after your free trial ends. Here's why!",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
+
               Container(
                 alignment: Alignment.center,
                 margin: EdgeInsets.all(18),
@@ -455,18 +446,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               const Padding(
                 padding: EdgeInsets.all(8),
                 child: Text(
-                  "You will not be charged until your one week free trial ends.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                child: Text(
-                  "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your one-week trial ends and you won't be charged.",
+                  "Your subscription will begin immediiately.",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -503,18 +483,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text("ONE WEEK FREE-TRIAL",
-                          textAlign: TextAlign.start),
-                    )
-                    // Row(children: [
-                    //   Text("Monthly",
-                    //       style: TextStyle(
-                    //           fontSize: 25, fontWeight: FontWeight.bold)),
-                    //   Text(monthlyProduct.price,
-                    //       style: TextStyle(
-                    //           fontSize: 25, fontWeight: FontWeight.bold))
-                    // ]),
-                    ),
+                    )),
                 onTap: () {
                   print("changing subscription option");
                   setState(() {
@@ -551,10 +520,6 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         yearlyProduct.price + "/year",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        "ONE WEEK FREE-TRIAL",
-                        textAlign: TextAlign.start,
                       ),
                     )),
                 onTap: () {

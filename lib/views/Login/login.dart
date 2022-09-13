@@ -13,6 +13,7 @@ import 'package:practice_planner/views/Login/password_resetpin_page.dart';
 import 'package:practice_planner/views/Login/restore_purchase_page.dart';
 import 'package:practice_planner/views/Login/signup.dart';
 import 'package:practice_planner/views/Subscription/subscription_page.dart';
+import 'package:practice_planner/views/Subscription/subscription_page_no_free_trial.dart';
 import '../../models/backlog_item.dart';
 import '../../models/definition.dart';
 import '../../models/habit.dart';
@@ -41,18 +42,10 @@ class _LoginPageState extends State<LoginPage> {
   //var questionIndex = 0;
   @override
   initState() {
-    // PlannerService.subscriptionProvider.purchaseError
-    //     .addListener(purchaseError);
-    // PlannerService.subscriptionProvider.purchasePending
-    //     .addListener(purchasePending);
     PlannerService.subscriptionProvider.purchaseRestored
         .addListener(purchaseRestored);
     PlannerService.subscriptionProvider.receipt.addListener(saveReceipt);
 
-    // subscriptionProvider.purchaseSuccess
-    //     .addListener(purchaseRestoredorComplete);
-    // PlannerService.subscriptionProvider.purchaseExpired
-    //     .addListener(purchaseExpired);
     super.initState();
   }
 
@@ -722,7 +715,7 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.of(context)
                                         .push(MaterialPageRoute(
                                       builder: (context) {
-                                        return SubscriptionPage(
+                                        return SubscriptionPageNoTrial(
                                             fromPage: 'login',
                                             products: productDetails);
                                       },
@@ -778,7 +771,7 @@ class _LoginPageState extends State<LoginPage> {
                                       Navigator.of(context)
                                           .push(MaterialPageRoute(
                                         builder: (context) {
-                                          return SubscriptionPage(
+                                          return SubscriptionPageNoTrial(
                                               fromPage: 'login',
                                               products: productDetails);
                                         },
