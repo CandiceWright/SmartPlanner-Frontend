@@ -530,100 +530,97 @@ class _SubscriptionPageNoTrialState extends State<SubscriptionPageNoTrial> {
                 },
               ),
 
-              Expanded(
-                flex: 2,
-                child: Container(
-                    //height: 400,
-                    margin: EdgeInsets.only(bottom: 30, top: 15),
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        autoPlayInterval: const Duration(seconds: 2),
-                        height: 500,
-                        viewportFraction: 0.4,
-                        aspectRatio: 2,
-                        enlargeCenterPage: true,
-                        scrollDirection: Axis.horizontal,
-                        autoPlay: true,
+              Container(
+                  //height: 400,
+                  margin: EdgeInsets.only(bottom: 30, top: 15),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      autoPlayInterval: const Duration(seconds: 2),
+                      height: 500,
+                      viewportFraction: 0.4,
+                      aspectRatio: 2,
+                      enlargeCenterPage: true,
+                      scrollDirection: Axis.horizontal,
+                      autoPlay: true,
+                    ),
+                    items: [
+                      Container(
+                        child: Column(children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              child: Image.asset(
+                                "assets/images/home.jpg",
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                        ]),
                       ),
-                      items: [
-                        Container(
-                          child: Column(children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/home.jpg",
-                                  fit: BoxFit.fill,
-                                ),
+                      Container(
+                        child: Column(children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              child: Image.asset(
+                                "assets/images/stories.jpg",
+                                fit: BoxFit.fill,
                               ),
                             ),
-                          ]),
-                        ),
-                        Container(
-                          child: Column(children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/stories.jpg",
-                                  fit: BoxFit.fill,
-                                ),
+                          ),
+                        ]),
+                      ),
+                      Container(
+                        child: Column(children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              child: Image.asset(
+                                "assets/images/schedule.jpg",
+                                fit: BoxFit.fill,
                               ),
                             ),
-                          ]),
-                        ),
-                        Container(
-                          child: Column(children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/schedule.jpg",
-                                  fit: BoxFit.fill,
-                                ),
+                          ),
+                        ]),
+                      ),
+                      Container(
+                        child: Column(children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              child: Image.asset(
+                                "assets/images/goals.jpg",
+                                fit: BoxFit.fill,
                               ),
                             ),
-                          ]),
-                        ),
-                        Container(
-                          child: Column(children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/goals.jpg",
-                                  fit: BoxFit.fill,
-                                ),
+                          ),
+                        ]),
+                      ),
+                      Container(
+                        child: Column(children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                              child: Image.asset(
+                                "assets/images/backlog.jpg",
+                                fit: BoxFit.fill,
                               ),
                             ),
-                          ]),
-                        ),
-                        Container(
-                          child: Column(children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                                child: Image.asset(
-                                  "assets/images/backlog.jpg",
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                            ),
-                          ]),
-                        ),
-                      ],
-                    )),
-              ),
+                          ),
+                        ]),
+                      ),
+                    ],
+                  )),
             ],
           ),
           persistentFooterButtons: [
