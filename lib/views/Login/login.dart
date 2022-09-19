@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
   var passwordTextController = TextEditingController();
   bool shouldShowRestoredDialog = false;
   bool isloggingIn = false;
+  double loadPercentage = 0.0;
   //var subscriptionProvider = SubscriptionsProvider();
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var questionIndex = 0;
@@ -348,6 +350,7 @@ class _LoginPageState extends State<LoginPage> {
         //correct password.
         setState(() {
           isloggingIn = true;
+          loadPercentage = 0.2;
         });
         var decodedBody = json.decode(response.body);
         //print(decodedBody);
@@ -417,6 +420,9 @@ class _LoginPageState extends State<LoginPage> {
             List<BacklogItem> arr = [];
             backlogMap.addAll({lc.name: arr});
           }
+          setState(() {
+            loadPercentage = 0.4;
+          });
 
           //get all goals
           //print("getting all goals");
@@ -452,6 +458,9 @@ class _LoginPageState extends State<LoginPage> {
                 goals.add(goal);
               }
             }
+            setState(() {
+              loadPercentage = 0.5;
+            });
 
             //get all calendar events
             //print("getting all calendar events");
@@ -483,6 +492,9 @@ class _LoginPageState extends State<LoginPage> {
                 scheduledEvents.add(event);
                 scheduledEventsMap[event.id!] = event;
               }
+              setState(() {
+                loadPercentage = 0.6;
+              });
 
               //get all habits
               //print("getting all habits");
@@ -519,6 +531,9 @@ class _LoginPageState extends State<LoginPage> {
                   habit.habitTrackerMap = habitTrackerMap;
                   habits.add(habit);
                 }
+                setState(() {
+                  loadPercentage = 0.7;
+                });
 
                 //you will need to get all backlog items next and all dictionary items
                 //get all backlog items
@@ -567,129 +582,185 @@ class _LoginPageState extends State<LoginPage> {
                       backlogMap.addAll({backlogItem.category.name: arr});
                     }
                   }
+                  setState(() {
+                    loadPercentage = 0.8;
+                  });
 
-                  //get all dictionary items
+                  //get all dictionary items (Dictionary not used right now)
+                  // var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                  //     '/dictionary/' +
+                  //     userId.toString());
+                  // var response7 = await http.get(url);
+                  // //print('Response status: ${response7.statusCode}');
+                  // //print('Response body: ${response7.body}');
+
+                  // if (response7.statusCode == 200) {
+                  //   var decodedBody = json.decode(response7.body);
+                  //   //print(decodedBody);
+                  //   for (int i = 0; i < decodedBody.length; i++) {
+                  //     var definition = Definition(decodedBody[i]["defId"],
+                  //         decodedBody[i]["name"], decodedBody[i]["def"]);
+                  //     dictionaryArr.add(definition);
+                  //     dictionaryMap.addAll({definition.name: definition});
+                  //   }
+
+                  //get all stories
                   var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
-                      '/dictionary/' +
-                      userId.toString());
-                  var response7 = await http.get(url);
-                  //print('Response status: ${response7.statusCode}');
-                  //print('Response body: ${response7.body}');
+                      '/user/' +
+                      userId.toString() +
+                      '/stories');
 
-                  if (response7.statusCode == 200) {
-                    var decodedBody = json.decode(response7.body);
+                  String bodyF = jsonEncode(body);
+                  var response8 = await http.get(url);
+
+                  //print(
+                  // "server came back with a response after saving story");
+                  //print('Response status: ${response8.statusCode}');
+                  //print('Response body: ${response8.body}');
+
+                  if (response8.statusCode == 200) {
+                    var decodedBody = json.decode(response8.body);
                     //print(decodedBody);
                     for (int i = 0; i < decodedBody.length; i++) {
-                      var definition = Definition(decodedBody[i]["defId"],
-                          decodedBody[i]["name"], decodedBody[i]["def"]);
-                      dictionaryArr.add(definition);
-                      dictionaryMap.addAll({definition.name: definition});
+                      var story = Story(
+                          decodedBody[i]["storyId"],
+                          decodedBody[i]["videoUrl"],
+                          decodedBody[i]["videoLocalPath"],
+                          decodedBody[i]["thumbnail"],
+                          decodedBody[i]["localthumbnailPath"],
+                          DateTime.parse(decodedBody[i]["date"]));
+                      stories.add(story);
+                      //PlannerService.sharedInstance.user!.stories.add(story);
                     }
+                    setState(() {
+                      loadPercentage = 0.9;
+                    });
 
-                    //get all stories
-                    var url = Uri.parse(
-                        PlannerService.sharedInstance.serverUrl +
-                            '/user/' +
-                            userId.toString() +
-                            '/stories');
+                    DynamicTheme.of(context)!.setTheme(themeId);
+                    var user = User(
+                        id: userId,
+                        receipt: receipt,
+                        planitName: planitName,
+                        email: email,
+                        //profileImage: "assets/images/profile_pic_icon.png",
+                        profileImage: profileImage,
+                        themeId: themeId,
+                        spaceImage: spaceTheme,
+                        //theme: PinkTheme(),
+                        didStartTomorrowPlanning: didStartPlanning,
+                        lifeCategories: lifeCategories);
+                    PlannerService.sharedInstance.user = user;
+                    PlannerService.sharedInstance.user!.planitVideo =
+                        inwardVideoUrl;
+                    PlannerService.sharedInstance.user!.planitVideoLocalPath =
+                        coverVideoLocalPath;
+                    PlannerService.sharedInstance.user!.hasPlanitVideo =
+                        PlannerService.sharedInstance.user!.planitVideo == ""
+                            ? false
+                            : true;
+                    PlannerService.sharedInstance.user!.lifeCategories =
+                        lifeCategories;
+                    PlannerService.sharedInstance.user!.lifeCategoriesMap =
+                        lifeCategoriesMap;
+                    PlannerService.sharedInstance.user!.LifeCategoriesColorMap =
+                        lifeCategoriesColorMap;
+                    PlannerService.sharedInstance.user!.accomplishedGoals =
+                        accomplishedGoals;
+                    PlannerService.sharedInstance.user!.goals = goals;
+                    PlannerService.sharedInstance.user!.scheduledEvents =
+                        scheduledEvents;
+                    PlannerService.sharedInstance.user!.habits = habits;
+                    PlannerService.sharedInstance.user!.backlogItems =
+                        backlogItems;
+                    PlannerService.sharedInstance.user!.backlogMap = backlogMap;
+                    // PlannerService.sharedInstance.user!.dictionaryArr =
+                    //     dictionaryArr;
+                    // PlannerService.sharedInstance.user!.dictionaryMap =
+                    //     dictionaryMap;
 
-                    String bodyF = jsonEncode(body);
-                    var response8 = await http.get(url);
+                    PlannerService.sharedInstance.user!.stories = stories;
 
-                    //print(
-                    // "server came back with a response after saving story");
-                    //print('Response status: ${response8.statusCode}');
-                    //print('Response body: ${response8.body}');
+                    final directory = await getApplicationDocumentsDirectory();
+                    String localDirPath = directory.path;
+                    String profilePicPath = '$localDirPath/profilepic';
 
-                    if (response8.statusCode == 200) {
-                      var decodedBody = json.decode(response8.body);
-                      //print(decodedBody);
-                      for (int i = 0; i < decodedBody.length; i++) {
-                        var story = Story(
-                            decodedBody[i]["storyId"],
-                            decodedBody[i]["videoUrl"],
-                            decodedBody[i]["videoLocalPath"],
-                            decodedBody[i]["thumbnail"],
-                            decodedBody[i]["localthumbnailPath"],
-                            DateTime.parse(decodedBody[i]["date"]));
-                        stories.add(story);
-                        //PlannerService.sharedInstance.user!.stories.add(story);
-                      }
+                    PlannerService.sharedInstance.user!.localProfileImage =
+                        profilePicPath;
 
-                      DynamicTheme.of(context)!.setTheme(themeId);
-                      var user = User(
-                          id: userId,
-                          receipt: receipt,
-                          planitName: planitName,
-                          email: email,
-                          //profileImage: "assets/images/profile_pic_icon.png",
-                          profileImage: profileImage,
-                          themeId: themeId,
-                          spaceImage: spaceTheme,
-                          //theme: PinkTheme(),
-                          didStartTomorrowPlanning: didStartPlanning,
-                          lifeCategories: lifeCategories);
-                      PlannerService.sharedInstance.user = user;
-                      PlannerService.sharedInstance.user!.planitVideo =
-                          inwardVideoUrl;
-                      PlannerService.sharedInstance.user!.planitVideoLocalPath =
-                          coverVideoLocalPath;
-                      PlannerService.sharedInstance.user!.hasPlanitVideo =
-                          PlannerService.sharedInstance.user!.planitVideo == ""
-                              ? false
-                              : true;
-                      PlannerService.sharedInstance.user!.lifeCategories =
-                          lifeCategories;
-                      PlannerService.sharedInstance.user!.lifeCategoriesMap =
-                          lifeCategoriesMap;
-                      PlannerService.sharedInstance.user!
-                          .LifeCategoriesColorMap = lifeCategoriesColorMap;
-                      PlannerService.sharedInstance.user!.accomplishedGoals =
-                          accomplishedGoals;
-                      PlannerService.sharedInstance.user!.goals = goals;
-                      PlannerService.sharedInstance.user!.scheduledEvents =
-                          scheduledEvents;
-                      PlannerService.sharedInstance.user!.habits = habits;
-                      PlannerService.sharedInstance.user!.backlogItems =
-                          backlogItems;
-                      PlannerService.sharedInstance.user!.backlogMap =
-                          backlogMap;
-                      PlannerService.sharedInstance.user!.dictionaryArr =
-                          dictionaryArr;
-                      PlannerService.sharedInstance.user!.dictionaryMap =
-                          dictionaryMap;
+                    //check to make sure their subscription is valid before you let them into planit
+                    //validate receipt
+                    String receiptStatus = await PlannerService
+                        .subscriptionProvider
+                        .verifyPurchase(receipt);
 
-                      PlannerService.sharedInstance.user!.stories = stories;
+                    if (receiptStatus == "expired") {
+                      //either receipt is expired or need to be restored
+                      setState(() {
+                        isloggingIn = false;
+                      });
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Looks like your subscription has expired. Resubscribe to access your planit.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('Ok, Resubscribe'),
+                                onPressed: () async {
+                                  PlannerService
+                                      .subscriptionProvider.purchaseError
+                                      .removeListener(purchaseError);
+                                  PlannerService
+                                      .subscriptionProvider.purchasePending
+                                      .removeListener(purchasePending);
+                                  PlannerService
+                                      .subscriptionProvider.purchaseRestored
+                                      .removeListener(purchaseRestored);
+                                  PlannerService
+                                      .subscriptionProvider.purchaseExpired
+                                      .removeListener(purchaseExpired);
+                                  PlannerService.subscriptionProvider.receipt
+                                      .removeListener(saveReceipt);
 
-                      final directory =
-                          await getApplicationDocumentsDirectory();
-                      String localDirPath = directory.path;
-                      String profilePicPath = '$localDirPath/profilepic';
+                                  //get subscription products
+                                  List<ProductDetails> productDetails =
+                                      await PlannerService.subscriptionProvider
+                                          .fetchSubscriptions();
 
-                      PlannerService.sharedInstance.user!.localProfileImage =
-                          profilePicPath;
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) {
+                                      return SubscriptionPageNoTrial(
+                                          fromPage: 'login',
+                                          products: productDetails);
+                                    },
+                                  ));
 
-                      //check to make sure their subscription is valid before you let them into planit
-                      //validate receipt
-                      String receiptStatus = await PlannerService
-                          .subscriptionProvider
-                          .verifyPurchase(receipt);
-
-                      if (receiptStatus == "expired") {
-                        //either receipt is expired or need to be restored
-                        setState(() {
-                          isloggingIn = false;
-                        });
-                        showDialog(
+                                  // Navigator.of(context)
+                                  //     .push(MaterialPageRoute(
+                                  //   builder: (context) {
+                                  //     return const SubscriptionPage(
+                                  //       fromPage: 'login',
+                                  //     );
+                                  //   },
+                                  // ));
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } else if (receiptStatus == "error") {
+                      showDialog(
                           context: context,
-                          barrierDismissible: false,
                           builder: (context) {
                             return AlertDialog(
                               title: Text(
-                                  'Looks like your subscription has expired. Resubscribe to access your planit.'),
+                                  "we weren't able to confirm your subscription. Please try to resubscribe. If you have already paid, you will not be charged again."),
                               actions: <Widget>[
                                 TextButton(
-                                  child: Text('Ok, Resubscribe'),
+                                  child: Text('OK'),
                                   onPressed: () async {
                                     PlannerService
                                         .subscriptionProvider.purchaseError
@@ -720,120 +791,50 @@ class _LoginPageState extends State<LoginPage> {
                                             products: productDetails);
                                       },
                                     ));
-
-                                    // Navigator.of(context)
-                                    //     .push(MaterialPageRoute(
-                                    //   builder: (context) {
-                                    //     return const SubscriptionPage(
-                                    //       fromPage: 'login',
-                                    //     );
-                                    //   },
-                                    // ));
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      } else if (receiptStatus == "error") {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(
-                                    "we weren't able to confirm your subscription. Please try to resubscribe. If you have already paid, you will not be charged again."),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text('OK'),
-                                    onPressed: () async {
-                                      PlannerService
-                                          .subscriptionProvider.purchaseError
-                                          .removeListener(purchaseError);
-                                      PlannerService
-                                          .subscriptionProvider.purchasePending
-                                          .removeListener(purchasePending);
-                                      PlannerService
-                                          .subscriptionProvider.purchaseRestored
-                                          .removeListener(purchaseRestored);
-                                      PlannerService
-                                          .subscriptionProvider.purchaseExpired
-                                          .removeListener(purchaseExpired);
-                                      PlannerService
-                                          .subscriptionProvider.receipt
-                                          .removeListener(saveReceipt);
-
-                                      //get subscription products
-                                      List<ProductDetails> productDetails =
-                                          await PlannerService
-                                              .subscriptionProvider
-                                              .fetchSubscriptions();
-
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) {
-                                          return SubscriptionPageNoTrial(
-                                              fromPage: 'login',
-                                              products: productDetails);
-                                        },
-                                      ));
-                                      //Navigator.of(context).pop();
-                                    },
-                                  )
-                                ],
-                              );
-                            });
-                      } else {
-                        //Receipt is valid so Get all user information
-                        PlannerService.subscriptionProvider.purchaseError
-                            .removeListener(purchaseError);
-                        PlannerService.subscriptionProvider.purchasePending
-                            .removeListener(purchasePending);
-                        PlannerService.subscriptionProvider.purchaseRestored
-                            .removeListener(purchaseRestored);
-                        PlannerService.subscriptionProvider.purchaseExpired
-                            .removeListener(purchaseExpired);
-                        PlannerService.subscriptionProvider.receipt
-                            .removeListener(saveReceipt);
-                        if (PlannerService
-                            .sharedInstance.user!.hasPlanitVideo) {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) {
-                              return const EnterPlannerVideoPage(
-                                fromPage: "login",
-                              );
-                            },
-                          ));
-                        } else {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) {
-                              return const NavigationWrapper();
-                            },
-                            settings: const RouteSettings(
-                              name: 'navigaionPage',
-                            ),
-                          ));
-                        }
-                      }
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text(
-                                  'Oops! Looks like something went wrong. Please try again.'),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
+                                    //Navigator.of(context).pop();
                                   },
                                 )
                               ],
                             );
                           });
+                    } else {
+                      setState(() {
+                        loadPercentage = 1.0;
+                      });
+                      //Receipt is valid so Get all user information
+                      PlannerService.subscriptionProvider.purchaseError
+                          .removeListener(purchaseError);
+                      PlannerService.subscriptionProvider.purchasePending
+                          .removeListener(purchasePending);
+                      PlannerService.subscriptionProvider.purchaseRestored
+                          .removeListener(purchaseRestored);
+                      PlannerService.subscriptionProvider.purchaseExpired
+                          .removeListener(purchaseExpired);
+                      PlannerService.subscriptionProvider.receipt
+                          .removeListener(saveReceipt);
+                      if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const EnterPlannerVideoPage(
+                              fromPage: "login",
+                            );
+                          },
+                        ));
+                      } else {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return const NavigationWrapper();
+                          },
+                          settings: const RouteSettings(
+                            name: 'navigaionPage',
+                          ),
+                        ));
+                      }
                     }
                   } else {
-                    //show and alert error
+                    setState(() {
+                      isloggingIn = false;
+                    });
                     showDialog(
                         context: context,
                         builder: (context) {
@@ -851,7 +852,29 @@ class _LoginPageState extends State<LoginPage> {
                           );
                         });
                   }
+                  // } else {
+                  //   //show and alert error
+                  //   showDialog(
+                  //       context: context,
+                  //       builder: (context) {
+                  //         return AlertDialog(
+                  //           title: Text(
+                  //               'Oops! Looks like something went wrong. Please try again.'),
+                  //           actions: <Widget>[
+                  //             TextButton(
+                  //               child: Text('OK'),
+                  //               onPressed: () {
+                  //                 Navigator.of(context).pop();
+                  //               },
+                  //             )
+                  //           ],
+                  //         );
+                  //       });
+                  // }
                 } else {
+                  setState(() {
+                    isloggingIn = false;
+                  });
                   //show an alert with error
                   showDialog(
                       context: context,
@@ -871,6 +894,9 @@ class _LoginPageState extends State<LoginPage> {
                       });
                 }
               } else {
+                setState(() {
+                  isloggingIn = false;
+                });
                 //show an error
                 showDialog(
                     context: context,
@@ -890,6 +916,9 @@ class _LoginPageState extends State<LoginPage> {
                     });
               }
             } else {
+              setState(() {
+                isloggingIn = false;
+              });
               //show an alert with error
               showDialog(
                   context: context,
@@ -910,6 +939,9 @@ class _LoginPageState extends State<LoginPage> {
             }
           }
         } else {
+          setState(() {
+            isloggingIn = false;
+          });
           //show alert that user already exists with that email
           showDialog(
               context: context,
@@ -930,6 +962,9 @@ class _LoginPageState extends State<LoginPage> {
         }
       }
     } else {
+      setState(() {
+        isloggingIn = false;
+      });
       //404 error, show an alert
       showDialog(
           context: context,
@@ -1009,9 +1044,33 @@ class _LoginPageState extends State<LoginPage> {
           fit: BoxFit.cover,
         ),
         isloggingIn
-            ? Container(
-                child: const CircularProgressIndicator(),
-                alignment: Alignment.center,
+            ? Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  // Here we take the value from the MyHomePage object that was created by
+                  // the App.build method, and use it to set our appbar title.
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                ),
+                body: Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "One Sec, Taking you to your Planit!",
+                        style: TextStyle(color: Colors.white, fontSize: 22),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10),
+                        child: CircularProgressIndicator(
+                          value: loadPercentage,
+                        ),
+                      )
+                    ],
+                  ),
+                  alignment: Alignment.center,
+                ),
               )
             : Scaffold(
                 backgroundColor: Colors.transparent,

@@ -32,12 +32,13 @@ class _NavigationWrapperState extends State<NavigationWrapper>
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
+    BacklogPage(),
     //CalendarPage(),
     TodaySchedulePage(),
     GoalsPage(),
 
     //DictionaryPage(),
-    BacklogPage(),
+
     InwardsPage(),
   ];
 
@@ -152,16 +153,16 @@ class _NavigationWrapperState extends State<NavigationWrapper>
             label: 'Home',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Backlog',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.schedule),
             label: 'Schedule',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.track_changes_outlined),
             label: 'Goals',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Backlog',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.book_outlined),

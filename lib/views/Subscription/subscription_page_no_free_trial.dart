@@ -28,7 +28,7 @@ class _SubscriptionPageNoTrialState extends State<SubscriptionPageNoTrial> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var subscriptionProvider = SubscriptionsProvider();
 
-  String selectedSubscription = "yearly";
+  String selectedSubscription = "monthly";
   bool doneBtnDisabled = true;
   bool monthlySelected = false;
   bool yearlySelected = false;
