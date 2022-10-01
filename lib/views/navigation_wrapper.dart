@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/services/subscription_provider.dart';
+import 'package:practice_planner/views/Calendar/today_page.dart';
 import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
 import 'package:practice_planner/views/Inwards/inwards_page.dart';
 import 'package:practice_planner/views/Subscription/subscription_page.dart';
@@ -33,13 +34,13 @@ class _NavigationWrapperState extends State<NavigationWrapper>
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     BacklogPage(),
-    //CalendarPage(),
+    TodayPage(),
     TodaySchedulePage(),
+
+    //CalendarPage(),
     GoalsPage(),
-
     //DictionaryPage(),
-
-    InwardsPage(),
+    //InwardsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -157,17 +158,22 @@ class _NavigationWrapperState extends State<NavigationWrapper>
             label: 'Backlog',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.schedule),
-            label: 'Schedule',
+            icon: Icon(Icons.today),
+            label: 'Today',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Calendar',
+          ),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.track_changes_outlined),
             label: 'Goals',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book_outlined),
-            label: 'The Cover',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Icon(Icons.book_outlined),
+          //   label: 'The Cover',
+          // ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Theme.of(context).primaryColor,

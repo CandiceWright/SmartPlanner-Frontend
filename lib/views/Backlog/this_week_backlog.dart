@@ -12,8 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
-class BacklogPage extends StatefulWidget {
-  const BacklogPage({Key? key}) : super(key: key);
+class ThisWeekBacklogPage extends StatefulWidget {
+  const ThisWeekBacklogPage({Key? key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -25,10 +25,10 @@ class BacklogPage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<BacklogPage> createState() => _BacklogPageState();
+  State<ThisWeekBacklogPage> createState() => _ThisWeekBacklogPageState();
 }
 
-class _BacklogPageState extends State<BacklogPage> {
+class _ThisWeekBacklogPageState extends State<ThisWeekBacklogPage> {
   //bool _value = false;
   //var backlog = PlannerService.sharedInstance.user.backlog;
   FontWeight? expandedTileFontWeight = FontWeight.bold;
@@ -445,12 +445,185 @@ class _BacklogPageState extends State<BacklogPage> {
                 },
               ),
             ),
-          ));
+          )
+
+          // Card(
+          //     elevation: 0,
+          //     shape: RoundedRectangleBorder(
+          //       borderRadius: BorderRadius.circular(15),
+          //     ),
+          //     color: Colors.grey.shade100,
+          //     margin: EdgeInsets.all(15),
+          //     child: Row(
+          //       mainAxisAlignment: MainAxisAlignment.center,
+          //       children: [
+          //         Padding(
+          //           padding: EdgeInsets.all(10),
+          //           child: Icon(
+          //             Icons.circle,
+          //             color: PlannerService
+          //                     .sharedInstance.user!.LifeCategoriesColorMap[
+          //                 backlogItemsToShow[i].categoryName],
+          //           ),
+          //         ),
+          //         Padding(
+          //           padding: EdgeInsets.all(10),
+          //           child: Column(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               Padding(
+          //                 padding: EdgeInsets.all(5),
+          //                 child: Text(
+          //                   PlannerService
+          //                       .sharedInstance
+          //                       .user!
+          //                       .backlogMap[backlogItemsToShow[i].categoryName]![
+          //                           backlogItemsToShow[i].arrayIdx]
+          //                       .description,
+          //                   style: const TextStyle(
+          //                       // color: PlannerService.sharedInstance.user!
+          //                       //     .backlogMap[key]![i].category.color,
+          //                       color: Colors.black,
+          //                       fontSize: 16,
+          //                       fontWeight: FontWeight.bold),
+          //                 ),
+          //               ),
+          //               Padding(
+          //                 padding: EdgeInsets.all(5),
+          //                 child: PlannerService
+          //                             .sharedInstance
+          //                             .user!
+          //                             .backlogMap[
+          //                                 backlogItemsToShow[i].categoryName]![
+          //                                 backlogItemsToShow[i].arrayIdx]
+          //                             .completeBy ==
+          //                         null
+          //                     ? const Text("No date set")
+          //                     : Text("Complete by " +
+          //                         DateFormat.yMMMd().format(PlannerService
+          //                             .sharedInstance
+          //                             .user!
+          //                             .backlogMap[
+          //                                 backlogItemsToShow[i].categoryName]![
+          //                                 backlogItemsToShow[i].arrayIdx]
+          //                             .completeBy!)),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //         Checkbox(
+          //           value: PlannerService
+          //               .sharedInstance
+          //               .user!
+          //               .backlogMap[backlogItemsToShow[i].categoryName]![
+          //                   backlogItemsToShow[i].arrayIdx]
+          //               .isComplete,
+          //           shape: const CircleBorder(),
+          //           onChanged: (bool? value) {
+          //             //print(value);
+          //             setState(() {
+          //               PlannerService
+          //                   .sharedInstance
+          //                   .user!
+          //                   .backlogMap[backlogItemsToShow[i].categoryName]![
+          //                       backlogItemsToShow[i].arrayIdx]
+          //                   .isComplete = value;
+
+          //               //_value = value!;
+          //             });
+          //           },
+          //         ),
+          //       ],
+          //     )),
+          );
       backlogItemCardsToShow.add(child);
     }
     setState(() {
       currentlyShownBacklogItems = backlogItemCardsToShow;
     });
+    //return backlogItemCardsToShow;
+
+    // PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
+    //   List<Widget> categoryChildren = [];
+    //   //print("I am building backlog and this is value.length");
+    //   //print(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     Widget child = GestureDetector(
+    //       onTap: () {
+    //         openViewDialog(value[i], i, key);
+    //       },
+    //       child: Card(
+    //           elevation: 0,
+    //           shape: RoundedRectangleBorder(
+    //             borderRadius: BorderRadius.circular(15),
+    //           ),
+    //           color: Colors.grey.shade100,
+    //           margin: EdgeInsets.all(15),
+    //           child: Row(
+    //             mainAxisAlignment: MainAxisAlignment.center,
+    //             children: [
+    //               Padding(
+    //                 padding: EdgeInsets.all(10),
+    //                 child: Icon(
+    //                   Icons.circle,
+    //                   color: PlannerService
+    //                       .sharedInstance.user!.LifeCategoriesColorMap[key],
+    //                 ),
+    //               ),
+    //               Padding(
+    //                 padding: EdgeInsets.all(10),
+    //                 child: Column(
+    //                   mainAxisAlignment: MainAxisAlignment.center,
+    //                   children: [
+    //                     Padding(
+    //                       padding: EdgeInsets.all(5),
+    //                       child: Text(
+    //                         PlannerService.sharedInstance.user!
+    //                             .backlogMap[key]![i].description,
+    //                         style: const TextStyle(
+    //                             // color: PlannerService.sharedInstance.user!
+    //                             //     .backlogMap[key]![i].category.color,
+    //                             color: Colors.black,
+    //                             fontSize: 16,
+    //                             fontWeight: FontWeight.bold),
+    //                       ),
+    //                     ),
+    //                     Padding(
+    //                       padding: EdgeInsets.all(5),
+    //                       child: value[i].completeBy == null
+    //                           ? const Text("No date set")
+    //                           : Text("Complete by " +
+    //                               DateFormat.yMMMd()
+    //                                   .format(value[i].completeBy!)),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //               Checkbox(
+    //                 value: PlannerService
+    //                     .sharedInstance.user!.backlogMap[key]![i].isComplete,
+    //                 shape: const CircleBorder(),
+    //                 onChanged: (bool? value) {
+    //                   //print(value);
+    //                   setState(() {
+    //                     PlannerService.sharedInstance.user!.backlogMap[key]![i]
+    //                         .isComplete = value;
+    //                     //_value = value!;
+    //                   });
+    //                 },
+    //               ),
+    //             ],
+    //           )),
+    //     );
+
+    //     //setState(() {
+    //     categoryChildren.add(child);
+    //     //});
+    //   }
+
+    //   backlogItemCardsMap.addAll({key: categoryChildren});
+    // });
+    //return updateCurrentlyShownBacklogCards();
   }
 
   List<Widget> updateCurrentlyShownBacklogCards() {

@@ -48,6 +48,8 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
   CalendarController calController = CalendarController();
   final DateRangePickerController _dateRangePickerController =
       DateRangePickerController();
+  final List<bool> _selectedPageView = <bool>[true, false];
+  String selectedMode = "structured";
 
   @override
   void initState() {
@@ -502,22 +504,6 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
         // the App.build method, and use it to set our appbar title.
         backgroundColor: Colors.transparent,
 
-        // title: Column(
-        //   children: [
-        //     Text(
-        //       "Today",
-        //       // style: GoogleFonts.roboto(
-        //       //   textStyle: const TextStyle(
-        //       //     color: Colors.white,
-        //       //   ),
-        //       // ),
-        //       style: TextStyle(color: Colors.white),
-        //     ),
-        //     // Image.asset(
-        //     //   "assets/images/pink_planit_today.png",
-        //     // ),
-        //   ],
-        // ),
         title: const Text("Today", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         flexibleSpace: Container(
@@ -528,22 +514,7 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
                   ),
                   fit: BoxFit.fill)),
         ),
-        // leading: IconButton(
-        //   icon: const Icon(
-        //     Icons.note_alt,
-        //     color: Colors.white,
-        //   ),
-        //   tooltip: 'View this backlog item',
-        //   onPressed: () {
-        //     //setState(() {});
-        //     Navigator.push(
-        //         context,
-        //         CupertinoPageRoute(
-        //             builder: (context) => const NotesPage(
-        //                   fromPage: "Today",
-        //                 )));
-        //   },
-        // ),
+
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -553,19 +524,6 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
               _goToFullCalendarView();
             },
           ),
-          // IconButton(
-          //   icon: const Icon(
-          //     Icons.next_week,
-          //     color: Colors.white,
-          //   ),
-          //   tooltip: 'Tomorrow',
-          //   onPressed: () {
-          //     setState(() {
-          //       _openTomorrowSchedulePage();
-
-          //     });
-          //   },
-          // ),
         ],
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here
@@ -608,18 +566,6 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
                           color: Theme.of(context).primaryColor,
                         ),
                       ),
-                      // Text(
-                      //   _selectedDate.day.toString() +
-                      //       ", " +
-                      //       _selectedDate.year.toString(),
-                      // style: TextStyle(
-                      //     color: Theme.of(context).primaryColor,
-                      //     fontSize: Theme.of(context)
-                      //         .textTheme
-                      //         .headlineSmall!
-                      //         .fontSize),
-                      //   // fontSize: Theme.of(context).textTheme.subtitle2!.fontSize),
-                      // )
                     ],
                   ),
                 ),
@@ -651,33 +597,6 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
               ),
             ]),
           ),
-
-          // Container(
-          //   //alignment: Alignment.topCenter,
-          //   //margin: EdgeInsets.all(20),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Padding(
-          //         padding: EdgeInsets.all(5),
-          //         child: Image.asset('assets/images/sunrise.png',
-          //             width: 20, height: 20),
-          //       ),
-          //       Padding(
-          //         padding: EdgeInsets.all(5),
-          // child: LinearProgressIndicator(
-          //   value: ((DateTime.now().hour) + 1) / 24,
-          //   backgroundColor: Colors.grey.shade400,
-          //   color: Theme.of(context).primaryColor,
-          // ),
-          //       ),
-          //       Padding(
-          //         padding: EdgeInsets.all(5),
-          //         child: Image.asset('assets/images/night.png'),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           Expanded(
             child: SfCalendar(
               headerHeight: 0,
@@ -710,14 +629,6 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
                   child: ListTile(
                     tileColor: meeting.category.color,
                     title: Text(
-                      meeting.description,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        // fontSize: 18,
-                        //fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(
                       DateFormat('h:mm').format(meeting.start) +
                           " - " +
                           DateFormat('h:mm').format(meeting.end),
@@ -725,6 +636,15 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
                       //     " - " +
                       //     DateFormat.Hm().format(meeting.end.toLocal()),
                       style: TextStyle(color: Colors.white),
+                    ),
+                    subtitle: Text(
+                      meeting.description,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        // fontSize: 18,
+                        //fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
                     ),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(
