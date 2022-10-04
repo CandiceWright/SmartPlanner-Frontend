@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/definition.dart';
 import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/models/story.dart';
@@ -42,7 +43,9 @@ class User {
     //     "assets/images/profile_pic_icon.png", DateTime.now())
   ];
 
-  Map<String, List<BacklogItem>> backlogMap = {};
+  Map<String, List<BacklogItem>> backlogMap = {}; //by category
+  Map<DateTime, List<BacklogMapRef>> scheduledBacklogItemsMap = {};
+  Map<DateTime, List<BacklogMapRef>> completedBacklogItemsMap = {};
   var todayTasks = [];
   bool didStartTomorrowPlanning;
   var lifeCategories = <LifeCategory>[];

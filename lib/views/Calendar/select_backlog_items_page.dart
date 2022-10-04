@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:ffi';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 import 'package:practice_planner/models/backlog_item.dart';
@@ -268,7 +270,7 @@ class _SelectBacklogItemsPageState extends State<SelectBacklogItemsPage> {
         automaticallyImplyLeading: true,
         actions: [
           TextButton(
-              onPressed: () {
+              onPressed: () async {
                 //build selectedBacklogItemsList
                 for (int i = 0; i < selectedItems.length; i++) {
                   if (selectedItems[i] == true) {
@@ -280,10 +282,68 @@ class _SelectBacklogItemsPageState extends State<SelectBacklogItemsPage> {
                         .backlogMap[backlogItemsToShow[i].categoryName]![
                             backlogItemsToShow[i].arrayIdx]
                         .scheduledDate = widget.date;
+                    if (PlannerService
+                        .sharedInstance.user!.scheduledBacklogItemsMap
+                        .containsKey(widget.date)) {
+                      PlannerService.sharedInstance.user!
+                          .scheduledBacklogItemsMap[widget.date]!
+                          .add(backlogItemsToShow[i]);
+                    } else {
+                      var arr = [backlogItemsToShow[i]];
+                      PlannerService
+                          .sharedInstance.user!.scheduledBacklogItemsMap
+                          .addAll({widget.date: arr});
+                    }
+                    //update server to record that backlog item has been scheduled
+                    //update task with event id and scheduled date (call schedule task server route)
+                    var body = {
+                      'taskId': PlannerService
+                          .sharedInstance
+                          .user!
+                          .backlogMap[backlogItemsToShow[i].categoryName]![
+                              backlogItemsToShow[i].arrayIdx]
+                          .id,
+                      'calendarRefId':
+                          -1, //use negative 1 because it is not on calendar
+                      'scheduledDate': widget.date.toString(),
+                    };
+                    String bodyF = jsonEncode(body);
+                    //print(bodyF);
+
+                    var url = Uri.parse(
+                        PlannerService.sharedInstance.serverUrl +
+                            '/backlog/schedule');
+                    var response2 = await http.patch(url,
+                        headers: {"Content-Type": "application/json"},
+                        body: bodyF);
+                    //print('Response status: ${response2.statusCode}');
+                    //print('Response body: ${response2.body}');
+
+                    if (response2.statusCode == 200) {
+                      widget
+                          .updatePotentialCandidates(selectedBacklogItemsList);
+                      Navigator.of(context).pop();
+                    } else {
+                      //500 error, show an alert
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    }
                   }
                 }
-                widget.updatePotentialCandidates(selectedBacklogItemsList);
-                Navigator.of(context).pop();
               },
               child: Text("Ok"))
         ],

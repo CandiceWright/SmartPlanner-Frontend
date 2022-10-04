@@ -12,6 +12,7 @@ class BacklogItem {
   String location;
   String notes;
   Event? calendarItemRef;
+  String? status = "notStarted"; //notStarted, incomplete, complete
 
   BacklogItem(
       {this.id,

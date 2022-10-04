@@ -169,7 +169,7 @@ class _ThisWeekBacklogPageState extends State<ThisWeekBacklogPage> {
                   //print(bodyF);
 
                   var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
-                      '/backlog/unscheduletask');
+                      '/calendar/unscheduletask');
                   var response = await http.post(url,
                       headers: {"Content-Type": "application/json"},
                       body: bodyF);

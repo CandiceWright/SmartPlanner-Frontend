@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/goal.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/services/subscription_provider.dart';
@@ -393,6 +394,7 @@ class _LoginPageState extends State<LoginPage> {
         var dictionaryMap = <String, Definition>{};
         var backlogItems = <BacklogItem>[];
         Map<String, List<BacklogItem>> backlogMap = {};
+        Map<DateTime, List<BacklogMapRef>> scheduledBacklogItemsMap = {};
         var stories = <Story>[];
 
         //get all life categories
@@ -574,12 +576,41 @@ class _LoginPageState extends State<LoginPage> {
                             lifeCategoriesMap[decodedBody[i]["category"]]!);
                     backlogItems.add(backlogItem);
                     //backlogMap[backlogItem.category.name]!.add(backlogItem);
+                    BacklogMapRef bmr;
 
                     if (backlogMap.containsKey(backlogItem.category.name)) {
                       backlogMap[backlogItem.category.name]!.add(backlogItem);
+                      bmr = BacklogMapRef(
+                          categoryName: backlogItem.category.name,
+                          arrayIdx:
+                              backlogMap[backlogItem.category.name]!.length -
+                                  1);
                     } else {
                       var arr = [backlogItem];
                       backlogMap.addAll({backlogItem.category.name: arr});
+                      bmr = BacklogMapRef(
+                          categoryName: backlogItem.category.name, arrayIdx: 0);
+                    }
+
+                    if (backlogItem.scheduledDate != null) {
+                      if (scheduledBacklogItemsMap.containsKey(DateTime(
+                          backlogItem.scheduledDate!.year,
+                          backlogItem.scheduledDate!.month,
+                          backlogItem.scheduledDate!.day))) {
+                        scheduledBacklogItemsMap[DateTime(
+                                backlogItem.scheduledDate!.year,
+                                backlogItem.scheduledDate!.month,
+                                backlogItem.scheduledDate!.day)]!
+                            .add(bmr);
+                      } else {
+                        var arr = [bmr];
+                        scheduledBacklogItemsMap.addAll({
+                          DateTime(
+                              backlogItem.scheduledDate!.year,
+                              backlogItem.scheduledDate!.month,
+                              backlogItem.scheduledDate!.day): arr
+                        });
+                      }
                     }
                   }
                   setState(() {
@@ -673,6 +704,8 @@ class _LoginPageState extends State<LoginPage> {
                     PlannerService.sharedInstance.user!.backlogItems =
                         backlogItems;
                     PlannerService.sharedInstance.user!.backlogMap = backlogMap;
+                    PlannerService.sharedInstance.user!
+                        .scheduledBacklogItemsMap = scheduledBacklogItemsMap;
                     // PlannerService.sharedInstance.user!.dictionaryArr =
                     //     dictionaryArr;
                     // PlannerService.sharedInstance.user!.dictionaryMap =
