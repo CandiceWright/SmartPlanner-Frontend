@@ -320,6 +320,7 @@ class _SelectBacklogItemsPageState extends State<SelectBacklogItemsPage> {
                     //print('Response body: ${response2.body}');
 
                     if (response2.statusCode == 200) {
+                      print("scheduling successful");
                       widget
                           .updatePotentialCandidates(selectedBacklogItemsList);
                       Navigator.of(context).pop();
