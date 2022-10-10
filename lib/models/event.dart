@@ -20,6 +20,7 @@ class Event {
   bool? isAccomplished;
   BacklogMapRef?
       backlogMapRef; //if a backlog item is scheduled on the calendar, this reference will link the backlog item to its calendar event
+  int? backlogIdRef;
   Event(
       {this.id,
       this.taskIdRef,
@@ -34,5 +35,6 @@ class Event {
       required this.category,
       required this.type,
       this.location = "",
-      this.backlogMapRef});
+      this.backlogMapRef,
+      this.backlogIdRef});
 }

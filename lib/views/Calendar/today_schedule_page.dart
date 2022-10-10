@@ -1,3 +1,5 @@
+/* This is an Unused Page */
+
 //library event_calendar;
 //part 'edit_event_page.dart';
 
@@ -84,12 +86,12 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
   }
 
   void _goToFullCalendarView() {
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => CalendarPage(
-                  updateEvents: _updateEvents,
-                )));
+    // Navigator.push(
+    //     context,
+    //     CupertinoPageRoute(
+    //         builder: (context) => CalendarPage(
+    //               updateEvents: _updateEvents,
+    //             )));
   }
 
   _updateEvents() {

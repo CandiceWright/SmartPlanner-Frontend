@@ -388,7 +388,7 @@ class _LoginPageState extends State<LoginPage> {
         var goals = <Event>[];
         var accomplishedGoals = <Event>[];
         var scheduledEvents = <Event>[];
-        Map<int, Event> scheduledEventsMap = {};
+        Map<int, int> scheduledEventsMap = {}; //id,scheduled events index
         var habits = <Habit>[];
         var dictionaryArr = <Definition>[];
         var dictionaryMap = <String, Definition>{};
@@ -490,9 +490,9 @@ class _LoginPageState extends State<LoginPage> {
                     type: "calendar",
                     notes: decodedBody[i]["notes"],
                     location: decodedBody[i]["location"],
-                    backlogMapRef: decodedBody[i]["backlogItemRef"]);
+                    backlogIdRef: decodedBody[i]["backlogItemRef"]);
                 scheduledEvents.add(event);
-                scheduledEventsMap[event.id!] = event;
+                scheduledEventsMap[event.id!] = scheduledEvents.length - 1;
               }
               setState(() {
                 loadPercentage = 0.6;
@@ -568,7 +568,11 @@ class _LoginPageState extends State<LoginPage> {
                             ? null
                             : DateTime.parse(decodedBody[i]["scheduledDate"]),
                         calendarItemRef:
-                            scheduledEventsMap[decodedBody[i]["calendarItem"]],
+                            decodedBody[i]["calendarItem"] == null ||
+                                    decodedBody[i]["calendarItem"] == -1
+                                ? null
+                                : scheduledEvents[scheduledEventsMap[
+                                    decodedBody[i]["calendarItem"]]!],
                         notes: decodedBody[i]["notes"],
                         location: decodedBody[i]["location"],
                         isComplete: isComplete,
@@ -590,6 +594,13 @@ class _LoginPageState extends State<LoginPage> {
                       backlogMap.addAll({backlogItem.category.name: arr});
                       bmr = BacklogMapRef(
                           categoryName: backlogItem.category.name, arrayIdx: 0);
+                    }
+                    if (decodedBody[i]["calendarItem"] != null &&
+                        decodedBody[i]["calendarItem"] != -1) {
+                      //it is a scheduled event
+                      scheduledEvents[scheduledEventsMap[decodedBody[i]
+                              ["calendarItem"]]!]
+                          .backlogMapRef = bmr;
                     }
 
                     if (backlogItem.scheduledDate != null) {

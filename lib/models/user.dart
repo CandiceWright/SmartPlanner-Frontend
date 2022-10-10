@@ -35,6 +35,8 @@ class User {
   var accomplishedGoals = <Event>[];
   var backlogItems = <BacklogItem>[];
   var inwardContent = <InwardItem>[];
+  BacklogMapRef? currentTaskWorkingOn;
+  DateTime? currentFreeFlowSessionEnds;
   //var stories = <Story>[];
   var stories = <Story>[
     // Story(File("assets/images/another_planit_animation_video.mp4"),

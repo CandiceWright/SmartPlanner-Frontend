@@ -35,7 +35,7 @@ class _NavigationWrapperState extends State<NavigationWrapper>
     HomePage(),
     BacklogPage(),
     TodayPage(),
-    TodaySchedulePage(),
+    CalendarPage(),
 
     //CalendarPage(),
     GoalsPage(),

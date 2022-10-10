@@ -47,8 +47,26 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
     int counter = 0;
     PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
       for (int i = 0; i < value.length; i++) {
-        if (value[i].scheduledDate == null && !value[i].isComplete!) {
-          counter++;
+        // print(value[i].description);
+        // print(value[i].scheduledDate);
+        // print(value[i].calendarItemRef! != null
+        //     ? value[i].calendarItemRef!.id
+        //     : "calendarRef null");
+        if ((value[i].scheduledDate == null)) {
+          if (value[i].status != "complete") {
+            counter++;
+          }
+        } else if (value[i].calendarItemRef == null &&
+            DateTime(
+                    value[i].scheduledDate!.year,
+                    value[i].scheduledDate!.month,
+                    value[i].scheduledDate!.day) ==
+                widget.calendarDate) {
+          //this is one of the refs where id = -1
+          //a backlog item that's not on the calendar
+          if (value[i].status != "complete") {
+            counter++;
+          }
         }
       } //1 per category
     });
@@ -57,19 +75,19 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
     }
   }
 
-  void _openNewBacklogItemPage() {
-    //this function needs to change to create new goal
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) =>
-                NewTaskPage(updateBacklog: _updateBacklogList)));
-  }
+  // void _openNewBacklogItemPage() {
+  //   //this function needs to change to create new goal
+  //   Navigator.push(
+  //       context,
+  //       CupertinoPageRoute(
+  //           builder: (context) =>
+  //               NewTaskPage(updateBacklog: _updateBacklogList)));
+  // }
 
-  void _updateBacklogList() {
-    //print("I am in update backlog");
-    setState(() {});
-  }
+  // void _updateBacklogList() {
+  //   //print("I am in update backlog");
+  //   setState(() {});
+  // }
 
   void setTime(BacklogItem backlogItem, BacklogMapRef bmRef) {
     Navigator.of(context).push(
@@ -93,41 +111,86 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
   }
 
   List<Widget> buildBacklogListView() {
-    ////print("building backlog view");
-    List<Widget> todayItems = [];
-    List<Widget> tomorrowItems = [];
-
     //build unscheduled backlog
     List<Widget> backloglistview = [];
     PlannerService.sharedInstance.user!.backlogMap.forEach((key, value) {
       List<Widget> unscheduledExpansionTileChildren = [];
+
       for (int i = 0; i < value.length; i++) {
-        if (value[i].scheduledDate == null && !value[i].isComplete!) {
-          Widget child = CheckboxListTile(
-            title: Text(
-              value[i].description,
-              // style: const TextStyle(
-              //     color: Colors.black, fontWeight: FontWeight.bold),
-            ),
-            value: PlannerService
-                .sharedInstance.user!.backlogMap[key]![i].isComplete,
-            onChanged: (bool? checked) {
-              ////print(value);
-              BacklogMapRef bmRef =
-                  BacklogMapRef(categoryName: key, arrayIdx: i);
-              setTime(value[i], bmRef);
-              // setState(() {
-              //   PlannerService.sharedInstance.user.backlog[key][i].isComplete =
-              //       value;
-              //   //_value = value!;
-              // });
-            },
-            controlAffinity: ListTileControlAffinity.leading,
-          );
-          //if (value[i].scheduledDate == null) {
-          unscheduledExpansionTileChildren.add(child);
-          //}
+        //if (value[i].scheduledDate == null && !value[i].isComplete!) {
+        // print(value[i].description);
+        // print(value[i].scheduledDate);
+        // print(value[i].calendarItemRef! != null
+        //     ? value[i].calendarItemRef!.id
+        //     : "calendarRef null");
+        if ((value[i].scheduledDate == null)) {
+          //a backlog item that hasn't been assigned to a day. In this case, it will need to be added too selected datee task list too
+          if (value[i].status != "complete") {
+            Widget child = CheckboxListTile(
+              title: Text(
+                value[i].description,
+                // style: const TextStyle(
+                //     color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              value: PlannerService
+                  .sharedInstance.user!.backlogMap[key]![i].isComplete,
+              onChanged: (bool? checked) {
+                ////print(value);
+                BacklogMapRef bmRef =
+                    BacklogMapRef(categoryName: key, arrayIdx: i);
+                setTime(value[i], bmRef);
+                // setState(() {
+                //   PlannerService.sharedInstance.user.backlog[key][i].isComplete =
+                //       value;
+                //   //_value = value!;
+                // });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+            );
+            //if (value[i].scheduledDate == null) {
+            unscheduledExpansionTileChildren.add(child);
+            //}
+          }
+        } else if (value[i].calendarItemRef == null &&
+            DateTime(
+                    value[i].scheduledDate!.year,
+                    value[i].scheduledDate!.month,
+                    value[i].scheduledDate!.day) ==
+                widget.calendarDate) {
+          //a backlog item that's not on the calendar
+          if (value[i].status != "complete") {
+            Widget child = CheckboxListTile(
+              title: Text(
+                value[i].description,
+                // style: const TextStyle(
+                //     color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              value: PlannerService
+                  .sharedInstance.user!.backlogMap[key]![i].isComplete,
+              onChanged: (bool? checked) {
+                ////print(value);
+                BacklogMapRef bmRef =
+                    BacklogMapRef(categoryName: key, arrayIdx: i);
+                setTime(value[i], bmRef);
+                // setState(() {
+                //   PlannerService.sharedInstance.user.backlog[key][i].isComplete =
+                //       value;
+                //   //_value = value!;
+                // });
+              },
+              controlAffinity: ListTileControlAffinity.leading,
+            );
+            //if (value[i].scheduledDate == null) {
+            unscheduledExpansionTileChildren.add(child);
+            //}
+          }
         }
+
+        // if ((value[i].scheduledDate == null ||
+        //         value[i].calendarItemRef!.id == -1) &&
+        //     value[i].status != "complete") {
+
+        // }
       }
       Widget expansionTile = ExpansionTile(
         title: Text(key),
@@ -164,22 +227,24 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
           "Select Backlog item",
           style: TextStyle(color: Colors.white),
         ),
-        bottom: PreferredSize(
+        bottom: const PreferredSize(
             child: Align(
               alignment: Alignment.center,
               child: Padding(
                 padding: EdgeInsets.only(bottom: 10),
-                child: widget.fromPage == "today"
-                    ? const Text(
-                        "Add item to today's schedule.",
-                        style: TextStyle(color: Colors.white),
-                        //textAlign: TextAlign.center,
-                      )
-                    : Text(
-                        "Add item to " + widget.fromPage + " schedule",
-                        style: TextStyle(color: Colors.white),
-                        //textAlign: TextAlign.center,
-                      ),
+                child: Text("Items that aren't yet scheduled shown below",
+                    style: TextStyle(color: Colors.white)),
+                // child: widget.fromPage == "today"
+                //     ? const Text(
+                //         "Add item to today's schedule.",
+                //         style: TextStyle(color: Colors.white),
+                //         //textAlign: TextAlign.center,
+                //       )
+                //     : Text(
+                //         "Add item to " + widget.fromPage + " schedule",
+                //         style: TextStyle(color: Colors.white),
+                //         //textAlign: TextAlign.center,
+                //       ),
               ),
             ),
             preferredSize: Size.fromHeight(10.0)),

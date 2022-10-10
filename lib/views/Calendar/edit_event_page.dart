@@ -46,12 +46,12 @@ class EditEventPage extends StatefulWidget {
 class _EditEventPageState extends State<EditEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  late var selectedStartDate = TodaySchedulePage.selectedEvent!.start;
+  late var selectedStartDate = widget.selectedEvent!.start;
 
   late var selectedStartTime =
       TimeOfDay(hour: selectedStartDate.hour, minute: selectedStartDate.minute);
 
-  late var selectedEndDate = TodaySchedulePage.selectedEvent!.end;
+  late var selectedEndDate = widget.selectedEvent!.end;
 
   late var selectedEndTime =
       TimeOfDay(hour: selectedEndDate.hour, minute: selectedEndDate.minute);
@@ -62,19 +62,18 @@ class _EditEventPageState extends State<EditEventPage> {
       TextEditingController(text: DateFormat.yMMMd().format(selectedEndDate));
 
   late final descriptionTxtController =
-      TextEditingController(text: TodaySchedulePage.selectedEvent!.description);
+      TextEditingController(text: widget.selectedEvent!.description);
   late final notesTxtController =
-      TextEditingController(text: TodaySchedulePage.selectedEvent!.notes);
+      TextEditingController(text: widget.selectedEvent!.notes);
 
   late final startTimeController = TextEditingController(
       text: formatDate(selectedStartDate, [hh, ':', nn, " ", am]).toString());
   late final endTimeController = TextEditingController(
       text: formatDate(selectedEndDate, [hh, ':', nn, " ", am]).toString());
   late final locationTxController =
-      TextEditingController(text: TodaySchedulePage.selectedEvent!.location);
+      TextEditingController(text: widget.selectedEvent!.location);
   bool doneBtnDisabled = false;
-  late LifeCategory currChosenCategory =
-      TodaySchedulePage.selectedEvent!.category;
+  late LifeCategory currChosenCategory = widget.selectedEvent!.category;
 
   @override
   void initState() {
@@ -203,7 +202,7 @@ class _EditEventPageState extends State<EditEventPage> {
         selectedStartTime.minute);
     var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
         selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
-    if (TodaySchedulePage.selectedEvent != null) {
+    if (widget.selectedEvent != null) {
       if (startDateTime.compareTo(endDateTime) > 0) {
         //startDate is after end date which can't happen
         showDialog(
@@ -225,7 +224,7 @@ class _EditEventPageState extends State<EditEventPage> {
         //make call to server
 
         var body = {
-          'eventId': TodaySchedulePage.selectedEvent!.id,
+          'eventId': widget.selectedEvent!.id,
           'description': eventTitle,
           'type': "calendar",
           'start': startDateTime.toString(),
@@ -246,16 +245,18 @@ class _EditEventPageState extends State<EditEventPage> {
         //print('Response body: ${response.body}');
 
         if (response.statusCode == 200) {
-          TodaySchedulePage.events.appointments!.removeAt(TodaySchedulePage
-              .events.appointments!
-              .indexOf(TodaySchedulePage.selectedEvent));
-          TodaySchedulePage.events.notifyListeners(
-              CalendarDataSourceAction.remove,
-              <Event>[]..add(TodaySchedulePage.selectedEvent!));
+          // TodaySchedulePage.events.appointments!.removeAt(TodaySchedulePage
+          //     .events.appointments!
+          //     .indexOf(TodaySchedulePage.selectedEvent));
+          // TodaySchedulePage.events.notifyListeners(
+          //     CalendarDataSourceAction.remove,
+          //     <Event>[]..add(TodaySchedulePage.selectedEvent!));
+          PlannerService.sharedInstance.user!.scheduledEvents
+              .remove(widget.selectedEvent);
 
           //int id = PlannerService.sharedInstance.user.allEvents.length;
           var newEvent = Event(
-            id: TodaySchedulePage.selectedEvent!.id,
+            id: widget.selectedEvent!.id,
             description: eventTitle,
             type: "calendar",
             start: startDateTime,
@@ -268,15 +269,17 @@ class _EditEventPageState extends State<EditEventPage> {
             location: eventLocation,
           );
 
-          events.add(newEvent);
+          PlannerService.sharedInstance.user!.scheduledEvents.add(newEvent);
 
-          TodaySchedulePage.events.appointments!.add(events[0]);
+          //events.add(newEvent);
 
-          TodaySchedulePage.events
-              .notifyListeners(CalendarDataSourceAction.add, events);
-          PlannerService.sharedInstance.user!.scheduledEvents =
-              TodaySchedulePage.events.appointments! as List<Event>;
-          TodaySchedulePage.selectedEvent = null;
+          //TodaySchedulePage.events.appointments!.add(events[0]);
+
+          // TodaySchedulePage.events
+          //     .notifyListeners(CalendarDataSourceAction.add, events);
+          // PlannerService.sharedInstance.user!.scheduledEvents =
+          //     TodaySchedulePage.events.appointments! as List<Event>;
+          // TodaySchedulePage.selectedEvent = null;
 
           _backToEventsPage();
         } else {
@@ -318,6 +321,7 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   void _backToEventsPage() {
+    widget.updateEvents();
     Navigator.pop(context);
   }
 

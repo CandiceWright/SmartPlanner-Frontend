@@ -163,26 +163,53 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
           //PlannerService.sharedInstance.user.allEvents.add(newEvent);
           events.add(newEvent);
 
-          TodaySchedulePage.events.appointments!.add(events[0]);
+          // TodaySchedulePage.events.appointments!.add(events[0]);
 
-          TodaySchedulePage.events
-              .notifyListeners(CalendarDataSourceAction.add, events);
-          PlannerService.sharedInstance.user!.scheduledEvents =
-              TodaySchedulePage.events.appointments! as List<Event>;
+          // TodaySchedulePage.events
+          //     .notifyListeners(CalendarDataSourceAction.add, events);
+          // PlannerService.sharedInstance.user!.scheduledEvents =
+          //     TodaySchedulePage.events.appointments! as List<Event>;
 
-          //update backlog task
-          PlannerService
-              .sharedInstance
-              .user!
-              .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-              .scheduledDate = startDateTime;
-          PlannerService
-              .sharedInstance
-              .user!
-              .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
-              .calendarItemRef = newEvent;
+          DateTime scheduledDate = DateTime(widget.calendarDate.year,
+              widget.calendarDate.month, widget.calendarDate.day);
 
-          TodaySchedulePage.selectedEvent = null;
+          setState(() {
+            PlannerService.sharedInstance.user!.scheduledEvents.add(newEvent);
+            if (PlannerService
+                    .sharedInstance
+                    .user!
+                    .backlogMap[widget.bmRef.categoryName]![
+                        widget.bmRef.arrayIdx]
+                    .scheduledDate ==
+                null) {
+              //its not on task page yet so add it to mapp so that it shows
+              if (PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
+                  .containsKey(scheduledDate)) {
+                PlannerService.sharedInstance.user!
+                    .scheduledBacklogItemsMap[scheduledDate]!
+                    .add(widget.bmRef);
+              } else {
+                var arr = [widget.bmRef];
+                PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
+                    .addAll({scheduledDate: arr});
+              }
+            }
+            //update backlog task
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .scheduledDate = startDateTime;
+            PlannerService
+                .sharedInstance
+                .user!
+                .backlogMap[widget.bmRef.categoryName]![widget.bmRef.arrayIdx]
+                .calendarItemRef = newEvent;
+          });
+
+          //widget.updateEvents();
+
+          //TodaySchedulePage.selectedEvent = null;
           widget.updateEvents();
           Navigator.of(context).popUntil((route) {
             return route.settings.name == 'navigaionPage';

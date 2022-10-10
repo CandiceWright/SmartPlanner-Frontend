@@ -21,6 +21,7 @@ class NewEventPage extends StatefulWidget {
       {Key? key,
       required this.updateEvents,
       required this.fromPage,
+      this.selectedDate,
       this.event,
       this.backlogMapRef})
       : super(key: key);
@@ -35,6 +36,7 @@ class NewEventPage extends StatefulWidget {
   // always marked "final".
   final Function updateEvents;
   final String fromPage;
+  final DateTime? selectedDate;
   final Event? event;
   final BacklogMapRef? backlogMapRef;
 
@@ -70,13 +72,13 @@ class _NewEventPageState extends State<NewEventPage> {
     startTimeController.addListener(setDoneBtnState);
     endTimeController.addListener(setDoneBtnState);
     descriptionTxtController.addListener(setDoneBtnState);
-    if (widget.fromPage == "tomorrow") {
-      DateTime tomorrow = DateTime(
-          DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
-      startDateTxtController.text = DateFormat.yMMMd().format(tomorrow);
-      endDateTxtController.text = DateFormat.yMMMd().format(tomorrow);
-      selectedStartDate = tomorrow;
-      selectedEndDate = tomorrow;
+    if (widget.selectedDate != null) {
+      startDateTxtController.text =
+          DateFormat.yMMMd().format(widget.selectedDate!);
+      endDateTxtController.text =
+          DateFormat.yMMMd().format(widget.selectedDate!);
+      selectedStartDate = widget.selectedDate!;
+      selectedEndDate = widget.selectedDate!;
     }
 
     setDoneBtnState();
@@ -249,14 +251,20 @@ class _NewEventPageState extends State<NewEventPage> {
 
         events.add(newEvent);
 
-        TodaySchedulePage.events.appointments!.add(events[0]);
+        //TodaySchedulePage.events.appointments!.add(events[0]);
 
-        TodaySchedulePage.events
-            .notifyListeners(CalendarDataSourceAction.add, events);
-        PlannerService.sharedInstance.user!.scheduledEvents =
-            TodaySchedulePage.events.appointments! as List<Event>;
+        // TodaySchedulePage.events
+        //     .notifyListeners(CalendarDataSourceAction.add, events);
+        // PlannerService.sharedInstance.user!.scheduledEvents =
+        //     TodaySchedulePage.events.appointments! as List<Event>;
 
-        TodaySchedulePage.selectedEvent = null;
+        setState(() {
+          PlannerService.sharedInstance.user!.scheduledEvents.add(newEvent);
+        });
+
+        widget.updateEvents();
+
+        //TodaySchedulePage.selectedEvent = null;
 
         _backToEventsPage();
       } else {
