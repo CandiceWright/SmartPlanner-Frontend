@@ -2,13 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/life_category.dart';
 import '/models/backlog_item.dart';
 import '/services/planner_service.dart';
 import 'package:http/http.dart' as http;
 
 class NewTaskPage extends StatefulWidget {
-  const NewTaskPage({Key? key, required this.updateBacklog}) : super(key: key);
+  const NewTaskPage({Key? key, required this.updateBacklog, this.selectdDate})
+      : super(key: key);
   //const NewTaskPage({Key? key}) : super(key: key);
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -20,6 +22,7 @@ class NewTaskPage extends StatefulWidget {
   // always marked "final".
 
   final Function updateBacklog;
+  final DateTime? selectdDate;
 
   @override
   State<NewTaskPage> createState() => _NewTaskPageState();
@@ -105,6 +108,72 @@ class _NewTaskPageState extends State<NewTaskPage> {
         var arr = [newBacklogItem];
         PlannerService.sharedInstance.user!.backlogMap
             .addAll({newBacklogItem.category.name: arr});
+      }
+
+      if (widget.selectdDate != null) {
+        //I want to make sure this backlog item is also scheduled for this date so
+        //set scheduled date to widget.date
+        PlannerService
+            .sharedInstance
+            .user!
+            .backlogMap[currChosenCategory.name]![PlannerService.sharedInstance
+                    .user!.backlogMap[currChosenCategory.name]!.length -
+                1]
+            .scheduledDate = widget.selectdDate;
+        BacklogMapRef bmr = BacklogMapRef(
+            categoryName: currChosenCategory.name,
+            arrayIdx: PlannerService.sharedInstance.user!
+                    .backlogMap[currChosenCategory.name]!.length -
+                1);
+        if (PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
+            .containsKey(widget.selectdDate)) {
+          PlannerService.sharedInstance.user!
+              .scheduledBacklogItemsMap[widget.selectdDate]!
+              .add(bmr);
+        } else {
+          var arr = [bmr];
+          PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
+              .addAll({widget.selectdDate!: arr});
+        }
+        //update server to record that backlog item has been scheduled
+        //update task with event id and scheduled date (call schedule task server route)
+        var body = {
+          'taskId': PlannerService.sharedInstance.user!
+              .backlogMap[bmr.categoryName]![bmr.arrayIdx].id,
+          'calendarRefId': -1, //use negative 1 because it is not on calendar
+          'scheduledDate': widget.selectdDate.toString(),
+        };
+        String bodyF = jsonEncode(body);
+        //print(bodyF);
+
+        var url = Uri.parse(
+            PlannerService.sharedInstance.serverUrl + '/backlog/schedule');
+        var response2 = await http.patch(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+        //print('Response status: ${response2.statusCode}');
+        //print('Response body: ${response2.body}');
+
+        if (response2.statusCode == 200) {
+          print("scheduling successful");
+        } else {
+          //500 error, show an alert
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
       }
       // PlannerService.sharedInstance.user!.backlogItems.add(newBacklogItem);
       // PlannerService.sharedInstance.user!.backlogItems

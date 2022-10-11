@@ -47,7 +47,7 @@ class _EditGoalPageState extends State<EditGoalPage> {
       PlannerService.sharedInstance.user!.goals[widget.goalIdx].start;
   bool doneBtnDisabled = true;
   late LifeCategory currChosenCategory =
-      PlannerService.sharedInstance.user!.goals[widget.goalIdx].category;
+      PlannerService.sharedInstance.user!.goals[widget.goalIdx].category!;
 
   @override
   void initState() {

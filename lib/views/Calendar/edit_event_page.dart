@@ -73,7 +73,7 @@ class _EditEventPageState extends State<EditEventPage> {
   late final locationTxController =
       TextEditingController(text: widget.selectedEvent!.location);
   bool doneBtnDisabled = false;
-  late LifeCategory currChosenCategory = widget.selectedEvent!.category;
+  late LifeCategory currChosenCategory = widget.selectedEvent!.category!;
 
   @override
   void initState() {

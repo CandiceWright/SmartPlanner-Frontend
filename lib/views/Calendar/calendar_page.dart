@@ -8,6 +8,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
+import 'package:practice_planner/views/Calendar/new_free_flow_event.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
 import 'package:practice_planner/views/Calendar/select_backlog_items_page.dart';
@@ -15,6 +16,7 @@ import 'package:practice_planner/views/Calendar/today_schedule_page.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../models/backlog_map_ref.dart';
 import '../Backlog/edit_task_page.dart';
+import '../Backlog/new_task_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -79,7 +81,7 @@ class _CalendarPageState extends State<CalendarPage> {
     _dateRangePickerController.selectedDate = _selectedDate;
   }
 
-  void updatePotentialCandidates(List<BacklogMapRef> selectedBacklogItems) {
+  void updatePotentialCandidates() {
     print("I am in update potential candidates");
     print(_selectedDate.toString());
     setState(() {
@@ -98,6 +100,19 @@ class _CalendarPageState extends State<CalendarPage> {
         context,
         CupertinoPageRoute(
             builder: (context) => NewEventPage(
+                  selectedDate: _selectedDate,
+                  updateEvents: _updateEvents,
+                  fromPage: "daily_calendar",
+                )));
+  }
+
+  void _openNewFreeFlowSessionPage() {
+    //this function needs to change to create new goal
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => NewFreeFlowEventPage(
                   selectedDate: _selectedDate,
                   updateEvents: _updateEvents,
                   fromPage: "daily_calendar",
@@ -224,48 +239,29 @@ class _CalendarPageState extends State<CalendarPage> {
         builder: (BuildContext context) {
           return AlertDialog(
               title: const Text(
-                "Schedule a backlog item or Create a new event?",
+                "Add to Schedule",
                 textAlign: TextAlign.center,
               ),
               shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20.0))),
-              content: Row(
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: IconButton(
-                      iconSize: 50,
-                      onPressed: startPlanningFromBacklog,
-                      icon: CircleAvatar(
-                        child: const Icon(
-                          Icons.list,
-                          color: Colors.white,
-                        ),
-                        radius: 25,
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                    ),
+                  TextButton(
+                    onPressed: _openNewCalendarItemPage,
+                    child: Text("New Event"),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(8),
-                    child: IconButton(
-                      iconSize: 50,
-                      onPressed: _openNewCalendarItemPage,
-                      icon: CircleAvatar(
-                        child: const Icon(
-                          Icons.event,
-                          color: Colors.white,
-                        ),
-                        radius: 25,
-                        backgroundColor: Theme.of(context).primaryColor,
-                      ),
-                    ),
+                  TextButton(
+                    onPressed: startPlanningFromBacklog,
+                    child: Text("Backlog Item"),
                   ),
+                  TextButton(
+                    onPressed: _openNewFreeFlowSessionPage,
+                    child: Text("Free Flow Session"),
+                  )
                 ],
               ),
-              actions: <Widget>[]);
+              actions: const <Widget>[]);
         });
   }
 
@@ -602,7 +598,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Scheduled'),
+                    child: Text('Schedule'),
                   ),
                 ],
                 direction: Axis.horizontal,
@@ -680,8 +676,10 @@ class _CalendarPageState extends State<CalendarPage> {
                                     //borderRadius: BorderRadius.circular(15.0),
                                     side: BorderSide(
                                       width: 5,
-                                      color:
-                                          meeting.category.color, //<-- SEE HERE
+                                      color: meeting.type == "freeflow"
+                                          ? Colors.transparent
+                                          : meeting
+                                              .category!.color, //<-- SEE HERE
                                     ),
                                   ),
                                 )
@@ -713,8 +711,10 @@ class _CalendarPageState extends State<CalendarPage> {
                                     //borderRadius: BorderRadius.circular(15.0),
                                     side: BorderSide(
                                       width: 5,
-                                      color:
-                                          meeting.category.color, //<-- SEE HERE
+                                      color: meeting.type == "freeflow"
+                                          ? Colors.transparent
+                                          : meeting
+                                              .category!.color, //<-- SEE HERE
                                     ),
                                   ),
                                 ),
@@ -728,117 +728,112 @@ class _CalendarPageState extends State<CalendarPage> {
                               ),
                       ),
                       Expanded(
-                          // child: FittedBox(
-                          //   fit: BoxFit.contain,
-                          child: SingleChildScrollView(
-                        //was a list view
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            //Expanded(
-                            // FittedBox(
-                            //   fit: BoxFit.contain,
-                            //child:
-                            Text(
-                              DateFormat('h:mm').format(meeting.start) +
-                                  " - " +
-                                  DateFormat('h:mm').format(meeting.end),
-                              // DateFormat.Hm().format(meeting.start.toLocal()) +
-                              //     " - " +
-                              //     DateFormat.Hm().format(meeting.end.toLocal()),
-                              style: TextStyle(color: Colors.grey),
-                              textAlign: TextAlign.center,
-                            ),
-                            //),
-                            FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                meeting.description,
-                                style: const TextStyle(
-                                    //color: Colors.white,
-                                    // fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
+                        // child: FittedBox(
+                        //   fit: BoxFit.contain,
+                        child: SingleChildScrollView(
+                          //was a list view
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            //mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              //Expanded(
+                              // FittedBox(
+                              //   fit: BoxFit.contain,
+                              //child:
+                              Text(
+                                DateFormat('h:mm').format(meeting.start) +
+                                    " - " +
+                                    DateFormat('h:mm').format(meeting.end),
+                                // DateFormat.Hm().format(meeting.start.toLocal()) +
+                                //     " - " +
+                                //     DateFormat.Hm().format(meeting.end.toLocal()),
+                                style: TextStyle(color: Colors.grey),
+                                textAlign: TextAlign.left,
                               ),
-                            ),
-
-                            //),
-                            //Expanded(
-
-                            //),
-                          ],
-                        ),
-                      )
-
-                          //),
+                              //),
+                              FittedBox(
+                                alignment: Alignment.centerLeft,
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  meeting.description,
+                                  style: const TextStyle(
+                                      //color: Colors.white,
+                                      // fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                            ],
                           ),
-                      Expanded(
-                        child: Checkbox(
-                          side: const BorderSide(color: Colors.grey),
-                          //value: meeting.isAccomplished,
-                          value: events
-                              .appointments![
-                                  events.appointments!.indexOf(meeting)]
-                              .isAccomplished,
-                          shape: const CircleBorder(),
-                          onChanged: (bool? value) async {
-                            //print(value);
-                            //setState(() async {
-                            //update on server and then update locally
-                            //meeting.isAccomplished = value;
-                            int id = meeting.id!;
-                            var body = {
-                              'eventId': id,
-                              'eventStatus': value,
-                            };
-                            String bodyF = jsonEncode(body);
-                            //print(bodyF);
-
-                            var url = Uri.parse(
-                                PlannerService.sharedInstance.serverUrl +
-                                    '/user/calendar/event/status');
-                            var response = await http.patch(url,
-                                headers: {"Content-Type": "application/json"},
-                                body: bodyF);
-                            //print('Response status: ${response.statusCode}');
-                            //print('Response body: ${response.body}');
-
-                            if (response.statusCode == 200) {
-                              setState(() {
-                                events
-                                    .appointments![
-                                        events.appointments!.indexOf(meeting)]
-                                    .isAccomplished = value;
-                                PlannerService
-                                        .sharedInstance.user!.scheduledEvents =
-                                    events.appointments! as List<Event>;
-                                //widget.updateEvents();
-                              });
-                            } else {
-                              //500 error, show an alert
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                          'Oops! Looks like something went wrong. Please try again.'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text('OK'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  });
-                            }
-
-                            //PlannerService.sharedInstance.user.f
-                            //});
-                          },
                         ),
-                      )
+                      ),
+                      // Expanded(
+                      //   child: Checkbox(
+                      //     side: const BorderSide(color: Colors.grey),
+                      //     //value: meeting.isAccomplished,
+                      //     value: events
+                      //         .appointments![
+                      //             events.appointments!.indexOf(meeting)]
+                      //         .isAccomplished,
+                      //     shape: const CircleBorder(),
+                      //     onChanged: (bool? value) async {
+                      //       //print(value);
+                      //       //setState(() async {
+                      //       //update on server and then update locally
+                      //       //meeting.isAccomplished = value;
+                      //       int id = meeting.id!;
+                      //       var body = {
+                      //         'eventId': id,
+                      //         'eventStatus': value,
+                      //       };
+                      //       String bodyF = jsonEncode(body);
+                      //       //print(bodyF);
+
+                      //       var url = Uri.parse(
+                      //           PlannerService.sharedInstance.serverUrl +
+                      //               '/user/calendar/event/status');
+                      //       var response = await http.patch(url,
+                      //           headers: {"Content-Type": "application/json"},
+                      //           body: bodyF);
+                      //       //print('Response status: ${response.statusCode}');
+                      //       //print('Response body: ${response.body}');
+
+                      //       if (response.statusCode == 200) {
+                      //         setState(() {
+                      //           events
+                      //               .appointments![
+                      //                   events.appointments!.indexOf(meeting)]
+                      //               .isAccomplished = value;
+                      //           PlannerService
+                      //                   .sharedInstance.user!.scheduledEvents =
+                      //               events.appointments! as List<Event>;
+                      //           //widget.updateEvents();
+                      //         });
+                      //       } else {
+                      //         //500 error, show an alert
+                      //         showDialog(
+                      //             context: context,
+                      //             builder: (context) {
+                      //               return AlertDialog(
+                      //                 title: Text(
+                      //                     'Oops! Looks like something went wrong. Please try again.'),
+                      //                 actions: <Widget>[
+                      //                   TextButton(
+                      //                     child: Text('OK'),
+                      //                     onPressed: () {
+                      //                       Navigator.of(context).pop();
+                      //                     },
+                      //                   )
+                      //                 ],
+                      //               );
+                      //             });
+                      //       }
+
+                      //       //PlannerService.sharedInstance.user.f
+                      //       //});
+                      //     },
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
@@ -921,7 +916,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Scheduled'),
+                    child: Text('Schedule'),
                   ),
                 ],
                 direction: Axis.horizontal,
@@ -1356,7 +1351,17 @@ class _CalendarPageState extends State<CalendarPage> {
                                   updatePotentialCandidates)));
                 },
                 child: Text("Add Backlog Items")),
-            TextButton(onPressed: () {}, child: Text("Create New Task"))
+            TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => NewTaskPage(
+                                updateBacklog: updatePotentialCandidates,
+                                selectdDate: _selectedDate,
+                              )));
+                },
+                child: Text("Create New Task"))
           ],
         ),
       ],

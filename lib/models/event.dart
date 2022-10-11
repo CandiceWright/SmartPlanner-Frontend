@@ -7,9 +7,9 @@ class Event {
   DateTime? date; //not being used
   DateTime start; //goals use this for its date
   DateTime end;
-  Color background;
+  Color? background;
   String notes;
-  LifeCategory category;
+  LifeCategory? category;
   String? location;
   String? imageUrl;
   String? localImgPath = "";

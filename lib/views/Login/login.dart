@@ -484,10 +484,15 @@ class _LoginPageState extends State<LoginPage> {
                     end: DateTime.parse(decodedBody[i]["end"]),
                     isAccomplished:
                         decodedBody[i]["isAccomplished"] == 1 ? true : false,
-                    background:
-                        lifeCategoriesMap[decodedBody[i]["category"]]!.color,
-                    category: lifeCategoriesMap[decodedBody[i]["category"]]!,
-                    type: "calendar",
+                    background: lifeCategoriesMap[decodedBody[i]["category"]] ==
+                            null
+                        ? const Color.fromARGB(255, 186, 221, 230)
+                        : lifeCategoriesMap[decodedBody[i]["category"]]!.color,
+                    category:
+                        lifeCategoriesMap[decodedBody[i]["category"]] == null
+                            ? null
+                            : lifeCategoriesMap[decodedBody[i]["category"]]!,
+                    type: decodedBody[i]["type"],
                     notes: decodedBody[i]["notes"],
                     location: decodedBody[i]["location"],
                     backlogIdRef: decodedBody[i]["backlogItemRef"]);

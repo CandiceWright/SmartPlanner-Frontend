@@ -629,7 +629,7 @@ class _TodaySchedulePageState extends State<TodaySchedulePage> {
                   //alignment: Alignment.topLeft,
                   //height: 30,
                   child: ListTile(
-                    tileColor: meeting.category.color,
+                    tileColor: meeting.category!.color,
                     title: Text(
                       DateFormat('h:mm').format(meeting.start) +
                           " - " +

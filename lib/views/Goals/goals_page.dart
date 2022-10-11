@@ -474,7 +474,7 @@ class _GoalsPageState extends State<GoalsPage> {
                         ),
                         //color: Theme.of(context).colorScheme.primary,
                         color: PlannerService
-                            .sharedInstance.user!.goals[index].category.color,
+                            .sharedInstance.user!.goals[index].category!.color,
                       ),
                     );
                   }),

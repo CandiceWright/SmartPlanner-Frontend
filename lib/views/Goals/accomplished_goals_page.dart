@@ -195,7 +195,7 @@ class _AccomplishedGoalsPageState extends State<AccomplishedGoalsPage> {
                 ),
                 //color: Theme.of(context).colorScheme.primary,
                 color: PlannerService.sharedInstance.user!
-                    .accomplishedGoals[index].category.color,
+                    .accomplishedGoals[index].category!.color,
               ),
             );
           }),

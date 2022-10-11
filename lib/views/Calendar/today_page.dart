@@ -16,6 +16,7 @@ import 'package:practice_planner/views/Calendar/select_backlog_items_page.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../models/backlog_item.dart';
 import '../Backlog/edit_task_page.dart';
+import '../Backlog/new_task_page.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -25,6 +26,8 @@ import '../../models/event.dart';
 import '../../models/event_data_source.dart';
 import 'package:http/http.dart' as http;
 import 'package:date_picker_timeline/date_picker_timeline.dart';
+
+import 'new_free_flow_event.dart';
 
 //part 'edit_event_page.dart';
 
@@ -117,6 +120,9 @@ class _TodayPageState extends State<TodayPage> {
             context: context,
             builder: (context) {
               return AlertDialog(
+                alignment: Alignment.center,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: Text(
                     'Looks like your free flow session is complete. You can start a new free flow session now.'),
                 actions: <Widget>[
@@ -164,8 +170,22 @@ class _TodayPageState extends State<TodayPage> {
         context,
         CupertinoPageRoute(
             builder: (context) => NewEventPage(
+                  selectedDate: thisDay,
                   updateEvents: _updateEvents,
                   fromPage: "full_calendar",
+                )));
+  }
+
+  void _openNewFreeFlowSessionPage() {
+    //this function needs to change to create new goal
+    Navigator.pop(context);
+    Navigator.push(
+        context,
+        CupertinoPageRoute(
+            builder: (context) => NewFreeFlowEventPage(
+                  selectedDate: thisDay,
+                  updateEvents: _updateEvents,
+                  fromPage: "daily_calendar",
                 )));
   }
 
@@ -213,7 +233,7 @@ class _TodayPageState extends State<TodayPage> {
     });
   }
 
-  void updatePotentialCandidates(List<BacklogMapRef> selectedBacklogItems) {
+  void updatePotentialCandidates() {
     setState(() {
       //todaysTasks.addAll(selectedBacklogItems);
       todaysTasks = List.from(PlannerService
@@ -247,7 +267,7 @@ class _TodayPageState extends State<TodayPage> {
       //show timer details to set duration
       return Card(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(20.0),
         ),
         margin: EdgeInsets.all(20),
         child: Column(children: [
@@ -317,6 +337,8 @@ class _TodayPageState extends State<TodayPage> {
             //   ,
             //   textAlign: TextAlign.center,
             // ),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             content: Text(
                 "I've complete this task and ready to start a new task. Mark it as complete!"),
             actions: <Widget>[
@@ -363,6 +385,8 @@ class _TodayPageState extends State<TodayPage> {
             //   ,
             //   textAlign: TextAlign.center,
             // ),
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             content: Text(
                 "I've started this task and will continue working on it later. I'm ready to start another task."),
             actions: <Widget>[
@@ -407,6 +431,8 @@ class _TodayPageState extends State<TodayPage> {
           //   ,
           //   textAlign: TextAlign.center,
           // ),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
           content: Text(
               "I haven't started this task yet. I will work on it later. I want to work on another task right now."),
           actions: <Widget>[
@@ -504,11 +530,11 @@ class _TodayPageState extends State<TodayPage> {
                 children: const <Widget>[
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Tasks'),
+                    child: Text('Schedule'),
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Scheduled'),
+                    child: Text('Tasks'),
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
@@ -555,7 +581,8 @@ class _TodayPageState extends State<TodayPage> {
                       padding: EdgeInsets.all(10),
                       child: Text(
                         // "As long as you give maximum effort while you're free flowing, you'll always get the optimal number of things done."
-                        "Maximum effort will always result in the optimal number of things getting done. So, don't focus on how many things you get done while you're free flowing, focus on maximizing the effort you put in.",
+                        // "Maximum effort will always result in the optimal number of things getting done. So, don't focus on how many things you get done while you're free flowing, focus on maximizing the effort you put in.",
+                        "Maximum effort will always maximize the number of things you get done. So, don't focus on the number of things you get done while you're free flowing, focus on maximizing the effort you put in.",
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -582,6 +609,10 @@ class _TodayPageState extends State<TodayPage> {
                               builder: (context) {
                                 return AlertDialog(
                                   title: Text("Congrats!"),
+                                  alignment: Alignment.center,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0))),
                                   content: Text(
                                       "You completed $hours hours and $minutes minutes of free flowing!"),
                                   actions: <Widget>[
@@ -607,6 +638,9 @@ class _TodayPageState extends State<TodayPage> {
                               context: context,
                               builder: (context) {
                                 return AlertDialog(
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.0))),
                                   content: Text(
                                       "Before ending this free flow session, close out your current task by updating its status in the free flow box."),
                                   actions: <Widget>[
@@ -680,6 +714,9 @@ class _TodayPageState extends State<TodayPage> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(20.0))),
                                             title: Text(
                                               PlannerService
                                                   .sharedInstance
@@ -848,7 +885,7 @@ class _TodayPageState extends State<TodayPage> {
                 child: todaysTasks.length == 0
                     ? Container(
                         alignment: Alignment.center,
-                        child: Text("No Tasks Yet. Add tasks below."),
+                        child: Text("No Tasks to work on."),
                       )
                     : ListView(
                         children:
@@ -924,6 +961,9 @@ class _TodayPageState extends State<TodayPage> {
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0))),
                                           title: Text(
                                             PlannerService
                                                 .sharedInstance
@@ -1037,6 +1077,9 @@ class _TodayPageState extends State<TodayPage> {
                           context: context,
                           builder: (context) {
                             return AlertDialog(
+                              shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20.0))),
                               title: Text(
                                   "The session timer hasn't been set yet. Set the timer before starting."),
                               actions: <Widget>[
@@ -1148,11 +1191,11 @@ class _TodayPageState extends State<TodayPage> {
                 children: const <Widget>[
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Tasks'),
+                    child: Text('Schedule'),
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Scheduled'),
+                    child: Text('Tasks'),
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
@@ -1183,331 +1226,33 @@ class _TodayPageState extends State<TodayPage> {
           //height: 150,
           //was a column
 
-          child:
-              !PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
-                          .containsKey(thisDay) ||
-                      PlannerService.sharedInstance.user!
-                          .scheduledBacklogItemsMap[thisDay]!.isEmpty
-                  //child: todaysTasks.length == 0
-                  ? Container(
-                      alignment: Alignment.center,
-                      child: Text("No Tasks Yet. Add tasks below."),
-                    )
-                  : ListView(
-                      children: List.generate(
-                          PlannerService
-                              .sharedInstance
-                              .user!
-                              .scheduledBacklogItemsMap[thisDay]!
-                              .length, (int index) {
-                        return GestureDetector(
-                          onTap: () {
-                            //show dialog
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text(
-                                      PlannerService
-                                          .sharedInstance
-                                          .user!
-                                          .backlogMap[PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .scheduledBacklogItemsMap[
-                                                      thisDay]![index]
-                                                  .categoryName]![
-                                              PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .scheduledBacklogItemsMap[
-                                                      thisDay]![index]
-                                                  .arrayIdx]
-                                          .description,
-                                      textAlign: TextAlign.center,
-                                    ),
-
-                                    content:
-                                        //Card(
-                                        //child: Container(
-                                        //child: Column(
-                                        Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.all(5),
-                                          child: Text(
-                                            "Complete by " +
-                                                DateFormat.yMMMd().format(PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .backlogMap[PlannerService
-                                                            .sharedInstance
-                                                            .user!
-                                                            .scheduledBacklogItemsMap[
-                                                                thisDay]![index]
-                                                            .categoryName]![
-                                                        PlannerService
-                                                            .sharedInstance
-                                                            .user!
-                                                            .scheduledBacklogItemsMap[
-                                                                thisDay]![index]
-                                                            .arrayIdx]
-                                                    .completeBy!),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.all(5),
-                                          child: Text(PlannerService
-                                              .sharedInstance
-                                              .user!
-                                              .backlogMap[PlannerService
-                                                      .sharedInstance
-                                                      .user!
-                                                      .scheduledBacklogItemsMap[
-                                                          thisDay]![index]
-                                                      .categoryName]![
-                                                  PlannerService
-                                                      .sharedInstance
-                                                      .user!
-                                                      .scheduledBacklogItemsMap[
-                                                          thisDay]![index]
-                                                      .arrayIdx]
-                                              .notes),
-                                        ),
-                                      ],
-                                    ),
-                                    //),
-                                    //),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: new Text('edit'),
-                                        onPressed: () {
-                                          openEditBacklogItemPage(
-                                              PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .scheduledBacklogItemsMap[
-                                                      thisDay]![index]
-                                                  .arrayIdx,
-                                              PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .scheduledBacklogItemsMap[
-                                                      thisDay]![index]
-                                                  .categoryName);
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text('remove from today'),
-                                        onPressed: () async {
-                                          print("I am running remove from");
-
-                                          //first check of the item is scheduled on calendar, if so, show a dialog
-                                          if (PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .backlogMap[PlannerService
-                                                          .sharedInstance
-                                                          .user!
-                                                          .scheduledBacklogItemsMap[
-                                                              thisDay]![index]
-                                                          .categoryName]![
-                                                      PlannerService
-                                                          .sharedInstance
-                                                          .user!
-                                                          .scheduledBacklogItemsMap[
-                                                              thisDay]![index]
-                                                          .arrayIdx]
-                                                  .calendarItemRef !=
-                                              null) {
-                                            //this would be null if not on calendar
-                                            Navigator.of(context).pop();
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: Text(
-                                                        "This item is scheduled on your calendar. Unschedule it on your calendar first. Then you will be able to remove from task list."),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: Text('Ok'),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      )
-                                                    ],
-                                                  );
-                                                });
-                                          } else {
-//unschedule on server, just remove scheduled date from backlog id
-                                            var body = {
-                                              'taskId': PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .backlogMap[PlannerService
-                                                          .sharedInstance
-                                                          .user!
-                                                          .scheduledBacklogItemsMap[
-                                                              thisDay]![index]
-                                                          .categoryName]![
-                                                      PlannerService
-                                                          .sharedInstance
-                                                          .user!
-                                                          .scheduledBacklogItemsMap[
-                                                              thisDay]![index]
-                                                          .arrayIdx]
-                                                  .id
-                                            };
-                                            String bodyF = jsonEncode(body);
-                                            //print(bodyF);
-
-                                            var url = Uri.parse(PlannerService
-                                                    .sharedInstance.serverUrl +
-                                                '/backlog/unscheduletask');
-                                            var response = await http.post(url,
-                                                headers: {
-                                                  "Content-Type":
-                                                      "application/json"
-                                                },
-                                                body: bodyF);
-                                            //print('Response status: ${response.statusCode}');
-                                            //print('Response body: ${response.body}');
-
-                                            if (response.statusCode == 200) {
-                                              print("unscheduling successful");
-                                              //setState(() {});
-                                              setState(() {
-                                                PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .backlogMap[PlannerService
-                                                            .sharedInstance
-                                                            .user!
-                                                            .scheduledBacklogItemsMap[
-                                                                thisDay]![index]
-                                                            .categoryName]![
-                                                        PlannerService
-                                                            .sharedInstance
-                                                            .user!
-                                                            .scheduledBacklogItemsMap[
-                                                                thisDay]![index]
-                                                            .arrayIdx]
-                                                    .scheduledDate = null;
-
-                                                PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .scheduledBacklogItemsMap[
-                                                        thisDay]!
-                                                    .removeAt(index);
-
-                                                todaysTasks = List.from(
-                                                    PlannerService
-                                                            .sharedInstance
-                                                            .user!
-                                                            .scheduledBacklogItemsMap[
-                                                        thisDay]!);
-                                              });
-                                              Navigator.pop(context);
-                                              //}
-                                            } else {
-                                              //500 error, show an alert
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertDialog(
-                                                    title: Text(
-                                                        'Oops! Looks like something went wrong. Please try again.'),
-                                                    actions: <Widget>[
-                                                      TextButton(
-                                                        child: Text('OK'),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      )
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            }
-                                          }
-                                        },
-                                      ),
-                                      TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: new Text('close'))
-                                    ],
-                                  );
-                                });
-                          },
-                          child: Card(
-                            margin: EdgeInsets.all(15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            color: PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .backlogMap[PlannerService.sharedInstance.user!.scheduledBacklogItemsMap[thisDay]![index].categoryName]![
-                                            PlannerService
-                                                .sharedInstance
-                                                .user!
-                                                .scheduledBacklogItemsMap[
-                                                    thisDay]![index]
-                                                .arrayIdx]
-                                        .status ==
-                                    "notStarted"
-                                ? Colors.grey.shade100
-                                : (PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .backlogMap[PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .scheduledBacklogItemsMap[
-                                                        thisDay]![index]
-                                                    .categoryName]![
-                                                PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .scheduledBacklogItemsMap[thisDay]![index]
-                                                    .arrayIdx]
-                                            .status ==
-                                        "complete"
-                                    ? Colors.green.shade200
-                                    : Colors.yellow.shade200),
-                            elevation: 5,
-                            child: ListTile(
-                              leading: Icon(
-                                Icons.circle,
-                                color: PlannerService
-                                    .sharedInstance
-                                    .user!
-                                    .backlogMap[PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .scheduledBacklogItemsMap[thisDay]![
-                                                index]
-                                            .categoryName]![
-                                        PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .scheduledBacklogItemsMap[thisDay]![
-                                                index]
-                                            .arrayIdx]
-                                    .category
-                                    .color,
-                              ),
-                              title: Padding(
-                                padding: EdgeInsets.only(bottom: 5),
-                                child: Text(
+          child: !PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
+                      .containsKey(thisDay) ||
+                  PlannerService.sharedInstance.user!
+                      .scheduledBacklogItemsMap[thisDay]!.isEmpty
+              //child: todaysTasks.length == 0
+              ? Container(
+                  alignment: Alignment.center,
+                  child: Text("No Tasks Yet. Add tasks below."),
+                )
+              : ListView(
+                  children: List.generate(
+                      PlannerService
+                          .sharedInstance
+                          .user!
+                          .scheduledBacklogItemsMap[thisDay]!
+                          .length, (int index) {
+                    return GestureDetector(
+                      onTap: () {
+                        //show dialog
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0))),
+                                title: Text(
                                   PlannerService
                                       .sharedInstance
                                       .user!
@@ -1524,12 +1269,373 @@ class _TodayPageState extends State<TodayPage> {
                                                   thisDay]![index]
                                               .arrayIdx]
                                       .description,
-                                  maxLines: 2,
                                   textAlign: TextAlign.center,
                                 ),
-                              ),
-                              trailing: Checkbox(
-                                value: PlannerService
+
+                                content:
+                                    //Card(
+                                    //child: Container(
+                                    //child: Column(
+                                    Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.all(5),
+                                      child: Text(
+                                        "Complete by " +
+                                            DateFormat.yMMMd().format(PlannerService
+                                                .sharedInstance
+                                                .user!
+                                                .backlogMap[PlannerService
+                                                        .sharedInstance
+                                                        .user!
+                                                        .scheduledBacklogItemsMap[
+                                                            thisDay]![index]
+                                                        .categoryName]![
+                                                    PlannerService
+                                                        .sharedInstance
+                                                        .user!
+                                                        .scheduledBacklogItemsMap[
+                                                            thisDay]![index]
+                                                        .arrayIdx]
+                                                .completeBy!),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.all(5),
+                                      child: Text(PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .backlogMap[PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .scheduledBacklogItemsMap[
+                                                      thisDay]![index]
+                                                  .categoryName]![
+                                              PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .scheduledBacklogItemsMap[
+                                                      thisDay]![index]
+                                                  .arrayIdx]
+                                          .notes),
+                                    ),
+                                  ],
+                                ),
+                                //),
+                                //),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: new Text('edit'),
+                                    onPressed: () {
+                                      openEditBacklogItemPage(
+                                          PlannerService
+                                              .sharedInstance
+                                              .user!
+                                              .scheduledBacklogItemsMap[
+                                                  thisDay]![index]
+                                              .arrayIdx,
+                                          PlannerService
+                                              .sharedInstance
+                                              .user!
+                                              .scheduledBacklogItemsMap[
+                                                  thisDay]![index]
+                                              .categoryName);
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('remove from today'),
+                                    onPressed: () async {
+                                      print("I am running remove from");
+
+                                      //first check if item is currently being worked on
+                                      if (PlannerService.sharedInstance.user!
+                                                  .scheduledBacklogItemsMap[
+                                              thisDay]![index] ==
+                                          PlannerService.sharedInstance.user!
+                                              .currentTaskWorkingOn) {
+                                        //this is the current task
+                                        Navigator.of(context).pop();
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              alignment: Alignment.center,
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.all(
+                                                              Radius.circular(
+                                                                  20.0))),
+                                              content: const Text(
+                                                  "This item can't be removed because it is currently being worked on in free flow session. Change current free flow task first. "),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('Ok'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        //first check if the item is scheduled on calendar, if so, show a dialog
+                                        if (PlannerService
+                                                .sharedInstance
+                                                .user!
+                                                .backlogMap[PlannerService
+                                                        .sharedInstance
+                                                        .user!
+                                                        .scheduledBacklogItemsMap[
+                                                            thisDay]![index]
+                                                        .categoryName]![
+                                                    PlannerService
+                                                        .sharedInstance
+                                                        .user!
+                                                        .scheduledBacklogItemsMap[
+                                                            thisDay]![index]
+                                                        .arrayIdx]
+                                                .calendarItemRef !=
+                                            null) {
+                                          //this would be null if not on calendar
+                                          Navigator.of(context).pop();
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  alignment: Alignment.center,
+                                                  shape:
+                                                      const RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius.circular(
+                                                                      20.0))),
+                                                  content: Text(
+                                                      "This item is scheduled on your calendar. Unschedule it on your calendar first. Then you will be able to remove from task list."),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: Text('Ok'),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                );
+                                              });
+                                        } else {
+//unschedule on server, just remove scheduled date from backlog id
+                                          var body = {
+                                            'taskId': PlannerService
+                                                .sharedInstance
+                                                .user!
+                                                .backlogMap[PlannerService
+                                                        .sharedInstance
+                                                        .user!
+                                                        .scheduledBacklogItemsMap[
+                                                            thisDay]![index]
+                                                        .categoryName]![
+                                                    PlannerService
+                                                        .sharedInstance
+                                                        .user!
+                                                        .scheduledBacklogItemsMap[
+                                                            thisDay]![index]
+                                                        .arrayIdx]
+                                                .id
+                                          };
+                                          String bodyF = jsonEncode(body);
+                                          //print(bodyF);
+
+                                          var url = Uri.parse(PlannerService
+                                                  .sharedInstance.serverUrl +
+                                              '/backlog/unscheduletask');
+                                          var response = await http.post(url,
+                                              headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                              },
+                                              body: bodyF);
+                                          //print('Response status: ${response.statusCode}');
+                                          //print('Response body: ${response.body}');
+
+                                          if (response.statusCode == 200) {
+                                            print("unscheduling successful");
+                                            //setState(() {});
+                                            setState(() {
+                                              PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .backlogMap[PlannerService
+                                                          .sharedInstance
+                                                          .user!
+                                                          .scheduledBacklogItemsMap[
+                                                              thisDay]![index]
+                                                          .categoryName]![
+                                                      PlannerService
+                                                          .sharedInstance
+                                                          .user!
+                                                          .scheduledBacklogItemsMap[
+                                                              thisDay]![index]
+                                                          .arrayIdx]
+                                                  .scheduledDate = null;
+
+                                              PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .scheduledBacklogItemsMap[
+                                                      thisDay]!
+                                                  .removeAt(index);
+
+                                              todaysTasks = List.from(PlannerService
+                                                      .sharedInstance
+                                                      .user!
+                                                      .scheduledBacklogItemsMap[
+                                                  thisDay]!);
+                                            });
+                                            Navigator.pop(context);
+                                            //}
+                                          } else {
+                                            //500 error, show an alert
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text(
+                                                      'Oops! Looks like something went wrong. Please try again.'),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: Text('OK'),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        }
+                                      }
+                                    },
+                                  ),
+                                  TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: new Text('close'))
+                                ],
+                              );
+                            });
+                      },
+                      child: Card(
+                        margin: EdgeInsets.all(15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        color: PlannerService
+                                    .sharedInstance
+                                    .user!
+                                    .backlogMap[
+                                        PlannerService.sharedInstance.user!
+                                            .scheduledBacklogItemsMap[thisDay]![index].categoryName]![
+                                        PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .scheduledBacklogItemsMap[thisDay]![
+                                                index]
+                                            .arrayIdx]
+                                    .status ==
+                                "notStarted"
+                            ? Colors.grey.shade100
+                            : (PlannerService
+                                        .sharedInstance
+                                        .user!
+                                        .backlogMap[
+                                            PlannerService.sharedInstance.user!
+                                                .scheduledBacklogItemsMap[thisDay]![index].categoryName]![
+                                            PlannerService
+                                                .sharedInstance
+                                                .user!
+                                                .scheduledBacklogItemsMap[thisDay]![index]
+                                                .arrayIdx]
+                                        .status ==
+                                    "complete"
+                                ? Colors.green.shade200
+                                : Colors.yellow.shade200),
+                        elevation: 5,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.circle,
+                            color: PlannerService
+                                .sharedInstance
+                                .user!
+                                .backlogMap[
+                                    PlannerService
+                                        .sharedInstance
+                                        .user!
+                                        .scheduledBacklogItemsMap[thisDay]![
+                                            index]
+                                        .categoryName]![
+                                    PlannerService
+                                        .sharedInstance
+                                        .user!
+                                        .scheduledBacklogItemsMap[thisDay]![
+                                            index]
+                                        .arrayIdx]
+                                .category
+                                .color,
+                          ),
+                          title: Padding(
+                            padding: EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              PlannerService
+                                  .sharedInstance
+                                  .user!
+                                  .backlogMap[
+                                      PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .scheduledBacklogItemsMap[thisDay]![
+                                              index]
+                                          .categoryName]![
+                                      PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .scheduledBacklogItemsMap[thisDay]![
+                                              index]
+                                          .arrayIdx]
+                                  .description,
+                              maxLines: 2,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          trailing: Checkbox(
+                            value: PlannerService
+                                .sharedInstance
+                                .user!
+                                .backlogMap[
+                                    PlannerService
+                                        .sharedInstance
+                                        .user!
+                                        .scheduledBacklogItemsMap[thisDay]![
+                                            index]
+                                        .categoryName]![
+                                    PlannerService
+                                        .sharedInstance
+                                        .user!
+                                        .scheduledBacklogItemsMap[thisDay]![
+                                            index]
+                                        .arrayIdx]
+                                .isComplete,
+                            shape: const CircleBorder(),
+                            onChanged: (bool? value) {
+                              //print(value);
+                              setState(() {
+                                PlannerService
                                     .sharedInstance
                                     .user!
                                     .backlogMap[PlannerService
@@ -1544,37 +1650,17 @@ class _TodayPageState extends State<TodayPage> {
                                             .scheduledBacklogItemsMap[thisDay]![
                                                 index]
                                             .arrayIdx]
-                                    .isComplete,
-                                shape: const CircleBorder(),
-                                onChanged: (bool? value) {
-                                  //print(value);
-                                  setState(() {
-                                    PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .backlogMap[PlannerService
-                                                .sharedInstance
-                                                .user!
-                                                .scheduledBacklogItemsMap[
-                                                    thisDay]![index]
-                                                .categoryName]![
-                                            PlannerService
-                                                .sharedInstance
-                                                .user!
-                                                .scheduledBacklogItemsMap[
-                                                    thisDay]![index]
-                                                .arrayIdx]
-                                        .isComplete = value;
+                                    .isComplete = value;
 
-                                    //_value = value!;
-                                  });
-                                },
-                              ),
-                            ),
+                                //_value = value!;
+                              });
+                            },
                           ),
-                        );
-                      }),
-                    ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1590,7 +1676,18 @@ class _TodayPageState extends State<TodayPage> {
                                   updatePotentialCandidates)));
                 },
                 child: Text("Add Backlog Items")),
-            TextButton(onPressed: () {}, child: Text("Create New Task"))
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => NewTaskPage(
+                              updateBacklog: updatePotentialCandidates,
+                              selectdDate: thisDay,
+                            )));
+              },
+              child: Text("Create New Task"),
+            )
           ],
         ),
       ],
@@ -1603,6 +1700,8 @@ class _TodayPageState extends State<TodayPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Container(
               child: const Text(
                 "Are you sure you want to delete?",
@@ -1677,6 +1776,8 @@ class _TodayPageState extends State<TodayPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Container(
               child: const Text(
                 "Are you sure you want to unschedule this backlog item?",
@@ -1786,6 +1887,8 @@ class _TodayPageState extends State<TodayPage> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: Container(
                   child: new Text(
                     '$_subjectText',
@@ -1834,6 +1937,8 @@ class _TodayPageState extends State<TodayPage> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
                 title: Container(
                   child: new Text(
                     '$_subjectText',
@@ -1945,11 +2050,11 @@ class _TodayPageState extends State<TodayPage> {
                 children: const <Widget>[
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Tasks'),
+                    child: Text('Schedule'),
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
-                    child: Text('Scheduled'),
+                    child: Text('Tasks'),
                   ),
                   Padding(
                     padding: EdgeInsets.all(5),
@@ -2035,8 +2140,10 @@ class _TodayPageState extends State<TodayPage> {
                                     //borderRadius: BorderRadius.circular(15.0),
                                     side: BorderSide(
                                       width: 5,
-                                      color:
-                                          meeting.category.color, //<-- SEE HERE
+                                      color: meeting.type == "freeflow"
+                                          ? Colors.transparent
+                                          : meeting
+                                              .category!.color, //<-- SEE HERE
                                     ),
                                   ),
                                 ),
@@ -2055,8 +2162,10 @@ class _TodayPageState extends State<TodayPage> {
                                     //borderRadius: BorderRadius.circular(15.0),
                                     side: BorderSide(
                                       width: 5,
-                                      color:
-                                          meeting.category.color, //<-- SEE HERE
+                                      color: meeting.type == "freeflow"
+                                          ? Colors.transparent
+                                          : meeting
+                                              .category!.color, //<-- SEE HERE
                                     ),
                                   ),
                                 ),
@@ -2068,7 +2177,8 @@ class _TodayPageState extends State<TodayPage> {
                           child: SingleChildScrollView(
                         //was a list view
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          //mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             //Expanded(
                             // FittedBox(
@@ -2108,71 +2218,124 @@ class _TodayPageState extends State<TodayPage> {
                           //),
                           ),
                       Expanded(
-                        child: Checkbox(
-                          side: const BorderSide(color: Colors.grey),
-                          //value: meeting.isAccomplished,
-                          value: events
-                              .appointments![
-                                  events.appointments!.indexOf(meeting)]
-                              .isAccomplished,
-                          shape: const CircleBorder(),
-                          onChanged: (bool? value) async {
-                            //print(value);
-                            //setState(() async {
-                            //update on server and then update locally
-                            //meeting.isAccomplished = value;
-                            int id = meeting.id!;
-                            var body = {
-                              'eventId': id,
-                              'eventStatus': value,
-                            };
-                            String bodyF = jsonEncode(body);
-                            //print(bodyF);
-
-                            var url = Uri.parse(
-                                PlannerService.sharedInstance.serverUrl +
-                                    '/user/calendar/event/status');
-                            var response = await http.patch(url,
-                                headers: {"Content-Type": "application/json"},
-                                body: bodyF);
-                            //print('Response status: ${response.statusCode}');
-                            //print('Response body: ${response.body}');
-
-                            if (response.statusCode == 200) {
-                              setState(() {
-                                events
+                        child: meeting.type == "freeflow"
+                            ? TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    freeFlowSessionStarted = true;
+                                    //duration = end time - startiment
+                                    freeFlowSessionDuration =
+                                        meeting.end.difference(DateTime.now());
+                                  });
+                                  if (freeFlowSessionDuration.isNegative) {
+                                    //session is complete
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            content: Text(
+                                              'Looks like this session has ended! Create a new free flow session or start an impromptu session by pressing the free flow tab.',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: Text('OK'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  } else {
+                                    setState(() {
+                                      // freeFlowSessionDuration = Duration(
+                                      //     hours: sessionHours,
+                                      //     minutes: sessionMins);
+                                      //store this in db
+                                      PlannerService.sharedInstance.user!
+                                              .currentFreeFlowSessionEnds =
+                                          meeting.end;
+                                      //flip to free flow tab and start timer
+                                      for (int i = 0;
+                                          i < _selectedPageView.length;
+                                          i++) {
+                                        _selectedPageView[i] = i == 2;
+                                      }
+                                      selectedMode = 2;
+                                    });
+                                    startTimer();
+                                  }
+                                },
+                                child: Text("Start"),
+                              )
+                            : Checkbox(
+                                side: const BorderSide(color: Colors.grey),
+                                //value: meeting.isAccomplished,
+                                value: events
                                     .appointments![
                                         events.appointments!.indexOf(meeting)]
-                                    .isAccomplished = value;
-                                PlannerService
-                                        .sharedInstance.user!.scheduledEvents =
-                                    events.appointments! as List<Event>;
-                                //widget.updateEvents();
-                              });
-                            } else {
-                              //500 error, show an alert
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                          'Oops! Looks like something went wrong. Please try again.'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text('OK'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  });
-                            }
+                                    .isAccomplished,
+                                shape: const CircleBorder(),
+                                onChanged: (bool? value) async {
+                                  //print(value);
+                                  //setState(() async {
+                                  //update on server and then update locally
+                                  //meeting.isAccomplished = value;
+                                  int id = meeting.id!;
+                                  var body = {
+                                    'eventId': id,
+                                    'eventStatus': value,
+                                  };
+                                  String bodyF = jsonEncode(body);
+                                  //print(bodyF);
 
-                            //PlannerService.sharedInstance.user.f
-                            //});
-                          },
-                        ),
+                                  var url = Uri.parse(
+                                      PlannerService.sharedInstance.serverUrl +
+                                          '/user/calendar/event/status');
+                                  var response = await http.patch(url,
+                                      headers: {
+                                        "Content-Type": "application/json"
+                                      },
+                                      body: bodyF);
+                                  //print('Response status: ${response.statusCode}');
+                                  //print('Response body: ${response.body}');
+
+                                  if (response.statusCode == 200) {
+                                    setState(() {
+                                      events
+                                          .appointments![events.appointments!
+                                              .indexOf(meeting)]
+                                          .isAccomplished = value;
+                                      PlannerService.sharedInstance.user!
+                                              .scheduledEvents =
+                                          events.appointments! as List<Event>;
+                                      //widget.updateEvents();
+                                    });
+                                  } else {
+                                    //500 error, show an alert
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: Text(
+                                                'Oops! Looks like something went wrong. Please try again.'),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                child: Text('OK'),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              )
+                                            ],
+                                          );
+                                        });
+                                  }
+
+                                  //PlannerService.sharedInstance.user.f
+                                  //});
+                                },
+                              ),
                       )
                     ],
                   ),
@@ -2187,6 +2350,53 @@ class _TodayPageState extends State<TodayPage> {
         // ),
       ],
     );
+  }
+
+  void startPlanningFromBacklog() {
+    Navigator.pop(context);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        settings: const RouteSettings(name: "BacklogScheduling"),
+        builder: (context) => ScheduleBacklogItemsPage(
+          updateTomorrowEvents: _updateEvents,
+          fromPage: DateFormat.yMMMd()
+              .format(_dateRangePickerController.selectedDate!),
+          calendarDate: thisDay,
+        ),
+      ),
+    );
+  }
+
+  void _openNewCalendarItemDialog() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: const Text(
+                "Add to Schedule",
+                textAlign: TextAlign.center,
+              ),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextButton(
+                    onPressed: _openNewCalendarItemPage,
+                    child: Text("New Event"),
+                  ),
+                  TextButton(
+                    onPressed: startPlanningFromBacklog,
+                    child: Text("Backlog Item"),
+                  ),
+                  TextButton(
+                    onPressed: _openNewFreeFlowSessionPage,
+                    child: Text("Free Flow Session"),
+                  )
+                ],
+              ),
+              actions: const <Widget>[]);
+        });
   }
 
   @override
@@ -2240,10 +2450,23 @@ class _TodayPageState extends State<TodayPage> {
       ),
 
       body: selectedMode == 0
-          ? buildTasksView()
+          ? buildScheduleView()
           : selectedMode == 1
-              ? buildScheduleView()
+              ? buildTasksView()
               : buildFreeFlowView(),
+
+      floatingActionButton: selectedMode == 0
+          ? FloatingActionButton(
+              //onPressed: _openNewCalendarItemPage, _openNewCalendarItemDialog
+              onPressed: _openNewCalendarItemDialog,
+              tooltip: 'Create new event.',
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+            )
+          : Container(),
 
       //),
 

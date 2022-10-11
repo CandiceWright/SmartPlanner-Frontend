@@ -345,7 +345,7 @@ class _SelectBacklogItemsPageState extends State<SelectBacklogItemsPage> {
                     }
                   }
                 }
-                widget.updatePotentialCandidates(selectedBacklogItemsList);
+                widget.updatePotentialCandidates();
                 Navigator.of(context).pop();
               },
               child: Text("Ok"))
