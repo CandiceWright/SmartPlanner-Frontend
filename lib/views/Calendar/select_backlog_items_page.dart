@@ -1,6 +1,7 @@
 /* Page used to add backlog items to selected date task list */
 import 'dart:convert';
 import 'dart:ffi';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -169,6 +170,7 @@ class _SelectBacklogItemsPageState extends State<SelectBacklogItemsPage> {
               setState(() {
                 selectedItems[i] = true; //the same size as backlogItemsToShow
               });
+              HapticFeedback.selectionClick();
             } else {
               setState(() {
                 selectedItems[i] = false;

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -967,6 +968,7 @@ class _TodayPageState extends State<TodayPage> {
                             },
                             onAccept: (DraggableTaskInfo data) {
                               print("accepted task");
+                              HapticFeedback.mediumImpact();
                               setState(() {
                                 taskAccepted = true;
                                 dragTargetContainerColor = Colors.white;
@@ -1226,6 +1228,7 @@ class _TodayPageState extends State<TodayPage> {
                             DateTime.now().add(freeFlowSessionDuration);
                         startTimer();
                       });
+                      HapticFeedback.mediumImpact();
                     }
                   },
                   child: Text("Start Free Flow Productivity"),
@@ -1753,7 +1756,10 @@ class _TodayPageState extends State<TodayPage> {
                                               .arrayIdx]
                                       .status ==
                                   "complete"
-                              ? null
+                              ? Icon(
+                                  Icons.check_rounded,
+                                  color: Theme.of(context).primaryColor,
+                                )
                               : Checkbox(
                                   value: PlannerService
                                           .sharedInstance
@@ -1774,6 +1780,7 @@ class _TodayPageState extends State<TodayPage> {
                                       "complete",
                                   shape: const CircleBorder(),
                                   onChanged: (bool? value) async {
+                                    HapticFeedback.mediumImpact();
                                     //make call to server
                                     var body = {
                                       'taskId': PlannerService
@@ -1843,6 +1850,7 @@ class _TodayPageState extends State<TodayPage> {
                                                     .arrayIdx]
                                             .status = "complete";
                                       });
+                                      // HapticFeedback.mediumImpact();
                                     } else {
                                       //500 error, show an alert
                                       showDialog(
@@ -2473,6 +2481,7 @@ class _TodayPageState extends State<TodayPage> {
                                       selectedMode = 2;
                                     });
                                     startTimer();
+                                    HapticFeedback.mediumImpact();
                                   }
                                 },
                                 child: Text("Start"),
@@ -2520,6 +2529,7 @@ class _TodayPageState extends State<TodayPage> {
                                           events.appointments! as List<Event>;
                                       //widget.updateEvents();
                                     });
+                                    HapticFeedback.mediumImpact();
                                   } else {
                                     //500 error, show an alert
                                     showDialog(

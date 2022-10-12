@@ -11,6 +11,7 @@ import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 class BacklogPage extends StatefulWidget {
   const BacklogPage({Key? key}) : super(key: key);
@@ -371,7 +372,7 @@ class _BacklogPageState extends State<BacklogPage> {
                   });
                   _updateBacklogList();
 
-                  Navigator.of(context).pop();
+                  // Navigator.of(context).pop();
                   //make call to server
                   var body = {
                     'taskId': PlannerService
@@ -394,7 +395,10 @@ class _BacklogPageState extends State<BacklogPage> {
                   //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
+                    Navigator.of(context).pop();
                   } else {
+                    Navigator.of(context).pop();
+
                     //500 error, show an alert
                     showDialog(
                         context: context,
@@ -798,6 +802,10 @@ class _BacklogPageState extends State<BacklogPage> {
                                 maxLines: 2,
                                 textAlign: TextAlign.center,
                               ),
+                            ),
+                            trailing: Icon(
+                              Icons.check_rounded,
+                              color: Theme.of(context).primaryColor,
                             ),
 
                             // subtitle: Text(
@@ -1346,7 +1354,9 @@ class _BacklogPageState extends State<BacklogPage> {
                                                 .categoryName]![
                                             backlogItemsToShow[index].arrayIdx]
                                         .status = "complete";
+                                    HapticFeedback.mediumImpact();
                                   });
+                                  _updateBacklogList();
                                 } else {
                                   //500 error, show an alert
                                   showDialog(
