@@ -155,7 +155,7 @@ class _NavigationWrapperState extends State<NavigationWrapper>
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list),
-            label: 'To Do',
+            label: 'Tasks',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.today),
