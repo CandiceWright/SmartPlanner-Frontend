@@ -495,7 +495,8 @@ class _LoginPageState extends State<LoginPage> {
                     type: decodedBody[i]["type"],
                     notes: decodedBody[i]["notes"],
                     location: decodedBody[i]["location"],
-                    backlogIdRef: decodedBody[i]["backlogItemRef"]);
+                    backlogIdRef: decodedBody[i]["backlogItemRef"],
+                    taskIdRef: decodedBody[i]["backlogItemRef"]);
                 scheduledEvents.add(event);
                 scheduledEventsMap[event.id!] = scheduledEvents.length - 1;
               }
@@ -602,7 +603,7 @@ class _LoginPageState extends State<LoginPage> {
                     }
                     if (decodedBody[i]["calendarItem"] != null &&
                         decodedBody[i]["calendarItem"] != -1) {
-                      //it is a scheduled event
+                      //it is a calendar event
                       scheduledEvents[scheduledEventsMap[decodedBody[i]
                               ["calendarItem"]]!]
                           .backlogMapRef = bmr;

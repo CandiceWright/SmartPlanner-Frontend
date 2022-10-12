@@ -35,9 +35,15 @@ class _BacklogPageState extends State<BacklogPage> {
   // List<Widget> currentlyShownBacklogItems = [];
   Map<String, List<Widget>> backlogItemCardsMap = {};
   List<Widget> currentlyShownBacklogItems = [];
+  List<BacklogMapRef> backlogItemsToShow = [];
+  List<BacklogMapRef> scheduledItemsToShow = [];
+
   var selectedCategories =
       PlannerService.sharedInstance.user!.LifeCategoriesColorMap;
+  var selectedCategoriesScheduledView =
+      PlannerService.sharedInstance.user!.LifeCategoriesColorMap;
   final List<bool> _selectedPageView = <bool>[true, false, false];
+  int selectedMode = 0;
 
   @override
   void initState() {
@@ -62,14 +68,39 @@ class _BacklogPageState extends State<BacklogPage> {
   openEditBacklogItemPage(int idx, String category) {
     //print(PlannerService.sharedInstance.user!.backlogMap[category]![idx]);
     Navigator.pop(context);
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => EditTaskPage(
-                  updateBacklog: _updateBacklog,
-                  id: idx,
-                  category: category,
-                )));
+    if (PlannerService
+            .sharedInstance.user!.backlogMap[category]![idx].calendarItemRef !=
+        null) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              title: Text(
+                "This item is scheduled on your calendar so it cannot be edited. Remove this from your calendar to edit.",
+                textAlign: TextAlign.center,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    } else {
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => EditTaskPage(
+                    updateBacklog: _updateBacklog,
+                    id: idx,
+                    category: category,
+                  )));
+    }
   }
 
   void _updateBacklog() {
@@ -82,6 +113,8 @@ class _BacklogPageState extends State<BacklogPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Container(
               child: const Text(
                 "Are you sure you want to delete?",
@@ -115,6 +148,9 @@ class _BacklogPageState extends State<BacklogPage> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(20.0))),
                             title: Text(
                                 'Oops! Looks like something went wrong. Please try again.'),
                             actions: <Widget>[
@@ -141,220 +177,784 @@ class _BacklogPageState extends State<BacklogPage> {
   }
 
   void unscheduleBacklogItem(int idx, String key) {
-    Navigator.pop(context);
+    // if (PlannerService
+    //         .sharedInstance.user!.backlogMap[key]![idx].calendarItemRef !=
+    //     null) {
+    Navigator.of(context).pop();
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Text(
+              "Navigate to the scheduled date on your calendar to unschedule this item",
+              textAlign: TextAlign.center,
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+//     } else {
+//       Navigator.of(context).pop();
+//       showDialog(
+//           context: context,
+//           builder: (BuildContext context) {
+//             return AlertDialog(
+//               title: Container(
+//                 child: const Text(
+//                   "Are you sure you want to unschedule this backlog item?",
+//                   textAlign: TextAlign.center,
+//                 ),
+//               ),
+//               content: const Text(
+//                   "This will not delete the backlog item. It will be removed from your calendar and moved to your backlog."),
+//               actions: <Widget>[
+//                 TextButton(
+//                   child: const Text('yes, unschedule'),
+//                   onPressed: () async {
+//                     //first check of the item is scheduled on calendar, if so, show a dialog
+
+// //unschedule on server, just remove scheduled date from backlog id
+//                     var body = {
+//                       'taskId': PlannerService
+//                           .sharedInstance.user!.backlogMap[key]![idx].id
+//                     };
+//                     String bodyF = jsonEncode(body);
+//                     //print(bodyF);
+
+//                     var url = Uri.parse(
+//                         PlannerService.sharedInstance.serverUrl +
+//                             '/backlog/unscheduletask');
+//                     var response = await http.post(url,
+//                         headers: {"Content-Type": "application/json"},
+//                         body: bodyF);
+//                     //print('Response status: ${response.statusCode}');
+//                     //print('Response body: ${response.body}');
+
+//                     if (response.statusCode == 200) {
+//                       print("unscheduling successful");
+//                       //setState(() {});
+//                       setState(() {
+//                         DateTime scheduledDate = DateTime(
+//                             PlannerService.sharedInstance.user!
+//                                 .backlogMap[key]![idx].scheduledDate!.year,
+//                             PlannerService.sharedInstance.user!
+//                                 .backlogMap[key]![idx].scheduledDate!.month,
+//                             PlannerService.sharedInstance.user!
+//                                 .backlogMap[key]![idx].scheduledDate!.day);
+
+//                         print(scheduledDate);
+//                         print(PlannerService.sharedInstance.user!
+//                             .scheduledBacklogItemsMap.keys);
+
+//                         BacklogMapRef bmr =
+//                             BacklogMapRef(categoryName: key, arrayIdx: idx);
+
+//                         PlannerService.sharedInstance.user!
+//                             .scheduledBacklogItemsMap[scheduledDate]!
+//                             .remove(bmr);
+
+//                         PlannerService.sharedInstance.user!
+//                             .backlogMap[key]![idx].scheduledDate = null;
+//                       });
+//                       Navigator.pop(context);
+//                       //}
+//                     } else {
+//                       //500 error, show an alert
+//                       showDialog(
+//                           context: context,
+//                           builder: (context) {
+//                             return AlertDialog(
+//                               title: Text(
+//                                   'Oops! Looks like something went wrong. Please try again.'),
+//                               actions: <Widget>[
+//                                 TextButton(
+//                                   child: Text('OK'),
+//                                   onPressed: () {
+//                                     Navigator.of(context).pop();
+//                                   },
+//                                 )
+//                               ],
+//                             );
+//                           });
+//                     }
+//                   },
+//                 ),
+//                 TextButton(
+//                     onPressed: () {
+//                       Navigator.of(context).pop();
+//                     },
+//                     child: const Text('cancel'))
+//               ],
+//             );
+//           });
+//     }
+  }
+
+  void viewScheduledBacklogItem(int index) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
             title: Container(
-              child: const Text(
-                "Are you sure you want to unschedule this backlog item?",
+              child: Text(
+                PlannerService
+                    .sharedInstance
+                    .user!
+                    .backlogMap[scheduledItemsToShow[index].categoryName]![
+                        scheduledItemsToShow[index].arrayIdx]
+                    .description,
                 textAlign: TextAlign.center,
               ),
             ),
-            content: const Text(
-                "This will not delete the backlog item, it will just be removed from your calendar."),
+            content:
+                //Card(
+                //child: Container(
+                //child: Column(
+                Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Scheduled for " +
+                      DateFormat.yMMMd().format(PlannerService
+                          .sharedInstance
+                          .user!
+                          .backlogMap[
+                              scheduledItemsToShow[index].categoryName]![
+                              scheduledItemsToShow[index].arrayIdx]
+                          .completeBy!),
+                  style: const TextStyle(
+                    // fontWeight: FontWeight.w400,
+                    fontSize: 14,
+                  ),
+                ),
+                Text(PlannerService
+                    .sharedInstance
+                    .user!
+                    .backlogMap[scheduledItemsToShow[index].categoryName]![
+                        scheduledItemsToShow[index].arrayIdx]
+                    .notes)
+              ],
+            ),
+            //),
+            //),
             actions: <Widget>[
               TextButton(
-                child: const Text('yes, unschedule'),
-                onPressed: () async {
-                  //first do server stuff
-                  var body = {
-                    'eventId': PlannerService.sharedInstance.user!
-                        .backlogMap[key]![idx].calendarItemRef!.id,
-                    'taskId': PlannerService
-                        .sharedInstance.user!.backlogMap[key]![idx].id
-                  };
-                  String bodyF = jsonEncode(body);
-                  //print(bodyF);
-
-                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
-                      '/calendar/unscheduletask');
-                  var response = await http.post(url,
-                      headers: {"Content-Type": "application/json"},
-                      body: bodyF);
-                  //print('Response status: ${response.statusCode}');
-                  //print('Response body: ${response.body}');
-
-                  if (response.statusCode == 200) {
-                    //delete event & unschedule backlog item
-                    //first remove event from scheduled events
-                    Event calendarItemRef = PlannerService.sharedInstance.user!
-                        .backlogMap[key]![idx].calendarItemRef!;
-                    PlannerService.sharedInstance.user!.scheduledEvents
-                        .removeAt(PlannerService
-                            .sharedInstance.user!.scheduledEvents
-                            .indexOf(calendarItemRef));
-
-                    //update the backlog item so that it no longer references a scheduled event
-                    PlannerService.sharedInstance.user!.backlogMap[key]![idx]
-                        .scheduledDate = null;
-                    PlannerService.sharedInstance.user!.backlogMap[key]![idx]
-                        .calendarItemRef = null;
-
-                    setState(() {});
-                    Navigator.pop(context);
-                    //}
-                  } else {
-                    //500 error, show an alert
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text(
-                                'Oops! Looks like something went wrong. Please try again.'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
+                child: new Text('edit'),
+                onPressed: () {
+                  openEditBacklogItemPage(scheduledItemsToShow[index].arrayIdx,
+                      scheduledItemsToShow[index].categoryName);
+                },
+              ),
+              TextButton(
+                child: const Text('unschedule'),
+                onPressed: () {
+                  unscheduleBacklogItem(scheduledItemsToShow[index].arrayIdx,
+                      scheduledItemsToShow[index].categoryName);
                 },
               ),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('cancel'))
+                  child: const Text('close'))
             ],
           );
         });
   }
 
   void openViewDialog(BacklogItem backlogItem, int idx, String key) {
-    if (backlogItem.scheduledDate == null) {
-      //item is not scheduled
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Container(
-                child: Text(
-                  backlogItem.description,
-                  textAlign: TextAlign.center,
-                ),
+    //item is not scheduled
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            title: Container(
+              child: Text(
+                backlogItem.description,
+                textAlign: TextAlign.center,
               ),
-              content:
-                  //Card(
-                  //child: Container(
-                  //child: Column(
-                  Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  backlogItem.completeBy != null
-                      ? Text(
-                          "Deadline " +
-                              DateFormat.yMMMd()
-                                  .format(backlogItem.completeBy!),
-                          style: const TextStyle(
-                            // fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                          ),
-                        )
-                      : Text("No deadline"),
-                  Text(backlogItem.notes)
-                ],
-              ),
-              //),
-              //),
-              actions: <Widget>[
-                TextButton(
-                  child: new Text('edit'),
-                  onPressed: () {
-                    openEditBacklogItemPage(idx, key);
-                  },
-                ),
-                TextButton(
-                    onPressed: () {
-                      deleteBacklogItem(idx, key);
-                    },
-                    child: new Text('delete')),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: new Text('close'))
+            ),
+            content:
+                //Card(
+                //child: Container(
+                //child: Column(
+                Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                backlogItem.completeBy != null
+                    ? Text(
+                        "Deadline " +
+                            DateFormat.yMMMd().format(backlogItem.completeBy!),
+                        style: const TextStyle(
+                          // fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
+                      )
+                    : Text("No deadline"),
+                Text(backlogItem.notes)
               ],
-            );
-          });
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Container(
-                child: Text(
-                  backlogItem.description,
-                  textAlign: TextAlign.center,
-                ),
+            ),
+            //),
+            //),
+            actions: <Widget>[
+              TextButton(
+                child: new Text('edit'),
+                onPressed: () {
+                  openEditBacklogItemPage(idx, key);
+                },
               ),
-              content:
-                  //Card(
-                  //child: Container(
-                  //child: Column(
-                  Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Complete by " +
-                        DateFormat.yMMMd().format(backlogItem.completeBy!),
-                    style: const TextStyle(
-                      // fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                    ),
-                  ),
-                  Text(backlogItem.notes)
-                ],
-              ),
-              //),
-              //),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('unschedule'),
+              TextButton(
                   onPressed: () {
-                    unscheduleBacklogItem(idx, key);
+                    deleteBacklogItem(idx, key);
                   },
-                ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('close'))
-              ],
-            );
-          });
-      // var tomorrow = DateTime(
-      //     DateTime.now().year, DateTime.now().month, DateTime.now().day + 1);
-      // if (backlogItem.scheduledDate == tomorrow) {
-      //   //scheduled for tomorrow
-
-      // } else { //today
-
-      // }
-    }
+                  child: new Text('delete')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: new Text('close'))
+            ],
+          );
+        });
   }
 
-  buildBacklogListView() {
+  buildCompletedListView() {}
+
+  buildScheduledListView() {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: ToggleButtons(
+            children: const <Widget>[
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Text('Backlog'),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Text('Scheduled'),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Text('Complete'),
+              ),
+            ],
+            direction: Axis.horizontal,
+            onPressed: (int index) {
+              setState(() {
+                // The button that is tapped is set to true, and the others to false.
+                for (int i = 0; i < _selectedPageView.length; i++) {
+                  _selectedPageView[i] = i == index;
+                }
+                selectedMode = index;
+              });
+            },
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            selectedBorderColor: Theme.of(context).primaryColor,
+            selectedColor: Colors.white,
+            fillColor: Theme.of(context).primaryColor.withAlpha(100),
+            color: Theme.of(context).primaryColor,
+            isSelected: _selectedPageView,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: Container(
+            height: 80.0,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: List.generate(
+                  PlannerService.sharedInstance.user!.lifeCategories.length,
+                  (int index) {
+                return GestureDetector(
+                    onTap: () {
+                      //first check if it is selected or not
+                      bool isSelected = selectedCategories.containsKey(
+                          PlannerService
+                              .sharedInstance.user!.lifeCategories[index].name);
+
+                      if (isSelected) {
+                        setState(() {
+                          selectedCategories.remove(PlannerService
+                              .sharedInstance.user!.lifeCategories[index].name);
+                        });
+                      } else {
+                        setState(() {
+                          selectedCategories.addAll({
+                            PlannerService.sharedInstance.user!
+                                    .lifeCategories[index].name:
+                                PlannerService.sharedInstance.user!
+                                    .lifeCategories[index].color
+                          });
+                        });
+                      }
+                      //updateCurrentlyShownBacklogCards();
+                      buildScheduledList();
+                    },
+                    child: Card(
+                      //margin: EdgeInsets.all(20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          width: 2.0,
+                          color: selectedCategories.containsKey(PlannerService
+                                  .sharedInstance
+                                  .user!
+                                  .lifeCategories[index]
+                                  .name)
+                              ? Colors.grey.shade700
+                              : Colors.transparent,
+                        ),
+                      ),
+                      //color: Colors.white,
+                      color: PlannerService
+                          .sharedInstance.user!.lifeCategories[index].color,
+                      elevation: 0,
+                      //shape: const ContinuousRectangleBorder(),
+                      shadowColor: PlannerService
+                          .sharedInstance.user!.lifeCategories[index].color,
+                      //color: Colors.blue[index * 100],
+                      child: Flex(direction: Axis.horizontal, children: [
+                        Column(
+                          //width: 50.0,
+                          //height: 50.0,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  PlannerService.sharedInstance.user!
+                                      .lifeCategories[index].name,
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                            // Icon(
+                            //   Icons.circle,
+                            //   color: PlannerService.sharedInstance.user!
+                            //       .lifeCategories[index].color,
+                            // ),
+                          ],
+                        )
+                      ]),
+                    ));
+              }),
+            ),
+            color: Colors.white,
+          ),
+        ),
+        Expanded(
+          child: scheduledItemsToShow.isEmpty
+              ? Container(
+                  margin: EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "No scheduled tasks. Use the calendar tab to schedule tasks.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ))
+              : ListView(
+                  //children: buildBacklogListView(),
+                  //children: currentlyShownBacklogItems,
+                  children: List.generate(scheduledItemsToShow.length, (index) {
+                    return GestureDetector(
+                        onTap: () {
+                          viewScheduledBacklogItem(index);
+                          // openViewDialog(
+                          //     PlannerService.sharedInstance.user!.backlogMap[
+                          //             scheduledItemsToShow[index]
+                          //                 .categoryName]![
+                          //         scheduledItemsToShow[index].arrayIdx],
+                          //     scheduledItemsToShow[index].arrayIdx,
+                          //     scheduledItemsToShow[index].categoryName);
+                        },
+                        child: Card(
+                          margin: EdgeInsets.all(15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          color: Colors.grey.shade100,
+                          elevation: 5,
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.circle,
+                              color: PlannerService.sharedInstance.user!
+                                      .LifeCategoriesColorMap[
+                                  scheduledItemsToShow[index].categoryName],
+                            ),
+                            title: Padding(
+                              padding: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                PlannerService
+                                    .sharedInstance
+                                    .user!
+                                    .backlogMap[scheduledItemsToShow[index]
+                                            .categoryName]![
+                                        scheduledItemsToShow[index].arrayIdx]
+                                    .description,
+                                style: const TextStyle(
+                                    // color: PlannerService.sharedInstance.user!
+                                    //     .backlogMap[key]![i].category.color,
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            // subtitle: Text(
+                            //   "Complete by " +
+                            //       DateFormat.yMMMd().format(PlannerService
+                            //           .sharedInstance
+                            //           .user!
+                            //           .backlogMap[scheduledItemsToShow[index]
+                            //                   .categoryName]![
+                            //               scheduledItemsToShow[index].arrayIdx]
+                            //           .completeBy!),
+                            //   textAlign: TextAlign.center,
+                            // ),
+                            subtitle: Text(
+                              "Scheduled for " +
+                                  DateFormat.yMMMd().format(PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[scheduledItemsToShow[index]
+                                              .categoryName]![
+                                          scheduledItemsToShow[index].arrayIdx]
+                                      .scheduledDate!),
+                              textAlign: TextAlign.center,
+                            ),
+                            // trailing: Checkbox(
+                            //   value: PlannerService
+                            //       .sharedInstance
+                            //       .user!
+                            //       .backlogMap[scheduledItemsToShow[index]
+                            //               .categoryName]![
+                            //           scheduledItemsToShow[index].arrayIdx]
+                            //       .isComplete,
+                            //   shape: const CircleBorder(),
+                            //   onChanged: (bool? value) {
+                            //     //print(value);
+                            //     setState(() {
+                            //       PlannerService
+                            //           .sharedInstance
+                            //           .user!
+                            //           .backlogMap[scheduledItemsToShow[index]
+                            //                   .categoryName]![
+                            //               scheduledItemsToShow[index].arrayIdx]
+                            //           .isComplete = value;
+
+                            //       //_value = value!;
+                            //     });
+                            //   },
+                            // ),
+                          ),
+                        ));
+                  }),
+                ),
+        )
+      ],
+    );
+  }
+
+  Widget buildBacklogListView() {
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: ToggleButtons(
+            children: const <Widget>[
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Text('Backlog'),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Text('Scheduled'),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Text('Complete'),
+              ),
+            ],
+            direction: Axis.horizontal,
+            onPressed: (int index) {
+              setState(() {
+                // The button that is tapped is set to true, and the others to false.
+                for (int i = 0; i < _selectedPageView.length; i++) {
+                  _selectedPageView[i] = i == index;
+                }
+                selectedMode = index;
+              });
+            },
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            selectedBorderColor: Theme.of(context).primaryColor,
+            selectedColor: Colors.white,
+            fillColor: Theme.of(context).primaryColor.withAlpha(100),
+            color: Theme.of(context).primaryColor,
+            isSelected: _selectedPageView,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(10),
+          child: Container(
+            height: 80.0,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: List.generate(
+                  PlannerService.sharedInstance.user!.lifeCategories.length,
+                  (int index) {
+                return GestureDetector(
+                    onTap: () {
+                      //first check if it is selected or not
+                      bool isSelected = selectedCategories.containsKey(
+                          PlannerService
+                              .sharedInstance.user!.lifeCategories[index].name);
+
+                      if (isSelected) {
+                        setState(() {
+                          selectedCategories.remove(PlannerService
+                              .sharedInstance.user!.lifeCategories[index].name);
+                        });
+                      } else {
+                        setState(() {
+                          selectedCategories.addAll({
+                            PlannerService.sharedInstance.user!
+                                    .lifeCategories[index].name:
+                                PlannerService.sharedInstance.user!
+                                    .lifeCategories[index].color
+                          });
+                        });
+                      }
+                      //updateCurrentlyShownBacklogCards();
+                      buildBacklogList();
+                    },
+                    child: Card(
+                      //margin: EdgeInsets.all(20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        side: BorderSide(
+                          width: 2.0,
+                          color: selectedCategories.containsKey(PlannerService
+                                  .sharedInstance
+                                  .user!
+                                  .lifeCategories[index]
+                                  .name)
+                              ? Colors.grey.shade700
+                              : Colors.transparent,
+                        ),
+                      ),
+                      //color: Colors.white,
+                      color: PlannerService
+                          .sharedInstance.user!.lifeCategories[index].color,
+                      elevation: 0,
+                      //shape: const ContinuousRectangleBorder(),
+                      shadowColor: PlannerService
+                          .sharedInstance.user!.lifeCategories[index].color,
+                      //color: Colors.blue[index * 100],
+                      child: Flex(direction: Axis.horizontal, children: [
+                        Column(
+                          //width: 50.0,
+                          //height: 50.0,
+                          children: [
+                            Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Text(
+                                  PlannerService.sharedInstance.user!
+                                      .lifeCategories[index].name,
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                            // Icon(
+                            //   Icons.circle,
+                            //   color: PlannerService.sharedInstance.user!
+                            //       .lifeCategories[index].color,
+                            // ),
+                          ],
+                        )
+                      ]),
+                    ));
+              }),
+            ),
+            color: Colors.white,
+          ),
+        ),
+        Expanded(
+          child: backlogItemsToShow.isEmpty
+              ? Container(
+                  margin: EdgeInsets.all(10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "No backlog items have been created yet. Click the plus sign to get started or the info button at the top to learn more.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ))
+              : ListView(
+                  //children: buildBacklogListView(),
+                  //children: currentlyShownBacklogItems,
+                  children: List.generate(backlogItemsToShow.length, (index) {
+                    return GestureDetector(
+                        onTap: () {
+                          openViewDialog(
+                              PlannerService.sharedInstance.user!.backlogMap[
+                                      backlogItemsToShow[index].categoryName]![
+                                  backlogItemsToShow[index].arrayIdx],
+                              backlogItemsToShow[index].arrayIdx,
+                              backlogItemsToShow[index].categoryName);
+                        },
+                        child: Card(
+                          margin: EdgeInsets.all(15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          color: Colors.grey.shade100,
+                          elevation: 5,
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.circle,
+                              color: PlannerService.sharedInstance.user!
+                                      .LifeCategoriesColorMap[
+                                  backlogItemsToShow[index].categoryName],
+                            ),
+                            title: Padding(
+                              padding: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                PlannerService
+                                    .sharedInstance
+                                    .user!
+                                    .backlogMap[backlogItemsToShow[index]
+                                            .categoryName]![
+                                        backlogItemsToShow[index].arrayIdx]
+                                    .description,
+                                style: const TextStyle(
+                                    // color: PlannerService.sharedInstance.user!
+                                    //     .backlogMap[key]![i].category.color,
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            subtitle: Text(
+                              "Complete by " +
+                                  DateFormat.yMMMd().format(PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[backlogItemsToShow[index]
+                                              .categoryName]![
+                                          backlogItemsToShow[index].arrayIdx]
+                                      .completeBy!),
+                              textAlign: TextAlign.center,
+                            ),
+                            trailing: Checkbox(
+                              value: PlannerService
+                                  .sharedInstance
+                                  .user!
+                                  .backlogMap[
+                                      backlogItemsToShow[index].categoryName]![
+                                      backlogItemsToShow[index].arrayIdx]
+                                  .isComplete,
+                              shape: const CircleBorder(),
+                              onChanged: (bool? value) {
+                                //print(value);
+                                setState(() {
+                                  PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[backlogItemsToShow[index]
+                                              .categoryName]![
+                                          backlogItemsToShow[index].arrayIdx]
+                                      .isComplete = value;
+
+                                  //_value = value!;
+                                });
+                              },
+                            ),
+                          ),
+                        ));
+                  }),
+                ),
+        )
+      ],
+    );
+  }
+
+  buildScheduledList() {
+    List<BacklogMapRef> tempScheduledItemsToShow = [];
+    List<BacklogMapRef> scheduledItems = [];
+    PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
+        .forEach((key, value) {
+      List<BacklogMapRef> list =
+          PlannerService.sharedInstance.user!.scheduledBacklogItemsMap[key]!;
+      for (int i = 0; i < list.length; i++) {
+        scheduledItems.add(list[i]);
+      }
+    });
+
+    //
+    selectedCategoriesScheduledView.forEach((key, value) {
+      for (int i = 0; i < scheduledItems.length; i++) {
+        if (scheduledItems[i].categoryName == key) {
+          tempScheduledItemsToShow.add(scheduledItems[i]);
+        }
+      }
+    });
+
+    tempScheduledItemsToShow.sort((backlogItem1, backlogItem2) {
+      DateTime backlogItem1Date = PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[backlogItem1.categoryName]![backlogItem1.arrayIdx]
+          .scheduledDate!;
+      DateTime backlogItem2Date = PlannerService
+          .sharedInstance
+          .user!
+          .backlogMap[backlogItem2.categoryName]![backlogItem2.arrayIdx]
+          .scheduledDate!;
+      return backlogItem1Date.compareTo(backlogItem2Date);
+    });
+
+    setState(() {
+      scheduledItemsToShow = tempScheduledItemsToShow;
+    });
+  }
+
+  buildBacklogList() {
     //new implementation idea
-    List<BacklogMapRef> backlogItemsToShow = [];
+    List<BacklogMapRef> tempbacklogItemsToShow = [];
 
     selectedCategories.forEach((key, value) {
       List<BacklogItem> list =
           PlannerService.sharedInstance.user!.backlogMap[key]!;
       for (int i = 0; i < list.length; i++) {
-        BacklogMapRef bmr = BacklogMapRef(categoryName: key, arrayIdx: i);
-        backlogItemsToShow.add(bmr);
+        if (list[i].scheduledDate == null) {
+          BacklogMapRef bmr = BacklogMapRef(categoryName: key, arrayIdx: i);
+          tempbacklogItemsToShow.add(bmr);
+        }
       }
     });
 
-    backlogItemsToShow.sort((backlogItem1, backlogItem2) {
+    tempbacklogItemsToShow.sort((backlogItem1, backlogItem2) {
       DateTime backlogItem1Date = PlannerService
           .sharedInstance
           .user!
@@ -368,88 +968,8 @@ class _BacklogPageState extends State<BacklogPage> {
       return backlogItem1Date.compareTo(backlogItem2Date);
     });
 
-    List<Widget> backlogItemCardsToShow = [];
-
-    for (int i = 0; i < backlogItemsToShow.length; i++) {
-      Widget child = GestureDetector(
-          onTap: () {
-            openViewDialog(
-                PlannerService.sharedInstance.user!.backlogMap[
-                    backlogItemsToShow[i]
-                        .categoryName]![backlogItemsToShow[i].arrayIdx],
-                backlogItemsToShow[i].arrayIdx,
-                backlogItemsToShow[i].categoryName);
-          },
-          child: Card(
-            margin: EdgeInsets.all(15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            color: Colors.grey.shade100,
-            elevation: 5,
-            child: ListTile(
-              leading: Icon(
-                Icons.circle,
-                color: PlannerService.sharedInstance.user!
-                    .LifeCategoriesColorMap[backlogItemsToShow[i].categoryName],
-              ),
-              title: Padding(
-                padding: EdgeInsets.only(bottom: 5),
-                child: Text(
-                  PlannerService
-                      .sharedInstance
-                      .user!
-                      .backlogMap[backlogItemsToShow[i].categoryName]![
-                          backlogItemsToShow[i].arrayIdx]
-                      .description,
-                  style: const TextStyle(
-                      // color: PlannerService.sharedInstance.user!
-                      //     .backlogMap[key]![i].category.color,
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              subtitle: Text(
-                "Complete by " +
-                    DateFormat.yMMMd().format(PlannerService
-                        .sharedInstance
-                        .user!
-                        .backlogMap[backlogItemsToShow[i].categoryName]![
-                            backlogItemsToShow[i].arrayIdx]
-                        .completeBy!),
-                textAlign: TextAlign.center,
-              ),
-              trailing: Checkbox(
-                value: PlannerService
-                    .sharedInstance
-                    .user!
-                    .backlogMap[backlogItemsToShow[i].categoryName]![
-                        backlogItemsToShow[i].arrayIdx]
-                    .isComplete,
-                shape: const CircleBorder(),
-                onChanged: (bool? value) {
-                  //print(value);
-                  setState(() {
-                    PlannerService
-                        .sharedInstance
-                        .user!
-                        .backlogMap[backlogItemsToShow[i].categoryName]![
-                            backlogItemsToShow[i].arrayIdx]
-                        .isComplete = value;
-
-                    //_value = value!;
-                  });
-                },
-              ),
-            ),
-          ));
-      backlogItemCardsToShow.add(child);
-    }
     setState(() {
-      currentlyShownBacklogItems = backlogItemCardsToShow;
+      backlogItemsToShow = tempbacklogItemsToShow;
     });
   }
 
@@ -473,7 +993,8 @@ class _BacklogPageState extends State<BacklogPage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    buildBacklogListView();
+    buildBacklogList();
+    buildScheduledList();
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -481,7 +1002,7 @@ class _BacklogPageState extends State<BacklogPage> {
         // the App.build method, and use it to set our appbar title.
         backgroundColor: Colors.transparent,
         title: Text(
-          "Backlog",
+          "To Do",
           style: GoogleFonts.roboto(
             textStyle: const TextStyle(
               color: Colors.white,
@@ -541,166 +1062,23 @@ class _BacklogPageState extends State<BacklogPage> {
                   fit: BoxFit.fill)),
         ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: ToggleButtons(
-              children: const <Widget>[
-                Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Text('This Week'),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Text('Sometime Later'),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Text('All'),
-                ),
-              ],
-              direction: Axis.horizontal,
-              onPressed: (int index) {
-                setState(() {
-                  // The button that is tapped is set to true, and the others to false.
-                  for (int i = 0; i < _selectedPageView.length; i++) {
-                    _selectedPageView[i] = i == index;
-                  }
-                });
-              },
-              borderRadius: const BorderRadius.all(Radius.circular(8)),
-              selectedBorderColor: Theme.of(context).primaryColor,
-              selectedColor: Colors.white,
-              fillColor: Theme.of(context).primaryColor.withAlpha(100),
-              color: Theme.of(context).primaryColor,
-              isSelected: _selectedPageView,
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(10),
-            child: Container(
-              height: 80.0,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: List.generate(
-                    PlannerService.sharedInstance.user!.lifeCategories.length,
-                    (int index) {
-                  return GestureDetector(
-                      onTap: () {
-                        //first check if it is selected or not
-                        bool isSelected = selectedCategories.containsKey(
-                            PlannerService.sharedInstance.user!
-                                .lifeCategories[index].name);
+      body: selectedMode == 0
+          ? buildBacklogListView()
+          : selectedMode == 1
+              ? buildScheduledListView()
+              : buildCompletedListView(),
 
-                        if (isSelected) {
-                          setState(() {
-                            selectedCategories.remove(PlannerService
-                                .sharedInstance
-                                .user!
-                                .lifeCategories[index]
-                                .name);
-                          });
-                        } else {
-                          setState(() {
-                            selectedCategories.addAll({
-                              PlannerService.sharedInstance.user!
-                                      .lifeCategories[index].name:
-                                  PlannerService.sharedInstance.user!
-                                      .lifeCategories[index].color
-                            });
-                          });
-                        }
-                        //updateCurrentlyShownBacklogCards();
-                        buildBacklogListView();
-                      },
-                      child: Card(
-                        //margin: EdgeInsets.all(20),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(
-                            width: 2.0,
-                            color: selectedCategories.containsKey(PlannerService
-                                    .sharedInstance
-                                    .user!
-                                    .lifeCategories[index]
-                                    .name)
-                                ? Colors.grey.shade700
-                                : Colors.transparent,
-                          ),
-                        ),
-                        //color: Colors.white,
-                        color: PlannerService
-                            .sharedInstance.user!.lifeCategories[index].color,
-                        elevation: 0,
-                        //shape: const ContinuousRectangleBorder(),
-                        shadowColor: PlannerService
-                            .sharedInstance.user!.lifeCategories[index].color,
-                        //color: Colors.blue[index * 100],
-                        child: Flex(direction: Axis.horizontal, children: [
-                          Column(
-                            //width: 50.0,
-                            //height: 50.0,
-                            children: [
-                              Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text(
-                                    PlannerService.sharedInstance.user!
-                                        .lifeCategories[index].name,
-                                    style: TextStyle(color: Colors.white),
-                                  )),
-                              // Icon(
-                              //   Icons.circle,
-                              //   color: PlannerService.sharedInstance.user!
-                              //       .lifeCategories[index].color,
-                              // ),
-                            ],
-                          )
-                        ]),
-                      ));
-                }),
+      floatingActionButton: selectedMode == 0
+          ? FloatingActionButton(
+              onPressed: _openNewBacklogItemPage,
+              tooltip: 'Create new task.',
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
               ),
-              color: Colors.white,
-            ),
-          ),
-          Expanded(
-            child:
-                PlannerService.sharedInstance.user!.backlogMap.values.isEmpty ||
-                        (PlannerService.sharedInstance.user!.backlogMap.keys
-                                    .length ==
-                                1 &&
-                            PlannerService.sharedInstance.user!.backlogMap
-                                    .entries.first.value.length ==
-                                0)
-                    ? Container(
-                        margin: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              "No backlog items have been created yet. Click the plus sign to get started or the info button at the top to learn more.",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ],
-                        ))
-                    : ListView(
-                        //children: buildBacklogListView(),
-                        children: currentlyShownBacklogItems,
-                      ),
-          )
-        ],
-      ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openNewBacklogItemPage,
-        tooltip: 'Create new task.',
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+              backgroundColor: Theme.of(context).primaryColor,
+            )
+          : Container(), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
