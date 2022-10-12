@@ -51,6 +51,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
   bool doneBtnDisabled = true;
   late var currChosenCategory = PlannerService
       .sharedInstance.user!.backlogMap[widget.category]![widget.id].category;
+  late var chosenStatus = PlannerService
+      .sharedInstance.user!.backlogMap[widget.category]![widget.id].status;
 
   @override
   void initState() {
@@ -95,7 +97,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
       'category': currChosenCategory.id,
       'isComplete': false,
       'location': locationTxtController.text,
-      'notes': notesTxtController.text
+      'notes': notesTxtController.text,
+      'status': chosenStatus
     };
     String bodyF = jsonEncode(body);
     //print(bodyF);
@@ -124,6 +127,8 @@ class _EditTaskPageState extends State<EditTaskPage> {
           .user!
           .backlogMap[widget.category]![widget.id]
           .notes = notesTxtController.text;
+      PlannerService.sharedInstance.user!
+          .backlogMap[widget.category]![widget.id].status = chosenStatus;
 
       // if (currChosenCategory !=
       //     PlannerService.sharedInstance.user!
@@ -278,6 +283,62 @@ class _EditTaskPageState extends State<EditTaskPage> {
                             },
                           ),
                           padding: EdgeInsets.all(20),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          child: DropdownButton(
+                            //value: PlannerService.sharedInstance.user.theme.themeId,
+                            value: chosenStatus,
+                            items: [
+                              DropdownMenuItem(
+                                //value: "pink",
+                                value: "notStarted",
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: Colors.grey,
+                                    ),
+                                    Text("Not Started"),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                //value: "pink",
+                                value: "started",
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: Colors.yellow,
+                                    ),
+                                    Text("Started"),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                //value: "pink",
+                                value: "complete",
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: Colors.green,
+                                    ),
+                                    Text("Complete"),
+                                  ],
+                                ),
+                              ),
+                            ],
+
+                            // onChanged: (String? newValue) {
+                            onChanged: (String? newValue) {
+                              print(newValue);
+                              setState(() {
+                                chosenStatus = newValue!;
+                              });
+                            },
+                          ),
                         ),
                         Container(
                           child: Column(

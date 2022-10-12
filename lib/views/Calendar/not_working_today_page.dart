@@ -362,7 +362,6 @@ class _TodayPageState extends State<TodayPage> {
                         null;
                     currentTaskSet = false;
                   });
-                  Navigator.of(context).pop();
 
                   //make call to server
                   var body = {
@@ -405,6 +404,8 @@ class _TodayPageState extends State<TodayPage> {
                           );
                         });
                   }
+
+                  Navigator.of(context).pop();
                 },
               ),
               TextButton(
@@ -450,7 +451,6 @@ class _TodayPageState extends State<TodayPage> {
                         null;
                     currentTaskSet = false;
                   });
-                  Navigator.of(context).pop();
                   //make call to server
                   var body = {
                     'taskId': PlannerService
@@ -492,6 +492,7 @@ class _TodayPageState extends State<TodayPage> {
                           );
                         });
                   }
+                  Navigator.of(context).pop();
                 },
               ),
               TextButton(
@@ -537,7 +538,6 @@ class _TodayPageState extends State<TodayPage> {
                       null;
                   currentTaskSet = false;
                 });
-                Navigator.of(context).pop();
                 //make call to server
                 var body = {
                   'taskId': PlannerService
@@ -578,6 +578,8 @@ class _TodayPageState extends State<TodayPage> {
                         );
                       });
                 }
+
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
@@ -1753,27 +1755,31 @@ class _TodayPageState extends State<TodayPage> {
                                               .arrayIdx]
                                       .status ==
                                   "complete"
-                              ? null
+                              ? Container()
                               : Checkbox(
                                   value: PlannerService
-                                          .sharedInstance
-                                          .user!
-                                          .backlogMap[PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .scheduledBacklogItemsMap[
-                                                      thisDay]![index]
-                                                  .categoryName]![
-                                              PlannerService
-                                                  .sharedInstance
-                                                  .user!
-                                                  .scheduledBacklogItemsMap[
-                                                      thisDay]![index]
-                                                  .arrayIdx]
-                                          .status ==
-                                      "complete",
+                                              .sharedInstance
+                                              .user!
+                                              .backlogMap[PlannerService
+                                                      .sharedInstance
+                                                      .user!
+                                                      .scheduledBacklogItemsMap[
+                                                          thisDay]![index]
+                                                      .categoryName]![
+                                                  PlannerService
+                                                      .sharedInstance
+                                                      .user!
+                                                      .scheduledBacklogItemsMap[
+                                                          thisDay]![index]
+                                                      .arrayIdx]
+                                              .status ==
+                                          "complete"
+                                      ? true
+                                      : false,
                                   shape: const CircleBorder(),
                                   onChanged: (bool? value) async {
+                                    //print(value);
+
                                     //make call to server
                                     var body = {
                                       'taskId': PlannerService
@@ -1862,6 +1868,8 @@ class _TodayPageState extends State<TodayPage> {
                                             );
                                           });
                                     }
+
+                                    //_value = value!;
                                   },
                                 ),
                         ),

@@ -583,7 +583,8 @@ class _LoginPageState extends State<LoginPage> {
                         location: decodedBody[i]["location"],
                         isComplete: isComplete,
                         category:
-                            lifeCategoriesMap[decodedBody[i]["category"]]!);
+                            lifeCategoriesMap[decodedBody[i]["category"]]!,
+                        status: decodedBody[i]["status"]);
                     backlogItems.add(backlogItem);
                     //backlogMap[backlogItem.category.name]!.add(backlogItem);
                     BacklogMapRef bmr;

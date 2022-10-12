@@ -589,7 +589,27 @@ class _BacklogPageState extends State<BacklogPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          color: Colors.grey.shade100,
+                          color: PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[scheduledItemsToShow[index]
+                                              .categoryName]![
+                                          scheduledItemsToShow[index].arrayIdx]
+                                      .status ==
+                                  "notStarted"
+                              ? Colors.grey.shade100
+                              : (PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .backlogMap[
+                                              scheduledItemsToShow[index]
+                                                  .categoryName]![
+                                              scheduledItemsToShow[index]
+                                                  .arrayIdx]
+                                          .status ==
+                                      "complete"
+                                  ? Colors.green.shade200
+                                  : Colors.yellow.shade200),
                           elevation: 5,
                           child: ListTile(
                             leading: Icon(
@@ -826,7 +846,26 @@ class _BacklogPageState extends State<BacklogPage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          color: Colors.grey.shade100,
+                          color: PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[backlogItemsToShow[index]
+                                              .categoryName]![
+                                          backlogItemsToShow[index].arrayIdx]
+                                      .status ==
+                                  "notStarted"
+                              ? Colors.grey.shade100
+                              : (PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .backlogMap[backlogItemsToShow[index]
+                                                  .categoryName]![
+                                              backlogItemsToShow[index]
+                                                  .arrayIdx]
+                                          .status ==
+                                      "complete"
+                                  ? Colors.green.shade200
+                                  : Colors.yellow.shade200),
                           elevation: 5,
                           child: ListTile(
                             leading: Icon(
@@ -868,14 +907,79 @@ class _BacklogPageState extends State<BacklogPage> {
                             ),
                             trailing: Checkbox(
                               value: PlannerService
-                                  .sharedInstance
-                                  .user!
-                                  .backlogMap[
-                                      backlogItemsToShow[index].categoryName]![
-                                      backlogItemsToShow[index].arrayIdx]
-                                  .isComplete,
+                                          .sharedInstance
+                                          .user!
+                                          .backlogMap[backlogItemsToShow[index]
+                                                  .categoryName]![
+                                              backlogItemsToShow[index]
+                                                  .arrayIdx]
+                                          .status ==
+                                      "complete"
+                                  ? true
+                                  : false,
                               shape: const CircleBorder(),
-                              onChanged: (bool? value) {
+                              onChanged: (bool? value) async {
+                                //make call to server
+                                var body = {
+                                  'taskId': PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[backlogItemsToShow[index]
+                                              .categoryName]![
+                                          backlogItemsToShow[index].arrayIdx]
+                                      .id,
+                                  'status': "complete"
+                                };
+                                String bodyF = jsonEncode(body);
+                                //print(bodyF);
+
+                                var url = Uri.parse(
+                                    PlannerService.sharedInstance.serverUrl +
+                                        '/backlog/status');
+                                var response = await http.patch(url,
+                                    headers: {
+                                      "Content-Type": "application/json"
+                                    },
+                                    body: bodyF);
+                                //print('Response status: ${response.statusCode}');
+                                //print('Response body: ${response.body}');
+
+                                if (response.statusCode == 200) {
+                                  setState(() {
+                                    PlannerService
+                                        .sharedInstance
+                                        .user!
+                                        .backlogMap[backlogItemsToShow[index]
+                                                .categoryName]![
+                                            backlogItemsToShow[index].arrayIdx]
+                                        .isComplete = value;
+                                    PlannerService
+                                        .sharedInstance
+                                        .user!
+                                        .backlogMap[backlogItemsToShow[index]
+                                                .categoryName]![
+                                            backlogItemsToShow[index].arrayIdx]
+                                        .status = "complete";
+                                  });
+                                } else {
+                                  //500 error, show an alert
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          title: Text(
+                                              'Oops! Looks like something went wrong. Please try again.'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text('OK'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            )
+                                          ],
+                                        );
+                                      });
+                                }
                                 //print(value);
                                 setState(() {
                                   PlannerService
@@ -947,7 +1051,7 @@ class _BacklogPageState extends State<BacklogPage> {
       List<BacklogItem> list =
           PlannerService.sharedInstance.user!.backlogMap[key]!;
       for (int i = 0; i < list.length; i++) {
-        if (list[i].scheduledDate == null) {
+        if (list[i].scheduledDate == null && list[i].status != "complete") {
           BacklogMapRef bmr = BacklogMapRef(categoryName: key, arrayIdx: i);
           tempbacklogItemsToShow.add(bmr);
         }

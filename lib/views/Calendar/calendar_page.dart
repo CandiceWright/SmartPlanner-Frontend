@@ -1289,48 +1289,48 @@ class _CalendarPageState extends State<CalendarPage> {
                               textAlign: TextAlign.center,
                             ),
                           ),
-                          trailing: Checkbox(
-                            value: PlannerService
-                                .sharedInstance
-                                .user!
-                                .backlogMap[PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .scheduledBacklogItemsMap[
-                                            _selectedDate]![index]
-                                        .categoryName]![
-                                    PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .scheduledBacklogItemsMap[
-                                            _selectedDate]![index]
-                                        .arrayIdx]
-                                .isComplete,
-                            shape: const CircleBorder(),
-                            onChanged: (bool? value) {
-                              //print(value);
-                              setState(() {
-                                PlannerService
-                                    .sharedInstance
-                                    .user!
-                                    .backlogMap[PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .scheduledBacklogItemsMap[
-                                                _selectedDate]![index]
-                                            .categoryName]![
-                                        PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .scheduledBacklogItemsMap[
-                                                _selectedDate]![index]
-                                            .arrayIdx]
-                                    .isComplete = value;
+                          // trailing: Checkbox(
+                          //   value: PlannerService
+                          //       .sharedInstance
+                          //       .user!
+                          //       .backlogMap[PlannerService
+                          //               .sharedInstance
+                          //               .user!
+                          //               .scheduledBacklogItemsMap[
+                          //                   _selectedDate]![index]
+                          //               .categoryName]![
+                          //           PlannerService
+                          //               .sharedInstance
+                          //               .user!
+                          //               .scheduledBacklogItemsMap[
+                          //                   _selectedDate]![index]
+                          //               .arrayIdx]
+                          //       .isComplete,
+                          //   shape: const CircleBorder(),
+                          //   onChanged: (bool? value) {
+                          //     //print(value);
+                          //     setState(() {
+                          //       PlannerService
+                          //           .sharedInstance
+                          //           .user!
+                          //           .backlogMap[PlannerService
+                          //                   .sharedInstance
+                          //                   .user!
+                          //                   .scheduledBacklogItemsMap[
+                          //                       _selectedDate]![index]
+                          //                   .categoryName]![
+                          //               PlannerService
+                          //                   .sharedInstance
+                          //                   .user!
+                          //                   .scheduledBacklogItemsMap[
+                          //                       _selectedDate]![index]
+                          //                   .arrayIdx]
+                          //           .isComplete = value;
 
-                                //_value = value!;
-                              });
-                            },
-                          ),
+                          //       //_value = value!;
+                          //     });
+                          //   },
+                          // ),
                         ),
                       ),
                     );

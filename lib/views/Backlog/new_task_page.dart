@@ -41,6 +41,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   bool doneBtnDisabled = true;
   var currChosenCategory =
       PlannerService.sharedInstance.user!.lifeCategories[0];
+  String chosenStatus = "notStarted";
 
   @override
   void initState() {
@@ -75,7 +76,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
       'category': currChosenCategory.id,
       'isComplete': false,
       'location': locationTxtController.text,
-      'notes': notesTxtController.text
+      'notes': notesTxtController.text,
+      'status': chosenStatus
     };
     String bodyF = jsonEncode(body);
     //print(bodyF);
@@ -312,6 +314,49 @@ class _NewTaskPageState extends State<NewTaskPage> {
                             },
                           ),
                           padding: EdgeInsets.all(20),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          child: DropdownButton(
+                            //value: PlannerService.sharedInstance.user.theme.themeId,
+                            value: chosenStatus,
+                            items: [
+                              DropdownMenuItem(
+                                //value: "pink",
+                                value: "notStarted",
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: Colors.grey,
+                                    ),
+                                    Text("Not Started"),
+                                  ],
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                //value: "pink",
+                                value: "started",
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle,
+                                      color: Colors.yellow,
+                                    ),
+                                    Text("Started"),
+                                  ],
+                                ),
+                              ),
+                            ],
+
+                            // onChanged: (String? newValue) {
+                            onChanged: (String? newValue) {
+                              print(newValue);
+                              setState(() {
+                                chosenStatus = newValue!;
+                              });
+                            },
+                          ),
                         ),
                         Container(
                           child: Column(

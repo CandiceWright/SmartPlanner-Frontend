@@ -12,7 +12,7 @@ class BacklogItem {
   String location;
   String notes;
   Event? calendarItemRef;
-  String? status = "notStarted"; //notStarted, started, complete
+  String? status; //notStarted, started, complete
 
   BacklogItem(
       {this.id,
@@ -20,6 +20,7 @@ class BacklogItem {
       this.calendarItemRef,
       required this.description,
       this.completeBy,
+      this.status,
       this.isComplete,
       required this.category,
       this.location = "",
