@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
+import 'package:badges/badges.dart';
 
 class BacklogPage extends StatefulWidget {
   const BacklogPage({Key? key}) : super(key: key);
@@ -46,6 +47,7 @@ class _BacklogPageState extends State<BacklogPage> {
       PlannerService.sharedInstance.user!.LifeCategoriesColorMap;
   final List<bool> _selectedPageView = <bool>[true, false, false];
   int selectedMode = 0;
+  bool showBadge = false;
 
   @override
   void initState() {
@@ -360,18 +362,6 @@ class _BacklogPageState extends State<BacklogPage> {
               TextButton(
                 child: const Text('Move to Backlog'),
                 onPressed: () async {
-                  setState(() {
-                    PlannerService
-                        .sharedInstance
-                        .user!
-                        .backlogMap[completedItemsToShow[index].categoryName]![
-                            completedItemsToShow[index].arrayIdx]
-                        .status = "notStarted";
-
-                    completedItemsToShow.removeAt(index);
-                  });
-                  _updateBacklogList();
-
                   // Navigator.of(context).pop();
                   //make call to server
                   var body = {
@@ -395,6 +385,19 @@ class _BacklogPageState extends State<BacklogPage> {
                   //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
+                    print("status update successful when moving to backlog");
+                    setState(() {
+                      PlannerService
+                          .sharedInstance
+                          .user!
+                          .backlogMap[
+                              completedItemsToShow[index].categoryName]![
+                              completedItemsToShow[index].arrayIdx]
+                          .status = "notStarted";
+
+                      completedItemsToShow.removeAt(index);
+                    });
+                    _updateBacklogList();
                     Navigator.of(context).pop();
                   } else {
                     Navigator.of(context).pop();
@@ -688,7 +691,7 @@ class _BacklogPageState extends State<BacklogPage> {
         Padding(
           padding: EdgeInsets.all(10),
           child: ToggleButtons(
-            children: const <Widget>[
+            children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(5),
                 child: Text('Backlog'),
@@ -699,7 +702,7 @@ class _BacklogPageState extends State<BacklogPage> {
               ),
               Padding(
                 padding: EdgeInsets.all(5),
-                child: Text('Complete'),
+                child: Text("Complete"),
               ),
             ],
             direction: Axis.horizontal,
@@ -1174,40 +1177,49 @@ class _BacklogPageState extends State<BacklogPage> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.all(10),
-          child: ToggleButtons(
-            children: const <Widget>[
-              Padding(
-                padding: EdgeInsets.all(5),
-                child: Text('Backlog'),
+            padding: EdgeInsets.all(10),
+            child: Badge(
+              badgeColor: Theme.of(context).primaryColor,
+              toAnimate: true,
+              position: BadgePosition.topEnd(),
+              badgeContent: Icon(
+                Icons.plus_one_rounded,
+                color: Colors.white,
               ),
-              Padding(
-                padding: EdgeInsets.all(5),
-                child: Text('Scheduled'),
+              child: ToggleButtons(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Text('Backlog'),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Text('Scheduled'),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(5),
+                    child: Text('Complete'),
+                  ),
+                ],
+                direction: Axis.horizontal,
+                onPressed: (int index) {
+                  setState(() {
+                    // The button that is tapped is set to true, and the others to false.
+                    for (int i = 0; i < _selectedPageView.length; i++) {
+                      _selectedPageView[i] = i == index;
+                    }
+                    selectedMode = index;
+                  });
+                },
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                selectedBorderColor: Theme.of(context).primaryColor,
+                selectedColor: Colors.white,
+                fillColor: Theme.of(context).primaryColor.withAlpha(100),
+                color: Theme.of(context).primaryColor,
+                isSelected: _selectedPageView,
               ),
-              Padding(
-                padding: EdgeInsets.all(5),
-                child: Text('Complete'),
-              ),
-            ],
-            direction: Axis.horizontal,
-            onPressed: (int index) {
-              setState(() {
-                // The button that is tapped is set to true, and the others to false.
-                for (int i = 0; i < _selectedPageView.length; i++) {
-                  _selectedPageView[i] = i == index;
-                }
-                selectedMode = index;
-              });
-            },
-            borderRadius: const BorderRadius.all(Radius.circular(8)),
-            selectedBorderColor: Theme.of(context).primaryColor,
-            selectedColor: Colors.white,
-            fillColor: Theme.of(context).primaryColor.withAlpha(100),
-            color: Theme.of(context).primaryColor,
-            isSelected: _selectedPageView,
-          ),
-        ),
+              showBadge: showBadge,
+            )),
         Expanded(
           child: backlogItemsToShow.isEmpty
               ? Container(
@@ -1355,6 +1367,13 @@ class _BacklogPageState extends State<BacklogPage> {
                                             backlogItemsToShow[index].arrayIdx]
                                         .status = "complete";
                                     HapticFeedback.mediumImpact();
+                                    showBadge = true;
+                                  });
+                                  await Future.delayed(
+                                      const Duration(seconds: 1), () {
+                                    setState(() {
+                                      showBadge = false;
+                                    });
                                   });
                                   _updateBacklogList();
                                 } else {
@@ -1377,17 +1396,17 @@ class _BacklogPageState extends State<BacklogPage> {
                                       });
                                 }
                                 //print(value);
-                                setState(() {
-                                  PlannerService
-                                      .sharedInstance
-                                      .user!
-                                      .backlogMap[backlogItemsToShow[index]
-                                              .categoryName]![
-                                          backlogItemsToShow[index].arrayIdx]
-                                      .isComplete = value;
+                                // setState(() {
+                                //   PlannerService
+                                //       .sharedInstance
+                                //       .user!
+                                //       .backlogMap[backlogItemsToShow[index]
+                                //               .categoryName]![
+                                //           backlogItemsToShow[index].arrayIdx]
+                                //       .isComplete = value;
 
-                                  //_value = value!;
-                                });
+                                //   //_value = value!;
+                                // });
                               },
                             ),
                           ),
