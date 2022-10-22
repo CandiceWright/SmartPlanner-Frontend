@@ -530,16 +530,26 @@ class _BacklogPageState extends State<BacklogPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 backlogItem.completeBy != null
-                    ? Text(
-                        "Deadline " +
-                            DateFormat.yMMMd().format(backlogItem.completeBy!),
-                        style: const TextStyle(
-                          // fontWeight: FontWeight.w400,
-                          fontSize: 14,
+                    ? Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Text(
+                          "Deadline " +
+                              DateFormat.yMMMd()
+                                  .format(backlogItem.completeBy!),
+                          style: const TextStyle(
+                            // fontWeight: FontWeight.w400,
+                            fontSize: 14,
+                          ),
                         ),
                       )
-                    : Text("No deadline"),
-                Text(backlogItem.notes)
+                    : const Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Text("No deadline"),
+                      ),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Text(backlogItem.notes),
+                ),
               ],
             ),
             //),
@@ -1325,6 +1335,30 @@ class _BacklogPageState extends State<BacklogPage> {
                                   : false,
                               shape: const CircleBorder(),
                               onChanged: (bool? value) async {
+                                setState(() {
+                                  PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[backlogItemsToShow[index]
+                                              .categoryName]![
+                                          backlogItemsToShow[index].arrayIdx]
+                                      .isComplete = value;
+                                  PlannerService
+                                      .sharedInstance
+                                      .user!
+                                      .backlogMap[backlogItemsToShow[index]
+                                              .categoryName]![
+                                          backlogItemsToShow[index].arrayIdx]
+                                      .status = "complete";
+                                  HapticFeedback.mediumImpact();
+                                  showBadge = true;
+                                });
+                                await Future.delayed(const Duration(seconds: 1),
+                                    () {
+                                  setState(() {
+                                    showBadge = false;
+                                  });
+                                });
                                 //make call to server
                                 var body = {
                                   'taskId': PlannerService
@@ -1351,30 +1385,30 @@ class _BacklogPageState extends State<BacklogPage> {
                                 //print('Response body: ${response.body}');
 
                                 if (response.statusCode == 200) {
-                                  setState(() {
-                                    PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .backlogMap[backlogItemsToShow[index]
-                                                .categoryName]![
-                                            backlogItemsToShow[index].arrayIdx]
-                                        .isComplete = value;
-                                    PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .backlogMap[backlogItemsToShow[index]
-                                                .categoryName]![
-                                            backlogItemsToShow[index].arrayIdx]
-                                        .status = "complete";
-                                    HapticFeedback.mediumImpact();
-                                    showBadge = true;
-                                  });
-                                  await Future.delayed(
-                                      const Duration(seconds: 1), () {
-                                    setState(() {
-                                      showBadge = false;
-                                    });
-                                  });
+                                  // setState(() {
+                                  //   PlannerService
+                                  //       .sharedInstance
+                                  //       .user!
+                                  //       .backlogMap[backlogItemsToShow[index]
+                                  //               .categoryName]![
+                                  //           backlogItemsToShow[index].arrayIdx]
+                                  //       .isComplete = value;
+                                  //   PlannerService
+                                  //       .sharedInstance
+                                  //       .user!
+                                  //       .backlogMap[backlogItemsToShow[index]
+                                  //               .categoryName]![
+                                  //           backlogItemsToShow[index].arrayIdx]
+                                  //       .status = "complete";
+                                  //   HapticFeedback.mediumImpact();
+                                  //   showBadge = true;
+                                  // });
+                                  // await Future.delayed(
+                                  //     const Duration(seconds: 1), () {
+                                  //   setState(() {
+                                  //     showBadge = false;
+                                  //   });
+                                  // });
                                   _updateBacklogList();
                                 } else {
                                   //500 error, show an alert

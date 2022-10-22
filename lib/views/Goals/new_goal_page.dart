@@ -334,6 +334,7 @@ class _NewGoalPageState extends State<NewGoalPage> {
             ],
           ),
           body: Card(
+            color: Colors.white,
             child: Container(
               child: ListView(
                 children: [
@@ -460,7 +461,10 @@ class _NewGoalPageState extends State<NewGoalPage> {
                                             );
                                           });
                                     },
-                                    icon: Icon(Icons.help),
+                                    icon: const Icon(
+                                      Icons.info,
+                                      color: Colors.grey,
+                                    ),
                                   )
                                 ],
                               ),

@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:practice_planner/main.dart';
 import 'package:practice_planner/models/life_category.dart';
+import 'package:practice_planner/services/local_storage_service.dart';
 import 'package:practice_planner/services/planner_service.dart';
 import 'package:practice_planner/views/Login/login.dart';
 import '../../Themes/app_themes.dart';
@@ -40,6 +43,7 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
   int themeId = 0;
   int spaceThemeId = 0;
   MaterialColor goBtnColor = AppThemes().pinkPrimarySwatch;
+  final LocalStorage storage = LocalStorage('planner_app');
 
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   var questionIndex = 0;
@@ -76,76 +80,79 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
         //print(decodedBody);
         var id = decodedBody["insertId"];
 
-//save spacetheme choice
-        var url =
-            Uri.parse(PlannerService.sharedInstance.serverUrl + '/spacetheme/');
-        //var response = await http.post(url);
-        String image;
-        if (spaceThemeId == 0) {
-          image = 'assets/images/black_stars_background.jpeg';
-        } else {
-          image = 'assets/images/login_screens_background.png';
-        }
-        var body = {'image': image, 'email': widget.email};
-        String bodyF = jsonEncode(body);
-        var response3 = await http.patch(url,
-            headers: {"Content-Type": "application/json"}, body: bodyF);
+// //save spacetheme choice
+//         var url =
+//             Uri.parse(PlannerService.sharedInstance.serverUrl + '/spacetheme/');
+//         //var response = await http.post(url);
+//         String image;
+//         if (spaceThemeId == 0) {
+//           image = 'assets/images/black_stars_background.jpeg';
+//         } else {
+//           image = 'assets/images/login_screens_background.png';
+//         }
+//         var body = {'image': image, 'email': widget.email};
+//         String bodyF = jsonEncode(body);
+//         var response3 = await http.patch(url,
+//             headers: {"Content-Type": "application/json"}, body: bodyF);
 
-        if (response3.statusCode == 200) {
-          var user = User(
-              id: widget.userId,
-              receipt: "",
-              planitName: widget.planitName,
-              email: widget.email,
-              profileImage: "assets/images/profile_pic_icon.png",
-              themeId: themeId,
-              spaceImage: image,
-              //theme: PinkTheme(),
-              didStartTomorrowPlanning: false,
-              lifeCategories: [
-                LifeCategory(id, "other", Colors.grey),
-              ]);
-          PlannerService.sharedInstance.user = user;
-          PlannerService.sharedInstance.user!.LifeCategoriesColorMap["other"] =
-              Colors.grey;
-          PlannerService.sharedInstance.user!.backlogMap.addAll({"other": []});
+//         if (response3.statusCode == 200) {
+        var user = User(
+            id: widget.userId,
+            receipt: "",
+            planitName: widget.planitName,
+            email: widget.email,
+            profileImage: "assets/images/profile_pic_icon.png",
+            themeId: themeId,
+            spaceImage: "assets/images/black_stars_background.jpeg",
+            //theme: PinkTheme(),
+            didStartTomorrowPlanning: false,
+            lifeCategories: [
+              LifeCategory(id, "other", Colors.grey),
+            ]);
+        PlannerService.sharedInstance.user = user;
+        PlannerService.sharedInstance.user!.LifeCategoriesColorMap["other"] =
+            Colors.grey;
+        PlannerService.sharedInstance.user!.backlogMap.addAll({"other": []});
 
-          // Navigator.of(context).push(MaterialPageRoute(
-          //   builder: (context) {
-          //     return const EnterPlannerVideoPage(
-          //       fromPage: "signup",
-          //     );
-          //   },
-          // ));
+        // Navigator.of(context).push(MaterialPageRoute(
+        //   builder: (context) {
+        //     return const EnterPlannerVideoPage(
+        //       fromPage: "signup",
+        //     );
+        //   },
+        // ));
 
-          //get subscription products
-          List<ProductDetails> productDetails =
-              await PlannerService.subscriptionProvider.fetchSubscriptions();
+        await storage.setItem('login', true);
+        await storage.setItem('user', widget.userId);
 
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) {
-              return SubscriptionPage(
-                  fromPage: 'signup', products: productDetails);
-            },
-          ));
-        } else {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text(
-                      'Oops! Looks like something went wrong. Please try again.'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
-        }
+        //get subscription products
+        List<ProductDetails> productDetails =
+            await PlannerService.subscriptionProvider.fetchSubscriptions();
+
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) {
+            return SubscriptionPage(
+                fromPage: 'signup', products: productDetails);
+          },
+        ));
+        // } else {
+        //   showDialog(
+        //       context: context,
+        //       builder: (context) {
+        //         return AlertDialog(
+        //           title: const Text(
+        //               'Oops! Looks like something went wrong. Please try again.'),
+        //           actions: <Widget>[
+        //             TextButton(
+        //               child: Text('OK'),
+        //               onPressed: () {
+        //                 Navigator.of(context).pop();
+        //               },
+        //             )
+        //           ],
+        //         );
+        //       });
+        // }
       } else {
         //500 error, show an alert (something wrong creating category)
         showDialog(
@@ -212,11 +219,22 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
             //   "assets/images/planit_logo.png",
             // ),
           ),
-          body: ListView(
+          body: Column(
             children: [
-              Container(
-                child: Column(
-                  children: [
+              //Container(
+              //child: Column(
+              //children: [
+              Expanded(
+                child: Padding(
+                  child: Image.asset(
+                    "assets/images/text_logo.png",
+                  ),
+                  padding: EdgeInsets.all(10),
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  child: Column(children: [
                     Padding(
                       padding: EdgeInsets.all(10),
                       child: const Text(
@@ -290,65 +308,13 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
                         ),
                       ],
                     )
-                  ],
+                  ]),
                 ),
               ),
-              Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: const Text(
-                        "Choose your space theme",
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                spaceThemeId = 0;
-                              });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.white,
-                                radius: spaceThemeId == 0 ? 30.0 : 20.0,
-                                child: ClipRRect(
-                                  child: Image.asset(
-                                      'assets/images/black_stars_background.jpeg'),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                            )),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              spaceThemeId = 1;
-                            });
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              radius: spaceThemeId == 1 ? 30.0 : 20.0,
-                              child: ClipRRect(
-                                child: Image.asset(
-                                    'assets/images/login_screens_background.png'),
-                                borderRadius: BorderRadius.circular(50.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+
+              //],
+              //),
+              //),
             ],
           ),
           persistentFooterButtons: [

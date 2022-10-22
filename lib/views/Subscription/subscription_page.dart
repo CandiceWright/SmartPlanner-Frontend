@@ -122,7 +122,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
       //print(receipt);
       var body = {
         'receipt': receipt,
-        'userId': PlannerService.sharedInstance.user!.id
+        //'userId': PlannerService.sharedInstance.user!.id
+        'email': PlannerService.sharedInstance.user!.email
       };
       var bodyF = jsonEncode(body);
       ////print(bodyF);
@@ -141,30 +142,31 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         PlannerService.subscriptionProvider.purchaseRestored.value = false;
         PlannerService.subscriptionProvider.receipt.value = "";
         PlannerService.sharedInstance.user!.receipt = receipt;
+        PlannerService.sharedInstance.user!.isPremiumUser = true;
         //print(widget.fromPage);
 
         //need to save receipt tto database
 
         if (widget.fromPage == "login") {
-          if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) {
-                return const EnterPlannerVideoPage(
-                  fromPage: "login",
-                );
-              },
-            ));
-          } else {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) {
-                return const NavigationWrapper();
-              },
-              settings: const RouteSettings(
-                name: 'navigaionPage',
-              ),
-            ));
-          }
-        } else {
+          // if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+          //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+          //     builder: (context) {
+          //       return const EnterPlannerVideoPage(
+          //         fromPage: "login",
+          //       );
+          //     },
+          //   ));
+          // } else {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) {
+              return const NavigationWrapper();
+            },
+            settings: const RouteSettings(
+              name: 'navigaionPage',
+            ),
+          ));
+          //}
+        } else if (widget.fromPage == "signup") {
           //signup
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) {
@@ -173,6 +175,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               );
             },
           ));
+        } else {
+          Navigator.of(context).pop();
         }
       } else {
         showDialog(
@@ -268,7 +272,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             //   style: TextStyle(color: Colors.white),
             // ),
             title: const Text(
-              "Access your Planit",
+              "Get Premium Access!",
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -279,39 +283,56 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
             elevation: 0.0,
+            leading: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                PlannerService.sharedInstance.user!.isPremiumUser = false;
+                if (widget.fromPage == "login") {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) {
+                      return const NavigationWrapper();
+                    },
+                    settings: const RouteSettings(
+                      name: 'navigaionPage',
+                    ),
+                  ));
+                  //}
+                } else if (widget.fromPage == "signup") {
+                  //signup
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) {
+                      return const EnterPlannerVideoPage(
+                        fromPage: "signup",
+                      );
+                    },
+                  ));
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
           ),
           body: ListView(
             children: [
+              // const Text(
+              //   "Try the app out free for one week!",
+              //   style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 15,
+              //       fontWeight: FontWeight.bold),
+              //   textAlign: TextAlign.center,
+              // ),
               // const Padding(
-              //   padding: EdgeInsets.all(8),
+              //   padding: EdgeInsets.all(4),
               //   child: Text(
-              //     "Try it out free, 1 week!",
+              //     "A subscription is required to use the app after your free trial ends. Here's why!",
               //     style: TextStyle(
-              //         color: Colors.white,
-              //         fontSize: 20,
-              //         fontWeight: FontWeight.bold),
+              //       color: Colors.white,
+              //       fontSize: 12,
+              //     ),
               //     textAlign: TextAlign.center,
               //   ),
               // ),
-              const Text(
-                "Try the app out free for one week!",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold),
-                textAlign: TextAlign.center,
-              ),
-              const Padding(
-                padding: EdgeInsets.all(4),
-                child: Text(
-                  "A subscription is required to use the app after your free trial ends. Here's why!",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
               Container(
                 alignment: Alignment.center,
                 margin: EdgeInsets.all(18),

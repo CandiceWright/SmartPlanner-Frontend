@@ -366,27 +366,63 @@ class _GoalsPageState extends State<GoalsPage> {
                             Container(
                               child: Column(
                                 children: [
-                                  Text(
-                                    DateFormat.yMMMd().format(PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .goals[index]
-                                        .start),
-                                    // style: Theme.of(context).textTheme.subtitle2,
-                                    style: const TextStyle(
-                                        fontSize: 25,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 5, left: 8, right: 8),
+                                    child: Text(
+                                      DateFormat.yMMMd().format(PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .goals[index]
+                                          .start),
+                                      // style: Theme.of(context).textTheme.subtitle2,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                    ),
                                   ),
-                                  Text(
-                                    PlannerService.sharedInstance.user!
-                                        .goals[index].description,
-                                    style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.center,
-                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.alarm,
+                                          color: PlannerService.sharedInstance
+                                                      .user!.goals[index].start
+                                                      .difference(
+                                                          DateTime.now())
+                                                      .inDays <
+                                                  0
+                                              ? Colors.red
+                                              : Colors.grey,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(8),
+                                          child: Text(
+                                            PlannerService.sharedInstance.user!
+                                                    .goals[index].start
+                                                    .difference(DateTime.now())
+                                                    .inDays
+                                                    .toString() +
+                                                " days remaining",
+                                            style: const TextStyle(
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.alarm,
+                                          color: PlannerService.sharedInstance
+                                                      .user!.goals[index].start
+                                                      .difference(
+                                                          DateTime.now())
+                                                      .inDays <
+                                                  0
+                                              ? Colors.red
+                                              : Colors.grey,
+                                        ),
+                                      ]),
                                   CircleAvatar(
                                     // // backgroundImage: AssetImage(
                                     //     PlannerService.sharedInstance.user!.profileImage),
@@ -425,36 +461,21 @@ class _GoalsPageState extends State<GoalsPage> {
                                                     .goals[index]
                                                     .localImgPath !=
                                                 ""
-                                        ? 40
+                                        ? 50
                                         : 0,
                                   ),
-                                  Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.alarm,
-                                          color: Colors.white,
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.all(8),
-                                          child: Text(
-                                            PlannerService.sharedInstance.user!
-                                                    .goals[index].start
-                                                    .difference(DateTime.now())
-                                                    .inDays
-                                                    .toString() +
-                                                " days remaining",
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        const Icon(
-                                          Icons.alarm,
-                                          color: Colors.white,
-                                        ),
-                                      ])
+                                  Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(
+                                      PlannerService.sharedInstance.user!
+                                          .goals[index].description,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  )
                                 ],
                               ),
                               margin: EdgeInsets.all(15),
@@ -466,15 +487,20 @@ class _GoalsPageState extends State<GoalsPage> {
                             // ),
                           ],
                         ),
-
                         elevation: 3,
                         margin: EdgeInsets.all(10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
+                          side: BorderSide(
+                            //color: Color(0xffd1849e),
+                            color: PlannerService.sharedInstance.user!
+                                .goals[index].category!.color,
+                            width: 5.0,
+                          ),
                         ),
-                        //color: Theme.of(context).colorScheme.primary,
-                        color: PlannerService
-                            .sharedInstance.user!.goals[index].category!.color,
+                        // color: PlannerService
+                        //     .sharedInstance.user!.goals[index].category!.color,
+                        color: Colors.white,
                       ),
                     );
                   }),

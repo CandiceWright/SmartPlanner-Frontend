@@ -1,4 +1,4 @@
-/* Page used to add backlog items to selected date task list */
+/* Page used to add multiple backlog items to selected date task list */
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:flutter/services.dart';
@@ -84,7 +84,7 @@ class _SelectBacklogItemsPageState extends State<SelectBacklogItemsPage> {
           PlannerService.sharedInstance.user!.backlogMap[key]!;
       for (int i = 0; i < list.length; i++) {
         //only show items that aren't scheduled
-        if (list[i].scheduledDate == null) {
+        if (list[i].scheduledDate == null && list[i].status != "complete") {
           //if (list[i].calendarItemRef == null) {
           BacklogMapRef bmr = BacklogMapRef(categoryName: key, arrayIdx: i);
           backlogItemsToShow.add(bmr);

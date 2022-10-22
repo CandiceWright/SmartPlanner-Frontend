@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_item.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
@@ -17,13 +16,13 @@ import 'package:http/http.dart' as http;
 
 import 'calendar_page.dart';
 
-class NewEventPage extends StatefulWidget {
-  const NewEventPage(
+class EditFreeFlowEventPage extends StatefulWidget {
+  const EditFreeFlowEventPage(
       {Key? key,
       required this.updateEvents,
       required this.fromPage,
       this.selectedDate,
-      this.event,
+      this.selectedEvent,
       this.backlogMapRef})
       : super(key: key);
 
@@ -38,32 +37,43 @@ class NewEventPage extends StatefulWidget {
   final Function updateEvents;
   final String fromPage;
   final DateTime? selectedDate;
-  final Event? event;
+  final Event? selectedEvent;
   final BacklogMapRef? backlogMapRef;
 
   @override
-  State<NewEventPage> createState() => _NewEventPageState();
+  State<EditFreeFlowEventPage> createState() => _EditFreeFlowEventPageState();
 }
 
-class _NewEventPageState extends State<NewEventPage> {
+class _EditFreeFlowEventPageState extends State<EditFreeFlowEventPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  DateTime selectedStartDate = DateTime.now();
-  TimeOfDay selectedStartTime = TimeOfDay(hour: 00, minute: 00);
-  //DateTime selectedEndDate = DateTime.now();
-  DateTime selectedEndDate = DateTime.now();
-  TimeOfDay selectedEndTime = TimeOfDay(hour: 00, minute: 00);
-  var startDateTxtController = TextEditingController();
-  var endDateTxtController = TextEditingController();
-  var descriptionTxtController = TextEditingController();
-  var notesTxtController = TextEditingController();
-  //var categoryTxtController = TextEditingController();
-  var locationTxtController = TextEditingController();
-  var startTimeController = TextEditingController();
-  var endTimeController = TextEditingController();
+
   var currChosenCategory =
       PlannerService.sharedInstance.user!.lifeCategories[0];
 
   bool doneBtnDisabled = true;
+
+  late var selectedStartDate = widget.selectedEvent!.start;
+
+  late var selectedStartTime =
+      TimeOfDay(hour: selectedStartDate.hour, minute: selectedStartDate.minute);
+
+  late var selectedEndDate = widget.selectedEvent!.end;
+
+  late var selectedEndTime =
+      TimeOfDay(hour: selectedEndDate.hour, minute: selectedEndDate.minute);
+
+  late final startDateTxtController =
+      TextEditingController(text: DateFormat.yMMMd().format(selectedStartDate));
+  late final endDateTxtController =
+      TextEditingController(text: DateFormat.yMMMd().format(selectedEndDate));
+
+  late final notesTxtController =
+      TextEditingController(text: widget.selectedEvent!.notes);
+
+  late final startTimeController = TextEditingController(
+      text: formatDate(selectedStartDate, [hh, ':', nn, " ", am]).toString());
+  late final endTimeController = TextEditingController(
+      text: formatDate(selectedEndDate, [hh, ':', nn, " ", am]).toString());
 
   @override
   void initState() {
@@ -72,15 +82,14 @@ class _NewEventPageState extends State<NewEventPage> {
     endDateTxtController.addListener(setDoneBtnState);
     startTimeController.addListener(setDoneBtnState);
     endTimeController.addListener(setDoneBtnState);
-    descriptionTxtController.addListener(setDoneBtnState);
-    if (widget.selectedDate != null) {
-      startDateTxtController.text =
-          DateFormat.yMMMd().format(widget.selectedDate!);
-      endDateTxtController.text =
-          DateFormat.yMMMd().format(widget.selectedDate!);
-      selectedStartDate = widget.selectedDate!;
-      selectedEndDate = widget.selectedDate!;
-    }
+    // if (widget.selectedDate != null) {
+    //   startDateTxtController.text =
+    //       DateFormat.yMMMd().format(widget.selectedDate!);
+    //   endDateTxtController.text =
+    //       DateFormat.yMMMd().format(widget.selectedDate!);
+    //   selectedStartDate = widget.selectedDate!;
+    //   selectedEndDate = widget.selectedDate!;
+    // }
 
     setDoneBtnState();
   }
@@ -172,8 +181,7 @@ class _NewEventPageState extends State<NewEventPage> {
     });
   }
 
-  void createEvent() async {
-    HapticFeedback.lightImpact();
+  void editEvent() async {
     final List<Event> events = <Event>[];
     //I'm nott sure why I added he code below so I commented out for now
     // if (CalendarPage.selectedEvent != null) {
@@ -189,8 +197,10 @@ class _NewEventPageState extends State<NewEventPage> {
         selectedStartDate.day,
         selectedStartTime.hour,
         selectedStartTime.minute);
-    var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
-        selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
+    // var endDateTime = DateTime(selectedEndDate.year, selectedEndDate.month,
+    //     selectedEndDate.day, selectedEndTime.hour, selectedEndTime.minute);
+    var endDateTime = DateTime(selectedStartDate.year, selectedStartDate.month,
+        selectedStartDate.day, selectedEndTime.hour, selectedEndTime.minute);
 
     if (startDateTime.compareTo(endDateTime) > 0) {
       //startDate is after end date which can't happen
@@ -211,56 +221,46 @@ class _NewEventPageState extends State<NewEventPage> {
           });
     } else {
       //first send request to create new event on server
-      var eventTitle = descriptionTxtController.text;
       var eventNotes = notesTxtController.text;
-      var eventLocation = locationTxtController.text;
       var body = {
-        'userId': PlannerService.sharedInstance.user!.id,
-        'description': eventTitle,
-        'type': "calendar",
+        'eventId': widget.selectedEvent!.id,
+        'description': "Free Flow Session",
+        'type': "freeflow",
         'start': startDateTime.toString(),
         'end': endDateTime.toString(),
         'notes': eventNotes,
-        'category': currChosenCategory.id,
-        'location': eventLocation,
-        'isAllDay': true
+        'category': null,
+        'location': "",
+        'isAllDay': false
       };
       String bodyF = jsonEncode(body);
       //print(bodyF);
 
       var url =
           Uri.parse(PlannerService.sharedInstance.serverUrl + '/calendar');
-      var response = await http.post(url,
+      var response = await http.patch(url,
           headers: {"Content-Type": "application/json"}, body: bodyF);
       //print('Response status: ${response.statusCode}');
       //print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        var decodedBody = json.decode(response.body);
+        PlannerService.sharedInstance.user!.scheduledEvents
+            .remove(widget.selectedEvent);
+
         //print(decodedBody);
-        var id = decodedBody["insertId"];
         var newEvent = Event(
-          id: id,
-          description: eventTitle,
-          type: "calendar",
+          id: widget.selectedEvent!.id,
+          //description: eventTitle,
+          description: "Free Flow Session",
+          type: "freeflow",
           start: startDateTime,
           end: endDateTime,
           //background: const Color(0xFFFF80b1),
-          background: currChosenCategory.color,
+          background: Color.fromARGB(255, 186, 221, 230),
           isAllDay: false,
           notes: eventNotes,
-          category: currChosenCategory,
-          location: eventLocation,
+          category: null,
         );
-
-        events.add(newEvent);
-
-        //TodaySchedulePage.events.appointments!.add(events[0]);
-
-        // TodaySchedulePage.events
-        //     .notifyListeners(CalendarDataSourceAction.add, events);
-        // PlannerService.sharedInstance.user!.scheduledEvents =
-        //     TodaySchedulePage.events.appointments! as List<Event>;
 
         setState(() {
           PlannerService.sharedInstance.user!.scheduledEvents.add(newEvent);
@@ -296,10 +296,8 @@ class _NewEventPageState extends State<NewEventPage> {
   void setDoneBtnState() {
     //print(descriptionTxtController.text);
     if (startDateTxtController.text != "" &&
-        endDateTxtController.text != "" &&
         startTimeController.text != "" &&
-        endTimeController.text != "" &&
-        descriptionTxtController.text != "") {
+        endTimeController.text != "") {
       setState(() {
         //print("button enabled");
         doneBtnDisabled = false;
@@ -338,14 +336,14 @@ class _NewEventPageState extends State<NewEventPage> {
             // the App.build method, and use it to set our appbar title.
             backgroundColor: Colors.transparent,
             title: const Text(
-              "New Event",
+              "Free Flow",
               style: TextStyle(color: Colors.white),
             ),
             centerTitle: true,
             //leading: BackButton(color: Colors.black),
             actions: [
               TextButton(
-                onPressed: doneBtnDisabled ? null : createEvent,
+                onPressed: doneBtnDisabled ? null : editEvent,
                 child: const Text(
                   "Done",
 
@@ -369,12 +367,37 @@ class _NewEventPageState extends State<NewEventPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
+                        // Container(
+                        //   child: TextFormField(
+                        //     controller: descriptionTxtController,
+                        //     decoration: const InputDecoration(
+                        //       hintText: "Title",
+                        //     ),
+                        //     validator: (String? value) {
+                        //       if (value == null || value.isEmpty) {
+                        //         return 'Please enter some text';
+                        //       }
+                        //       return null;
+                        //     },
+                        //   ),
+                        //   padding: EdgeInsets.all(20),
+                        // ),
+                        Padding(
                           child: TextFormField(
-                            controller: descriptionTxtController,
-                            decoration: const InputDecoration(
-                              hintText: "What's the event?",
+                            controller: startDateTxtController,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              hintText: "Start Date",
+                              icon: Icon(
+                                Icons.calendar_today,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
+                            onTap: () => {
+                              if (widget.fromPage != "tomorrow" &&
+                                  widget.fromPage != "schedule_backlog_item")
+                                {_selectStartDate(context)}
+                            },
                             validator: (String? value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter some text';
@@ -384,44 +407,16 @@ class _NewEventPageState extends State<NewEventPage> {
                           ),
                           padding: EdgeInsets.all(20),
                         ),
+
                         Row(
                           children: [
-                            Flexible(
-                              child: Padding(
-                                child: TextFormField(
-                                  controller: startDateTxtController,
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    hintText: "Start Date",
-                                    icon: Icon(
-                                      Icons.calendar_today,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
-                                  onTap: () => {
-                                    if (widget.fromPage != "tomorrow" &&
-                                        widget.fromPage !=
-                                            "schedule_backlog_item")
-                                      {_selectStartDate(context)}
-                                  },
-                                  validator: (String? value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                padding: EdgeInsets.all(20),
-                              ),
-                            ),
                             Flexible(
                               child: Padding(
                                 child: TextFormField(
                                   controller: startTimeController,
                                   readOnly: true,
                                   decoration: InputDecoration(
-                                    hintText: "Time",
+                                    hintText: "Start",
                                     icon: Icon(
                                       Icons.timer,
                                       color:
@@ -438,37 +433,6 @@ class _NewEventPageState extends State<NewEventPage> {
                                 ),
                                 padding: EdgeInsets.all(20),
                               ),
-                            )
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Padding(
-                                child: TextFormField(
-                                  controller: endDateTxtController,
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    hintText: "End Date",
-                                    icon: Icon(
-                                      Icons.calendar_today,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ),
-                                  onTap: () => {
-                                    if (widget.fromPage != "tomorrow")
-                                      {_selectEndDate(context)}
-                                  },
-                                  validator: (String? value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter some text';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                padding: EdgeInsets.all(20),
-                              ),
                             ),
                             Flexible(
                               child: Padding(
@@ -476,7 +440,7 @@ class _NewEventPageState extends State<NewEventPage> {
                                   controller: endTimeController,
                                   readOnly: true,
                                   decoration: InputDecoration(
-                                    hintText: "Time",
+                                    hintText: "End",
                                     icon: Icon(
                                       Icons.timer,
                                       color:
@@ -496,104 +460,38 @@ class _NewEventPageState extends State<NewEventPage> {
                             )
                           ],
                         ),
-                        Container(
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Text(
-                                      "Choose a Life Category",
-                                      style: TextStyle(
-                                          color:
-                                              Theme.of(context).primaryColor),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: Text(
-                                                  'Your life categories help you organize your tasks (i.e. business, self-care, fitness, work, school, etc.). You can create new life categories in your profile by clicking on your avatar on the home page.'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: Text('OK'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                )
-                                              ],
-                                            );
-                                          });
-                                    },
-                                    icon: const Icon(
-                                      Icons.info,
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                ],
-                              ),
-                              DropdownButton(
-                                //value: PlannerService.sharedInstance.user.theme.themeId,
-                                value: currChosenCategory,
-                                items: List.generate(
-                                    PlannerService.sharedInstance.user!
-                                        .lifeCategories.length, (int index) {
-                                  return DropdownMenuItem(
-                                    //value: "pink",
-                                    value: PlannerService.sharedInstance.user!
-                                        .lifeCategories[index],
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.circle,
-                                          color: PlannerService
-                                              .sharedInstance
-                                              .user!
-                                              .lifeCategories[index]
-                                              .color,
-                                        ),
-                                        Text(PlannerService.sharedInstance.user!
-                                            .lifeCategories[index].name),
-                                      ],
-                                    ),
-                                  );
-                                }),
+                        // Row(
+                        //   children: [
+                        //     Flexible(
+                        //       child: Padding(
+                        //         child: TextFormField(
+                        //           controller: endDateTxtController,
+                        //           readOnly: true,
+                        //           decoration: InputDecoration(
+                        //             hintText: "End Date",
+                        //             icon: Icon(
+                        //               Icons.calendar_today,
+                        //               color:
+                        //                   Theme.of(context).colorScheme.primary,
+                        //             ),
+                        //           ),
+                        //           onTap: () => {
+                        //             if (widget.fromPage != "tomorrow")
+                        //               {_selectEndDate(context)}
+                        //           },
+                        //           validator: (String? value) {
+                        //             if (value == null || value.isEmpty) {
+                        //               return 'Please enter some text';
+                        //             }
+                        //             return null;
+                        //           },
+                        //         ),
+                        //         padding: EdgeInsets.all(20),
+                        //       ),
+                        //     ),
 
-                                // onChanged: (String? newValue) {
-                                onChanged: (LifeCategory? newValue) {
-                                  setState(() {
-                                    currChosenCategory = newValue!;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                          padding: EdgeInsets.all(20),
-                        ),
-                        Container(
-                          child: TextFormField(
-                            controller: locationTxtController,
-                            decoration: InputDecoration(
-                              hintText: "Location",
-                              icon: Icon(
-                                Icons.location_pin,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                            validator: (String? value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
-                              }
-                              return null;
-                            },
-                          ),
-                          padding: EdgeInsets.all(20),
-                        ),
+                        //   ],
+                        // ),
                         Container(
                           child: TextFormField(
                             controller: notesTxtController,

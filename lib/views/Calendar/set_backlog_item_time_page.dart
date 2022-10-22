@@ -291,6 +291,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
 
   Future<Null> _selectStartTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
       context: context,
       initialTime: selectedStartTime,
     );
@@ -311,6 +312,7 @@ class _SetBacklogItemTimePageState extends State<SetBacklogItemTimePage> {
 
   Future<Null> _selectEndTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
       context: context,
       initialTime: selectedEndTime,
     );

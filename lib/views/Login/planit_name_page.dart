@@ -129,11 +129,19 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
           ),
           body: ListView(
             children: [
-              Padding(
-                child: Image.asset(
-                  "assets/images/planit_logo.png",
+              // Padding(
+              //   child: Image.asset(
+              //     "assets/images/planit_logo.png",
+              //   ),
+              //   padding: EdgeInsets.all(10),
+              // ),
+              Expanded(
+                child: Padding(
+                  child: Image.asset(
+                    "assets/images/text_logo.png",
+                  ),
+                  padding: EdgeInsets.all(10),
                 ),
-                padding: EdgeInsets.all(10),
               ),
               Container(
                 margin: EdgeInsets.all(15),
@@ -171,25 +179,44 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
           persistentFooterButtons: [
             Container(
               alignment: Alignment.center,
-              child:
-                  //Column(
-                  //children: [
-                  FractionallySizedBox(
+              child: FractionallySizedBox(
                 widthFactor: 0.5,
                 child: ElevatedButton(
                   onPressed: signup,
-                  child: Text(
+                  child: const Text(
                     "Next",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xffef41a8)),
-                  ),
+                      backgroundColor: MaterialStateProperty.all<Color>(
+                          //const Color(0xfff188b1),
+                          Colors.transparent),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: const BorderSide(
+                                  //color: Color(0xfff188b1),
+                                  color: Colors.white)))),
                 ),
               ),
-              //],
-              //),
+
+              //     FractionallySizedBox(
+              //   widthFactor: 0.5,
+              //   child: ElevatedButton(
+              //     onPressed: signup,
+              //     child: Text(
+              //       "Next",
+              //       style: TextStyle(fontSize: 18),
+              //     ),
+              //     style: ButtonStyle(
+              //       backgroundColor: MaterialStateProperty.all<Color>(
+              //           const Color(0xffef41a8)),
+              //     ),
+              //   ),
+              // ),
             )
           ],
         ),

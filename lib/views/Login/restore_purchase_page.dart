@@ -194,7 +194,8 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
       //print(receipt);
       var body = {
         'receipt': receipt,
-        'userId': PlannerService.sharedInstance.user!.id
+        //'userId': PlannerService.sharedInstance.user!.id
+        'email': emailTextController.text
       };
       var bodyF = jsonEncode(body);
       ////print(bodyF);
@@ -268,6 +269,11 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
             });
       }
     }
+  }
+
+  restore() {
+    PlannerService.subscriptionProvider.restorePurchases();
+    //this should trigger saveReceipt() after successful
   }
 
   void login() async {
@@ -856,7 +862,7 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
                       child: Column(
                         children: [
                           const Text(
-                            "Do you have an active subscription, but recently got a new device or reinstalled the app? If the app is not able to validate your subscription, you likely need to restore the purchase. ",
+                            "Did you recently get a new device or reinstall the app? If the app is not able to validate your subscription, you likely need to restore the purchase. ",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -887,30 +893,30 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
                               },
                             ),
                           ),
-                          Padding(
-                            padding: EdgeInsets.all(5),
-                            child: TextFormField(
-                              controller: passwordTextController,
-                              obscureText: true,
-                              enableSuggestions: false,
-                              autocorrect: false,
-                              decoration: const InputDecoration(
-                                  hintText: "Password",
-                                  icon: Icon(
-                                    Icons.password,
-                                    color: Colors.white,
-                                  ),
-                                  border: OutlineInputBorder(),
-                                  filled: true,
-                                  fillColor: Colors.white),
-                              validator: (String? value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter password';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
+                          // Padding(
+                          //   padding: EdgeInsets.all(5),
+                          //   child: TextFormField(
+                          //     controller: passwordTextController,
+                          //     obscureText: true,
+                          //     enableSuggestions: false,
+                          //     autocorrect: false,
+                          //     decoration: const InputDecoration(
+                          //         hintText: "Password",
+                          //         icon: Icon(
+                          //           Icons.password,
+                          //           color: Colors.white,
+                          //         ),
+                          //         border: OutlineInputBorder(),
+                          //         filled: true,
+                          //         fillColor: Colors.white),
+                          //     validator: (String? value) {
+                          //       if (value == null || value.isEmpty) {
+                          //         return 'Please enter password';
+                          //       }
+                          //       return null;
+                          //     },
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -925,7 +931,8 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
                           child: ElevatedButton(
                             onPressed: () {
                               //first validate login and then restore
-                              login();
+                              //login();
+                              restore();
                             },
                             child: Text(
                               "Restore Purchase",
@@ -933,7 +940,7 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
                             ),
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  const Color(0xffef41a8)),
+                                  const Color(0xffd1849e)),
                             ),
                           ),
                         ),

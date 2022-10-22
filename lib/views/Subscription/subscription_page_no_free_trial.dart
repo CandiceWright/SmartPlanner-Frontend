@@ -123,7 +123,8 @@ class _SubscriptionPageNoTrialState extends State<SubscriptionPageNoTrial> {
       //print(receipt);
       var body = {
         'receipt': receipt,
-        'userId': PlannerService.sharedInstance.user!.id
+        //'userId': PlannerService.sharedInstance.user!.id
+        'email': PlannerService.sharedInstance.user!.email
       };
       var bodyF = jsonEncode(body);
       ////print(bodyF);
@@ -142,38 +143,44 @@ class _SubscriptionPageNoTrialState extends State<SubscriptionPageNoTrial> {
         PlannerService.subscriptionProvider.purchaseRestored.value = false;
         PlannerService.subscriptionProvider.receipt.value = "";
         PlannerService.sharedInstance.user!.receipt = receipt;
+        PlannerService.sharedInstance.user!.isPremiumUser = true;
+
         //print(widget.fromPage);
 
         //need to save receipt tto database
 
         if (widget.fromPage == "login") {
-          if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) {
-                return const EnterPlannerVideoPage(
-                  fromPage: "login",
-                );
-              },
-            ));
-          } else {
-            Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (context) {
-                return const NavigationWrapper();
-              },
-              settings: const RouteSettings(
-                name: 'navigaionPage',
-              ),
-            ));
-          }
-        } else {
-          //signup
+          // if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+          //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+          //     builder: (context) {
+          //       return const EnterPlannerVideoPage(
+          //         fromPage: "login",
+          //       );
+          //     },
+          //   ));
+          // } else {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) {
-              return const EnterPlannerVideoPage(
-                fromPage: "signup",
-              );
+              return const NavigationWrapper();
             },
+            settings: const RouteSettings(
+              name: 'navigaionPage',
+            ),
           ));
+          //}
+        }
+        // else if (widget.fromPage == "signup") {
+        //   //signup
+        //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+        //     builder: (context) {
+        //       return const EnterPlannerVideoPage(
+        //         fromPage: "signup",
+        //       );
+        //     },
+        //   ));
+        // }
+        else {
+          Navigator.of(context).pop();
         }
       } else {
         showDialog(
@@ -279,6 +286,25 @@ class _SubscriptionPageNoTrialState extends State<SubscriptionPageNoTrial> {
             centerTitle: true,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
+            leading: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                PlannerService.sharedInstance.user!.isPremiumUser = false;
+                if (widget.fromPage == "login") {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) {
+                      return const NavigationWrapper();
+                    },
+                    settings: const RouteSettings(
+                      name: 'navigaionPage',
+                    ),
+                  ));
+                  //}
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
             elevation: 0.0,
           ),
           body: ListView(

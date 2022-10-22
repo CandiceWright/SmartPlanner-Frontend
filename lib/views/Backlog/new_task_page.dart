@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/life_category.dart';
@@ -67,6 +68,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
   }
 
   void createBacklogItem() async {
+    HapticFeedback.lightImpact();
     var taskTitle = descriptionTxtController.text;
     //Make calls to server
     var body = {
@@ -100,7 +102,8 @@ class _NewTaskPageState extends State<NewTaskPage> {
           category: currChosenCategory,
           //categoryTxtController.text,
           location: locationTxtController.text,
-          notes: notesTxtController.text);
+          notes: notesTxtController.text,
+          status: chosenStatus);
 
       if (PlannerService.sharedInstance.user!.backlogMap
           .containsKey(currChosenCategory.name)) {
@@ -266,6 +269,7 @@ class _NewTaskPageState extends State<NewTaskPage> {
             ],
           ),
           body: Card(
+            color: Colors.white,
             child: Container(
               child: ListView(
                 children: [
@@ -392,7 +396,10 @@ class _NewTaskPageState extends State<NewTaskPage> {
                                             );
                                           });
                                     },
-                                    icon: Icon(Icons.help),
+                                    icon: const Icon(
+                                      Icons.info,
+                                      color: Colors.grey,
+                                    ),
                                   )
                                 ],
                               ),

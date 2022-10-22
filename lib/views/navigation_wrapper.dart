@@ -71,69 +71,211 @@ class _NavigationWrapperState extends State<NavigationWrapper>
       //print("app is in foreground");
 
       //check to see if purchase is  still valid, if not, show an error
-      //print("printing receipt line 69");
-      //print(PlannerService.sharedInstance.user!.receipt);
-      String receiptStatus = await PlannerService.subscriptionProvider
-          .verifyPurchase(PlannerService.sharedInstance.user!.receipt);
+      var receipt = PlannerService.sharedInstance.user!.receipt;
+      if (receipt == "") {
+        print("I am in nav wrapper and user is not premium");
+        PlannerService.sharedInstance.user!.isPremiumUser = false;
 
-      if (receiptStatus == "expired") {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
+        Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
-            return AlertDialog(
-              title: Text(
-                  'Looks like your subscription has expired. Resubscribe to access your planit..'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('Ok, Resubscribe'),
-                  onPressed: () async {
-                    //get subscription products
-                    List<ProductDetails> productDetails = await PlannerService
-                        .subscriptionProvider
-                        .fetchSubscriptions();
-
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) {
-                        return SubscriptionPageNoTrial(
-                          fromPage: 'login',
-                          products: productDetails,
-                        );
-                      },
-                    ));
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (context) {
-                    //     return const SubscriptionPage(
-                    //       fromPage: 'login',
-                    //     );
-                    //   },
-                    // ));
-                  },
-                ),
-              ],
-            );
+            return const NavigationWrapper();
           },
-        );
-      } else if (receiptStatus == "error") {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(
-                  'Oops! Looks like something went wrong. Please try again.'),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
-          },
-        );
+          settings: const RouteSettings(
+            name: 'navigaionPage',
+          ),
+        ));
       } else {
-        //print("in navigation wrapper the purchase is good");
+        print("I am in nav wrapper and user has a receipt to verify");
+        //check to make sure their subscription is valid before you let them into planit
+        //validate receipt
+        String receiptStatus =
+            await PlannerService.subscriptionProvider.verifyPurchase(receipt);
+
+        if (receiptStatus == "expired") {
+          //either receipt is expired or need to be restored
+
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                    'Looks like your subscription has expired. Resubscribe to access your planit.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Ok, Resubscribe'),
+                    onPressed: () async {
+                      //get subscription products
+                      List<ProductDetails> productDetails = await PlannerService
+                          .subscriptionProvider
+                          .fetchSubscriptions();
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) {
+                          return SubscriptionPageNoTrial(
+                              fromPage: 'login', products: productDetails);
+                        },
+                      ));
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      "Use Basic",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                    onPressed: () {
+                      //show a dialogag asking if theyre sure
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text('Are you sure?'),
+                              content: Text(
+                                  "If you choose to use the basic version, you will not have access to premium features or any of your content associated with such features."),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text(
+                                    'Yes, use Basic',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                  onPressed: () {
+                                    PlannerService.sharedInstance.user!
+                                        .isPremiumUser = false;
+
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) {
+                                        return const NavigationWrapper();
+                                      },
+                                      settings: const RouteSettings(
+                                        name: 'navigaionPage',
+                                      ),
+                                    ));
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text('Resubscribe to Premium'),
+                                  onPressed: () async {
+                                    //Navigator.of(context).pop();
+
+                                    //get subscription products
+                                    List<ProductDetails> productDetails =
+                                        await PlannerService
+                                            .subscriptionProvider
+                                            .fetchSubscriptions();
+
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) {
+                                        return SubscriptionPageNoTrial(
+                                            fromPage: 'login',
+                                            products: productDetails);
+                                      },
+                                    ));
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    },
+                  )
+                ],
+              );
+            },
+          );
+        } else if (receiptStatus == "error") {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text(
+                      "we weren't able to confirm your subscription. Try to resubscribe. If you have already paid, you will not be charged again."),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Resubscribe'),
+                      onPressed: () async {
+                        //get subscription products
+                        List<ProductDetails> productDetails =
+                            await PlannerService.subscriptionProvider
+                                .fetchSubscriptions();
+
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return SubscriptionPageNoTrial(
+                                fromPage: 'login', products: productDetails);
+                          },
+                        ));
+                        //Navigator.of(context).pop();
+                      },
+                    ),
+                    TextButton(
+                      child: const Text(
+                        "Use Basic",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      onPressed: () {
+                        //show a dialogag asking if theyre sure
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Are you sure?'),
+                                content: Text(
+                                    "If you choose to use the basic version, you will not have access to premium features or any of your content associated with such features"),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text(
+                                      'Yes, use Basic',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                    onPressed: () {
+                                      PlannerService.sharedInstance.user!
+                                          .isPremiumUser = false;
+
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) {
+                                          return const NavigationWrapper();
+                                        },
+                                        settings: const RouteSettings(
+                                          name: 'navigaionPage',
+                                        ),
+                                      ));
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text('Resubscribe to Premium'),
+                                    onPressed: () async {
+                                      //Navigator.of(context).pop();
+
+                                      //get subscription products
+                                      List<ProductDetails> productDetails =
+                                          await PlannerService
+                                              .subscriptionProvider
+                                              .fetchSubscriptions();
+
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) {
+                                          return SubscriptionPageNoTrial(
+                                              fromPage: 'login',
+                                              products: productDetails);
+                                        },
+                                      ));
+                                    },
+                                  )
+                                ],
+                              );
+                            });
+                      },
+                    )
+                  ],
+                );
+              });
+        } else {
+          //receipt is valid so i dont need to do anything
+
+        }
       }
     }
   }

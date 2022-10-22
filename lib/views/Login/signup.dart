@@ -132,7 +132,7 @@ class _SignupPageState extends State<SignupPage> {
               Expanded(
                 child: Padding(
                   child: Image.asset(
-                    "assets/images/welcome_graphic_brownpink.png",
+                    "assets/images/text_logo.png",
                   ),
                   padding: EdgeInsets.all(10),
                 ),
@@ -196,14 +196,29 @@ class _SignupPageState extends State<SignupPage> {
                     widthFactor: 0.5,
                     child: ElevatedButton(
                       onPressed: signup,
-                      child: Text(
-                        "Sign up",
-                        style: TextStyle(fontSize: 18),
+                      child: const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
                       ),
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xffef41a8)),
-                      ),
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              //const Color(0xffd1849e),
+                              Colors.transparent),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18.0),
+                                      side: const BorderSide(
+                                          //color: Color(0xffd1849e),
+                                          color: Colors.white)))),
+
+                      // style: ButtonStyle(
+                      //   backgroundColor: MaterialStateProperty.all<Color>(
+                      //       const Color(0xffef41a8)),
+                      // ),
                     ),
                   ),
                   Row(
@@ -219,7 +234,7 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         child: Text(
                           "Privacy Policy",
-                          style: TextStyle(color: Color(0xff7ddcfa)),
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ),
                       Text(
@@ -237,7 +252,7 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         child: Text(
                           "Terms of Use.",
-                          style: TextStyle(color: Color(0xff7ddcfa)),
+                          style: TextStyle(color: Colors.grey),
                         ),
                       ),
                     ],
@@ -251,10 +266,11 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                       TextButton(
                           onPressed: login,
-                          child: Text(
+                          child: const Text(
                             "Login",
                             style: TextStyle(
-                              color: Color(0xff7ddcfa),
+                              color: Color(0xffd1849e),
+                              //color: Colors.grey
                             ),
                           ))
                     ],

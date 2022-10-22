@@ -10,6 +10,7 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/draggable_task_info.dart';
 import 'package:practice_planner/views/Calendar/calendar_page.dart';
+import 'package:practice_planner/views/Calendar/edit_free_flow_event.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
 import 'package:practice_planner/views/Calendar/schedule_backlog_items_page.dart';
@@ -80,6 +81,7 @@ class _TodayPageState extends State<TodayPage> {
   Timer? timer;
   bool freeFlowSessionStarted = false;
   bool freeFlowSessionEnded = false;
+  bool freeFlowSessionNeedsToBeEnded = false;
   int sessionHours = 0;
   int sessionMins = 0;
   Event? selectedEvent;
@@ -88,15 +90,12 @@ class _TodayPageState extends State<TodayPage> {
 
   @override
   void initState() {
-    // if (PlannerService.sharedInstance.user!.scheduledBacklogItemsMap
-    //     .containsKey(thisDay)) {
-    //   todaysTasks = PlannerService
-    //       .sharedInstance.user!.scheduledBacklogItemsMap[thisDay]!;
-    // }
+    super.initState();
     if (PlannerService.sharedInstance.user!.currentFreeFlowSessionEnds !=
         null) {
       if (DateTime.now().isBefore(
           PlannerService.sharedInstance.user!.currentFreeFlowSessionEnds!)) {
+        print("free flow session in progress");
         //still ongoing
         //a session that hasn't been ended
         freeFlowSessionStarted = true;
@@ -113,33 +112,16 @@ class _TodayPageState extends State<TodayPage> {
         }
         startTimer();
       } else {
+        print("free flow session ended");
+        freeFlowSessionDuration = PlannerService
+            .sharedInstance.user!.currentFreeFlowSessionEnds!
+            .difference(DateTime.now());
+        freeFlowSessionNeedsToBeEnded = true;
+        //endFreeFlowSession();
         //session ended
-        PlannerService.sharedInstance.user!.currentTaskWorkingOn = null;
-        PlannerService.sharedInstance.user!.currentFreeFlowSessionEnds = null;
-        //make call to server to record free flow session ended. set current task and end time to null
-        showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                alignment: Alignment.center,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                title: Text(
-                    'Looks like your free flow session is complete. You can start a new free flow session now.'),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
+
       }
     }
-
-    super.initState();
   }
 
   @override
@@ -148,6 +130,172 @@ class _TodayPageState extends State<TodayPage> {
       timer!.cancel();
     }
     super.dispose();
+  }
+
+  endFreeFlowSession() {
+    if (!currentTaskSet) {
+      String twoDigits(int n) => n.toString().padLeft(2, '0');
+      final minutes =
+          twoDigits(freeFlowSessionDuration.inMinutes.remainder(60));
+      final hours = twoDigits(freeFlowSessionDuration.inHours.remainder(60));
+      if (freeFlowSessionDuration.inMinutes <= 0) {
+        //Show an alert that says "Congrats!" You completed x hours and y minutes of free flowing
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Congrats!"),
+              alignment: Alignment.center,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              content: const Text("Your free flow seession is complete. "),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Done!'),
+                  onPressed: () async {
+                    HapticFeedback.mediumImpact();
+                    setState(() {
+                      freeFlowSessionStarted = false;
+                      freeFlowSessionEnded = true;
+                      freeFlowSessionDuration = Duration();
+                      timer!.cancel();
+                    });
+                    var body = {
+                      'userId': PlannerService.sharedInstance.user!.id,
+                      'action': "end",
+                    };
+                    String bodyF = jsonEncode(body);
+                    //print(bodyF);
+
+                    var url = Uri.parse(
+                        PlannerService.sharedInstance.serverUrl +
+                            '/user/freeflow');
+                    var response = await http.patch(url,
+                        headers: {"Content-Type": "application/json"},
+                        body: bodyF);
+                    //print('Response status: ${response.statusCode}');
+                    //print('Response body: ${response.body}');
+
+                    if (response.statusCode == 200) {
+                      Navigator.of(context).pop();
+                    } else {
+                      //500 error, show an alert
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    }
+                  },
+                )
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("There's still time..."),
+              alignment: Alignment.center,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20.0))),
+              content: const Text(
+                  "Are you sure you want to end your free flow session early?"),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Yes'),
+                  onPressed: () async {
+                    setState(() {
+                      freeFlowSessionStarted = false;
+                      freeFlowSessionEnded = true;
+                      freeFlowSessionDuration = Duration();
+                      timer!.cancel();
+                    });
+                    var body = {
+                      'userId': PlannerService.sharedInstance.user!.id,
+                      'action': "end",
+                    };
+                    String bodyF = jsonEncode(body);
+                    //print(bodyF);
+
+                    var url = Uri.parse(
+                        PlannerService.sharedInstance.serverUrl +
+                            '/user/freeflow');
+                    var response = await http.patch(url,
+                        headers: {"Content-Type": "application/json"},
+                        body: bodyF);
+                    //print('Response status: ${response.statusCode}');
+                    //print('Response body: ${response.body}');
+
+                    if (response.statusCode == 200) {
+                      Navigator.of(context).pop();
+                    } else {
+                      //500 error, show an alert
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    }
+                  },
+                ),
+                TextButton(
+                  child: const Text("No, I'll continue."),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          },
+        );
+      }
+    } else {
+      //show alert telling user that they must close out current task first by updating its status in the free flow box.
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
+            content: Text(
+                "Before ending this free flow session, close out your current task by updating its status in the free flow box."),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        },
+      );
+    }
   }
 
   void startTimer() {
@@ -192,14 +340,26 @@ class _TodayPageState extends State<TodayPage> {
 
   void openEditEventPage() {
     Navigator.pop(context);
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => EditEventPage(
-                  updateEvents: _updateEvents,
-                  // dataSource: _events,
-                  selectedEvent: selectedEvent,
-                )));
+    if (selectedEvent!.type == "freeflow") {
+      print("ready to edit free flow eventt");
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => EditFreeFlowEventPage(
+                    updateEvents: _updateEvents,
+                    // dataSource: _events,
+                    selectedEvent: selectedEvent, fromPage: 'calendar',
+                  )));
+    } else {
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => EditEventPage(
+                    updateEvents: _updateEvents,
+                    // dataSource: _events,
+                    selectedEvent: selectedEvent,
+                  )));
+    }
   }
 
   // void _goToFullCalendarView() {
@@ -265,65 +425,137 @@ class _TodayPageState extends State<TodayPage> {
     //   );
     // }
     else {
-      //show timer details to set duration
-      return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        margin: EdgeInsets.all(20),
-        child: Column(children: [
-          Padding(
-            padding: EdgeInsets.all(15),
-            child: Text(
-              "For how long?",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+      if (!freeFlowSessionNeedsToBeEnded) {
+//show timer details to set duration
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              NumberPicker(
-                value: sessionHours,
-                minValue: 0,
-                maxValue: 10,
-                step: 1,
-                itemHeight: 50,
-                onChanged: (value) => setState(() => sessionHours = value),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.black26),
-                ),
+          margin: EdgeInsets.all(20),
+          child: Column(children: [
+            Padding(
+              padding: EdgeInsets.all(15),
+              child: Text(
+                "For how long?",
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              Padding(
-                padding: EdgeInsets.all(4),
-                child: Text(
-                  "hrs ",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                NumberPicker(
+                  value: sessionHours,
+                  minValue: 0,
+                  maxValue: 10,
+                  step: 1,
+                  itemHeight: 50,
+                  onChanged: (value) => setState(() => sessionHours = value),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.black26),
+                  ),
                 ),
-              ),
-              NumberPicker(
-                value: sessionMins,
-                minValue: 0,
-                maxValue: 45,
-                step: 15,
-                itemHeight: 50,
-                onChanged: (value) => setState(() => sessionMins = value),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.black26),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Text(
+                    "hrs ",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(4),
-                child: Text(
-                  "mins",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                NumberPicker(
+                  value: sessionMins,
+                  minValue: 0,
+                  maxValue: 45,
+                  step: 15,
+                  itemHeight: 50,
+                  onChanged: (value) => setState(() => sessionMins = value),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.black26),
+                  ),
                 ),
+                Padding(
+                  padding: EdgeInsets.all(4),
+                  child: Text(
+                    "mins",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            )
+          ]),
+        );
+      } else {
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          margin: EdgeInsets.all(20),
+          child: Column(children: [
+            Padding(
+              padding: EdgeInsets.all(10),
+              child: Text(
+                "Congrats!",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
-            ],
-          )
-        ]),
-      );
+            ),
+            Padding(
+              padding: EdgeInsets.all(5),
+              child: const Text("Your free flow seession is complete. "),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                HapticFeedback.mediumImpact();
+                setState(() {
+                  freeFlowSessionStarted = false;
+                  freeFlowSessionEnded = true;
+                  freeFlowSessionNeedsToBeEnded = false;
+                  freeFlowSessionDuration = Duration();
+                  if (timer != null) {
+                    timer!.cancel();
+                  }
+                });
+                var body = {
+                  'userId': PlannerService.sharedInstance.user!.id,
+                  'action': "end",
+                };
+                String bodyF = jsonEncode(body);
+                //print(bodyF);
+
+                var url = Uri.parse(
+                    PlannerService.sharedInstance.serverUrl + '/user/freeflow');
+                var response = await http.patch(url,
+                    headers: {"Content-Type": "application/json"}, body: bodyF);
+                //print('Response status: ${response.statusCode}');
+                //print('Response body: ${response.body}');
+
+                if (response.statusCode == 200) {
+                  //Navigator.of(context).pop();
+                } else {
+                  //500 error, show an alert
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(
+                              'Oops! Looks like something went wrong. Please try again.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            )
+                          ],
+                        );
+                      });
+                }
+              },
+              child: Text("Done"),
+            )
+          ]),
+        );
+      }
     }
     //return Container();
     //return TextButton(onPressed: () {}, child: Text("Set Session Timer"));
@@ -334,10 +566,10 @@ class _TodayPageState extends State<TodayPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            // title: Text(
-            //   ,
-            //   textAlign: TextAlign.center,
-            // ),
+            title: const Text(
+              "Status",
+              textAlign: TextAlign.center,
+            ),
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             content: Text(
@@ -347,23 +579,6 @@ class _TodayPageState extends State<TodayPage> {
                 child: Text('Yes'),
                 onPressed: () async {
                   //update the tasks status to complete
-                  setState(() {
-                    PlannerService
-                        .sharedInstance
-                        .user!
-                        .backlogMap[currentTask!.categoryName]![
-                            currentTask!.arrayIdx]
-                        .status = "complete";
-
-                    //add this task back to today's task
-                    todaysTasks.add(currentTask!);
-                    currentTask = null;
-                    //update this in db
-                    PlannerService.sharedInstance.user!.currentTaskWorkingOn =
-                        null;
-                    currentTaskSet = false;
-                  });
-                  Navigator.of(context).pop();
 
                   //make call to server
                   var body = {
@@ -387,6 +602,62 @@ class _TodayPageState extends State<TodayPage> {
                   //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
+                    print("I am removing current task on db");
+                    //update on server
+                    var body = {
+                      'userId': PlannerService.sharedInstance.user!.id,
+                      'action': "updatetask",
+                      'currentTask': -1
+                    };
+                    String bodyF = jsonEncode(body);
+                    //print(bodyF);
+
+                    var url = Uri.parse(
+                        PlannerService.sharedInstance.serverUrl +
+                            '/user/freeflow');
+                    var response = await http.patch(url,
+                        headers: {"Content-Type": "application/json"},
+                        body: bodyF);
+                    //print('Response status: ${response.statusCode}');
+                    //print('Response body: ${response.body}');
+
+                    if (response.statusCode == 200) {
+                      setState(() {
+                        PlannerService
+                            .sharedInstance
+                            .user!
+                            .backlogMap[currentTask!.categoryName]![
+                                currentTask!.arrayIdx]
+                            .status = "complete";
+
+                        //add this task back to today's task
+                        todaysTasks.add(currentTask!);
+                        currentTask = null;
+                        //update this in db
+                        PlannerService
+                            .sharedInstance.user!.currentTaskWorkingOn = null;
+                        currentTaskSet = false;
+                      });
+                      Navigator.of(context).pop();
+                    } else {
+                      //500 error, show an alert
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    }
                   } else {
                     //500 error, show an alert
                     showDialog(
@@ -424,10 +695,10 @@ class _TodayPageState extends State<TodayPage> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            // title: Text(
-            //   ,
-            //   textAlign: TextAlign.center,
-            // ),
+            title: const Text(
+              "Status",
+              textAlign: TextAlign.center,
+            ),
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(20.0))),
             content: Text(
@@ -436,22 +707,6 @@ class _TodayPageState extends State<TodayPage> {
               TextButton(
                 child: Text('Yes'),
                 onPressed: () async {
-                  setState(() {
-                    PlannerService
-                        .sharedInstance
-                        .user!
-                        .backlogMap[currentTask!.categoryName]![
-                            currentTask!.arrayIdx]
-                        .status = "started";
-                    //add this task back to today's task
-                    todaysTasks.add(currentTask!);
-                    currentTask = null;
-                    //update this in db
-                    PlannerService.sharedInstance.user!.currentTaskWorkingOn =
-                        null;
-                    currentTaskSet = false;
-                  });
-                  Navigator.of(context).pop();
                   //make call to server
                   var body = {
                     'taskId': PlannerService
@@ -474,6 +729,61 @@ class _TodayPageState extends State<TodayPage> {
                   //print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
+                    print("I am removing current task on db");
+                    //update on server
+                    var body = {
+                      'userId': PlannerService.sharedInstance.user!.id,
+                      'action': "updatetask",
+                      'currentTask': -1
+                    };
+                    String bodyF = jsonEncode(body);
+                    //print(bodyF);
+
+                    var url = Uri.parse(
+                        PlannerService.sharedInstance.serverUrl +
+                            '/user/freeflow');
+                    var response = await http.patch(url,
+                        headers: {"Content-Type": "application/json"},
+                        body: bodyF);
+                    //print('Response status: ${response.statusCode}');
+                    //print('Response body: ${response.body}');
+
+                    if (response.statusCode == 200) {
+                      setState(() {
+                        PlannerService
+                            .sharedInstance
+                            .user!
+                            .backlogMap[currentTask!.categoryName]![
+                                currentTask!.arrayIdx]
+                            .status = "started";
+                        //add this task back to today's task
+                        todaysTasks.add(currentTask!);
+                        currentTask = null;
+                        //update this in db
+                        PlannerService
+                            .sharedInstance.user!.currentTaskWorkingOn = null;
+                        currentTaskSet = false;
+                      });
+                      Navigator.of(context).pop();
+                    } else {
+                      //500 error, show an alert
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                  'Oops! Looks like something went wrong. Please try again.'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                )
+                              ],
+                            );
+                          });
+                    }
                   } else {
                     //500 error, show an alert
                     showDialog(
@@ -511,10 +821,10 @@ class _TodayPageState extends State<TodayPage> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          // title: Text(
-          //   ,
-          //   textAlign: TextAlign.center,
-          // ),
+          title: const Text(
+            "Status",
+            textAlign: TextAlign.center,
+          ),
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           content: Text(
@@ -523,22 +833,6 @@ class _TodayPageState extends State<TodayPage> {
             TextButton(
               child: Text('Yes'),
               onPressed: () async {
-                setState(() {
-                  PlannerService
-                      .sharedInstance
-                      .user!
-                      .backlogMap[currentTask!.categoryName]![
-                          currentTask!.arrayIdx]
-                      .status = "notStarted";
-                  //add this task back to today's task
-                  todaysTasks.add(currentTask!);
-                  currentTask = null;
-                  //update this in db
-                  PlannerService.sharedInstance.user!.currentTaskWorkingOn =
-                      null;
-                  currentTaskSet = false;
-                });
-                Navigator.of(context).pop();
                 //make call to server
                 var body = {
                   'taskId': PlannerService
@@ -560,6 +854,60 @@ class _TodayPageState extends State<TodayPage> {
                 //print('Response body: ${response.body}');
 
                 if (response.statusCode == 200) {
+                  print("I am removing current task on db");
+                  //update on server
+                  var body = {
+                    'userId': PlannerService.sharedInstance.user!.id,
+                    'action': "updatetask",
+                    'currentTask': -1
+                  };
+                  String bodyF = jsonEncode(body);
+                  //print(bodyF);
+
+                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
+                      '/user/freeflow');
+                  var response = await http.patch(url,
+                      headers: {"Content-Type": "application/json"},
+                      body: bodyF);
+                  //print('Response status: ${response.statusCode}');
+                  //print('Response body: ${response.body}');
+
+                  if (response.statusCode == 200) {
+                    setState(() {
+                      PlannerService
+                          .sharedInstance
+                          .user!
+                          .backlogMap[currentTask!.categoryName]![
+                              currentTask!.arrayIdx]
+                          .status = "notStarted";
+                      //add this task back to today's task
+                      todaysTasks.add(currentTask!);
+                      currentTask = null;
+                      //update this in db
+                      PlannerService.sharedInstance.user!.currentTaskWorkingOn =
+                          null;
+                      currentTaskSet = false;
+                    });
+                    Navigator.of(context).pop();
+                  } else {
+                    //500 error, show an alert
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Oops! Looks like something went wrong. Please try again.'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('OK'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              )
+                            ],
+                          );
+                        });
+                  }
                 } else {
                   //500 error, show an alert
                   showDialog(
@@ -643,7 +991,7 @@ class _TodayPageState extends State<TodayPage> {
                 color: Theme.of(context).primaryColor,
               ),
               trailing: Image.asset(
-                'assets/images/night.png',
+                'assets/images/night2.png',
                 // width: 20,
                 // height: 20,
               ),
@@ -717,68 +1065,8 @@ class _TodayPageState extends State<TodayPage> {
                       padding: EdgeInsets.only(bottom: 15),
                       child: ElevatedButton(
                         child: Text("End Free Flow Session"),
-                        onPressed: () {
-                          if (!currentTaskSet) {
-                            String twoDigits(int n) =>
-                                n.toString().padLeft(2, '0');
-                            final minutes = twoDigits(freeFlowSessionDuration
-                                .inMinutes
-                                .remainder(60));
-                            final hours = twoDigits(
-                                freeFlowSessionDuration.inHours.remainder(60));
-
-                            //Show an alert that says "Congrats!" You completed x hours and y minutes of free flowing
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: Text("Congrats!"),
-                                  alignment: Alignment.center,
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20.0))),
-                                  content: Text(
-                                      "You completed $hours hours and $minutes minutes of free flowing!"),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('Ok, Great!'),
-                                      onPressed: () {
-                                        setState(() {
-                                          freeFlowSessionStarted = false;
-                                          freeFlowSessionEnded = true;
-                                          freeFlowSessionDuration = Duration();
-                                          timer!.cancel();
-                                        });
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                          } else {
-                            //show alert telling user that they must close out current task first by updating its status in the free flow box.
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20.0))),
-                                  content: Text(
-                                      "Before ending this free flow session, close out your current task by updating its status in the free flow box."),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('Ok'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                          }
+                        onPressed: () async {
+                          endFreeFlowSession();
                         },
                       ),
                     )
@@ -910,7 +1198,7 @@ class _TodayPageState extends State<TodayPage> {
                                         taskCompleted();
                                       },
                                       icon: Icon(
-                                        Icons.square,
+                                        Icons.flag_circle,
                                         color: Colors.green,
                                       ),
                                     ),
@@ -920,7 +1208,7 @@ class _TodayPageState extends State<TodayPage> {
                                       },
                                       //"I started it. I will work on this more later."
                                       icon: Icon(
-                                        Icons.square,
+                                        Icons.incomplete_circle_rounded,
                                         color: Colors.yellow,
                                       ),
                                     ),
@@ -930,7 +1218,7 @@ class _TodayPageState extends State<TodayPage> {
                                       },
                                       //"I haven't started. I want to choose another task."
                                       icon: Icon(
-                                        Icons.square,
+                                        Icons.cancel_rounded,
                                         color: Colors.grey,
                                       ),
                                     )
@@ -966,7 +1254,7 @@ class _TodayPageState extends State<TodayPage> {
                               setState(() {});
                               return true;
                             },
-                            onAccept: (DraggableTaskInfo data) {
+                            onAccept: (DraggableTaskInfo data) async {
                               print("accepted task");
                               HapticFeedback.mediumImpact();
                               setState(() {
@@ -997,7 +1285,50 @@ class _TodayPageState extends State<TodayPage> {
                                         DateTime.now().day)]!
                                     .length);
                               });
-                              //taskAccepted = false;
+                              //update on server
+                              var body = {
+                                'userId':
+                                    PlannerService.sharedInstance.user!.id,
+                                'action': "updatetask",
+                                'currentTask': PlannerService
+                                    .sharedInstance
+                                    .user!
+                                    .backlogMap[data.bmr.categoryName]![
+                                        data.bmr.arrayIdx]
+                                    .id
+                              };
+                              String bodyF = jsonEncode(body);
+                              //print(bodyF);
+
+                              var url = Uri.parse(
+                                  PlannerService.sharedInstance.serverUrl +
+                                      '/user/freeflow');
+                              var response = await http.patch(url,
+                                  headers: {"Content-Type": "application/json"},
+                                  body: bodyF);
+                              //print('Response status: ${response.statusCode}');
+                              //print('Response body: ${response.body}');
+
+                              if (response.statusCode == 200) {
+                              } else {
+                                //500 error, show an alert
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: Text(
+                                            'Oops! Looks like something went wrong. Please try again.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    });
+                              }
                             },
                           ),
                   ],
@@ -1015,41 +1346,161 @@ class _TodayPageState extends State<TodayPage> {
                     : ListView(
                         children:
                             List.generate(todaysTasks.length, (int index) {
-                          return LongPressDraggable<DraggableTaskInfo>(
-                              onDragStarted: () {
-                                print("drag started");
-                              },
-                              childWhenDragging: Container(),
-                              child: GestureDetector(
-                                child: Card(
-                                  margin: EdgeInsets.all(15),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  color: PlannerService
+                          if (PlannerService
+                                  .sharedInstance
+                                  .user!
+                                  .backlogMap[todaysTasks[index].categoryName]![
+                                      todaysTasks[index].arrayIdx]
+                                  .status !=
+                              "complete") {
+                            return LongPressDraggable<DraggableTaskInfo>(
+                                onDragStarted: () {
+                                  print("drag started");
+                                },
+                                childWhenDragging: Container(),
+                                child: GestureDetector(
+                                  child: Card(
+                                    margin: EdgeInsets.all(15),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    color: PlannerService
+                                                .sharedInstance
+                                                .user!
+                                                .backlogMap[todaysTasks[index]
+                                                        .categoryName]![
+                                                    todaysTasks[index].arrayIdx]
+                                                .status ==
+                                            "notStarted"
+                                        ? Colors.grey.shade100
+                                        : (PlannerService
+                                                    .sharedInstance
+                                                    .user!
+                                                    .backlogMap[
+                                                        todaysTasks[index]
+                                                            .categoryName]![
+                                                        todaysTasks[index]
+                                                            .arrayIdx]
+                                                    .status ==
+                                                "complete"
+                                            ? Colors.green.shade200
+                                            : Colors.yellow.shade200),
+                                    elevation: 5,
+                                    child: ListTile(
+                                      leading: Icon(
+                                        Icons.circle,
+                                        color: PlannerService
+                                            .sharedInstance
+                                            .user!
+                                            .backlogMap[todaysTasks[index]
+                                                    .categoryName]![
+                                                todaysTasks[index].arrayIdx]
+                                            .category
+                                            .color,
+                                      ),
+                                      title: Padding(
+                                        padding: EdgeInsets.only(bottom: 5),
+                                        child: Text(
+                                          PlannerService
                                               .sharedInstance
                                               .user!
                                               .backlogMap[todaysTasks[index]
                                                       .categoryName]![
                                                   todaysTasks[index].arrayIdx]
-                                              .status ==
-                                          "notStarted"
-                                      ? Colors.grey.shade100
-                                      : (PlannerService
+                                              .description,
+                                          // style: const TextStyle(
+                                          //     // color: PlannerService.sharedInstance.user!
+                                          //     //     .backlogMap[key]![i].category.color,
+                                          //     color: Colors.black,
+                                          //     fontSize: 16,
+                                          //     fontWeight: FontWeight.bold),
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(20.0))),
+                                            title: Text(
+                                              PlannerService
                                                   .sharedInstance
                                                   .user!
                                                   .backlogMap[todaysTasks[index]
                                                           .categoryName]![
                                                       todaysTasks[index]
                                                           .arrayIdx]
-                                                  .status ==
-                                              "complete"
-                                          ? Colors.green.shade200
-                                          : Colors.yellow.shade200),
-                                  elevation: 5,
-                                  child: ListTile(
-                                    leading: Icon(
-                                      Icons.circle,
+                                                  .description,
+                                              textAlign: TextAlign.center,
+                                            ),
+
+                                            content:
+                                                //Card(
+                                                //child: Container(
+                                                //child: Column(
+                                                Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.all(5),
+                                                  child: Text(
+                                                    "Complete by " +
+                                                        DateFormat.yMMMd().format(
+                                                            PlannerService
+                                                                .sharedInstance
+                                                                .user!
+                                                                .backlogMap[
+                                                                    todaysTasks[
+                                                                            index]
+                                                                        .categoryName]![
+                                                                    todaysTasks[
+                                                                            index]
+                                                                        .arrayIdx]
+                                                                .completeBy!),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: EdgeInsets.all(5),
+                                                  child: Text(PlannerService
+                                                      .sharedInstance
+                                                      .user!
+                                                      .backlogMap[
+                                                          todaysTasks[index]
+                                                              .categoryName]![
+                                                          todaysTasks[index]
+                                                              .arrayIdx]
+                                                      .notes),
+                                                ),
+                                              ],
+                                            ),
+                                            //),
+                                            //),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: new Text('close'))
+                                            ],
+                                          );
+                                        });
+                                  },
+                                ),
+                                data: DraggableTaskInfo(
+                                    todaysTasks[index], index),
+                                feedback: Material(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
                                       color: PlannerService
                                           .sharedInstance
                                           .user!
@@ -1058,145 +1509,36 @@ class _TodayPageState extends State<TodayPage> {
                                               todaysTasks[index].arrayIdx]
                                           .category
                                           .color,
-                                    ),
-                                    title: Padding(
-                                      padding: EdgeInsets.only(bottom: 5),
-                                      child: Text(
-                                        PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .backlogMap[todaysTasks[index]
-                                                    .categoryName]![
-                                                todaysTasks[index].arrayIdx]
-                                            .description,
-                                        // style: const TextStyle(
-                                        //     // color: PlannerService.sharedInstance.user!
-                                        //     //     .backlogMap[key]![i].category.color,
-                                        //     color: Colors.black,
-                                        //     fontSize: 16,
-                                        //     fontWeight: FontWeight.bold),
-                                        maxLines: 2,
-                                        textAlign: TextAlign.center,
+                                      child: Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Text(
+                                          PlannerService
+                                              .sharedInstance
+                                              .user!
+                                              .backlogMap[todaysTasks[index]
+                                                      .categoryName]![
+                                                  todaysTasks[index].arrayIdx]
+                                              .description,
+                                          maxLines: 2,
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                onTap: () {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          shape: const RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(20.0))),
-                                          title: Text(
-                                            PlannerService
-                                                .sharedInstance
-                                                .user!
-                                                .backlogMap[todaysTasks[index]
-                                                        .categoryName]![
-                                                    todaysTasks[index].arrayIdx]
-                                                .description,
-                                            textAlign: TextAlign.center,
-                                          ),
-
-                                          content:
-                                              //Card(
-                                              //child: Container(
-                                              //child: Column(
-                                              Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.all(5),
-                                                child: Text(
-                                                  "Complete by " +
-                                                      DateFormat.yMMMd().format(
-                                                          PlannerService
-                                                              .sharedInstance
-                                                              .user!
-                                                              .backlogMap[
-                                                                  todaysTasks[
-                                                                          index]
-                                                                      .categoryName]![
-                                                                  todaysTasks[
-                                                                          index]
-                                                                      .arrayIdx]
-                                                              .completeBy!),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.all(5),
-                                                child: Text(PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .backlogMap[
-                                                        todaysTasks[index]
-                                                            .categoryName]![
-                                                        todaysTasks[index]
-                                                            .arrayIdx]
-                                                    .notes),
-                                              ),
-                                            ],
-                                          ),
-                                          //),
-                                          //),
-                                          actions: <Widget>[
-                                            TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                child: new Text('close'))
-                                          ],
-                                        );
-                                      });
-                                },
-                              ),
-                              data:
-                                  DraggableTaskInfo(todaysTasks[index], index),
-                              feedback: Material(
-                                borderRadius: BorderRadius.circular(10),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    color: PlannerService
-                                        .sharedInstance
-                                        .user!
-                                        .backlogMap[
-                                            todaysTasks[index].categoryName]![
-                                            todaysTasks[index].arrayIdx]
-                                        .category
-                                        .color,
-                                    child: Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: Text(
-                                        PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .backlogMap[todaysTasks[index]
-                                                    .categoryName]![
-                                                todaysTasks[index].arrayIdx]
-                                            .description,
-                                        maxLines: 2,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ));
+                                ));
+                          }
+                          return Container();
                         }),
                       ),
               )
             : Container(),
         //),
 
-        !freeFlowSessionStarted
+        !freeFlowSessionStarted && !freeFlowSessionNeedsToBeEnded
             ? Padding(
                 padding: EdgeInsets.only(bottom: 15),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (sessionHours == 0 && sessionMins == 0) {
                       showDialog(
                           context: context,
@@ -1229,6 +1571,47 @@ class _TodayPageState extends State<TodayPage> {
                         startTimer();
                       });
                       HapticFeedback.mediumImpact();
+                      //call server to start
+                      //make call to server
+
+                      var body = {
+                        'userId': PlannerService.sharedInstance.user!.id,
+                        'action': "start",
+                        'end': (DateTime.now().add(freeFlowSessionDuration))
+                            .toString(),
+                      };
+                      String bodyF = jsonEncode(body);
+                      //print(bodyF);
+
+                      var url = Uri.parse(
+                          PlannerService.sharedInstance.serverUrl +
+                              '/user/freeflow');
+                      var response = await http.patch(url,
+                          headers: {"Content-Type": "application/json"},
+                          body: bodyF);
+                      //print('Response status: ${response.statusCode}');
+                      //print('Response body: ${response.body}');
+
+                      if (response.statusCode == 200) {
+                      } else {
+                        //500 error, show an alert
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(
+                                    'Oops! Looks like something went wrong. Please try again.'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  )
+                                ],
+                              );
+                            });
+                      }
                     }
                   },
                   child: Text("Start Free Flow Productivity"),
@@ -1306,7 +1689,7 @@ class _TodayPageState extends State<TodayPage> {
                 color: Theme.of(context).primaryColor,
               ),
               trailing: Image.asset(
-                'assets/images/night.png',
+                'assets/images/night2.png',
                 // width: 20,
                 // height: 20,
               ),
@@ -1781,6 +2164,40 @@ class _TodayPageState extends State<TodayPage> {
                                   shape: const CircleBorder(),
                                   onChanged: (bool? value) async {
                                     HapticFeedback.mediumImpact();
+                                    setState(() {
+                                      PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .backlogMap[PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .scheduledBacklogItemsMap[
+                                                      thisDay]![index]
+                                                  .categoryName]![
+                                              PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .scheduledBacklogItemsMap[
+                                                      thisDay]![index]
+                                                  .arrayIdx]
+                                          .isComplete = value;
+                                      PlannerService
+                                          .sharedInstance
+                                          .user!
+                                          .backlogMap[PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .scheduledBacklogItemsMap[
+                                                      thisDay]![index]
+                                                  .categoryName]![
+                                              PlannerService
+                                                  .sharedInstance
+                                                  .user!
+                                                  .scheduledBacklogItemsMap[
+                                                      thisDay]![index]
+                                                  .arrayIdx]
+                                          .status = "complete";
+                                    });
                                     //make call to server
                                     var body = {
                                       'taskId': PlannerService
@@ -1816,41 +2233,40 @@ class _TodayPageState extends State<TodayPage> {
                                     //print('Response body: ${response.body}');
 
                                     if (response.statusCode == 200) {
-                                      setState(() {
-                                        PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .backlogMap[PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .scheduledBacklogItemsMap[
-                                                        thisDay]![index]
-                                                    .categoryName]![
-                                                PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .scheduledBacklogItemsMap[
-                                                        thisDay]![index]
-                                                    .arrayIdx]
-                                            .isComplete = value;
-                                        PlannerService
-                                            .sharedInstance
-                                            .user!
-                                            .backlogMap[PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .scheduledBacklogItemsMap[
-                                                        thisDay]![index]
-                                                    .categoryName]![
-                                                PlannerService
-                                                    .sharedInstance
-                                                    .user!
-                                                    .scheduledBacklogItemsMap[
-                                                        thisDay]![index]
-                                                    .arrayIdx]
-                                            .status = "complete";
-                                      });
-                                      // HapticFeedback.mediumImpact();
+                                      // setState(() {
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .backlogMap[PlannerService
+                                      //               .sharedInstance
+                                      //               .user!
+                                      //               .scheduledBacklogItemsMap[
+                                      //                   thisDay]![index]
+                                      //               .categoryName]![
+                                      //           PlannerService
+                                      //               .sharedInstance
+                                      //               .user!
+                                      //               .scheduledBacklogItemsMap[
+                                      //                   thisDay]![index]
+                                      //               .arrayIdx]
+                                      //       .isComplete = value;
+                                      //   PlannerService
+                                      //       .sharedInstance
+                                      //       .user!
+                                      //       .backlogMap[PlannerService
+                                      //               .sharedInstance
+                                      //               .user!
+                                      //               .scheduledBacklogItemsMap[
+                                      //                   thisDay]![index]
+                                      //               .categoryName]![
+                                      //           PlannerService
+                                      //               .sharedInstance
+                                      //               .user!
+                                      //               .scheduledBacklogItemsMap[
+                                      //                   thisDay]![index]
+                                      //               .arrayIdx]
+                                      //       .status = "complete";
+                                      // });
                                     } else {
                                       //500 error, show an alert
                                       showDialog(
@@ -2255,7 +2671,7 @@ class _TodayPageState extends State<TodayPage> {
                 color: Theme.of(context).primaryColor,
               ),
               trailing: Image.asset(
-                'assets/images/night.png',
+                'assets/images/night2.png',
                 // width: 20,
                 // height: 20,
               ),
@@ -2495,10 +2911,18 @@ class _TodayPageState extends State<TodayPage> {
                                     .isAccomplished,
                                 shape: const CircleBorder(),
                                 onChanged: (bool? value) async {
-                                  //print(value);
-                                  //setState(() async {
-                                  //update on server and then update locally
-                                  //meeting.isAccomplished = value;
+                                  setState(() {
+                                    events
+                                        .appointments![events.appointments!
+                                            .indexOf(meeting)]
+                                        .isAccomplished = value;
+                                    PlannerService.sharedInstance.user!
+                                            .scheduledEvents =
+                                        events.appointments! as List<Event>;
+                                    //widget.updateEvents();
+                                  });
+                                  HapticFeedback.mediumImpact();
+                                  //make server call
                                   int id = meeting.id!;
                                   var body = {
                                     'eventId': id,
@@ -2519,17 +2943,17 @@ class _TodayPageState extends State<TodayPage> {
                                   //print('Response body: ${response.body}');
 
                                   if (response.statusCode == 200) {
-                                    setState(() {
-                                      events
-                                          .appointments![events.appointments!
-                                              .indexOf(meeting)]
-                                          .isAccomplished = value;
-                                      PlannerService.sharedInstance.user!
-                                              .scheduledEvents =
-                                          events.appointments! as List<Event>;
-                                      //widget.updateEvents();
-                                    });
-                                    HapticFeedback.mediumImpact();
+                                    // setState(() {
+                                    //   events
+                                    //       .appointments![events.appointments!
+                                    //           .indexOf(meeting)]
+                                    //       .isAccomplished = value;
+                                    //   PlannerService.sharedInstance.user!
+                                    //           .scheduledEvents =
+                                    //       events.appointments! as List<Event>;
+                                    //   //widget.updateEvents();
+                                    // });
+                                    // HapticFeedback.mediumImpact();
                                   } else {
                                     //500 error, show an alert
                                     showDialog(

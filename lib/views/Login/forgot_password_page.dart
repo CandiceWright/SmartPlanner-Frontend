@@ -133,7 +133,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             children: [
               Padding(
                 child: Image.asset(
-                  "assets/images/planit_logo.png",
+                  "assets/images/text_logo.png",
                 ),
                 padding: EdgeInsets.all(10),
               ),
@@ -183,25 +183,43 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           persistentFooterButtons: [
             Container(
               alignment: Alignment.center,
-              child:
-                  //Column(
-                  //children: [
-                  FractionallySizedBox(
+              child: FractionallySizedBox(
                 widthFactor: 0.5,
-                child: ElevatedButton(
+                child: TextButton(
                   onPressed: forgotPassword,
-                  child: Text(
+                  child: const Text(
                     "Next",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
                   ),
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xffef41a8)),
-                  ),
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.transparent),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                              side: const BorderSide(
+                                  //color: Color(0xfff188b1),
+                                  color: Colors.white)))),
                 ),
               ),
-              //],
-              //),
+
+              //     FractionallySizedBox(
+              //   widthFactor: 0.5,
+              //   child: ElevatedButton(
+              //     onPressed: forgotPassword,
+              //     child: Text(
+              //       "Next",
+              //       style: TextStyle(fontSize: 18),
+              //     ),
+              //     style: ButtonStyle(
+              //       backgroundColor: MaterialStateProperty.all<Color>(
+              //           const Color(0xffef41a8)),
+              //     ),
+              //   ),
+              // ),
             )
           ],
         ),

@@ -190,6 +190,7 @@ class _EditGoalPageState extends State<EditGoalPage> {
             ],
           ),
           body: Card(
+            color: Colors.white,
             child: Container(
               child: ListView(
                 children: [
@@ -268,7 +269,10 @@ class _EditGoalPageState extends State<EditGoalPage> {
                                             );
                                           });
                                     },
-                                    icon: Icon(Icons.help),
+                                    icon: const Icon(
+                                      Icons.info,
+                                      color: Colors.grey,
+                                    ),
                                   )
                                 ],
                               ),

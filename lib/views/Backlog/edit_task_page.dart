@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/life_category.dart';
 import '/models/goal.dart';
@@ -86,6 +87,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
   }
 
   void editBacklogItem() async {
+    HapticFeedback.lightImpact();
     var taskTitle = descriptionTxtController.text;
     //Make calls to server
     var body = {
@@ -226,7 +228,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
             ),
             backgroundColor: Colors.transparent,
             centerTitle: true,
-            leading: BackButton(color: Colors.black),
+            //leading: BackButton(color: Colors.black),
             actions: [
               TextButton(
                 onPressed: doneBtnDisabled ? null : editBacklogItem,
@@ -235,6 +237,7 @@ class _EditTaskPageState extends State<EditTaskPage> {
             ],
           ),
           body: Card(
+            color: Colors.white,
             child: Container(
               child: ListView(
                 children: [
@@ -374,7 +377,10 @@ class _EditTaskPageState extends State<EditTaskPage> {
                                             );
                                           });
                                     },
-                                    icon: Icon(Icons.help),
+                                    icon: const Icon(
+                                      Icons.info,
+                                      color: Colors.grey,
+                                    ),
                                   )
                                 ],
                               ),

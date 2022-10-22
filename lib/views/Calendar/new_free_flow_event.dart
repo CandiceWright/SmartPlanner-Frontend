@@ -124,6 +124,7 @@ class _NewFreeFlowEventPageState extends State<NewFreeFlowEventPage> {
 
   Future<Null> _selectStartTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
       context: context,
       initialTime: selectedStartTime,
     );
@@ -144,6 +145,7 @@ class _NewFreeFlowEventPageState extends State<NewFreeFlowEventPage> {
 
   Future<Null> _selectEndTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
+        initialEntryMode: TimePickerEntryMode.input,
         context: context,
         //initialTime: selectedEndTime,
         initialTime: selectedStartTime);

@@ -37,7 +37,7 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
               child: Padding(
                 padding: EdgeInsets.all(10),
                 child: Image.asset(
-                  "assets/images/planit_logo.png",
+                  "assets/images/planit_logo_white.png",
                   fit: BoxFit.contain,
                   height: 100,
                   width: 100,

@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/event_data_source.dart';
 import 'package:practice_planner/models/life_category.dart';
@@ -149,6 +150,7 @@ class _EditEventPageState extends State<EditEventPage> {
 
   Future<Null> _selectStartTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
       context: context,
       initialTime: selectedStartTime,
     );
@@ -170,6 +172,7 @@ class _EditEventPageState extends State<EditEventPage> {
   Future<Null> _selectEndTime(BuildContext context) async {
     //print(selectedEndTime);
     final TimeOfDay? picked = await showTimePicker(
+      initialEntryMode: TimePickerEntryMode.input,
       context: context,
       initialTime: selectedEndTime,
     );
@@ -188,6 +191,7 @@ class _EditEventPageState extends State<EditEventPage> {
   }
 
   void editEvent() async {
+    HapticFeedback.lightImpact();
     final List<Event> events = <Event>[];
     var eventTitle = descriptionTxtController.text;
     var eventNotes = notesTxtController.text;
@@ -368,6 +372,7 @@ class _EditEventPageState extends State<EditEventPage> {
           ],
         ),
         body: Card(
+          color: Colors.white,
           child: Container(
             child: ListView(
               children: [

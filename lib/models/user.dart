@@ -20,6 +20,8 @@ class User {
   String profileImage;
   String localProfileImage = "";
   String receipt;
+  bool? isPremiumUser; //if receipt == "" then no
+  String? homeQuote;
   var email;
   int themeId;
   String spaceImage;

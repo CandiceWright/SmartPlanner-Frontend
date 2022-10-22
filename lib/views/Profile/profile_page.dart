@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:localstorage/localstorage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 
@@ -56,6 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
   int selectedThemeId = PlannerService.sharedInstance.user!.themeId;
   String selectedSpaceTheme = PlannerService.sharedInstance.user!.spaceImage;
+  final LocalStorage storage = LocalStorage('planner_app');
 
   @override
   void initState() {
@@ -1052,6 +1054,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
+                    await storage.setItem('login', false);
                     //navigate to login screen
                     Navigator.pushAndRemoveUntil(
                       context,
@@ -1266,68 +1269,68 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedSpaceTheme =
-                                      'assets/images/black_stars_background.jpeg';
-                                  changeSpaceTheme();
-                                });
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.all(10),
-                                child: CircleAvatar(
-                                  backgroundImage: const AssetImage(
-                                      'assets/images/black_stars_background.jpeg'),
-                                  //backgroundColor: Colors.white,
-                                  radius: PlannerService.sharedInstance.user!
-                                              .spaceImage ==
-                                          'assets/images/black_stars_background.jpeg'
-                                      ? 17.0
-                                      : 10.0,
-                                  // child: ClipRRect(
-                                  //   child: Image.asset(
-                                  //       'assets/images/black_stars_background.jpeg'),
-                                  //   borderRadius: BorderRadius.circular(50.0),
-                                  // ),
-                                ),
-                              )),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedSpaceTheme =
-                                    'assets/images/login_screens_background.png';
-                                changeSpaceTheme();
-                              });
-                            },
-                            child: Padding(
-                              padding: EdgeInsets.all(10),
-                              child: CircleAvatar(
-                                backgroundImage: const AssetImage(
-                                    'assets/images/login_screens_background.png'),
-                                //backgroundColor: Colors.white,
-                                radius: PlannerService
-                                            .sharedInstance.user!.spaceImage ==
-                                        'assets/images/login_screens_background.png'
-                                    ? 17.0
-                                    : 10.0,
-                                child: ClipRRect(
-                                  child: Image.asset(
-                                      'assets/images/login_screens_background.png'),
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      //Row(
+                      //mainAxisAlignment: MainAxisAlignment.center,
+                      //children: [
+                      // GestureDetector(
+                      //     onTap: () {
+                      //       setState(() {
+                      //         selectedSpaceTheme =
+                      //             'assets/images/black_stars_background.jpeg';
+                      //         changeSpaceTheme();
+                      //       });
+                      //     },
+                      //     child: Padding(
+                      //       padding: EdgeInsets.all(10),
+                      //       child: CircleAvatar(
+                      //         backgroundImage: const AssetImage(
+                      //             'assets/images/black_stars_background.jpeg'),
+                      //         //backgroundColor: Colors.white,
+                      //         radius: PlannerService.sharedInstance.user!
+                      //                     .spaceImage ==
+                      //                 'assets/images/black_stars_background.jpeg'
+                      //             ? 17.0
+                      //             : 10.0,
+                      //         // child: ClipRRect(
+                      //         //   child: Image.asset(
+                      //         //       'assets/images/black_stars_background.jpeg'),
+                      //         //   borderRadius: BorderRadius.circular(50.0),
+                      //         // ),
+                      //       ),
+                      //     )),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     setState(() {
+                      //       selectedSpaceTheme =
+                      //           'assets/images/login_screens_background.png';
+                      //       changeSpaceTheme();
+                      //     });
+                      //   },
+                      //   child: Padding(
+                      //     padding: EdgeInsets.all(10),
+                      //     child: CircleAvatar(
+                      //       backgroundImage: const AssetImage(
+                      //           'assets/images/login_screens_background.png'),
+                      //       //backgroundColor: Colors.white,
+                      //       radius: PlannerService
+                      //                   .sharedInstance.user!.spaceImage ==
+                      //               'assets/images/login_screens_background.png'
+                      //           ? 17.0
+                      //           : 10.0,
+                      //       child: ClipRRect(
+                      //         child: Image.asset(
+                      //             'assets/images/login_screens_background.png'),
+                      //         borderRadius: BorderRadius.circular(50.0),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      //],
+                      //),
                       Card(
                         child: Column(
                           children: [
-                            Padding(
+                            const Padding(
                                 padding: EdgeInsets.all(8),
                                 child: Text(
                                   "My Life Categories",
@@ -1503,6 +1506,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       ElevatedButton(
                           onPressed: () {
+                            storage.setItem('login', false);
                             Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(

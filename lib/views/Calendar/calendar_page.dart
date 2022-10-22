@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:practice_planner/views/Calendar/edit_free_flow_event.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
 import 'package:practice_planner/views/Calendar/new_free_flow_event.dart';
 import 'package:practice_planner/views/Calendar/notes_page.dart';
@@ -121,14 +122,26 @@ class _CalendarPageState extends State<CalendarPage> {
 
   void openEditEventPage() {
     Navigator.pop(context);
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => EditEventPage(
-                  updateEvents: _updateEvents,
-                  // dataSource: _events,
-                  selectedEvent: selectedEvent,
-                )));
+    if (selectedEvent!.type == "freeflow") {
+      print("ready to edit free flow eventt");
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => EditFreeFlowEventPage(
+                    updateEvents: _updateEvents,
+                    // dataSource: _events,
+                    selectedEvent: selectedEvent, fromPage: 'calendar',
+                  )));
+    } else {
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+              builder: (context) => EditEventPage(
+                    updateEvents: _updateEvents,
+                    // dataSource: _events,
+                    selectedEvent: selectedEvent,
+                  )));
+    }
   }
 
   void _goToMonthlyView() {
@@ -1062,7 +1075,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                     },
                                   ),
                                   TextButton(
-                                    child: Text('remove'),
+                                    child: Text('unschedule'),
                                     onPressed: () async {
                                       print("I am running remove from");
 
