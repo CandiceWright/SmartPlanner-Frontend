@@ -14,6 +14,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/services.dart';
 import 'package:badges/badges.dart';
 
+import 'backlog_items_scheduler.dart';
+
 class BacklogPage extends StatefulWidget {
   const BacklogPage({Key? key}) : super(key: key);
 
@@ -1187,49 +1189,59 @@ class _BacklogPageState extends State<BacklogPage> {
           ),
         ),
         Padding(
-            padding: EdgeInsets.all(10),
-            child: Badge(
-              badgeColor: Theme.of(context).primaryColor,
-              toAnimate: true,
-              position: BadgePosition.topEnd(),
-              badgeContent: Icon(
-                Icons.plus_one_rounded,
-                color: Colors.white,
-              ),
-              child: ToggleButtons(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Text('Backlog'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Text('Scheduled'),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.all(5),
-                    child: Text('Complete'),
-                  ),
-                ],
-                direction: Axis.horizontal,
-                onPressed: (int index) {
-                  setState(() {
-                    // The button that is tapped is set to true, and the others to false.
-                    for (int i = 0; i < _selectedPageView.length; i++) {
-                      _selectedPageView[i] = i == index;
-                    }
-                    selectedMode = index;
-                  });
-                },
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                selectedBorderColor: Theme.of(context).primaryColor,
-                selectedColor: Colors.white,
-                fillColor: Theme.of(context).primaryColor.withAlpha(100),
-                color: Theme.of(context).primaryColor,
-                isSelected: _selectedPageView,
-              ),
-              showBadge: showBadge,
-            )),
+          padding: EdgeInsets.all(10),
+          child: Badge(
+            badgeColor: Theme.of(context).primaryColor,
+            toAnimate: true,
+            position: BadgePosition.topEnd(),
+            badgeContent: Icon(
+              Icons.plus_one_rounded,
+              color: Colors.white,
+            ),
+            child: ToggleButtons(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Text('Backlog'),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Text('Scheduled'),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(5),
+                  child: Text('Complete'),
+                ),
+              ],
+              direction: Axis.horizontal,
+              onPressed: (int index) {
+                setState(() {
+                  // The button that is tapped is set to true, and the others to false.
+                  for (int i = 0; i < _selectedPageView.length; i++) {
+                    _selectedPageView[i] = i == index;
+                  }
+                  selectedMode = index;
+                });
+              },
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              selectedBorderColor: Theme.of(context).primaryColor,
+              selectedColor: Colors.white,
+              fillColor: Theme.of(context).primaryColor.withAlpha(100),
+              color: Theme.of(context).primaryColor,
+              isSelected: _selectedPageView,
+            ),
+            showBadge: showBadge,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => const BacklogItemsScheduler()));
+          },
+          child: const Text("Open Scheduler"),
+        ),
         Expanded(
           child: backlogItemsToShow.isEmpty
               ? Container(
