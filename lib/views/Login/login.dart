@@ -357,6 +357,7 @@ class _LoginPageState extends State<LoginPage> {
           loadPercentage = 0.2;
         });
         var decodedBody = json.decode(response.body);
+        print("correct password");
         //print(decodedBody);
         var userId = decodedBody["userId"];
         var receipt =

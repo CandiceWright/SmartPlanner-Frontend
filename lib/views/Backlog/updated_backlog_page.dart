@@ -1238,7 +1238,9 @@ class _BacklogPageState extends State<BacklogPage> {
             Navigator.push(
                 context,
                 CupertinoPageRoute(
-                    builder: (context) => const BacklogItemsScheduler()));
+                    builder: (context) => BacklogItemsScheduler(
+                          updateTaskPage: _updateBacklogList,
+                        )));
           },
           child: const Text("Open Scheduler"),
         ),
@@ -1506,6 +1508,7 @@ class _BacklogPageState extends State<BacklogPage> {
     setState(() {
       scheduledItemsToShow = tempScheduledItemsToShow;
     });
+    print(scheduledItemsToShow.length);
   }
 
   buildBacklogList() {
