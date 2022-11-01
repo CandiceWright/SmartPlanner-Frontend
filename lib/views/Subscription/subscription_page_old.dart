@@ -27,7 +27,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   //var subscriptionProvider = SubscriptionsProvider();
 
-  String selectedSubscription = "yearly";
+  String selectedSubscription = "monthly";
   bool doneBtnDisabled = true;
   bool monthlySelected = false;
   bool yearlySelected = false;
@@ -145,24 +145,19 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         PlannerService.sharedInstance.user!.isPremiumUser = true;
         //print(widget.fromPage);
 
-        var body = {
-          'user': PlannerService.sharedInstance.user!.id,
-          'isPremium': PlannerService.sharedInstance.user!.isPremiumUser,
-        };
-        String bodyF = jsonEncode(body);
-        //print(bodyF);
+        //need to save receipt tto database
 
-        var url = Uri.parse(
-            PlannerService.sharedInstance.serverUrl + '/user/premium');
-        var response = await http.patch(url,
-            headers: {"Content-Type": "application/json"}, body: bodyF);
-        //print('Response status: ${response.statusCode}');
-        //print('Response body: ${response.body}');
-
-        if (response.statusCode == 200) {
-          // if (widget.fromPage == "login" || widget.fromPage == "signup") {
-          //was .pushReplacement
-          Navigator.of(context).push(MaterialPageRoute(
+        if (widget.fromPage == "login") {
+          // if (PlannerService.sharedInstance.user!.hasPlanitVideo) {
+          //   Navigator.of(context).pushReplacement(MaterialPageRoute(
+          //     builder: (context) {
+          //       return const EnterPlannerVideoPage(
+          //         fromPage: "login",
+          //       );
+          //     },
+          //   ));
+          // } else {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) {
               return const NavigationWrapper();
             },
@@ -170,27 +165,18 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               name: 'navigaionPage',
             ),
           ));
-
-          // } else {
-          //   Navigator.of(context).pop();
-          // }
+          //}
+        } else if (widget.fromPage == "signup") {
+          //signup
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) {
+              return const EnterPlannerVideoPage(
+                fromPage: "signup",
+              );
+            },
+          ));
         } else {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(
-                      'Oops! Looks like something went wrong. Please try again.'),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('OK'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                );
-              });
+          Navigator.of(context).pop();
         }
       } else {
         showDialog(
@@ -281,106 +267,47 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           appBar: AppBar(
             // Here we take the value from the MyHomePage object that was created by
             // the App.build method, and use it to set our appbar title.
-
+            // title: const Text(
+            //   "Another Planit",
+            //   style: TextStyle(color: Colors.white),
+            // ),
             title: const Text(
-              "Go Premium!",
+              "Get Premium Access!",
               style: TextStyle(
                   color: Colors.white,
-                  //fontSize: 20,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            bottom: const PreferredSize(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Text(
-                      "Unlock all the features of your Planit.",
-                      style: TextStyle(color: Colors.white),
-                      //textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                preferredSize: Size.fromHeight(10.0)),
             centerTitle: true,
             backgroundColor: Colors.transparent,
             automaticallyImplyLeading: false,
-            //elevation: 0.0,
+            elevation: 0.0,
             leading: IconButton(
               icon: Icon(Icons.close),
-              onPressed: () async {
-                if (!PlannerService.sharedInstance.user!.isPremiumUser!) {
-                  if (widget.fromPage == "login" ||
-                      widget.fromPage == "signup") {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) {
-                        return const NavigationWrapper();
-                      },
-                      settings: const RouteSettings(
-                        name: 'navigaionPage',
-                      ),
-                    ));
-                    //}
-                  } else {
-                    //in app
-                    Navigator.of(context).pop();
-                  }
+              onPressed: () {
+                PlannerService.sharedInstance.user!.isPremiumUser = false;
+                if (widget.fromPage == "login") {
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) {
+                      return const NavigationWrapper();
+                    },
+                    settings: const RouteSettings(
+                      name: 'navigaionPage',
+                    ),
+                  ));
+                  //}
+                } else if (widget.fromPage == "signup") {
+                  //signup
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    builder: (context) {
+                      return const EnterPlannerVideoPage(
+                        fromPage: "signup",
+                      );
+                    },
+                  ));
                 } else {
-                  //premium status needs to be updated to false
-                  PlannerService.sharedInstance.user!.isPremiumUser = false;
-                  //update isPremium on server
-                  var body = {
-                    'user': PlannerService.sharedInstance.user!.id,
-                    'isPremium':
-                        PlannerService.sharedInstance.user!.isPremiumUser,
-                  };
-                  String bodyF = jsonEncode(body);
-                  //print(bodyF);
-
-                  var url = Uri.parse(PlannerService.sharedInstance.serverUrl +
-                      '/user/premium');
-                  var response = await http.patch(url,
-                      headers: {"Content-Type": "application/json"},
-                      body: bodyF);
-                  //print('Response status: ${response.statusCode}');
-                  //print('Response body: ${response.body}');
-
-                  if (response.statusCode == 200) {
-                    if (widget.fromPage == "login" ||
-                        widget.fromPage == "signup") {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) {
-                          return const NavigationWrapper();
-                        },
-                        settings: const RouteSettings(
-                          name: 'navigaionPage',
-                        ),
-                      ));
-                      //}
-                    } else {
-                      //in app
-                      Navigator.of(context).pop();
-                    }
-                  } else {
-                    //500 error, show an alert
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: Text(
-                                'Oops! Looks like something went wrong. Please try again.'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              )
-                            ],
-                          );
-                        });
-                  }
+                  Navigator.of(context).pop();
                 }
               },
             ),
@@ -406,130 +333,167 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
               //     textAlign: TextAlign.center,
               //   ),
               // ),
-              Padding(
-                child: Image.asset(
-                  "assets/images/planit_logo_black_small.png",
-                  width: 60,
-                  height: 60,
+              Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.all(18),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.all(5),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.photo,
+                                  size: 40,
+                                  //color: Colors.white,
+                                  color: Color(0xffef41a8),
+                                ),
+                                Text(
+                                  "Unlimited Personalzed Media",
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.all(5),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.calendar_month,
+                                  size: 40,
+                                  //color: Colors.white,
+                                  color: Color(0xffd4ac62),
+                                ),
+                                Text(
+                                  "Unlimited Scheduling and Goals",
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.all(5),
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.video_camera_front,
+                                  size: 40,
+                                  //color: Colors.white,
+                                  color: Color(0xff7ddcfa),
+                                ),
+                                Text(
+                                  "Unlimited Video Stories",
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.all(5),
+                            child: Column(
+                              children: [
+                                Icon(Icons.update,
+                                    size: 40,
+                                    //color: Colors.white,
+                                    color: Color(0xffd4ac62)),
+                                Text(
+                                  "Consistent App Updates",
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.all(5),
+                            child: Column(
+                              children: [
+                                Icon(Icons.help_center,
+                                    size: 40,
+                                    //color: Colors.white,
+                                    color: Color(0xff7ddcfa)),
+                                Text(
+                                  "Effective User Support",
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            margin: EdgeInsets.all(5),
+                            child: Column(
+                              children: [
+                                Icon(Icons.favorite,
+                                    size: 40,
+                                    //color: Colors.white,
+                                    color: Color(0xffef41a8)),
+                                Text(
+                                  "Developer Support",
+                                  style: TextStyle(color: Colors.white),
+                                  textAlign: TextAlign.center,
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
                 ),
-                padding: EdgeInsets.all(10),
-              ),
-              // const Text(
-              //   "Go Premium!",
-              //   style: TextStyle(
-              //       color: Colors.white,
-              //       fontSize: 20,
-              //       fontWeight: FontWeight.bold),
-              //   textAlign: TextAlign.center,
-              // ),
-              // const Text(
-              //   "Unlock all the features of your Planit.",
-              //   style: TextStyle(
-              //       color: Colors.white,
-              //       fontSize: 20,
-              //       fontWeight: FontWeight.bold),
-              //   textAlign: TextAlign.center,
-              // ),
-              const ListTile(
-                leading: Icon(
-                  Icons.check_circle,
-                  //color: Color(0xffc69aa7),
-                  color: Color(0xffb4888d),
-                ),
-                title: Text(
-                  "Optimized Life Organization",
-                  style: TextStyle(color: Colors.white),
-                ),
-                subtitle: Text(
-                    "Stay on top of all of your tasks with personalized life categories and a daily task scheduler.",
-                    style: TextStyle(color: Colors.grey)),
-              ),
-              const ListTile(
-                leading: Icon(
-                  Icons.check_circle,
-                  // color: Color(0xffc69aa7),
-                  color: Color(0xffb4888d),
-                ),
-                title: Text("Anxiety-free Productivity",
-                    style: TextStyle(color: Colors.white)),
-                subtitle: Text(
-                    "Access free-flow mode to get things done without stressing about time.",
-                    style: TextStyle(color: Colors.grey)),
-              ),
-              const ListTile(
-                leading: Icon(
-                  Icons.check_circle,
-                  //color: Color(0xffc69aa7),
-                  color: Color(0xffb4888d),
-                ),
-                title: Text("Daily Affirmations",
-                    style: TextStyle(color: Colors.white)),
-                subtitle: Text(
-                    "Create daily video affirmations to stimulate positive thinking and reinforce your goals.",
-                    style: TextStyle(color: Colors.grey)),
-              ),
-              const ListTile(
-                leading: Icon(
-                  Icons.check_circle,
-                  //color: Color(0xffc69aa7),
-                  color: Color(0xffb4888d),
-                ),
-                title:
-                    Text("Visual Goals", style: TextStyle(color: Colors.white)),
-                subtitle: Text(
-                    "Define your life goals with personalized images.",
-                    style: TextStyle(color: Colors.grey)),
               ),
               const Text(
-                "Choose your Plan",
+                "Choose a Subscription",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-
-              GestureDetector(
-                child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                      side: BorderSide(
-                        width: 3,
-                        color: selectedSubscription == "yearly"
-                            //? Color(0xffc69aa7)
-                            ? Color(0xffb4888d)
-                            : Colors.white, //<-- SEE HERE
-                      ),
-                    ),
-                    margin: EdgeInsets.only(
-                        left: 30, right: 30, top: 10, bottom: 5),
+              const Padding(
+                padding: EdgeInsets.all(8),
+                child: Text(
+                  "You will not be charged until your one week free trial ends.",
+                  style: TextStyle(
                     color: Colors.white,
-                    elevation: selectedSubscription == "yearly" ? 15 : 0,
-                    child: ListTile(
-                      title: Text("Yearly",
-                          style: TextStyle(
-                              color: selectedSubscription == "yearly"
-                                  // ? Color(0xffc69aa7)
-                                  ? Color(0xffb4888d)
-                                  : Colors.black,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold)),
-                      trailing: Text(
-                        yearlyProduct.price + "/year",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        "7 days free trial",
-                        textAlign: TextAlign.start,
-                      ),
-                    )),
-                onTap: () {
-                  setState(() {
-                    selectedSubscription = "yearly";
-                  });
-                  //setDoneBtnState();
-                },
+                    fontSize: 10,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
+                child: Text(
+                  "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your one-week trial ends and you won't be charged.",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
 
               GestureDetector(
@@ -539,8 +503,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       side: BorderSide(
                         width: 3,
                         color: selectedSubscription == "monthly"
-                            //? Color(0xffc69aa7)
-                            ? Color(0xffb4888d)
+                            ? Color(0xffef41a8)
                             : Colors.white, //<-- SEE HERE
                       ),
                     ),
@@ -552,8 +515,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                       title: Text("Monthly",
                           style: TextStyle(
                               color: selectedSubscription == "monthly"
-                                  //? Color(0xffc69aa7)
-                                  ? Color(0xffb4888d)
+                                  ? Color(0xffef41a8)
                                   : Colors.black,
                               fontSize: 25,
                               fontWeight: FontWeight.bold)),
@@ -562,8 +524,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      subtitle:
-                          Text("7 days free trial", textAlign: TextAlign.start),
+                      subtitle: Text("ONE WEEK FREE-TRIAL",
+                          textAlign: TextAlign.start),
                     )
                     // Row(children: [
                     //   Text("Monthly",
@@ -583,17 +545,45 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   //setDoneBtnState();
                 },
               ),
-
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8, left: 8, right: 8),
-                child: Text(
-                  "We're confident you'll love your planit, but If you're not satisfied, cancel anytime before your one-week trial ends and you won't be charged.",
-                  style: TextStyle(
+              GestureDetector(
+                child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                      side: BorderSide(
+                        width: 3,
+                        color: selectedSubscription == "yearly"
+                            ? Color(0xffef41a8)
+                            : Colors.white, //<-- SEE HERE
+                      ),
+                    ),
+                    margin: EdgeInsets.only(
+                        left: 30, right: 30, top: 10, bottom: 5),
                     color: Colors.white,
-                    fontSize: 10,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                    elevation: selectedSubscription == "yearly" ? 15 : 0,
+                    child: ListTile(
+                      title: Text("Yearly",
+                          style: TextStyle(
+                              color: selectedSubscription == "yearly"
+                                  ? Color(0xffef41a8)
+                                  : Colors.black,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold)),
+                      trailing: Text(
+                        yearlyProduct.price + "/year",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        "ONE WEEK FREE-TRIAL",
+                        textAlign: TextAlign.start,
+                      ),
+                    )),
+                onTap: () {
+                  setState(() {
+                    selectedSubscription = "yearly";
+                  });
+                  //setDoneBtnState();
+                },
               ),
 
               Container(
@@ -618,7 +608,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 Radius.circular(10),
                               ),
                               child: Image.asset(
-                                "assets/images/home.PNG",
+                                "assets/images/home.jpg",
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -633,7 +623,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 Radius.circular(10),
                               ),
                               child: Image.asset(
-                                "assets/images/stories.PNG",
+                                "assets/images/stories.jpg",
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -648,7 +638,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 Radius.circular(10),
                               ),
                               child: Image.asset(
-                                "assets/images/schedule.PNG",
+                                "assets/images/schedule.jpg",
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -663,37 +653,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 Radius.circular(10),
                               ),
                               child: Image.asset(
-                                "assets/images/free_flow.PNG",
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        ]),
-                      ),
-                      // Container(
-                      //   child: Column(children: [
-                      //     Expanded(
-                      //       child: ClipRRect(
-                      //         borderRadius: BorderRadius.all(
-                      //           Radius.circular(10),
-                      //         ),
-                      //         child: Image.asset(
-                      //           "assets/images/free_flow_notstarted.PNG",
-                      //           fit: BoxFit.fill,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ]),
-                      // ),
-                      Container(
-                        child: Column(children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              child: Image.asset(
-                                "assets/images/free_flow_inprogress.PNG",
+                                "assets/images/goals.jpg",
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -708,37 +668,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                                 Radius.circular(10),
                               ),
                               child: Image.asset(
-                                "assets/images/goals.PNG",
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        ]),
-                      ),
-                      Container(
-                        child: Column(children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              child: Image.asset(
-                                "assets/images/backlog.PNG",
-                                fit: BoxFit.fill,
-                              ),
-                            ),
-                          ),
-                        ]),
-                      ),
-                      Container(
-                        child: Column(children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(10),
-                              ),
-                              child: Image.asset(
-                                "assets/images/profile.PNG",
+                                "assets/images/backlog.jpg",
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -761,14 +691,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                           ? subscribeMonthly
                           : subscribeYearly),
                   child: const Text(
-                    "Start your 7 days free trial",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                    "Go to My Planit Now",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 22),
                   ),
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
-                    // const Color(0xffc69aa7),
-                    const Color(0xffb4888d),
-                  )),
+                          const Color(0xffef41a8))),
                 ))
               ],
             ),

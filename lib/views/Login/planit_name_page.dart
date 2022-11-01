@@ -156,7 +156,7 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
                         decoration: const InputDecoration(
                           hintText: "Planit Name",
                           icon: Icon(
-                            Icons.email,
+                            Icons.person,
                             color: Colors.white,
                           ),
                           border: OutlineInputBorder(),

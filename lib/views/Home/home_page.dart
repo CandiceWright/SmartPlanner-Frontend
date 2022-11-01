@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/rendering.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,8 @@ import 'package:practice_planner/views/navigation_wrapper.dart';
 
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:video_player/video_player.dart';
+import '../Subscription/subscription_page.dart';
+import '../Subscription/subscription_page_no_free_trial.dart';
 import '/services/planner_service.dart';
 import '../Profile/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -382,8 +385,33 @@ class _HomePageState extends State<HomePage> {
         ),
         padding: EdgeInsets.all(5),
       ),
-      onTap: () {
-        createStory();
+      onTap: () async {
+        if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+          createStory();
+        } else {
+          if (PlannerService.sharedInstance.user!.receipt == "") {
+            //should geet free trial
+            List<ProductDetails> productDetails =
+                await PlannerService.subscriptionProvider.fetchSubscriptions();
+
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) {
+                return SubscriptionPage(
+                    fromPage: 'inapp', products: productDetails);
+              },
+            ));
+          } else {
+            List<ProductDetails> productDetails =
+                await PlannerService.subscriptionProvider.fetchSubscriptions();
+
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) {
+                return SubscriptionPageNoTrial(
+                    fromPage: 'inapp', products: productDetails);
+              },
+            ));
+          }
+        }
       },
     );
     stories.add(addStoryWidget);

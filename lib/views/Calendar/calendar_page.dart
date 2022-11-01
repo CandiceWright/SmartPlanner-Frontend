@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/views/Calendar/edit_free_flow_event.dart';
 import 'package:practice_planner/views/Calendar/new_event_page.dart';
@@ -18,6 +19,8 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../models/backlog_map_ref.dart';
 import '../Backlog/edit_task_page.dart';
 import '../Backlog/new_task_page.dart';
+import '../Subscription/subscription_page.dart';
+import '../Subscription/subscription_page_no_free_trial.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -265,11 +268,69 @@ class _CalendarPageState extends State<CalendarPage> {
                     child: Text("New Event"),
                   ),
                   TextButton(
-                    onPressed: startPlanningFromBacklog,
+                    onPressed: () async {
+                      if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+                        startPlanningFromBacklog();
+                      } else {
+                        if (PlannerService.sharedInstance.user!.receipt == "") {
+                          //should geet free trial
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPage(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        } else {
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPageNoTrial(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        }
+                      }
+                    },
                     child: Text("Backlog Item"),
                   ),
                   TextButton(
-                    onPressed: _openNewFreeFlowSessionPage,
+                    onPressed: () async {
+                      if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+                        _openNewFreeFlowSessionPage();
+                      } else {
+                        if (PlannerService.sharedInstance.user!.receipt == "") {
+                          //should geet free trial
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPage(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        } else {
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPageNoTrial(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        }
+                      }
+                    },
                     child: Text("Free Flow Session"),
                   )
                 ],
@@ -1354,7 +1415,8 @@ class _CalendarPageState extends State<CalendarPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-                onPressed: () {
+              onPressed: () async {
+                if (PlannerService.sharedInstance.user!.isPremiumUser!) {
                   Navigator.push(
                       context,
                       CupertinoPageRoute(
@@ -1362,10 +1424,38 @@ class _CalendarPageState extends State<CalendarPage> {
                               date: _selectedDate,
                               updatePotentialCandidates:
                                   updatePotentialCandidates)));
-                },
-                child: Text("Add Backlog Items")),
+                } else {
+                  if (PlannerService.sharedInstance.user!.receipt == "") {
+                    //should geet free trial
+                    List<ProductDetails> productDetails = await PlannerService
+                        .subscriptionProvider
+                        .fetchSubscriptions();
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return SubscriptionPage(
+                            fromPage: 'inapp', products: productDetails);
+                      },
+                    ));
+                  } else {
+                    List<ProductDetails> productDetails = await PlannerService
+                        .subscriptionProvider
+                        .fetchSubscriptions();
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return SubscriptionPageNoTrial(
+                            fromPage: 'inapp', products: productDetails);
+                      },
+                    ));
+                  }
+                }
+              },
+              child: Text("Add Backlog Items"),
+            ),
             TextButton(
-                onPressed: () {
+              onPressed: () async {
+                if (PlannerService.sharedInstance.user!.isPremiumUser!) {
                   Navigator.push(
                       context,
                       CupertinoPageRoute(
@@ -1373,8 +1463,35 @@ class _CalendarPageState extends State<CalendarPage> {
                                 updateBacklog: updatePotentialCandidates,
                                 selectdDate: _selectedDate,
                               )));
-                },
-                child: Text("Create New Task"))
+                } else {
+                  if (PlannerService.sharedInstance.user!.receipt == "") {
+                    //should geet free trial
+                    List<ProductDetails> productDetails = await PlannerService
+                        .subscriptionProvider
+                        .fetchSubscriptions();
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return SubscriptionPage(
+                            fromPage: 'inapp', products: productDetails);
+                      },
+                    ));
+                  } else {
+                    List<ProductDetails> productDetails = await PlannerService
+                        .subscriptionProvider
+                        .fetchSubscriptions();
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return SubscriptionPageNoTrial(
+                            fromPage: 'inapp', products: productDetails);
+                      },
+                    ));
+                  }
+                }
+              },
+              child: Text("Create New Task"),
+            )
           ],
         ),
       ],

@@ -1221,6 +1221,34 @@ class _BacklogItemsSchedulerState extends State<BacklogItemsScheduler> {
                   ),
                   fit: BoxFit.fill)),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      title: const Text(
+                        "The task scheduler is used to assign backlog items to the date that you'd like to work on that task. Click on the date and then drag and drop the task(s) from the backlog column to the 'To Do This Day' column.",
+                        textAlign: TextAlign.center,
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('OK'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        )
+                      ],
+                    );
+                  });
+            },
+            icon: const Icon(Icons.info),
+          )
+        ],
 
         iconTheme: IconThemeData(
           color: Theme.of(context).primaryColor, //change your color here

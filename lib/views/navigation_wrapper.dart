@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -14,6 +16,7 @@ import '/views/Calendar/calendar_page.dart';
 // import '/views/Backlog/backlog_page.dart';
 //import '/views/Calendar/updated_calendar_page.dart';
 import '/views/Backlog/updated_backlog_page.dart';
+import 'package:http/http.dart' as http;
 
 import 'Dictionary/dictionary.dart';
 
@@ -69,22 +72,10 @@ class _NavigationWrapperState extends State<NavigationWrapper>
     if (_isInForeground &&
         !PlannerService.subscriptionProvider.purchaseInProgress) {
       //print("app is in foreground");
+      if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+        //check to see if purchase is  still valid, if not, show an error
+        var receipt = PlannerService.sharedInstance.user!.receipt;
 
-      //check to see if purchase is  still valid, if not, show an error
-      var receipt = PlannerService.sharedInstance.user!.receipt;
-      if (receipt == "") {
-        print("I am in nav wrapper and user is not premium");
-        PlannerService.sharedInstance.user!.isPremiumUser = false;
-
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return const NavigationWrapper();
-          },
-          settings: const RouteSettings(
-            name: 'navigaionPage',
-          ),
-        ));
-      } else {
         print("I am in nav wrapper and user has a receipt to verify");
         //check to make sure their subscription is valid before you let them into planit
         //validate receipt
@@ -138,19 +129,59 @@ class _NavigationWrapperState extends State<NavigationWrapper>
                                     'Yes, use Basic',
                                     style: TextStyle(color: Colors.grey),
                                   ),
-                                  onPressed: () {
+                                  onPressed: () async {
                                     PlannerService.sharedInstance.user!
                                         .isPremiumUser = false;
+                                    //update isPremium on server
+                                    var body = {
+                                      'user': PlannerService
+                                          .sharedInstance.user!.id,
+                                      'isPremium': PlannerService
+                                          .sharedInstance.user!.isPremiumUser,
+                                    };
+                                    String bodyF = jsonEncode(body);
+                                    //print(bodyF);
 
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (context) {
-                                        return const NavigationWrapper();
-                                      },
-                                      settings: const RouteSettings(
-                                        name: 'navigaionPage',
-                                      ),
-                                    ));
+                                    var url = Uri.parse(PlannerService
+                                            .sharedInstance.serverUrl +
+                                        '/user/premium');
+                                    var response = await http.patch(url,
+                                        headers: {
+                                          "Content-Type": "application/json"
+                                        },
+                                        body: bodyF);
+                                    //print('Response status: ${response.statusCode}');
+                                    //print('Response body: ${response.body}');
+
+                                    if (response.statusCode == 200) {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                        builder: (context) {
+                                          return const NavigationWrapper();
+                                        },
+                                        settings: const RouteSettings(
+                                          name: 'navigaionPage',
+                                        ),
+                                      ));
+                                    } else {
+                                      //500 error, show an alert
+                                      showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text(
+                                                  'Oops! Looks like something went wrong. Please try again.'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: Text('OK'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          });
+                                    }
                                   },
                                 ),
                                 TextButton(
@@ -228,19 +259,60 @@ class _NavigationWrapperState extends State<NavigationWrapper>
                                       'Yes, use Basic',
                                       style: TextStyle(color: Colors.grey),
                                     ),
-                                    onPressed: () {
+                                    onPressed: () async {
                                       PlannerService.sharedInstance.user!
                                           .isPremiumUser = false;
+                                      //update isPremium on server
+                                      var body = {
+                                        'user': PlannerService
+                                            .sharedInstance.user!.id,
+                                        'isPremium': PlannerService
+                                            .sharedInstance.user!.isPremiumUser,
+                                      };
+                                      String bodyF = jsonEncode(body);
+                                      //print(bodyF);
 
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) {
-                                          return const NavigationWrapper();
-                                        },
-                                        settings: const RouteSettings(
-                                          name: 'navigaionPage',
-                                        ),
-                                      ));
+                                      var url = Uri.parse(PlannerService
+                                              .sharedInstance.serverUrl +
+                                          '/user/premium');
+                                      var response = await http.patch(url,
+                                          headers: {
+                                            "Content-Type": "application/json"
+                                          },
+                                          body: bodyF);
+                                      //print('Response status: ${response.statusCode}');
+                                      //print('Response body: ${response.body}');
+
+                                      if (response.statusCode == 200) {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) {
+                                            return const NavigationWrapper();
+                                          },
+                                          settings: const RouteSettings(
+                                            name: 'navigaionPage',
+                                          ),
+                                        ));
+                                      } else {
+                                        //500 error, show an alert
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                title: Text(
+                                                    'Oops! Looks like something went wrong. Please try again.'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    child: Text('OK'),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  )
+                                                ],
+                                              );
+                                            });
+                                      }
                                     },
                                   ),
                                   TextButton(

@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:practice_planner/models/backlog_item.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
 import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/views/Backlog/edit_task_page.dart';
 import 'package:practice_planner/views/Backlog/new_task_page.dart';
+import '../Subscription/subscription_page.dart';
+import '../Subscription/subscription_page_no_free_trial.dart';
 import '/services/planner_service.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
@@ -743,7 +746,7 @@ class _BacklogPageState extends State<BacklogPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Text(
-                        "No scheduled tasks. Use the calendar tab to schedule tasks.",
+                        "No completed tasks.",
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.grey),
                       ),
@@ -972,7 +975,7 @@ class _BacklogPageState extends State<BacklogPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Text(
-                        "No scheduled tasks. Use the calendar tab to schedule tasks.",
+                        "No scheduled tasks. Use the task scheduler or the calendar page to schedule tasks.",
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.grey),
                       ),
@@ -1234,13 +1237,40 @@ class _BacklogPageState extends State<BacklogPage> {
           ),
         ),
         TextButton(
-          onPressed: () {
-            Navigator.push(
-                context,
-                CupertinoPageRoute(
-                    builder: (context) => BacklogItemsScheduler(
-                          updateTaskPage: _updateBacklogList,
-                        )));
+          onPressed: () async {
+            if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) => BacklogItemsScheduler(
+                            updateTaskPage: _updateBacklogList,
+                          )));
+            } else {
+              if (PlannerService.sharedInstance.user!.receipt == "") {
+                //should geet free trial
+                List<ProductDetails> productDetails = await PlannerService
+                    .subscriptionProvider
+                    .fetchSubscriptions();
+
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) {
+                    return SubscriptionPage(
+                        fromPage: 'inapp', products: productDetails);
+                  },
+                ));
+              } else {
+                List<ProductDetails> productDetails = await PlannerService
+                    .subscriptionProvider
+                    .fetchSubscriptions();
+
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) {
+                    return SubscriptionPageNoTrial(
+                        fromPage: 'inapp', products: productDetails);
+                  },
+                ));
+              }
+            }
           },
           child: const Text("Open Scheduler"),
         ),
@@ -1252,7 +1282,7 @@ class _BacklogPageState extends State<BacklogPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Text(
-                        "No backlog items have been created yet. Click the plus sign to get started or the info button at the top to learn more.",
+                        "No backlog tasks at the moment. Click the plus sign to create a new task",
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.grey),
                       ),
@@ -1595,9 +1625,11 @@ class _BacklogPageState extends State<BacklogPage> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       title: const Text(
-                        "Your backlog holds any tasks that you need to do, but haven't scheduled time on your calendar to do yet.",
+                        "Your tasks are organized in three categories: Backlog, Scheduled, and Complete.",
                         textAlign: TextAlign.center,
                       ),
+                      content: const Text(
+                          "Your backlog includes any task that needs to be completed and has not been assigned a date to work on it. The scheduled section has all tasks that have been assigned a date."),
                       actions: <Widget>[
                         TextButton(
                           child: Text('OK'),

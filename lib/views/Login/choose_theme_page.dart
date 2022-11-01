@@ -122,19 +122,54 @@ class _ChooseThemePageState extends State<ChooseThemePage> {
         //   },
         // ));
 
-        await storage.setItem('login', true);
-        await storage.setItem('user', widget.userId);
+        PlannerService.sharedInstance.user!.isPremiumUser = false;
+        var body = {
+          'user': PlannerService.sharedInstance.user!.id,
+          'isPremium': PlannerService.sharedInstance.user!.isPremiumUser,
+        };
+        String bodyF = jsonEncode(body);
+        //print(bodyF);
 
-        //get subscription products
-        List<ProductDetails> productDetails =
-            await PlannerService.subscriptionProvider.fetchSubscriptions();
+        var url = Uri.parse(
+            PlannerService.sharedInstance.serverUrl + '/user/premium');
+        var response = await http.patch(url,
+            headers: {"Content-Type": "application/json"}, body: bodyF);
+        //print('Response status: ${response.statusCode}');
+        //print('Response body: ${response.body}');
 
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) {
-            return SubscriptionPage(
-                fromPage: 'signup', products: productDetails);
-          },
-        ));
+        if (response.statusCode == 200) {
+          await storage.setItem('login', true);
+          await storage.setItem('user', widget.userId);
+
+          //get subscription products
+          List<ProductDetails> productDetails =
+              await PlannerService.subscriptionProvider.fetchSubscriptions();
+
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) {
+              return SubscriptionPage(
+                  fromPage: 'signup', products: productDetails);
+            },
+          ));
+        } else {
+          showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: const Text(
+                      'Oops! Looks like something went wrong. Please try again.'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                );
+              });
+        }
+
         // } else {
         //   showDialog(
         //       context: context,

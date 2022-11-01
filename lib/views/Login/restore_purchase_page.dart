@@ -853,7 +853,7 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
                   children: [
                     Padding(
                       child: Image.asset(
-                        "assets/images/planit_logo.png",
+                        "assets/images/text_logo.png",
                       ),
                       padding: EdgeInsets.all(10),
                     ),
@@ -924,27 +924,30 @@ class _RestorePurchasePageState extends State<RestorePurchasePage> {
                 ),
                 persistentFooterButtons: [
                   Container(
-                    child: Column(
-                      children: [
-                        FractionallySizedBox(
-                          widthFactor: 0.5,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              //first validate login and then restore
-                              //login();
-                              restore();
-                            },
-                            child: Text(
-                              "Restore Purchase",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  const Color(0xffd1849e)),
-                            ),
-                          ),
+                    alignment: Alignment.center,
+                    child: FractionallySizedBox(
+                      widthFactor: 0.5,
+                      child: TextButton(
+                        onPressed: restore,
+                        child: const Text(
+                          "Restore Purchase",
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
                         ),
-                      ],
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.transparent),
+                            shape: MaterialStateProperty
+                                .all<RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(18.0),
+                                        side: const BorderSide(
+                                            //color: Color(0xfff188b1),
+                                            color: Colors.white)))),
+                      ),
                     ),
                   )
                 ],

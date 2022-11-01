@@ -269,7 +269,8 @@ class _SignupPageState extends State<SignupPage> {
                           child: const Text(
                             "Login",
                             style: TextStyle(
-                              color: Color(0xffd1849e),
+                              // color: Color(0xffd1849e),
+                              color: Color(0xffb4888d),
                               //color: Colors.grey
                             ),
                           ))

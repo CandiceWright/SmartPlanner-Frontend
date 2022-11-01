@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:practice_planner/models/event.dart';
 import 'package:practice_planner/models/life_category.dart';
+import '../Subscription/subscription_page.dart';
+import '../Subscription/subscription_page_no_free_trial.dart';
 import '/models/goal.dart';
 import '/services/planner_service.dart';
 import 'package:http/http.dart' as http;
@@ -364,14 +367,53 @@ class _NewGoalPageState extends State<NewGoalPage> {
                                     child: TextButton(
                                       child: Text("Add an image (Optional)"),
                                       onPressed: () async {
-                                        _selectedImg = await _picker.pickImage(
-                                            source: ImageSource.gallery);
-                                        //print(_selectedImg);
-                                        if (_selectedImg != null) {
-                                          setState(() {
-                                            fileMedia =
-                                                File(_selectedImg!.path);
-                                          });
+                                        if (PlannerService.sharedInstance.user!
+                                            .isPremiumUser!) {
+                                          _selectedImg =
+                                              await _picker.pickImage(
+                                                  source: ImageSource.gallery);
+                                          //print(_selectedImg);
+                                          if (_selectedImg != null) {
+                                            setState(() {
+                                              fileMedia =
+                                                  File(_selectedImg!.path);
+                                            });
+                                          }
+                                        } else {
+                                          if (PlannerService.sharedInstance
+                                                  .user!.receipt ==
+                                              "") {
+                                            //should geet free trial
+                                            List<ProductDetails>
+                                                productDetails =
+                                                await PlannerService
+                                                    .subscriptionProvider
+                                                    .fetchSubscriptions();
+
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                              builder: (context) {
+                                                return SubscriptionPage(
+                                                    fromPage: 'inapp',
+                                                    products: productDetails);
+                                              },
+                                            ));
+                                          } else {
+                                            List<ProductDetails>
+                                                productDetails =
+                                                await PlannerService
+                                                    .subscriptionProvider
+                                                    .fetchSubscriptions();
+
+                                            Navigator.of(context)
+                                                .push(MaterialPageRoute(
+                                              builder: (context) {
+                                                return SubscriptionPageNoTrial(
+                                                    fromPage: 'inapp',
+                                                    products: productDetails);
+                                              },
+                                            ));
+                                          }
                                         }
                                       },
 

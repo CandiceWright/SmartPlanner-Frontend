@@ -270,12 +270,13 @@ class _ScheduleBacklogItemsPageState extends State<ScheduleBacklogItemsPage> {
                           .value.length ==
                       0)
           ? Container(
+              alignment: Alignment.center,
               margin: EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
                   Text(
-                    "No backlog items have been created yet. Go to your backlog page to get started.",
+                    "No backlog items.",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey),
                   ),

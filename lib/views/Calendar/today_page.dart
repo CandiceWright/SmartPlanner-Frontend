@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:intl/intl.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:practice_planner/models/backlog_map_ref.dart';
@@ -19,6 +20,8 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import '../../models/backlog_item.dart';
 import '../Backlog/edit_task_page.dart';
 import '../Backlog/new_task_page.dart';
+import '../Subscription/subscription_page.dart';
+import '../Subscription/subscription_page_no_free_trial.dart';
 import '/services/planner_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -158,6 +161,8 @@ class _TodayPageState extends State<TodayPage> {
                       freeFlowSessionStarted = false;
                       freeFlowSessionEnded = true;
                       freeFlowSessionDuration = Duration();
+                      PlannerService.sharedInstance.user!
+                          .currentFreeFlowSessionEnds = null;
                       timer!.cancel();
                     });
                     var body = {
@@ -222,6 +227,8 @@ class _TodayPageState extends State<TodayPage> {
                       freeFlowSessionStarted = false;
                       freeFlowSessionEnded = true;
                       freeFlowSessionDuration = Duration();
+                      PlannerService.sharedInstance.user!
+                          .currentFreeFlowSessionEnds = null;
                       timer!.cancel();
                     });
                     var body = {
@@ -1054,7 +1061,7 @@ class _TodayPageState extends State<TodayPage> {
                       child: Text(
                         // "As long as you give maximum effort while you're free flowing, you'll always get the optimal number of things done."
                         // "Maximum effort will always result in the optimal number of things getting done. So, don't focus on how many things you get done while you're free flowing, focus on maximizing the effort you put in.",
-                        "Maximum effort will always maximize the number of things you get done. So, don't focus on the number of things you get done while you're free flowing, focus on maximizing the effort you put in.",
+                        "Maximum effort will always optimize the number of things you get done. So, don't focus on the number of things you do while you're free flowing, focus on maximizing the effort you put in.",
                         textAlign: TextAlign.center,
                       ),
                     )
@@ -1539,68 +1546,17 @@ class _TodayPageState extends State<TodayPage> {
                 padding: EdgeInsets.only(bottom: 15),
                 child: ElevatedButton(
                   onPressed: () async {
-                    if (sessionHours == 0 && sessionMins == 0) {
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20.0))),
-                              title: Text(
-                                  "The session timer hasn't been set yet. Set the timer before starting."),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                )
-                              ],
-                            );
-                          });
-                    } else {
-                      setState(() {
-                        freeFlowSessionStarted = true;
-                        freeFlowSessionDuration =
-                            Duration(hours: sessionHours, minutes: sessionMins);
-                        //store this in db
-                        PlannerService.sharedInstance.user!
-                                .currentFreeFlowSessionEnds =
-                            DateTime.now().add(freeFlowSessionDuration);
-                        startTimer();
-                      });
-                      HapticFeedback.mediumImpact();
-                      //call server to start
-                      //make call to server
-
-                      var body = {
-                        'userId': PlannerService.sharedInstance.user!.id,
-                        'action': "start",
-                        'end': (DateTime.now().add(freeFlowSessionDuration))
-                            .toString(),
-                      };
-                      String bodyF = jsonEncode(body);
-                      //print(bodyF);
-
-                      var url = Uri.parse(
-                          PlannerService.sharedInstance.serverUrl +
-                              '/user/freeflow');
-                      var response = await http.patch(url,
-                          headers: {"Content-Type": "application/json"},
-                          body: bodyF);
-                      //print('Response status: ${response.statusCode}');
-                      //print('Response body: ${response.body}');
-
-                      if (response.statusCode == 200) {
-                      } else {
-                        //500 error, show an alert
+                    if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+                      if (sessionHours == 0 && sessionMins == 0) {
                         showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(20.0))),
                                 title: Text(
-                                    'Oops! Looks like something went wrong. Please try again.'),
+                                    "The session timer hasn't been set yet. Set the timer before starting."),
                                 actions: <Widget>[
                                   TextButton(
                                     child: Text('OK'),
@@ -1611,6 +1567,84 @@ class _TodayPageState extends State<TodayPage> {
                                 ],
                               );
                             });
+                      } else {
+                        setState(() {
+                          freeFlowSessionStarted = true;
+                          freeFlowSessionDuration = Duration(
+                              hours: sessionHours, minutes: sessionMins);
+                          //store this in db
+                          PlannerService.sharedInstance.user!
+                                  .currentFreeFlowSessionEnds =
+                              DateTime.now().add(freeFlowSessionDuration);
+                          startTimer();
+                        });
+                        HapticFeedback.mediumImpact();
+                        //call server to start
+                        //make call to server
+
+                        var body = {
+                          'userId': PlannerService.sharedInstance.user!.id,
+                          'action': "start",
+                          'end': (DateTime.now().add(freeFlowSessionDuration))
+                              .toString(),
+                        };
+                        String bodyF = jsonEncode(body);
+                        //print(bodyF);
+
+                        var url = Uri.parse(
+                            PlannerService.sharedInstance.serverUrl +
+                                '/user/freeflow');
+                        var response = await http.patch(url,
+                            headers: {"Content-Type": "application/json"},
+                            body: bodyF);
+                        //print('Response status: ${response.statusCode}');
+                        //print('Response body: ${response.body}');
+
+                        if (response.statusCode == 200) {
+                        } else {
+                          //500 error, show an alert
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text(
+                                      'Oops! Looks like something went wrong. Please try again.'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text('OK'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        }
+                      }
+                    } else {
+                      if (PlannerService.sharedInstance.user!.receipt == "") {
+                        //should geet free trial
+                        List<ProductDetails> productDetails =
+                            await PlannerService.subscriptionProvider
+                                .fetchSubscriptions();
+
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return SubscriptionPage(
+                                fromPage: 'inapp', products: productDetails);
+                          },
+                        ));
+                      } else {
+                        List<ProductDetails> productDetails =
+                            await PlannerService.subscriptionProvider
+                                .fetchSubscriptions();
+
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return SubscriptionPageNoTrial(
+                                fromPage: 'inapp', products: productDetails);
+                          },
+                        ));
                       }
                     }
                   },
@@ -2298,25 +2332,79 @@ class _TodayPageState extends State<TodayPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => SelectBacklogItemsPage(
-                              date: thisDay,
-                              updatePotentialCandidates:
-                                  updatePotentialCandidates)));
+                onPressed: () async {
+                  if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => SelectBacklogItemsPage(
+                                date: thisDay,
+                                updatePotentialCandidates:
+                                    updatePotentialCandidates)));
+                  } else {
+                    if (PlannerService.sharedInstance.user!.receipt == "") {
+                      //should geet free trial
+                      List<ProductDetails> productDetails = await PlannerService
+                          .subscriptionProvider
+                          .fetchSubscriptions();
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) {
+                          return SubscriptionPage(
+                              fromPage: 'inapp', products: productDetails);
+                        },
+                      ));
+                    } else {
+                      List<ProductDetails> productDetails = await PlannerService
+                          .subscriptionProvider
+                          .fetchSubscriptions();
+
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) {
+                          return SubscriptionPageNoTrial(
+                              fromPage: 'inapp', products: productDetails);
+                        },
+                      ));
+                    }
+                  }
                 },
                 child: Text("Add Backlog Items")),
             TextButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) => NewTaskPage(
-                              updateBacklog: updatePotentialCandidates,
-                              selectdDate: thisDay,
-                            )));
+              onPressed: () async {
+                if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => NewTaskPage(
+                                updateBacklog: updatePotentialCandidates,
+                                selectdDate: thisDay,
+                              )));
+                } else {
+                  if (PlannerService.sharedInstance.user!.receipt == "") {
+                    //should geet free trial
+                    List<ProductDetails> productDetails = await PlannerService
+                        .subscriptionProvider
+                        .fetchSubscriptions();
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return SubscriptionPage(
+                            fromPage: 'inapp', products: productDetails);
+                      },
+                    ));
+                  } else {
+                    List<ProductDetails> productDetails = await PlannerService
+                        .subscriptionProvider
+                        .fetchSubscriptions();
+
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) {
+                        return SubscriptionPageNoTrial(
+                            fromPage: 'inapp', products: productDetails);
+                      },
+                    ));
+                  }
+                }
               },
               child: Text("Create New Task"),
             )
@@ -3028,11 +3116,69 @@ class _TodayPageState extends State<TodayPage> {
                     child: Text("New Event"),
                   ),
                   TextButton(
-                    onPressed: startPlanningFromBacklog,
+                    onPressed: () async {
+                      if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+                        startPlanningFromBacklog();
+                      } else {
+                        if (PlannerService.sharedInstance.user!.receipt == "") {
+                          //should geet free trial
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPage(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        } else {
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPageNoTrial(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        }
+                      }
+                    },
                     child: Text("Backlog Item"),
                   ),
                   TextButton(
-                    onPressed: _openNewFreeFlowSessionPage,
+                    onPressed: () async {
+                      if (PlannerService.sharedInstance.user!.isPremiumUser!) {
+                        _openNewFreeFlowSessionPage();
+                      } else {
+                        if (PlannerService.sharedInstance.user!.receipt == "") {
+                          //should geet free trial
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPage(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        } else {
+                          List<ProductDetails> productDetails =
+                              await PlannerService.subscriptionProvider
+                                  .fetchSubscriptions();
+
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) {
+                              return SubscriptionPageNoTrial(
+                                  fromPage: 'inapp', products: productDetails);
+                            },
+                          ));
+                        }
+                      }
+                    },
                     child: Text("Free Flow Session"),
                   )
                 ],
