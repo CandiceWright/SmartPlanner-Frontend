@@ -20,48 +20,12 @@ class LaunchVideoPage extends StatefulWidget {
 
 class _LaunchVideoPageState extends State<LaunchVideoPage> {
   late VideoPlayerController _videoPlayerController;
-  // late Future getVideoStatusFunc;
   //final LocalStorage storage = LocalStorage('planner_app');
   final Future<SharedPreferences> storage = SharedPreferences.getInstance();
 
   @override
   void initState() {
     super.initState();
-    //getVideoStatusFunc = getVideoStatus();
-
-    // storage.then((SharedPreferences prefs) {
-    //   print("I am printing login status in local storage");
-
-    //   print(prefs.getBool('videoShown'));
-    //   if (prefs.getBool("videoShown") != null) {
-    //     print("I am in does not equal not video shown");
-    //     //video already shown
-    //     skipToWelcomePage();
-    //   } else {
-    //     _videoPlayerController =
-    //         VideoPlayerController.asset("assets/images/launch_video.mp4")
-    //           ..initialize().then((_) {
-    //             _videoPlayerController.play();
-    //             _videoPlayerController.setLooping(false);
-    //             _videoPlayerController.addListener(checkVideoEnded);
-    //           });
-    //   }
-    // });
-
-    // print("I am printing valuee of video shown");
-    // print(storage.getItem('videoShown'));
-    // if (storage.getItem('videoShown') != null) {
-    //   //then it was already set
-    //   goToWelcomePage();
-    // } else {
-    //   _videoPlayerController =
-    //       VideoPlayerController.asset("assets/images/launch_video.mp4")
-    //         ..initialize().then((_) {
-    //           _videoPlayerController.play();
-    //           _videoPlayerController.setLooping(false);
-    //           _videoPlayerController.addListener(checkVideoEnded);
-    //         });
-    // }
   }
 
   void checkVideoEnded() {
@@ -101,16 +65,6 @@ class _LaunchVideoPageState extends State<LaunchVideoPage> {
       }
     });
   }
-
-  // Future setVideoController() async {
-  //   _videoPlayerController =
-  //       VideoPlayerController.asset("assets/images/launch_video.mp4")
-  //         ..initialize().then((_) {
-  //           _videoPlayerController.play();
-  //           _videoPlayerController.setLooping(false);
-  //           _videoPlayerController.addListener(checkVideoEnded);
-  //         });
-  // }
 
   skipToWelcomePage() {
     _videoPlayerController.removeListener(checkVideoEnded);
@@ -190,80 +144,6 @@ class _LaunchVideoPageState extends State<LaunchVideoPage> {
                 //   },
                 // ),
 
-                // body: AspectRatio(
-                //   aspectRatio: _videoPlayerController.value.aspectRatio,
-                //   child: ClipRRect(
-                //     borderRadius: BorderRadius.circular(15),
-                //     child: Stack(
-                //       alignment: Alignment.bottomCenter,
-                //       children: <Widget>[
-                //         VideoPlayer(_videoPlayerController),
-                //         VideoProgressIndicator(_videoPlayerController,
-                //             allowScrubbing: true),
-                //       ],
-                //     ),
-                //   ),
-                // ),
-                // Stack(
-                //   children: [
-                //     Center(
-                //       child: Container(
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(10),
-                //             color: Colors.transparent,
-                //           ),
-                //           clipBehavior: Clip.antiAlias,
-                //           alignment: Alignment.center,
-                //           child: Container(
-                //               margin: EdgeInsets.all(20),
-                //               child: AspectRatio(
-                //                 aspectRatio: _videoPlayerController.value.aspectRatio,
-                //                 child: ClipRRect(
-                //                   borderRadius: BorderRadius.circular(15),
-                //                   child: Stack(
-                //                     alignment: Alignment.bottomCenter,
-                //                     children: <Widget>[
-                //                       VideoPlayer(_videoPlayerController),
-                //                       VideoProgressIndicator(_videoPlayerController,
-                //                           allowScrubbing: true),
-                //                     ],
-                //                   ),
-                //                 ),
-                //               ))
-
-                //           //     FutureBuilder(
-                //           //   //future: setVideoController(),
-                //           //   future: setVideoControllerFunc,
-                //           //   builder: (context, state) {
-                //           //     if (state.connectionState == ConnectionState.waiting) {
-                //           //       return const Center(child: CircularProgressIndicator());
-                //           //     } else {
-                //           //       //return VideoPlayer(_videoPlayerController);
-                //           //       return Container(
-                //           //           margin: EdgeInsets.all(20),
-                //           //           child: AspectRatio(
-                //           //             aspectRatio:
-                //           //                 _videoPlayerController.value.aspectRatio,
-                //           //             child: ClipRRect(
-                //           //               borderRadius: BorderRadius.circular(15),
-                //           //               child: Stack(
-                //           //                 alignment: Alignment.bottomCenter,
-                //           //                 children: <Widget>[
-                //           //                   VideoPlayer(_videoPlayerController),
-                //           //                   VideoProgressIndicator(
-                //           //                       _videoPlayerController,
-                //           //                       allowScrubbing: true),
-                //           //                 ],
-                //           //               ),
-                //           //             ),
-                //           //           ));
-                //           //     }
-                //           //   },
-                //           // ),
-                //           ),
-                //     )
-                //   ],
-                // ),
                 persistentFooterButtons: [
                   FractionallySizedBox(
                     widthFactor: 0.5,
@@ -287,28 +167,6 @@ class _LaunchVideoPageState extends State<LaunchVideoPage> {
                                           color: Color(0xffffffff))))),
                     ),
                   ),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     //FractionallySizedBox(
-                  //     //widthFactor: 0.5,
-                  //     //child: ElevatedButton(
-                  //     ElevatedButton(
-                  //       onPressed: goToWelcomePage,
-                  //       child: Text(
-                  //         "Skip",
-                  //         style: TextStyle(fontSize: 18),
-                  //       ),
-                  //       style: ButtonStyle(
-                  //         // backgroundColor: MaterialStateProperty.all<Color>(
-                  //         //     const Color(0xffef41a8)),
-                  //         backgroundColor: MaterialStateProperty.all<Color>(
-                  //             Theme.of(context).primaryColor),
-                  //       ),
-                  //     ),
-                  //     //),
-                  //   ],
-                  // ),
                 ],
               ),
             ],

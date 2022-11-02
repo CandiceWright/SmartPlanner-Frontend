@@ -56,15 +56,6 @@ class _WelcomePageState extends State<WelcomePage> {
         }
       }
     });
-
-    // print("I am printing login status in local storage");
-    // print(storage.getItem('login'));
-    // if (storage.getItem('login') != null) {
-    //   if (storage.getItem('login')) {
-    //     //already logged in
-    //     goToPlanner();
-    //   }
-    // }
   }
 
   void goToPlanner() async {
