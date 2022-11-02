@@ -24,7 +24,7 @@ class PlannerService {
   String serverUrl = "https://serve-anotherplanit.com:7343";
 
   //for dev (this is your ip. It changes sometimes so keep this up-to-date)
-  //String serverUrl = "https://a238-95-168-120-16.ngrok.io";
+  //String serverUrl = "https://8db4-172-58-142-146.ngrok.io";
 
   User? user;
 

@@ -129,13 +129,15 @@ class _PasswordResetPinPageState extends State<PasswordResetPinPage> {
                         controller: pinTxtController,
                         enableSuggestions: false,
                         autocorrect: false,
+                        cursorColor: Colors.grey,
                         decoration: const InputDecoration(
                           hintText: "Pin",
                           icon: Icon(
                             Icons.password,
                             color: Colors.white,
                           ),
-                          border: OutlineInputBorder(),
+                          //border: OutlineInputBorder(),
+                          border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.white,
                         ),

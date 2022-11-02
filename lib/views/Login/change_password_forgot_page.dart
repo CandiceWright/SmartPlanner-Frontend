@@ -126,13 +126,15 @@ class _ChangePasswordForgotPageState extends State<ChangePasswordForgotPage> {
                         enableSuggestions: false,
                         autocorrect: false,
                         obscureText: true,
+                        cursorColor: Colors.grey,
                         decoration: const InputDecoration(
                           hintText: "New Password",
                           icon: Icon(
                             Icons.password,
                             color: Colors.white,
                           ),
-                          border: OutlineInputBorder(),
+                          //border: OutlineInputBorder(),
+                          border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.white,
                         ),

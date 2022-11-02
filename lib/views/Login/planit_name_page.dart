@@ -153,13 +153,15 @@ class _PlanitNamePageState extends State<PlanitNamePage> {
                         controller: planitNameTextController,
                         enableSuggestions: false,
                         autocorrect: false,
+                        cursorColor: Colors.grey,
                         decoration: const InputDecoration(
                           hintText: "Planit Name",
                           icon: Icon(
                             Icons.person,
                             color: Colors.white,
                           ),
-                          border: OutlineInputBorder(),
+                          //border: OutlineInputBorder(),
+                          border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.white,
                         ),

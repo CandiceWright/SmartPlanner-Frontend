@@ -516,11 +516,9 @@ class _TodayPageState extends State<TodayPage> {
                 setState(() {
                   freeFlowSessionStarted = false;
                   freeFlowSessionEnded = true;
-                  freeFlowSessionNeedsToBeEnded = false;
                   freeFlowSessionDuration = Duration();
-                  if (timer != null) {
-                    timer!.cancel();
-                  }
+                  PlannerService
+                      .sharedInstance.user!.currentFreeFlowSessionEnds = null;
                 });
                 var body = {
                   'userId': PlannerService.sharedInstance.user!.id,
@@ -537,7 +535,6 @@ class _TodayPageState extends State<TodayPage> {
                 //print('Response body: ${response.body}');
 
                 if (response.statusCode == 200) {
-                  //Navigator.of(context).pop();
                 } else {
                   //500 error, show an alert
                   showDialog(

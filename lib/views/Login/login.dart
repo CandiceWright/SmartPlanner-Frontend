@@ -17,6 +17,7 @@ import 'package:practice_planner/views/Login/restore_purchase_page.dart';
 import 'package:practice_planner/views/Login/signup.dart';
 import 'package:practice_planner/views/Subscription/subscription_page.dart';
 import 'package:practice_planner/views/Subscription/subscription_page_no_free_trial.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/backlog_item.dart';
 import '../../models/definition.dart';
 import '../../models/habit.dart';
@@ -41,7 +42,8 @@ class _LoginPageState extends State<LoginPage> {
   bool shouldShowRestoredDialog = false;
   bool isloggingIn = false;
   double loadPercentage = 0.0;
-  final LocalStorage storage = LocalStorage('planner_app');
+  // final LocalStorage storage = LocalStorage('planner_app');
+  final Future<SharedPreferences> storage = SharedPreferences.getInstance();
 
   //var subscriptionProvider = SubscriptionsProvider();
   //<MyApp> tells flutter that this state belongs to MyApp Widget
@@ -766,8 +768,12 @@ class _LoginPageState extends State<LoginPage> {
                     PlannerService.sharedInstance.user!.localProfileImage =
                         profilePicPath;
 
-                    await storage.setItem('login', true);
-                    await storage.setItem('user', userId);
+                    //await storage.setItem('login', true);
+                    //await storage.setItem('user', userId);
+                    await storage.then((SharedPreferences prefs) {
+                      prefs.setBool('login', true);
+                      prefs.setInt('user', userId);
+                    });
 
                     if (!PlannerService.sharedInstance.user!.isPremiumUser!) {
                       //PlannerService.sharedInstance.user!.isPremiumUser = false;
@@ -1529,13 +1535,15 @@ class _LoginPageState extends State<LoginPage> {
                         controller: emailTextController,
                         enableSuggestions: false,
                         autocorrect: false,
+                        cursorColor: Colors.grey,
                         decoration: const InputDecoration(
                           hintText: "Email",
                           icon: Icon(
                             Icons.email,
                             color: Colors.white,
                           ),
-                          border: OutlineInputBorder(),
+                          //border: OutlineInputBorder(),
+                          border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.white,
                         ),
@@ -1554,13 +1562,15 @@ class _LoginPageState extends State<LoginPage> {
                         obscureText: true,
                         enableSuggestions: false,
                         autocorrect: false,
+                        cursorColor: Colors.grey,
                         decoration: const InputDecoration(
                             hintText: "Password",
                             icon: Icon(
                               Icons.password,
                               color: Colors.white,
                             ),
-                            border: OutlineInputBorder(),
+                            //border: OutlineInputBorder(),
+                            border: InputBorder.none,
                             filled: true,
                             fillColor: Colors.white),
                         validator: (String? value) {

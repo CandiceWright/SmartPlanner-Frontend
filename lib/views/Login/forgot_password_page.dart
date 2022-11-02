@@ -157,13 +157,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         controller: emailTxtController,
                         enableSuggestions: false,
                         autocorrect: false,
+                        cursorColor: Colors.grey,
                         decoration: const InputDecoration(
                           hintText: "Email",
                           icon: Icon(
                             Icons.email,
                             color: Colors.white,
                           ),
-                          border: OutlineInputBorder(),
+                          //border: OutlineInputBorder(),
+                          border: InputBorder.none,
                           filled: true,
                           fillColor: Colors.white,
                         ),

@@ -232,12 +232,13 @@ class _HomePageState extends State<HomePage> {
       //print("file does not exists");
       //need to get the video from s3
       //first get s3 get url, then store file locally and
+      print("I am tryng to get video url");
       Object presignedUrl = await PlannerService.aws.getPresignedUrl("get",
           PlannerService.sharedInstance.user!.stories[index].videoAwsPath);
       if (presignedUrl != "error") {
         var url = Uri.parse(presignedUrl.toString());
-        //print("this is the url i am trying to get in inwards page line 103");
-        //print(url);
+        print("this is the url i am trying to get in inwards page line 103");
+        print(url);
         var response = await http.get(url);
         //print('Response status: ${response.statusCode}');
         if (response.statusCode == 200) {

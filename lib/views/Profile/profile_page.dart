@@ -13,6 +13,7 @@ import 'package:practice_planner/models/life_category.dart';
 import 'package:practice_planner/services/subscription_provider.dart';
 import 'package:practice_planner/views/Home/home_page.dart';
 import 'package:practice_planner/views/Legal/help_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../Login/login.dart';
 import '../Subscription/subscription_page.dart';
 import '../Subscription/subscription_page_no_free_trial.dart';
@@ -60,7 +61,8 @@ class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker _picker = ImagePicker();
   int selectedThemeId = PlannerService.sharedInstance.user!.themeId;
   String selectedSpaceTheme = PlannerService.sharedInstance.user!.spaceImage;
-  final LocalStorage storage = LocalStorage('planner_app');
+  // final LocalStorage storage = LocalStorage('planner_app');
+  final Future<SharedPreferences> storage = SharedPreferences.getInstance();
 
   @override
   void initState() {
@@ -1132,7 +1134,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   print('Response body: ${response.body}');
 
                   if (response.statusCode == 200) {
-                    await storage.setItem('login', false);
+                    //await storage.setItem('login', false);
+                    await storage.then((SharedPreferences prefs) {
+                      prefs.setBool('login', false);
+                    });
                     //navigate to login screen
                     Navigator.pushAndRemoveUntil(
                       context,
@@ -1664,8 +1669,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             )
                           : Container(),
                       ElevatedButton(
-                        onPressed: () {
-                          storage.setItem('login', false);
+                        onPressed: () async {
+                          //storage.setItem('login', false);
+                          await storage.then((SharedPreferences prefs) {
+                            prefs.setBool('login', false);
+                          });
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

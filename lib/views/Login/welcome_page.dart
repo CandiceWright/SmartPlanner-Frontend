@@ -4,6 +4,7 @@ import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:localstorage/localstorage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../models/backlog_item.dart';
 import '../../models/backlog_map_ref.dart';
@@ -31,7 +32,9 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   //<MyApp> tells flutter that this state belongs to MyApp Widget
   var questionIndex = 0;
-  final LocalStorage storage = LocalStorage('planner_app');
+  //final LocalStorage storage = LocalStorage('planner_app');
+  final Future<SharedPreferences> storage = SharedPreferences.getInstance();
+
   bool isloggingIn = false;
   double loadPercentage = 0.0;
 
@@ -42,14 +45,26 @@ class _WelcomePageState extends State<WelcomePage> {
   initState() {
     super.initState();
     //check if user is already logged in, if they are, then just log in
-    print("I am printing login status in local storage");
-    print(storage.getItem('login'));
-    if (storage.getItem('login') != null) {
-      if (storage.getItem('login')) {
-        //already logged in
-        goToPlanner();
+
+    storage.then((SharedPreferences prefs) {
+      print("I am printing login status in local storage");
+
+      print(prefs.getBool('login'));
+      if (prefs.getBool("login") != null) {
+        if (prefs.getBool("login")!) {
+          goToPlanner();
+        }
       }
-    }
+    });
+
+    // print("I am printing login status in local storage");
+    // print(storage.getItem('login'));
+    // if (storage.getItem('login') != null) {
+    //   if (storage.getItem('login')) {
+    //     //already logged in
+    //     goToPlanner();
+    //   }
+    // }
   }
 
   void goToPlanner() async {
@@ -57,7 +72,10 @@ class _WelcomePageState extends State<WelcomePage> {
       isloggingIn = true;
       loadPercentage = 0.2;
     });
-    var userId = storage.getItem('user');
+    //var userId = storage.getItem('user');
+    var userId = await storage.then((SharedPreferences prefs) {
+      return prefs.getInt('user')!;
+    });
     //first get user details with userId
     var url = Uri.parse(
         PlannerService.sharedInstance.serverUrl + '/user/' + userId.toString());
@@ -467,8 +485,8 @@ class _WelcomePageState extends State<WelcomePage> {
                   PlannerService.sharedInstance.user!.localProfileImage =
                       profilePicPath;
 
-                  storage.setItem('login', true);
-                  storage.setItem('user', userId);
+                  //storage.setItem('login', true);
+                  //storage.setItem('user', userId);
 
                   if (!PlannerService.sharedInstance.user!.isPremiumUser!) {
                     //PlannerService.sharedInstance.user!.isPremiumUser = false;
@@ -1018,7 +1036,7 @@ class _WelcomePageState extends State<WelcomePage> {
                 appBar: AppBar(
                   // Here we take the value from the MyHomePage object that was created by
                   // the App.build method, and use it to set our appbar title.
-
+                  automaticallyImplyLeading: false,
                   backgroundColor: Colors.transparent,
                   elevation: 0.0,
                 ),

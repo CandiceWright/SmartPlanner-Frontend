@@ -143,13 +143,15 @@ class _SignupPageState extends State<SignupPage> {
                   controller: emailTextController,
                   enableSuggestions: false,
                   autocorrect: false,
+                  cursorColor: Colors.grey,
                   decoration: const InputDecoration(
                     hintText: "Email",
                     icon: Icon(
                       Icons.email,
                       color: Colors.white,
                     ),
-                    border: OutlineInputBorder(),
+                    //border: OutlineInputBorder(),
+                    border: InputBorder.none,
                     filled: true,
                     fillColor: Colors.white,
                   ),
@@ -169,13 +171,15 @@ class _SignupPageState extends State<SignupPage> {
                   obscureText: true,
                   enableSuggestions: false,
                   autocorrect: false,
+                  cursorColor: Colors.grey,
                   decoration: const InputDecoration(
                       hintText: "Password",
                       icon: Icon(
                         Icons.password,
                         color: Colors.white,
                       ),
-                      border: OutlineInputBorder(),
+                      //border: OutlineInputBorder(),
+                      border: InputBorder.none,
                       filled: true,
                       fillColor: Colors.white),
                   validator: (String? value) {
